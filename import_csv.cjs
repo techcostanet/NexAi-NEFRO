@@ -2,9 +2,9 @@ const fs = require('fs');
 const Papa = require('papaparse');
 const path = require('path');
 
-const accessFile = path.join(__dirname, '..', 'Acesso 3 turno - Página1.csv');
-const exames3File = path.join(__dirname, '..', 'exames 3 turno - Página1.csv');
-const exames2File = path.join(__dirname, '..', 'planilha 2 turno - Página1.csv');
+const accessFile = path.join(__dirname, 'Acesso 3 turno - Página1.csv');
+const exames3File = path.join(__dirname, 'exames 3 turno - Página1.csv');
+const exames2File = path.join(__dirname, 'planilha 2 turno - Página1.csv');
 
 function parseCSV(filePath) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
@@ -142,7 +142,7 @@ async function run() {
 
   const finalPatients = Array.from(patientsMap.values());
   
-  fs.writeFileSync(path.join(__dirname, 'patients_db.json'), JSON.stringify(finalPatients, null, 2));
+  fs.writeFileSync(path.join(__dirname, 'src', 'data', 'patients_db.json'), JSON.stringify(finalPatients, null, 2));
   console.log('Criado patients_db.json com sucesso. Total:', finalPatients.length);
 }
 
