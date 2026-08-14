@@ -24,7 +24,22 @@ function bumpVersion(currentVersion) {
 }
 
 async function main() {
-  const changeMessage = process.argv.slice(2).join(' ') || 'Melhorias gerais e correções no sistema';
+  const args = process.argv.slice(2);
+  let explicitVersion = null;
+  let keepCurrent = false;
+
+  const filteredArgs = [];
+  for (const arg of args) {
+    if (arg.startsWith('--version=')) {
+      explicitVersion = arg.replace('--version=', '').trim();
+    } else if (arg === '--keep-version') {
+      keepCurrent = true;
+    } else {
+      filteredArgs.push(arg);
+    }
+  }
+
+  const changeMessage = filteredArgs.join(' ') || 'Melhorias gerais e correções no sistema';
 
   console.log('=====================================================');
   console.log('🚀 NexAi-NEFRO - Pipeline Automático de Release');
@@ -33,11 +48,18 @@ async function main() {
   // 1. Atualizar package.json
   const pkgPath = path.join(rootDir, 'package.json');
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
-  const oldVersion = pkg.version || '0.1.0';
-  const newVersion = bumpVersion(oldVersion);
+  const oldVersion = pkg.version || '1.1.2';
+  
+  let newVersion = oldVersion;
+  if (explicitVersion) {
+    newVersion = explicitVersion;
+  } else if (!keepCurrent) {
+    newVersion = bumpVersion(oldVersion);
+  }
+  
   pkg.version = newVersion;
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n');
-  console.log(`📌 Nova versão incrementada: v${oldVersion} -> v${newVersion}`);
+  console.log(`📌 Versão definida: v${newVersion}`);
 
   // 2. Atualizar src/version.js
   const versionJsPath = path.join(rootDir, 'src', 'version.js');

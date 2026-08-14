@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.2] - 2026-08-14
+### Alterações
+- Atualizacao de identidade visual: NexAi-NEFRO - Gestao Nefrologica, novo icone renal e versao 1.1.2 no login
+
 ## [0.1.2] - 2026-08-14
 ### Alterações
 - Ajuste e validacao do pipeline de entrega continua

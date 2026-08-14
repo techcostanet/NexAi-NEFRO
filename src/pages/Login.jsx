@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Activity } from 'lucide-react';
+import KidneyIcon from '../components/KidneyIcon';
+import { APP_VERSION } from '../version';
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const [error, setError] = useState('');
 
   const handleLogin = (e) => {
@@ -18,19 +18,31 @@ export default function Login() {
     } else if (email === 'dra.gisele@nefroapp.com' && password === '123456') {
       navigate('/doctor');
     } else {
-      setError('Credenciais inválidas! Use os acessos de teste informados.');
+      setError('Credenciais inválidas! Verifique seu email e senha.');
     }
   };
 
   return (
-    <div className="flex items-center justify-center h-screen">
+    <div className="flex items-center justify-center h-screen" style={{ minHeight: '100vh' }}>
       <div className="glass-panel animate-in" style={{ padding: '2.5rem', width: '100%', maxWidth: '400px', margin: '1rem' }}>
         <div className="flex flex-col items-center mb-8">
-          <div style={{ background: 'var(--primary)', padding: '1rem', borderRadius: '50%', marginBottom: '1rem', color: 'white' }}>
-            <Activity size={32} />
+          <div 
+            style={{ 
+              background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
+              padding: '1rem', 
+              borderRadius: '50%', 
+              marginBottom: '1rem', 
+              color: 'white',
+              boxShadow: '0 8px 16px rgba(37, 99, 235, 0.25)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <KidneyIcon size={34} color="white" />
           </div>
-          <h1 className="text-2xl font-bold">NefroApp</h1>
-          <p className="text-muted text-sm mt-2">Gestão Clínica Inteligente</p>
+          <h1 className="text-2xl font-bold text-center">NexAi-NEFRO</h1>
+          <p className="text-muted text-sm mt-1">Gestão Nefrológica</p>
         </div>
 
         <form onSubmit={handleLogin} className="flex flex-col gap-4">
@@ -65,13 +77,10 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-muted text-sm mb-2">
-            <strong>Dra. Gisele:</strong> dra.gisele@nefroapp.com <br/> Senha: 123456
-          </p>
-          <p className="text-muted text-sm" style={{ borderTop: '1px solid var(--border)', paddingTop: '0.5rem' }}>
-            <strong>Painel Admin:</strong> admin@nefroapp.com <br/> Senha: admin123
-          </p>
+        <div className="mt-8 text-center" style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem' }}>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', letterSpacing: '0.5px' }}>
+            Versão {APP_VERSION}
+          </span>
         </div>
       </div>
     </div>

@@ -19,7 +19,7 @@ export default function AdminDashboard() {
 
       <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
         <h2 className="font-bold text-lg mb-4">Gestão de Licenças (Clínicas)</h2>
-        <p className="text-muted text-sm mb-6">Gerencie os assinantes do NefroApp.</p>
+        <p className="text-muted text-sm mb-6">Gerencie os assinantes do NexAi-NEFRO.</p>
         
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-semibold">Clientes Ativos</h3>
