@@ -45,8 +45,8 @@ export default function ChangelogModal({ isOpen, onClose }) {
               <Sparkles size={20} />
             </div>
             <div>
-              <h2 className="text-xl font-bold">Evoluções do Sistema</h2>
-              <p className="text-muted text-xs">Histórico cronológico de melhorias e novidades do NexAi-NEFRO</p>
+              <h2 className="text-xl font-bold">Notas de Versão (Release Notes)</h2>
+              <p className="text-muted text-xs">Histórico cronológico de melhorias e atualizações técnicas do NexAi-NEFRO</p>
             </div>
           </div>
           <button 

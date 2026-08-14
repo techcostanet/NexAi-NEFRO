@@ -68,37 +68,40 @@ export default function DoctorDashboard() {
 
   return (
     <div className="container" style={{ paddingBottom: '5rem', maxWidth: '1100px' }}>
-      {/* Cabeçalho do Médico */}
-      <header className="flex justify-between items-center mt-3 mb-6 flex-wrap gap-4">
+      {/* Cabeçalho do Médico com Notas de Versão Centralizadas */}
+      <header className="flex justify-between items-center mt-2 mb-6 flex-wrap gap-4" style={{ position: 'relative' }}>
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>
-              Olá, {doctor.nome || 'Doutor(a)'}
-            </h1>
-            <button 
-              className="btn btn-outline" 
-              onClick={() => setIsChangelogOpen(true)}
-              style={{ 
-                padding: '0.25rem 0.65rem', 
-                fontSize: '0.75rem', 
-                borderRadius: '20px', 
-                background: 'rgba(239, 246, 255, 0.9)', 
-                borderColor: '#bfdbfe',
-                color: '#1d4ed8',
-                fontWeight: '600',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}
-              title="Ver evoluções e novidades do sistema"
-            >
-              <Sparkles size={13} color="#2563eb" />
-              <span>Evoluções</span>
-            </button>
-          </div>
+          <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>
+            Olá, {doctor.nome || 'Doutor(a)'}
+          </h1>
           <p className="text-muted text-sm mt-1">
             {doctor.especialidade || 'Gestão Nefrológica'} • CRM {doctor.crm || '---'}/{doctor.ufCrm || 'UF'}
           </p>
+        </div>
+
+        {/* Botão Central de Notas de Versão */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <button 
+            className="btn btn-outline" 
+            onClick={() => setIsChangelogOpen(true)}
+            style={{ 
+              padding: '0.4rem 1rem', 
+              fontSize: '0.8rem', 
+              borderRadius: '20px', 
+              background: 'rgba(239, 246, 255, 0.95)', 
+              borderColor: '#bfdbfe',
+              color: '#1d4ed8',
+              fontWeight: '600',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 2px 10px rgba(37, 99, 235, 0.08)'
+            }}
+            title="Ver Notas de Versão e atualizações do sistema"
+          >
+            <Sparkles size={14} color="#2563eb" />
+            <span>Notas de Versão (Release Notes)</span>
+          </button>
         </div>
 
         <div className="flex items-center gap-2">

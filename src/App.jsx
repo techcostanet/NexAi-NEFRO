@@ -57,7 +57,7 @@ function App() {
             }}
           >
             <Sparkles size={12} />
-            <span>v{APP_VERSION} (Ver Novidades)</span>
+            <span>v{APP_VERSION} • Notas de Versão</span>
           </button>
         </footer>
 

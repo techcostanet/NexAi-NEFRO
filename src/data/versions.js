@@ -1,12 +1,22 @@
 export const SYSTEM_CHANGELOG = [
   {
+    version: "1.1.5",
+    date: "13/08/2026",
+    title: "Notas de Versão Centralizadas & Refinamento Terminológico",
+    highlights: [
+      "🏷️ Adequação terminológica técnica de 'Evoluções' para 'Notas de Versão (Release Notes)' para evitar conflito com o termo médico de evolução clínica.",
+      "📍 Centralização em destaque do botão de Notas de Versão no cabeçalho principal.",
+      "🎨 Consolidação dos tons pastéis e harmonia da interface clínica."
+    ]
+  },
+  {
     version: "1.1.4",
     date: "13/08/2026",
-    title: "Ergonomia Visual, Tons Pastéis e Central de Evoluções",
+    title: "Ergonomia Visual, Tons Pastéis e Central de Versões",
     highlights: [
       "🎨 Implementação de paleta em tons pastéis clínicos para diferenciar visualmente cada quadro (Acesso Vascular em Azul, Medicações em Âmbar, Exames em Menta e Histórico em Lavanda).",
       "📐 Correção e ampliação do espaçamento da navegação (botão Voltar e títulos com respiro adequado).",
-      "✨ Central de Evoluções do Sistema: Linha do tempo interativa para acompanhar todas as melhorias versão a versão."
+      "✨ Linha do tempo interativa para acompanhar todas as melhorias versão a versão."
     ]
   },
   {

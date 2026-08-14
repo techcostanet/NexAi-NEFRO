@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.5] - 2026-08-14
+### Alterações
+- Adequacao terminologica para Notas de Versao e posicionamento centralizado no cabecalho
+
 ## [1.1.4] - 2026-08-14
 ### Alterações
 - Melhoria de ergonomia visual no botao voltar, paleta de tons pasteis para quadros clinicos e modal interativo de evolucoes do sistema
