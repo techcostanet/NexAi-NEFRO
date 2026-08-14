@@ -16,11 +16,23 @@ import {
   FileText, 
   CheckCircle2,
   Trash2,
-  Sparkles
+  Sparkles,
+  AlertCircle,
+  Check,
+  RotateCcw,
+  Tag,
+  Filter
 } from 'lucide-react';
-import { subscribeToPatientById, deletePatientExam } from '../services/patientService';
+import { 
+  subscribeToPatientById, 
+  deletePatientExam,
+  deletePatientMedication,
+  toggleMedicationStatus
+} from '../services/patientService';
+import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
 import PatientFormModal from '../components/PatientFormModal';
 import ExamFormModal from '../components/ExamFormModal';
+import MedicationModal from '../components/MedicationModal';
 
 export default function PatientProfile() {
   const { id } = useParams();
@@ -33,6 +45,11 @@ export default function PatientProfile() {
   const [isExamModalOpen, setIsExamModalOpen] = useState(false);
   const [examToEdit, setExamToEdit] = useState(null);
   const [examIndexToEdit, setExamIndexToEdit] = useState(null);
+
+  // Estados para Gestão de Medicamentos
+  const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
+  const [medicationToEdit, setMedicationToEdit] = useState(null);
+  const [medFilter, setMedFilter] = useState('todos'); // 'todos' | 'continuo' | 'temporario' | 'alerta'
 
   useEffect(() => {
     setLoading(true);
@@ -62,6 +79,31 @@ export default function PatientProfile() {
     }
   };
 
+  // Funções de Ação para Medicamentos
+  const handleOpenNewMedication = () => {
+    setMedicationToEdit(null);
+    setIsMedicationModalOpen(true);
+  };
+
+  const handleEditMedication = (med) => {
+    setMedicationToEdit(med);
+    setIsMedicationModalOpen(true);
+  };
+
+  const handleDeleteMedication = async (medId) => {
+    if (window.confirm("Deseja realmente excluir esta prescrição?")) {
+      await deletePatientMedication(patient.id, medId);
+    }
+  };
+
+  const handleToggleMedicationActive = async (med) => {
+    const nextActive = !med.ativo;
+    const msg = nextActive ? "Reativar esta prescrição?" : "Suspender/finalizar esta prescrição?";
+    if (window.confirm(msg)) {
+      await toggleMedicationStatus(patient.id, med.id, nextActive);
+    }
+  };
+
   if (loading) {
     return (
       <div className="container flex items-center justify-center h-screen flex-col gap-4">
@@ -82,13 +124,33 @@ export default function PatientProfile() {
 
   const exames = patient.exames || {};
   const acessoVascular = patient.acessoVascular || {};
-  const medicamentos = patient.medicamentos || {};
+  const medicamentosList = normalizeMedicamentosList(patient.medicamentos);
   const historicoExames = Array.isArray(patient.historicoExames) ? patient.historicoExames : [];
 
-  // Alertas Clínicos
+  // Alertas Clínicos de Exames
   const hbBaixa = exames.hb !== null && exames.hb !== undefined && exames.hb < 10;
   const pthAlto = exames.pth !== null && exames.pth !== undefined && exames.pth > 600;
   const fosforoAlto = exames.fosforo !== null && exames.fosforo !== undefined && exames.fosforo > 5.5;
+
+  // Alertas de Medicamentos (Ciclos a vencer ou vencidos)
+  const medAlerts = medicamentosList.filter(m => {
+    if (!m.ativo) return false;
+    const st = getMedicationStatus(m);
+    return st.status === 'expirando' || st.status === 'expirado';
+  });
+
+  // Filtragem de Medicamentos na UI
+  const filteredMedicamentos = medicamentosList.filter(med => {
+    if (medFilter === 'todos') return true;
+    if (medFilter === 'continuo') return med.tipo === 'continuo' && med.ativo !== false;
+    if (medFilter === 'temporario') return med.tipo === 'temporario' && med.ativo !== false;
+    if (medFilter === 'alerta') {
+      const st = getMedicationStatus(med);
+      return st.status === 'expirando' || st.status === 'expirado';
+    }
+    if (medFilter === 'inativos') return med.ativo === false;
+    return true;
+  });
 
   return (
     <div className="container" style={{ paddingBottom: '5rem', maxWidth: '1050px' }}>
@@ -159,11 +221,11 @@ export default function PatientProfile() {
         </div>
       </header>
 
-      {/* Alertas Médicos em Destaque (Card Rosa/Coral Pastel) */}
+      {/* Alertas Médicos de Parâmetros Fora da Meta */}
       {(hbBaixa || pthAlto || fosforoAlto) && (
-        <div className="card-pastel-rose mb-6 animate-in" style={{ padding: '1.25rem', borderRadius: '16px' }}>
+        <div className="card-pastel-rose mb-4 animate-in" style={{ padding: '1.25rem', borderRadius: '16px' }}>
           <h3 className="font-bold text-sm mb-2 flex items-center gap-2" style={{ color: '#b91c1c' }}>
-            <AlertTriangle size={18} /> Alertas de Parâmetros Fora da Meta
+            <AlertTriangle size={18} /> Alertas de Parâmetros Laboratoriais Fora da Meta
           </h3>
           <div className="flex flex-col gap-1.5 text-sm" style={{ color: '#991b1b' }}>
             {hbBaixa && <div>• <strong>Hemoglobina Crítica:</strong> {exames.hb} g/dL (Meta recomendada: 10,0 a 12,0 g/dL)</div>}
@@ -173,10 +235,56 @@ export default function PatientProfile() {
         </div>
       )}
 
+      {/* Alerta de Medicamentos a Vencer ou Ciclos Encerrados */}
+      {medAlerts.length > 0 && (
+        <div className="card-pastel-amber mb-6 animate-in" style={{ padding: '1.25rem', borderRadius: '16px' }}>
+          <div className="flex justify-between items-center mb-2 flex-wrap gap-2">
+            <h3 className="font-bold text-sm flex items-center gap-2" style={{ color: '#92400e' }}>
+              <Clock size={18} /> Alertas de Prescrições com Prazo / Término
+            </h3>
+            <span style={{ fontSize: '0.75rem', padding: '2px 10px', borderRadius: '12px', background: '#fef3c7', color: '#92400e', fontWeight: 'bold' }}>
+              {medAlerts.length} {medAlerts.length === 1 ? 'pendência' : 'pendências'}
+            </span>
+          </div>
+          <div className="flex flex-col gap-2 text-sm" style={{ color: '#78350f' }}>
+            {medAlerts.map((m, idx) => {
+              const st = getMedicationStatus(m);
+              return (
+                <div key={idx} className="flex justify-between items-center bg-white/70 p-2.5 rounded-xl flex-wrap gap-2">
+                  <div>
+                    <strong>{m.nome}</strong> ({m.dosagem} • {m.via})
+                    <div style={{ fontSize: '0.75rem', color: '#854d0e', marginTop: '2px' }}>
+                      {st.label} • Término: {m.dataFim ? new Date(m.dataFim + 'T00:00:00').toLocaleDateString('pt-BR') : '-'}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      className="btn btn-outline" 
+                      onClick={() => handleEditMedication(m)}
+                      style={{ padding: '0.3rem 0.7rem', fontSize: '0.75rem', background: '#ffffff', borderColor: '#fde68a', color: '#b45309' }}
+                    >
+                      Renovar / Ajustar
+                    </button>
+                    <button 
+                      className="btn btn-outline" 
+                      onClick={() => handleToggleMedicationActive(m)}
+                      style={{ padding: '0.3rem 0.7rem', fontSize: '0.75rem', background: '#ffffff', borderColor: '#fde68a', color: '#64748b' }}
+                    >
+                      Encerrar Ciclo
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Grid Principal: Acesso Vascular (Azul Pastel) & Prescrições (Âmbar Pastel) */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem', marginBottom: '1.5rem' }}>
+        
         {/* Acesso Vascular & Diálise (Azul Pastel) */}
-        <section className="card-pastel-blue" style={{ padding: '1.4rem', borderRadius: '16px' }}>
+        <section className="card-pastel-blue" style={{ padding: '1.4rem', borderRadius: '16px', height: 'fit-content' }}>
           <div className="flex justify-between items-center mb-3">
             <h2 className="font-bold text-base flex items-center gap-2" style={{ color: '#1d4ed8' }}>
               <Activity size={18} /> Acesso Vascular & Diálise
@@ -209,58 +317,211 @@ export default function PatientProfile() {
           </div>
         </section>
 
-        {/* Prescrições & Medicamentos (Âmbar Pastel) */}
+        {/* Prescrições & Medicamentos (Âmbar Pastel com Gestor Dinâmico) */}
         <section className="card-pastel-amber" style={{ padding: '1.4rem', borderRadius: '16px' }}>
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="font-bold text-base flex items-center gap-2" style={{ color: '#b45309' }}>
-              <Pill size={18} /> Prescrições & Medicamentos
-            </h2>
-            <span style={{ fontSize: '0.72rem', background: '#fef3c7', color: '#92400e', padding: '2px 8px', borderRadius: '10px', fontWeight: '600' }}>
-              Ajuste Atual
-            </span>
-          </div>
-          <ul className="text-sm flex flex-col gap-2" style={{ listStyleType: 'none', color: '#78350f' }}>
-            {medicamentos.epo && (
-              <li className="flex justify-between border-b pb-1.5" style={{ borderColor: 'rgba(254, 240, 138, 0.6)' }}>
-                <span className="text-muted" style={{ color: '#78716c' }}>EPO:</span> 
-                <strong className="font-semibold">{medicamentos.epo}</strong>
-              </li>
-            )}
-            {medicamentos.nor && (
-              <li className="flex justify-between border-b pb-1.5" style={{ borderColor: 'rgba(254, 240, 138, 0.6)' }}>
-                <span className="text-muted" style={{ color: '#78716c' }}>Noripurum:</span> 
-                <strong className="font-semibold">{medicamentos.nor}</strong>
-              </li>
-            )}
-            {medicamentos.paricalcitol && (
-              <li className="flex justify-between border-b pb-1.5" style={{ borderColor: 'rgba(254, 240, 138, 0.6)' }}>
-                <span className="text-muted" style={{ color: '#78716c' }}>Paricalcitol:</span> 
-                <strong className="font-semibold">{medicamentos.paricalcitol}</strong>
-              </li>
-            )}
-            {medicamentos.cinacalcete && (
-              <li className="flex justify-between border-b pb-1.5" style={{ borderColor: 'rgba(254, 240, 138, 0.6)' }}>
-                <span className="text-muted" style={{ color: '#78716c' }}>Cinacalcete:</span> 
-                <strong className="font-semibold">{medicamentos.cinacalcete}</strong>
-              </li>
-            )}
-            {medicamentos.sevelamer && (
-              <li className="flex justify-between border-b pb-1.5" style={{ borderColor: 'rgba(254, 240, 138, 0.6)' }}>
-                <span className="text-muted" style={{ color: '#78716c' }}>Sevelamer:</span> 
-                <strong className="font-semibold">{medicamentos.sevelamer}</strong>
-              </li>
-            )}
-            {medicamentos.caco3 && (
-              <li className="flex justify-between">
-                <span className="text-muted" style={{ color: '#78716c' }}>Carbonato Cálcio:</span> 
-                <strong className="font-semibold">{medicamentos.caco3}</strong>
-              </li>
-            )}
+          <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
+            <div>
+              <h2 className="font-bold text-base flex items-center gap-2" style={{ color: '#b45309' }}>
+                <Pill size={18} /> Prescrições & Medicamentos
+              </h2>
+              <p className="text-xs" style={{ color: '#92400e', marginTop: '2px' }}>
+                Controle contínuo e ciclos com data de término
+              </p>
+            </div>
             
-            {(!medicamentos.epo && !medicamentos.nor && !medicamentos.paricalcitol && !medicamentos.cinacalcete && !medicamentos.sevelamer && !medicamentos.caco3) && (
-              <li className="text-muted text-sm italic py-2">Nenhuma medicação registrada no momento.</li>
+            <button 
+              className="btn btn-primary" 
+              onClick={handleOpenNewMedication}
+              style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', background: '#d97706' }}
+            >
+              <Plus size={14} /> Prescrever
+            </button>
+          </div>
+
+          {/* Filtros rápidos de medicamentos */}
+          {medicamentosList.length > 0 && (
+            <div className="flex gap-1.5 mb-3 flex-wrap" style={{ fontSize: '0.72rem' }}>
+              <button
+                onClick={() => setMedFilter('todos')}
+                style={{
+                  padding: '2px 8px',
+                  borderRadius: '10px',
+                  border: '1px solid',
+                  borderColor: medFilter === 'todos' ? '#b45309' : '#fde68a',
+                  background: medFilter === 'todos' ? '#d97706' : '#ffffff',
+                  color: medFilter === 'todos' ? '#ffffff' : '#78350f',
+                  cursor: 'pointer',
+                  fontWeight: '600'
+                }}
+              >
+                Todos ({medicamentosList.length})
+              </button>
+              <button
+                onClick={() => setMedFilter('continuo')}
+                style={{
+                  padding: '2px 8px',
+                  borderRadius: '10px',
+                  border: '1px solid',
+                  borderColor: medFilter === 'continuo' ? '#059669' : '#fde68a',
+                  background: medFilter === 'continuo' ? '#059669' : '#ffffff',
+                  color: medFilter === 'continuo' ? '#ffffff' : '#78350f',
+                  cursor: 'pointer',
+                  fontWeight: '600'
+                }}
+              >
+                Contínuos ({medicamentosList.filter(m => m.tipo === 'continuo' && m.ativo !== false).length})
+              </button>
+              <button
+                onClick={() => setMedFilter('temporario')}
+                style={{
+                  padding: '2px 8px',
+                  borderRadius: '10px',
+                  border: '1px solid',
+                  borderColor: medFilter === 'temporario' ? '#2563eb' : '#fde68a',
+                  background: medFilter === 'temporario' ? '#2563eb' : '#ffffff',
+                  color: medFilter === 'temporario' ? '#ffffff' : '#78350f',
+                  cursor: 'pointer',
+                  fontWeight: '600'
+                }}
+              >
+                Ciclos / Prazos ({medicamentosList.filter(m => m.tipo === 'temporario' && m.ativo !== false).length})
+              </button>
+              {medAlerts.length > 0 && (
+                <button
+                  onClick={() => setMedFilter('alerta')}
+                  style={{
+                    padding: '2px 8px',
+                    borderRadius: '10px',
+                    border: '1px solid',
+                    borderColor: medFilter === 'alerta' ? '#dc2626' : '#fde68a',
+                    background: medFilter === 'alerta' ? '#dc2626' : '#ffffff',
+                    color: medFilter === 'alerta' ? '#ffffff' : '#dc2626',
+                    cursor: 'pointer',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  ⚠️ Alertas ({medAlerts.length})
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Lista de Medicamentos */}
+          <div className="flex flex-col gap-2.5" style={{ maxHeight: '420px', overflowY: 'auto', paddingRight: '2px' }}>
+            {filteredMedicamentos.length === 0 ? (
+              <div className="text-center py-6 text-muted bg-white/50 rounded-xl">
+                <Pill size={28} style={{ margin: '0 auto 0.5rem', opacity: 0.4 }} />
+                <p className="text-sm">Nenhum medicamento encontrado para este filtro.</p>
+                <button 
+                  className="btn btn-outline mt-2" 
+                  onClick={handleOpenNewMedication}
+                  style={{ fontSize: '0.78rem', padding: '0.35rem 0.8rem', background: '#ffffff' }}
+                >
+                  Prescrever Medicamento
+                </button>
+              </div>
+            ) : (
+              filteredMedicamentos.map((med, idx) => {
+                const st = getMedicationStatus(med);
+                return (
+                  <div 
+                    key={med.id || idx}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.88)',
+                      borderRadius: '12px',
+                      padding: '0.85rem',
+                      border: `1px solid ${st.borderColor}`,
+                      boxShadow: '0 2px 6px rgba(0,0,0,0.03)',
+                      opacity: med.ativo === false ? 0.65 : 1
+                    }}
+                  >
+                    <div className="flex justify-between items-start gap-2 mb-1.5 flex-wrap">
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <strong style={{ fontSize: '0.9rem', color: '#1e293b' }}>
+                            {med.nome}
+                          </strong>
+                          {med.categoria && (
+                            <span style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '6px', background: '#f1f5f9', color: '#475569' }}>
+                              {med.categoria}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm font-semibold mt-0.5" style={{ color: '#b45309' }}>
+                          {med.dosagem} {med.via ? `• ${med.via}` : ''} {med.frequencia ? `• ${med.frequencia}` : ''}
+                        </div>
+                      </div>
+
+                      {/* Badge de Status Semafórico */}
+                      <span 
+                        style={{ 
+                          fontSize: '0.72rem', 
+                          padding: '3px 8px', 
+                          borderRadius: '8px', 
+                          background: st.badgeBg, 
+                          color: st.color, 
+                          fontWeight: 'bold',
+                          border: `1px solid ${st.borderColor}`,
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        {st.label}
+                      </span>
+                    </div>
+
+                    {/* Datas de Vigência e Observações */}
+                    <div className="flex justify-between items-center text-xs mt-2 pt-2 border-t flex-wrap gap-2" style={{ borderColor: 'rgba(0,0,0,0.05)' }}>
+                      <div style={{ color: '#64748b' }}>
+                        {med.tipo === 'temporario' && med.dataFim ? (
+                          <span>
+                            Período: <strong>{new Date(med.dataInicio + 'T00:00:00').toLocaleDateString('pt-BR')}</strong> até <strong>{new Date(med.dataFim + 'T00:00:00').toLocaleDateString('pt-BR')}</strong>
+                          </span>
+                        ) : (
+                          <span>Início: {med.dataInicio ? new Date(med.dataInicio + 'T00:00:00').toLocaleDateString('pt-BR') : 'Uso contínuo'}</span>
+                        )}
+                        {med.observacao && (
+                          <div style={{ fontStyle: 'italic', color: '#78716c', marginTop: '2px' }}>
+                            Obs: {med.observacao}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Ações de Edição e Exclusão */}
+                      <div className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          className="btn btn-outline"
+                          onClick={() => handleToggleMedicationActive(med)}
+                          style={{ padding: '0.25rem 0.45rem', fontSize: '0.7rem', background: '#ffffff' }}
+                          title={med.ativo ? "Suspender medicação" : "Reativar medicação"}
+                        >
+                          <RotateCcw size={12} color="var(--primary)" />
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline"
+                          onClick={() => handleEditMedication(med)}
+                          style={{ padding: '0.25rem 0.45rem', fontSize: '0.7rem', background: '#ffffff' }}
+                          title="Editar prescrição"
+                        >
+                          <Edit size={12} color="var(--primary)" />
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-outline"
+                          onClick={() => handleDeleteMedication(med.id)}
+                          style={{ padding: '0.25rem 0.45rem', fontSize: '0.7rem', background: '#ffffff' }}
+                          title="Excluir medicação"
+                        >
+                          <Trash2 size={12} color="var(--danger)" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
             )}
-          </ul>
+          </div>
         </section>
       </div>
 
@@ -435,6 +696,13 @@ export default function PatientProfile() {
         patientId={patient.id}
         examToEdit={examToEdit}
         examIndex={examIndexToEdit}
+      />
+
+      <MedicationModal 
+        isOpen={isMedicationModalOpen}
+        onClose={() => setIsMedicationModalOpen(false)}
+        patientId={patient.id}
+        medicationToEdit={medicationToEdit}
       />
     </div>
   );

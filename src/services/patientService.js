@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../config/firebase";
 import localPatients from "../data/patients_db.json";
+import { normalizeMedicamentosList } from "../data/dialysisMedications";
 
 const PATIENTS_COLLECTION = "patients";
 
@@ -198,7 +199,7 @@ export async function savePatientExam(patientId, examData, examIndex = null) {
       creatinina: latestExam.creatinina !== undefined ? latestExam.creatinina : (patient.exames?.creatinina || null),
       ktv: latestExam.ktv !== undefined ? latestExam.ktv : (patient.exames?.ktv || null)
     },
-    medicamentos: latestExam.medicamentos || patient.medicamentos || {},
+    medicamentos: (patient.medicamentos && (Array.isArray(patient.medicamentos) ? patient.medicamentos.length > 0 : Object.keys(patient.medicamentos).length > 0)) ? patient.medicamentos : (latestExam.medicamentos || []),
     atualizadoEm: new Date().toISOString()
   };
 
@@ -223,6 +224,85 @@ export async function deletePatientExam(patientId, examIndex) {
     historicoExames: historico,
     atualizadoEm: new Date().toISOString()
   });
+}
+
+/**
+ * Adiciona ou atualiza uma medicação no paciente
+ */
+export async function savePatientMedication(patientId, medData, medId = null) {
+  if (!db) throw new Error("Firestore não inicializado");
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado");
+
+  let currentMeds = normalizeMedicamentosList(patient.medicamentos);
+  const targetId = medId || medData.id || `med-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+
+  const medRecord = {
+    ...medData,
+    id: targetId,
+    ativo: medData.ativo !== undefined ? medData.ativo : true,
+    atualizadoEm: new Date().toISOString()
+  };
+
+  const existingIndex = currentMeds.findIndex(m => m.id === targetId);
+  if (existingIndex !== -1) {
+    currentMeds[existingIndex] = { ...currentMeds[existingIndex], ...medRecord };
+  } else {
+    currentMeds.unshift(medRecord);
+  }
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    medicamentos: currentMeds,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return currentMeds;
+}
+
+/**
+ * Remove uma medicação do paciente
+ */
+export async function deletePatientMedication(patientId, medId) {
+  if (!db) throw new Error("Firestore não inicializado");
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado");
+
+  let currentMeds = normalizeMedicamentosList(patient.medicamentos);
+  currentMeds = currentMeds.filter(m => m.id !== medId);
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    medicamentos: currentMeds,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return currentMeds;
+}
+
+/**
+ * Alterna o status ativo/suspenso de uma medicação
+ */
+export async function toggleMedicationStatus(patientId, medId, active) {
+  if (!db) throw new Error("Firestore não inicializado");
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado");
+
+  let currentMeds = normalizeMedicamentosList(patient.medicamentos);
+  currentMeds = currentMeds.map(m => {
+    if (m.id === medId) {
+      return { ...m, ativo: active, atualizadoEm: new Date().toISOString() };
+    }
+    return m;
+  });
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    medicamentos: currentMeds,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return currentMeds;
 }
 
 /**

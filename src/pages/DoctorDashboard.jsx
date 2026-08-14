@@ -1,8 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Search, User, UserPlus, Filter, UserCog, Edit, ChevronRight, Activity, Calendar, Sparkles } from 'lucide-react';
+import { 
+  LogOut, 
+  Search, 
+  User, 
+  UserPlus, 
+  Filter, 
+  UserCog, 
+  Edit, 
+  ChevronRight, 
+  Activity, 
+  Calendar, 
+  Sparkles,
+  Pill,
+  Clock,
+  AlertTriangle
+} from 'lucide-react';
 import { subscribeToPatients } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
+import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
 import PatientFormModal from '../components/PatientFormModal';
 import ChangelogModal from '../components/ChangelogModal';
 
@@ -13,6 +29,7 @@ export default function DoctorDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTurno, setFilterTurno] = useState('Todos');
   const [filterStatus, setFilterStatus] = useState('Todos');
+  const [filterMedAlert, setFilterMedAlert] = useState(false);
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
   const [patientToEdit, setPatientToEdit] = useState(null);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
@@ -43,11 +60,39 @@ export default function DoctorDashboard() {
     setIsPatientModalOpen(true);
   };
 
+  // Helper para verificar alertas de medicação no paciente
+  const getPatientMedicationAlerts = (patient) => {
+    const meds = normalizeMedicamentosList(patient.medicamentos);
+    const expiring = [];
+    const expired = [];
+    
+    meds.forEach(m => {
+      if (m.ativo !== false) {
+        const st = getMedicationStatus(m);
+        if (st.status === 'expirando') expiring.push(m);
+        if (st.status === 'expirado') expired.push(m);
+      }
+    });
+
+    return {
+      totalMeds: meds.filter(m => m.ativo !== false).length,
+      expiring,
+      expired,
+      hasAlerts: expiring.length > 0 || expired.length > 0
+    };
+  };
+
   const filteredPatients = patients.filter(p => {
     const matchesSearch = (p.nome || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                           (p.clinica || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTurno = filterTurno === 'Todos' || p.turno === filterTurno;
     const matchesStatus = filterStatus === 'Todos' || (p.status || 'Ativo') === filterStatus;
+    
+    if (filterMedAlert) {
+      const medAlerts = getPatientMedicationAlerts(p);
+      return matchesSearch && matchesTurno && matchesStatus && medAlerts.hasAlerts;
+    }
+
     return matchesSearch && matchesTurno && matchesStatus;
   });
 
@@ -65,6 +110,9 @@ export default function DoctorDashboard() {
         return { bg: 'rgba(248, 250, 252, 0.95)', color: '#475569', border: '#cbd5e1' };
     }
   };
+
+  // Contagem global de pacientes com alertas de medicação
+  const patientsWithMedAlertsCount = patients.filter(p => getPatientMedicationAlerts(p).hasAlerts).length;
 
   return (
     <div className="container" style={{ paddingBottom: '5rem', maxWidth: '1100px' }}>
@@ -149,7 +197,7 @@ export default function DoctorDashboard() {
           />
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
           <select 
             className="input-field" 
             style={{ width: 'auto', flex: '0 0 auto' }}
@@ -178,6 +226,30 @@ export default function DoctorDashboard() {
             <option value="Transplante">Transplante</option>
             <option value="Inativo">Inativos</option>
           </select>
+
+          {/* Filtro Rápido para Alertas de Medicamentos */}
+          <button
+            type="button"
+            onClick={() => setFilterMedAlert(!filterMedAlert)}
+            style={{
+              padding: '0.5rem 0.85rem',
+              borderRadius: '12px',
+              border: '1px solid',
+              borderColor: filterMedAlert ? '#d97706' : '#e2e8f0',
+              background: filterMedAlert ? '#fef3c7' : '#ffffff',
+              color: filterMedAlert ? '#b45309' : '#64748b',
+              fontWeight: '600',
+              fontSize: '0.85rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer'
+            }}
+            title="Filtrar pacientes com medicamentos vencendo ou vencidos"
+          >
+            <Clock size={15} color={filterMedAlert ? '#b45309' : '#64748b'} />
+            <span>Ciclos a Vencer {patientsWithMedAlertsCount > 0 ? `(${patientsWithMedAlertsCount})` : ''}</span>
+          </button>
         </div>
       </div>
 
@@ -186,6 +258,11 @@ export default function DoctorDashboard() {
         <span className="text-xs text-muted font-semibold uppercase tracking-wider">
           Total de Pacientes: {filteredPatients.length}
         </span>
+        {filterMedAlert && (
+          <span style={{ fontSize: '0.75rem', color: '#b45309', fontWeight: 'bold' }}>
+            Exibindo apenas pacientes com ciclos/prazos de medicamentos pendentes
+          </span>
+        )}
       </div>
 
       {/* Lista de Pacientes em Grid de Cards com Visual Refinado */}
@@ -202,6 +279,8 @@ export default function DoctorDashboard() {
         ) : (
           filteredPatients.map(patient => {
             const statusTheme = getStatusStyle(patient.status);
+            const medInfo = getPatientMedicationAlerts(patient);
+
             return (
               <div 
                 key={patient.id} 
@@ -212,8 +291,8 @@ export default function DoctorDashboard() {
                   transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                   borderRadius: '16px',
                   background: 'rgba(255, 255, 255, 0.85)',
-                  border: '1px solid rgba(226, 232, 240, 0.9)',
-                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
+                  border: medInfo.hasAlerts ? '1px solid #fde68a' : '1px solid rgba(226, 232, 240, 0.9)',
+                  boxShadow: medInfo.hasAlerts ? '0 4px 16px rgba(217, 119, 6, 0.06)' : '0 4px 16px rgba(0, 0, 0, 0.03)',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between'
@@ -227,7 +306,7 @@ export default function DoctorDashboard() {
                 onMouseOut={(e) => {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.03)';
-                  e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.9)';
+                  e.currentTarget.style.borderColor = medInfo.hasAlerts ? '#fde68a' : 'rgba(226, 232, 240, 0.9)';
                 }}
               >
                 <div>
@@ -249,7 +328,7 @@ export default function DoctorDashboard() {
                     {patient.clinica || 'Clínica NexAi'} {patient.idade ? `• ${patient.idade} anos` : ''}
                   </p>
 
-                  <div className="flex items-center gap-1.5 flex-wrap mb-3">
+                  <div className="flex items-center gap-1.5 flex-wrap mb-2">
                     <span 
                       style={{ 
                         fontSize: '0.72rem', 
@@ -276,7 +355,50 @@ export default function DoctorDashboard() {
                     >
                       {patient.turno}
                     </span>
+
+                    {medInfo.totalMeds > 0 && (
+                      <span 
+                        style={{ 
+                          fontSize: '0.72rem', 
+                          background: '#fffbeb', 
+                          color: '#b45309', 
+                          border: '1px solid #fef3c7',
+                          padding: '2px 8px', 
+                          borderRadius: '10px', 
+                          fontWeight: '600',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '3px'
+                        }}
+                      >
+                        <Pill size={11} /> {medInfo.totalMeds} {medInfo.totalMeds === 1 ? 'med' : 'meds'}
+                      </span>
+                    )}
                   </div>
+
+                  {/* Indicador de Alerta de Medicamentos */}
+                  {medInfo.hasAlerts && (
+                    <div 
+                      style={{ 
+                        fontSize: '0.72rem', 
+                        background: medInfo.expired.length > 0 ? 'rgba(254, 242, 242, 0.9)' : 'rgba(254, 243, 199, 0.9)',
+                        color: medInfo.expired.length > 0 ? '#b91c1c' : '#92400e',
+                        border: `1px solid ${medInfo.expired.length > 0 ? '#fecaca' : '#fde68a'}`,
+                        padding: '3px 8px',
+                        borderRadius: '8px',
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        marginBottom: '0.75rem'
+                      }}
+                    >
+                      <Clock size={12} />
+                      <span>
+                        {medInfo.expired.length > 0 ? `${medInfo.expired.length} ciclo encerrado` : `${medInfo.expiring.length} medicação a vencer`}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center justify-between text-xs text-muted pt-2.5 border-t" style={{ borderColor: 'rgba(226, 232, 240, 0.8)' }}>
@@ -288,7 +410,7 @@ export default function DoctorDashboard() {
                   </div>
 
                   <div className="flex items-center gap-1" style={{ color: 'var(--primary)', fontWeight: '600', flexShrink: 0 }}>
-                    <span>Exames</span>
+                    <span>Prontuário</span>
                     <ChevronRight size={14} />
                   </div>
                 </div>

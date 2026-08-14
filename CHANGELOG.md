@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.6] - 2026-08-14
+### Alterações
+- Adiciona gestao dinamica de medicamentos com catalogo de dialise e alertas visuais de termino de ciclo
+
 ## [1.1.5] - 2026-08-14
 ### Alterações
 - Adequacao terminologica para Notas de Versao e posicionamento centralizado no cabecalho
