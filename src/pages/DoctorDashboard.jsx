@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Search, User, UserPlus, Filter, UserCog, Edit, ChevronRight, Activity, Calendar } from 'lucide-react';
+import { LogOut, Search, User, UserPlus, Filter, UserCog, Edit, ChevronRight, Activity, Calendar, Sparkles } from 'lucide-react';
 import { subscribeToPatients } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
 import PatientFormModal from '../components/PatientFormModal';
+import ChangelogModal from '../components/ChangelogModal';
 
 export default function DoctorDashboard() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function DoctorDashboard() {
   const [filterStatus, setFilterStatus] = useState('Todos');
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
   const [patientToEdit, setPatientToEdit] = useState(null);
+  const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
   useEffect(() => {
     const unsubDoc = subscribeDoctorProfile('dra-gisele', (data) => {
@@ -49,28 +51,52 @@ export default function DoctorDashboard() {
     return matchesSearch && matchesTurno && matchesStatus;
   });
 
-  const getStatusColor = (status = 'Ativo') => {
+  const getStatusStyle = (status = 'Ativo') => {
     switch (status) {
       case 'Ativo':
       case 'Em Tratamento':
-        return { bg: 'rgba(16, 185, 129, 0.12)', color: '#059669', border: 'rgba(16, 185, 129, 0.25)' };
+        return { bg: 'rgba(240, 253, 244, 0.95)', color: '#047857', border: '#bbf7d0' };
       case 'Internado':
-        return { bg: 'rgba(239, 68, 68, 0.12)', color: '#dc2626', border: 'rgba(239, 68, 68, 0.25)' };
+        return { bg: 'rgba(254, 242, 242, 0.95)', color: '#b91c1c', border: '#fecaca' };
       case 'Transferido':
       case 'Transplante':
-        return { bg: 'rgba(37, 99, 235, 0.12)', color: '#2563eb', border: 'rgba(37, 99, 235, 0.25)' };
+        return { bg: 'rgba(245, 243, 255, 0.95)', color: '#6d28d9', border: '#ddd6fe' };
       default:
-        return { bg: 'rgba(148, 163, 184, 0.15)', color: '#475569', border: 'rgba(148, 163, 184, 0.3)' };
+        return { bg: 'rgba(248, 250, 252, 0.95)', color: '#475569', border: '#cbd5e1' };
     }
   };
 
   return (
-    <div className="container" style={{ paddingBottom: '5rem' }}>
+    <div className="container" style={{ paddingBottom: '5rem', maxWidth: '1100px' }}>
       {/* Cabeçalho do Médico */}
-      <header className="flex justify-between items-center mt-4 mb-6 flex-wrap gap-4">
+      <header className="flex justify-between items-center mt-3 mb-6 flex-wrap gap-4">
         <div>
-          <h1 className="text-xl font-bold">Olá, {doctor.nome || 'Doutor(a)'}</h1>
-          <p className="text-muted text-sm mt-0.5">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>
+              Olá, {doctor.nome || 'Doutor(a)'}
+            </h1>
+            <button 
+              className="btn btn-outline" 
+              onClick={() => setIsChangelogOpen(true)}
+              style={{ 
+                padding: '0.25rem 0.65rem', 
+                fontSize: '0.75rem', 
+                borderRadius: '20px', 
+                background: 'rgba(239, 246, 255, 0.9)', 
+                borderColor: '#bfdbfe',
+                color: '#1d4ed8',
+                fontWeight: '600',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+              title="Ver evoluções e novidades do sistema"
+            >
+              <Sparkles size={13} color="#2563eb" />
+              <span>Evoluções</span>
+            </button>
+          </div>
+          <p className="text-muted text-sm mt-1">
             {doctor.especialidade || 'Gestão Nefrológica'} • CRM {doctor.crm || '---'}/{doctor.ufCrm || 'UF'}
           </p>
         </div>
@@ -79,7 +105,7 @@ export default function DoctorDashboard() {
           <button 
             className="btn btn-outline" 
             onClick={() => navigate('/doctor/profile')}
-            style={{ padding: '0.5rem 0.9rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+            style={{ padding: '0.55rem 0.95rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
             title="Ver e editar dados cadastrais do médico"
           >
             <UserCog size={16} color="var(--primary)" />
@@ -89,7 +115,7 @@ export default function DoctorDashboard() {
           <button 
             className="btn btn-primary" 
             onClick={handleOpenNewPatient}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+            style={{ padding: '0.55rem 1.1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             <UserPlus size={16} />
             <span>Novo Paciente</span>
@@ -98,7 +124,7 @@ export default function DoctorDashboard() {
           <button 
             className="btn btn-outline" 
             onClick={() => navigate('/login')} 
-            style={{ padding: '0.5rem' }}
+            style={{ padding: '0.55rem', borderRadius: '12px' }}
             title="Sair do sistema"
           >
             <LogOut size={18} />
@@ -106,9 +132,9 @@ export default function DoctorDashboard() {
         </div>
       </header>
 
-      {/* Painel de Filtros e Busca */}
-      <div className="glass-panel" style={{ padding: '1rem', marginBottom: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
-        <div style={{ position: 'relative', flex: '1 1 240px' }}>
+      {/* Painel de Filtros e Busca com Toque Pastel Suave */}
+      <div className="glass-panel" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '16px' }}>
+        <div style={{ position: 'relative', flex: '1 1 250px' }}>
           <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input 
             type="text" 
@@ -159,12 +185,12 @@ export default function DoctorDashboard() {
         </span>
       </div>
 
-      {/* Lista de Pacientes */}
-      <div className="flex flex-col gap-3">
+      {/* Lista de Pacientes em Grid de Cards com Visual Refinado */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
         {filteredPatients.length === 0 ? (
-          <div className="glass-panel text-center" style={{ padding: '3rem 1rem' }}>
-            <User size={36} color="var(--text-muted)" style={{ margin: '0 auto 0.75rem', opacity: 0.5 }} />
-            <p className="font-semibold">Nenhum paciente encontrado</p>
+          <div className="glass-panel text-center" style={{ gridColumn: '1 / -1', padding: '3.5rem 1rem', borderRadius: '16px' }}>
+            <User size={40} color="var(--text-muted)" style={{ margin: '0 auto 0.75rem', opacity: 0.4 }} />
+            <p className="font-semibold text-lg">Nenhum paciente encontrado</p>
             <p className="text-muted text-sm mt-1">Cadastre um novo paciente ou ajuste os filtros acima.</p>
             <button className="btn btn-primary mt-4" onClick={handleOpenNewPatient}>
               <UserPlus size={16} /> Cadastrar Paciente
@@ -172,7 +198,7 @@ export default function DoctorDashboard() {
           </div>
         ) : (
           filteredPatients.map(patient => {
-            const statusStyle = getStatusColor(patient.status);
+            const statusTheme = getStatusStyle(patient.status);
             return (
               <div 
                 key={patient.id} 
@@ -180,32 +206,55 @@ export default function DoctorDashboard() {
                 style={{ 
                   padding: '1.25rem', 
                   cursor: 'pointer', 
-                  transition: 'all 0.2s ease',
-                  border: '1px solid var(--border)'
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  borderRadius: '16px',
+                  background: 'rgba(255, 255, 255, 0.85)',
+                  border: '1px solid rgba(226, 232, 240, 0.9)',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.03)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between'
                 }}
                 onClick={() => navigate(`/patient/${patient.id}`)}
-                onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-3px)';
+                  e.currentTarget.style.boxShadow = '0 10px 25px rgba(37, 99, 235, 0.08)';
+                  e.currentTarget.style.borderColor = '#bfdbfe';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.03)';
+                  e.currentTarget.style.borderColor = 'rgba(226, 232, 240, 0.9)';
+                }}
               >
-                <div className="flex items-start justify-between gap-2 mb-2">
-                  <div>
-                    <h3 className="font-bold text-lg" style={{ color: 'var(--text-main)' }}>
+                <div>
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <h3 className="font-bold text-base" style={{ color: 'var(--text-main)', lineHeight: '1.3' }}>
                       {patient.nome}
                     </h3>
-                    <p className="text-xs text-muted mt-0.5">
-                      {patient.clinica || 'Clínica Nefrológica NexAi'} {patient.idade ? `• ${patient.idade} anos` : ''}
-                    </p>
+                    <button 
+                      className="btn btn-outline" 
+                      onClick={(e) => handleEditPatient(e, patient)}
+                      style={{ padding: '0.35rem', borderRadius: '8px', flexShrink: 0 }}
+                      title="Editar cadastro do paciente"
+                    >
+                      <Edit size={14} color="var(--primary)" />
+                    </button>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <p className="text-xs text-muted mb-3">
+                    {patient.clinica || 'Clínica NexAi'} {patient.idade ? `• ${patient.idade} anos` : ''}
+                  </p>
+
+                  <div className="flex items-center gap-1.5 flex-wrap mb-3">
                     <span 
                       style={{ 
                         fontSize: '0.72rem', 
-                        background: statusStyle.bg, 
-                        color: statusStyle.color, 
-                        border: `1px solid ${statusStyle.border}`,
+                        background: statusTheme.bg, 
+                        color: statusTheme.color, 
+                        border: `1px solid ${statusTheme.border}`,
                         padding: '2px 8px', 
-                        borderRadius: '12px', 
+                        borderRadius: '10px', 
                         fontWeight: '600' 
                       }}
                     >
@@ -214,38 +263,30 @@ export default function DoctorDashboard() {
                     <span 
                       style={{ 
                         fontSize: '0.72rem', 
-                        background: 'rgba(37, 99, 235, 0.1)', 
-                        color: 'var(--primary)', 
+                        background: 'rgba(239, 246, 255, 0.9)', 
+                        color: '#1d4ed8', 
+                        border: '1px solid #bfdbfe',
                         padding: '2px 8px', 
-                        borderRadius: '12px', 
+                        borderRadius: '10px', 
                         fontWeight: '600' 
                       }}
                     >
                       {patient.turno}
                     </span>
-                    <button 
-                      className="btn btn-outline" 
-                      onClick={(e) => handleEditPatient(e, patient)}
-                      style={{ padding: '0.35rem', borderRadius: '8px' }}
-                      title="Editar cadastro do paciente"
-                    >
-                      <Edit size={15} color="var(--primary)" />
-                    </button>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-sm text-muted mt-3 pt-2 border-t" style={{ borderColor: 'var(--border)' }}>
-                  <div className="flex items-center gap-2">
-                    <Activity size={15} color="var(--primary)" />
-                    <span style={{ fontSize: '0.82rem' }}>
-                      <strong>Acesso:</strong> {patient.acessoVascular?.tipo || 'Não informado'} 
-                      {patient.acessoVascular?.fluxoSangue ? ` (${patient.acessoVascular.fluxoSangue} ml/min)` : ''}
+                <div className="flex items-center justify-between text-xs text-muted pt-2.5 border-t" style={{ borderColor: 'rgba(226, 232, 240, 0.8)' }}>
+                  <div className="flex items-center gap-1.5 truncate mr-2">
+                    <Activity size={14} color="var(--primary)" />
+                    <span className="truncate">
+                      {patient.acessoVascular?.tipo || 'Acesso não inf.'}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1" style={{ color: 'var(--primary)', fontSize: '0.82rem', fontWeight: '600' }}>
-                    <span>Ver Exames</span>
-                    <ChevronRight size={16} />
+                  <div className="flex items-center gap-1" style={{ color: 'var(--primary)', fontWeight: '600', flexShrink: 0 }}>
+                    <span>Exames</span>
+                    <ChevronRight size={14} />
                   </div>
                 </div>
               </div>
@@ -254,11 +295,16 @@ export default function DoctorDashboard() {
         )}
       </div>
 
-      {/* Modal de Cadastro/Edição de Paciente */}
+      {/* Modais */}
       <PatientFormModal 
         isOpen={isPatientModalOpen}
         onClose={() => setIsPatientModalOpen(false)}
         patientToEdit={patientToEdit}
+      />
+
+      <ChangelogModal 
+        isOpen={isChangelogOpen}
+        onClose={() => setIsChangelogOpen(false)}
       />
     </div>
   );

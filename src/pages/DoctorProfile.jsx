@@ -62,13 +62,25 @@ export default function DoctorProfile() {
 
   return (
     <div className="container" style={{ paddingBottom: '5rem', maxWidth: '800px' }}>
-      <header className="flex items-center gap-4 mt-4 mb-6">
-        <button className="btn btn-outline" onClick={() => navigate('/doctor')} style={{ padding: '0.5rem' }}>
-          <ArrowLeft size={20} />
+      <header className="flex items-center mt-3 mb-6" style={{ gap: '1.5rem' }}>
+        <button 
+          className="btn btn-outline" 
+          onClick={() => navigate('/doctor')} 
+          style={{ 
+            padding: '0.65rem', 
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.04)'
+          }}
+          title="Voltar ao Painel"
+        >
+          <ArrowLeft size={20} color="var(--primary)" />
         </button>
         <div>
-          <h1 className="text-xl font-bold">Perfil e Dados Cadastrais</h1>
-          <p className="text-muted text-sm">Informações profissionais e institucionais do médico</p>
+          <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>Perfil e Dados Cadastrais</h1>
+          <p className="text-muted text-sm mt-0.5">Informações profissionais e institucionais do médico</p>
         </div>
       </header>
 

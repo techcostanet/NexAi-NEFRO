@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.4] - 2026-08-14
+### Alterações
+- Melhoria de ergonomia visual no botao voltar, paleta de tons pasteis para quadros clinicos e modal interativo de evolucoes do sistema
+
 ## [1.1.3] - 2026-08-14
 ### Alterações
 - Cadastro completo do médico, gestão de pacientes com dados clínicos e lançamento/edição de histórico de exames laboratoriais
