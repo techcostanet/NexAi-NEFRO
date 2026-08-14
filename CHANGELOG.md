@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [0.1.2] - 2026-08-14
+### Alterações
+- Ajuste e validacao do pipeline de entrega continua
+
 ## [0.1.1] - 2026-08-14
 ### Alterações
 - Implementação de regras de arquitetura, versionamento automático, changelog e sincronização com GitHub
