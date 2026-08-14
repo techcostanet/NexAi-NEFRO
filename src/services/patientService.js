@@ -5,6 +5,7 @@ import {
   getDoc, 
   setDoc, 
   updateDoc, 
+  deleteDoc,
   onSnapshot, 
   writeBatch 
 } from "firebase/firestore";
@@ -14,11 +15,41 @@ import localPatients from "../data/patients_db.json";
 const PATIENTS_COLLECTION = "patients";
 
 /**
- * Escuta pacientes em tempo real do Firestore
+ * Normaliza e gera um ID amigável a partir do nome
+ */
+export function generatePatientId(nome) {
+  if (!nome) return `paciente-${Date.now()}`;
+  return nome
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") + `-${Math.random().toString(36).substring(2, 6)}`;
+}
+
+/**
+ * Calcula idade com base na data de nascimento (YYYY-MM-DD)
+ */
+export function calculateAge(birthDateStr) {
+  if (!birthDateStr) return null;
+  const birthDate = new Date(birthDateStr);
+  if (isNaN(birthDate.getTime())) return null;
+  
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age >= 0 ? age : null;
+}
+
+/**
+ * Escuta todos os pacientes em tempo real do Firestore
  */
 export function subscribeToPatients(callback, onError) {
   if (!db) {
-    if (callback) callback(localPatients);
+    if (callback) callback(localPatients, true);
     return () => {};
   }
 
@@ -28,14 +59,12 @@ export function subscribeToPatients(callback, onError) {
       colRef, 
       (snapshot) => {
         if (snapshot.empty) {
-          // Se ainda não foi populado no Firestore, retorna lista local
           callback(localPatients, true);
         } else {
           const list = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
           }));
-          // Ordena por nome
           list.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
           callback(list, false);
         }
@@ -54,7 +83,37 @@ export function subscribeToPatients(callback, onError) {
 }
 
 /**
- * Busca um único paciente por ID do Firestore com fallback local
+ * Escuta um paciente específico em tempo real
+ */
+export function subscribeToPatientById(id, callback, onError) {
+  if (!db) {
+    const p = localPatients.find(item => item.id === id) || null;
+    if (callback) callback(p);
+    return () => {};
+  }
+
+  const docRef = doc(db, PATIENTS_COLLECTION, id);
+  return onSnapshot(
+    docRef,
+    (snap) => {
+      if (snap.exists()) {
+        callback({ id: snap.id, ...snap.data() });
+      } else {
+        const fallback = localPatients.find(item => item.id === id) || null;
+        callback(fallback);
+      }
+    },
+    (err) => {
+      console.warn("Erro ao escutar paciente:", err);
+      if (onError) onError(err);
+      const fallback = localPatients.find(item => item.id === id) || null;
+      if (callback) callback(fallback);
+    }
+  );
+}
+
+/**
+ * Busca um único paciente por ID
  */
 export async function getPatientById(id) {
   if (db) {
@@ -72,22 +131,116 @@ export async function getPatientById(id) {
 }
 
 /**
- * Salva ou atualiza um paciente no Firestore
+ * Cadastra ou Atualiza um paciente completo
  */
-export async function savePatient(patient) {
+export async function savePatient(patientData) {
   if (!db) throw new Error("Firestore não inicializado");
-  const docRef = doc(db, PATIENTS_COLLECTION, patient.id);
-  await setDoc(docRef, patient, { merge: true });
-  return patient;
+  
+  const id = patientData.id || generatePatientId(patientData.nome);
+  const docRef = doc(db, PATIENTS_COLLECTION, id);
+  
+  const dataToSave = {
+    ...patientData,
+    id,
+    atualizadoEm: new Date().toISOString()
+  };
+
+  if (!patientData.criadoEm) {
+    dataToSave.criadoEm = new Date().toISOString();
+  }
+
+  await setDoc(docRef, dataToSave, { merge: true });
+  return dataToSave;
 }
 
 /**
- * Sincroniza/Importa todos os dados locais do patients_db.json para o Firestore
+ * Adiciona ou atualiza um exame com data no histórico do paciente
+ */
+export async function savePatientExam(patientId, examData, examIndex = null) {
+  if (!db) throw new Error("Firestore não inicializado");
+  
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado");
+
+  const historico = Array.isArray(patient.historicoExames) ? [...patient.historicoExames] : [];
+
+  const examRecord = {
+    ...examData,
+    dataExame: examData.dataExame || new Date().toISOString().split("T")[0],
+    registradoEm: new Date().toISOString()
+  };
+
+  if (examIndex !== null && examIndex >= 0 && examIndex < historico.length) {
+    // Atualiza exame existente
+    historico[examIndex] = examRecord;
+  } else {
+    // Insere novo exame no início
+    historico.unshift(examRecord);
+  }
+
+  // Ordena por data do mais recente para o mais antigo
+  historico.sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
+
+  // O exame mais recente é colocado como os exames atuais do paciente
+  const latestExam = historico[0] || examRecord;
+
+  const updatePayload = {
+    historicoExames: historico,
+    exames: {
+      hb: latestExam.hb !== undefined ? latestExam.hb : (patient.exames?.hb || null),
+      ist: latestExam.ist !== undefined ? latestExam.ist : (patient.exames?.ist || null),
+      ferritina: latestExam.ferritina !== undefined ? latestExam.ferritina : (patient.exames?.ferritina || null),
+      pth: latestExam.pth !== undefined ? latestExam.pth : (patient.exames?.pth || null),
+      fosforo: latestExam.fosforo !== undefined ? latestExam.fosforo : (patient.exames?.fosforo || null),
+      ca: latestExam.ca !== undefined ? latestExam.ca : (patient.exames?.ca || null),
+      vitD: latestExam.vitD !== undefined ? latestExam.vitD : (patient.exames?.vitD || null),
+      k: latestExam.k !== undefined ? latestExam.k : (patient.exames?.k || null),
+      creatinina: latestExam.creatinina !== undefined ? latestExam.creatinina : (patient.exames?.creatinina || null),
+      ktv: latestExam.ktv !== undefined ? latestExam.ktv : (patient.exames?.ktv || null)
+    },
+    medicamentos: latestExam.medicamentos || patient.medicamentos || {},
+    atualizadoEm: new Date().toISOString()
+  };
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, updatePayload);
+  return { ...patient, ...updatePayload };
+}
+
+/**
+ * Remove um exame do histórico
+ */
+export async function deletePatientExam(patientId, examIndex) {
+  if (!db) throw new Error("Firestore não inicializado");
+  const patient = await getPatientById(patientId);
+  if (!patient || !Array.isArray(patient.historicoExames)) return;
+
+  const historico = [...patient.historicoExames];
+  historico.splice(examIndex, 1);
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    historicoExames: historico,
+    atualizadoEm: new Date().toISOString()
+  });
+}
+
+/**
+ * Exclui um paciente do Firestore
+ */
+export async function deletePatient(id) {
+  if (!db) throw new Error("Firestore não inicializado");
+  const docRef = doc(db, PATIENTS_COLLECTION, id);
+  await deleteDoc(docRef);
+}
+
+/**
+ * Sincroniza/Importa dados iniciais locais para o Firestore
  */
 export async function seedFirestoreWithLocalData() {
   if (!db) throw new Error("Firestore não conectado");
 
-  const batchSize = 400; // Limite de 500 operações por batch do Firestore
+  const batchSize = 400;
   const chunks = [];
   
   for (let i = 0; i < localPatients.length; i += batchSize) {
@@ -98,7 +251,21 @@ export async function seedFirestoreWithLocalData() {
     const batch = writeBatch(db);
     chunk.forEach(patient => {
       const docRef = doc(db, PATIENTS_COLLECTION, patient.id);
-      batch.set(docRef, patient, { merge: true });
+      // Cria histórico inicial com os exames atuais
+      const patientWithHistory = {
+        ...patient,
+        status: patient.status || "Ativo",
+        clinica: patient.clinica || "Clínica Nefrológica NexAi",
+        hospital: patient.hospital || "Hospital de Nefrologia",
+        historicoExames: [
+          {
+            dataExame: "2026-08-01",
+            ...patient.exames,
+            medicamentos: patient.medicamentos || {}
+          }
+        ]
+      };
+      batch.set(docRef, patientWithHistory, { merge: true });
     });
     await batch.commit();
   }

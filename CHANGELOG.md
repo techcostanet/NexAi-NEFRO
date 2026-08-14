@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.3] - 2026-08-14
+### Alterações
+- Cadastro completo do médico, gestão de pacientes com dados clínicos e lançamento/edição de histórico de exames laboratoriais
+
 ## [1.1.2] - 2026-08-14
 ### Alterações
 - Atualizacao de identidade visual: NexAi-NEFRO - Gestao Nefrologica, novo icone renal e versao 1.1.2 no login

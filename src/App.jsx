@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import DoctorDashboard from './pages/DoctorDashboard';
+import DoctorProfile from './pages/DoctorProfile';
 import PatientProfile from './pages/PatientProfile';
 import { APP_VERSION } from './version';
 
@@ -16,6 +17,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/doctor" element={<DoctorDashboard />} />
+            <Route path="/doctor/profile" element={<DoctorProfile />} />
             <Route path="/patient/:id" element={<PatientProfile />} />
           </Routes>
         </div>
@@ -28,7 +30,7 @@ function App() {
           background: 'rgba(255, 255, 255, 0.4)',
           backdropFilter: 'blur(8px)'
         }}>
-          NexAi-NEFRO • v{APP_VERSION} • Cloud Firestore
+          NexAi-NEFRO • v{APP_VERSION} • Gestão Nefrológica
         </footer>
       </div>
     </Router>
