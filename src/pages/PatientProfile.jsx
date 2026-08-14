@@ -21,7 +21,10 @@ import {
   Check,
   RotateCcw,
   Tag,
-  Filter
+  Filter,
+  HeartPulse,
+  Zap,
+  ShieldAlert
 } from 'lucide-react';
 import { 
   subscribeToPatientById, 
@@ -127,10 +130,15 @@ export default function PatientProfile() {
   const medicamentosList = normalizeMedicamentosList(patient.medicamentos);
   const historicoExames = Array.isArray(patient.historicoExames) ? patient.historicoExames : [];
 
-  // Alertas Clínicos de Exames
+  // Alertas Clínicos Críticos Laboratoriais
   const hbBaixa = exames.hb !== null && exames.hb !== undefined && exames.hb < 10;
   const pthAlto = exames.pth !== null && exames.pth !== undefined && exames.pth > 600;
   const fosforoAlto = exames.fosforo !== null && exames.fosforo !== undefined && exames.fosforo > 5.5;
+  const kAlto = exames.k !== null && exames.k !== undefined && exames.k > 5.5;
+  const albuminaBaixa = exames.albumina !== null && exames.albumina !== undefined && exames.albumina < 3.8;
+  const hco3Baixo = exames.hco3 !== null && exames.hco3 !== undefined && exames.hco3 < 22;
+
+  const hasLabAlerts = hbBaixa || pthAlto || fosforoAlto || kAlto || albuminaBaixa || hco3Baixo;
 
   // Alertas de Medicamentos (Ciclos a vencer ou vencidos)
   const medAlerts = medicamentosList.filter(m => {
@@ -222,15 +230,18 @@ export default function PatientProfile() {
       </header>
 
       {/* Alertas Médicos de Parâmetros Fora da Meta */}
-      {(hbBaixa || pthAlto || fosforoAlto) && (
+      {hasLabAlerts && (
         <div className="card-pastel-rose mb-4 animate-in" style={{ padding: '1.25rem', borderRadius: '16px' }}>
           <h3 className="font-bold text-sm mb-2 flex items-center gap-2" style={{ color: '#b91c1c' }}>
-            <AlertTriangle size={18} /> Alertas de Parâmetros Laboratoriais Fora da Meta
+            <AlertTriangle size={18} /> Alertas de Parâmetros Laboratoriais Críticos
           </h3>
-          <div className="flex flex-col gap-1.5 text-sm" style={{ color: '#991b1b' }}>
-            {hbBaixa && <div>• <strong>Hemoglobina Crítica:</strong> {exames.hb} g/dL (Meta recomendada: 10,0 a 12,0 g/dL)</div>}
-            {pthAlto && <div>• <strong>PTH Elevado:</strong> {exames.pth} pg/mL (Meta recomendada: 150 a 600 pg/mL)</div>}
-            {fosforoAlto && <div>• <strong>Fósforo Alto:</strong> {exames.fosforo} mg/dL (Meta recomendada: 3,5 a 5,5 mg/dL)</div>}
+          <div className="flex flex-col gap-1 text-sm" style={{ color: '#991b1b' }}>
+            {hbBaixa && <div>• <strong>Hemoglobina Baixa:</strong> {exames.hb} g/dL (Meta: 10,0 a 12,0 g/dL)</div>}
+            {pthAlto && <div>• <strong>PTH Elevado:</strong> {exames.pth} pg/mL (Meta: 150 a 600 pg/mL)</div>}
+            {fosforoAlto && <div>• <strong>Fósforo Alto:</strong> {exames.fosforo} mg/dL (Meta: 3,5 a 5,5 mg/dL)</div>}
+            {kAlto && <div>• <strong>Hipercalemia (Potássio Elevado):</strong> {exames.k} mEq/L (Meta: 3,5 a 5,5 mEq/L)</div>}
+            {albuminaBaixa && <div>• <strong>Hipoalbuminemia (Desnutrição):</strong> {exames.albumina} g/dL (Meta: &ge; 3,8 g/dL)</div>}
+            {hco3Baixo && <div>• <strong>Acidose Metabólica (Bicarbonato Baixo):</strong> {exames.hco3} mEq/L (Meta: 22 a 26 mEq/L)</div>}
           </div>
         </div>
       )}
@@ -525,7 +536,7 @@ export default function PatientProfile() {
         </section>
       </div>
 
-      {/* Painel Laboratorial Mais Recente (Verde Menta Pastel) */}
+      {/* Painel Laboratorial Mais Recente (Verde Menta Pastel com Categorias Completas) */}
       <section className="card-pastel-emerald mb-6" style={{ padding: '1.5rem', borderRadius: '16px' }}>
         <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
           <div>
@@ -533,7 +544,7 @@ export default function PatientProfile() {
               <Droplet size={20} color="#059669" /> Painel Laboratorial Mais Recente
             </h2>
             <p className="text-xs" style={{ color: '#065f46', marginTop: '2px' }}>
-              Resultados dos últimos exames com faixas de metas clínicas
+              Resultados completos dos últimos exames com metas clínicas nefrológicas
             </p>
           </div>
           <button className="btn btn-outline" onClick={handleOpenNewExam} style={{ padding: '0.4rem 0.85rem', fontSize: '0.8rem', background: 'white' }}>
@@ -541,59 +552,131 @@ export default function PatientProfile() {
           </button>
         </div>
 
+        {/* Grade de Indicadores Laboratoriais */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.85rem' }}>
-          <div className="glass-panel" style={{ padding: '0.9rem', textAlign: 'center', background: hbBaixa ? 'rgba(254, 242, 242, 0.9)' : 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: hbBaixa ? '1px solid #fecaca' : '1px solid rgba(187, 247, 208, 0.6)' }}>
+          
+          {/* Hemoglobina */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: hbBaixa ? 'rgba(254, 242, 242, 0.95)' : 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: hbBaixa ? '1px solid #fecaca' : '1px solid rgba(187, 247, 208, 0.6)' }}>
             <p className="text-muted text-xs uppercase font-semibold">Hemoglobina</p>
-            <p className="font-bold text-lg mt-1" style={{ color: hbBaixa ? '#dc2626' : '#1e293b' }}>
+            <p className="font-bold text-lg mt-0.5" style={{ color: hbBaixa ? '#dc2626' : '#1e293b' }}>
               {exames.hb !== null && exames.hb !== undefined ? `${exames.hb} g/dL` : '-'}
             </p>
-            <span className="text-xs text-muted" style={{ fontSize: '0.7rem' }}>Meta: 10 - 12</span>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: 10 - 12</span>
           </div>
 
-          <div className="glass-panel" style={{ padding: '0.9rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
+          {/* Hematócrito */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
+            <p className="text-muted text-xs uppercase font-semibold">Hematócrito</p>
+            <p className="font-bold text-lg mt-0.5" style={{ color: '#1e293b' }}>{exames.ht !== null && exames.ht !== undefined ? `${exames.ht}%` : '-'}</p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: 30 - 36%</span>
+          </div>
+
+          {/* IST */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
             <p className="text-muted text-xs uppercase font-semibold">IST</p>
-            <p className="font-bold text-lg mt-1" style={{ color: '#1e293b' }}>{exames.ist !== null && exames.ist !== undefined ? `${exames.ist}%` : '-'}</p>
-            <span className="text-xs text-muted" style={{ fontSize: '0.7rem' }}>Meta: &gt; 20%</span>
+            <p className="font-bold text-lg mt-0.5" style={{ color: '#1e293b' }}>{exames.ist !== null && exames.ist !== undefined ? `${exames.ist}%` : '-'}</p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: &gt; 20%</span>
           </div>
 
-          <div className="glass-panel" style={{ padding: '0.9rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
+          {/* Ferritina */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
             <p className="text-muted text-xs uppercase font-semibold">Ferritina</p>
-            <p className="font-bold text-lg mt-1" style={{ color: '#1e293b' }}>{exames.ferritina !== null && exames.ferritina !== undefined ? exames.ferritina : '-'}</p>
-            <span className="text-xs text-muted" style={{ fontSize: '0.7rem' }}>ng/mL</span>
+            <p className="font-bold text-lg mt-0.5" style={{ color: '#1e293b' }}>{exames.ferritina !== null && exames.ferritina !== undefined ? exames.ferritina : '-'}</p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>ng/mL</span>
           </div>
 
-          <div className="glass-panel" style={{ padding: '0.9rem', textAlign: 'center', background: pthAlto ? 'rgba(254, 242, 242, 0.9)' : 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: pthAlto ? '1px solid #fecaca' : '1px solid rgba(187, 247, 208, 0.6)' }}>
-            <p className="text-muted text-xs uppercase font-semibold">PTH</p>
-            <p className="font-bold text-lg mt-1" style={{ color: pthAlto ? '#dc2626' : '#1e293b' }}>
+          {/* PTH */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: pthAlto ? 'rgba(254, 242, 242, 0.95)' : 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: pthAlto ? '1px solid #fecaca' : '1px solid rgba(187, 247, 208, 0.6)' }}>
+            <p className="text-muted text-xs uppercase font-semibold">PTH Intacto</p>
+            <p className="font-bold text-lg mt-0.5" style={{ color: pthAlto ? '#dc2626' : '#1e293b' }}>
               {exames.pth !== null && exames.pth !== undefined ? exames.pth : '-'}
             </p>
-            <span className="text-xs text-muted" style={{ fontSize: '0.7rem' }}>pg/mL</span>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: 150 - 600</span>
           </div>
 
-          <div className="glass-panel" style={{ padding: '0.9rem', textAlign: 'center', background: fosforoAlto ? 'rgba(254, 242, 242, 0.9)' : 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: fosforoAlto ? '1px solid #fecaca' : '1px solid rgba(187, 247, 208, 0.6)' }}>
+          {/* Fósforo */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: fosforoAlto ? 'rgba(254, 242, 242, 0.95)' : 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: fosforoAlto ? '1px solid #fecaca' : '1px solid rgba(187, 247, 208, 0.6)' }}>
             <p className="text-muted text-xs uppercase font-semibold">Fósforo</p>
-            <p className="font-bold text-lg mt-1" style={{ color: fosforoAlto ? '#dc2626' : '#1e293b' }}>
+            <p className="font-bold text-lg mt-0.5" style={{ color: fosforoAlto ? '#dc2626' : '#1e293b' }}>
               {exames.fosforo !== null && exames.fosforo !== undefined ? exames.fosforo : '-'}
             </p>
-            <span className="text-xs text-muted" style={{ fontSize: '0.7rem' }}>mg/dL</span>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: 3.5 - 5.5</span>
           </div>
 
-          <div className="glass-panel" style={{ padding: '0.9rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
+          {/* Cálcio */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
             <p className="text-muted text-xs uppercase font-semibold">Cálcio</p>
-            <p className="font-bold text-lg mt-1" style={{ color: '#1e293b' }}>{exames.ca !== null && exames.ca !== undefined ? exames.ca : '-'}</p>
-            <span className="text-xs text-muted" style={{ fontSize: '0.7rem' }}>mg/dL</span>
+            <p className="font-bold text-lg mt-0.5" style={{ color: '#1e293b' }}>{exames.ca !== null && exames.ca !== undefined ? exames.ca : '-'}</p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>mg/dL</span>
           </div>
 
-          <div className="glass-panel" style={{ padding: '0.9rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
+          {/* Vitamina D */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
             <p className="text-muted text-xs uppercase font-semibold">Vitamina D</p>
-            <p className="font-bold text-lg mt-1" style={{ color: '#1e293b' }}>{exames.vitD !== null && exames.vitD !== undefined ? exames.vitD : '-'}</p>
-            <span className="text-xs text-muted" style={{ fontSize: '0.7rem' }}>ng/mL</span>
+            <p className="font-bold text-lg mt-0.5" style={{ color: '#1e293b' }}>{exames.vitD !== null && exames.vitD !== undefined ? exames.vitD : '-'}</p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>ng/mL</span>
           </div>
 
-          <div className="glass-panel" style={{ padding: '0.9rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
+          {/* Fosfatase Alcalina */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
+            <p className="text-muted text-xs uppercase font-semibold">Fosf. Alcalina</p>
+            <p className="font-bold text-lg mt-0.5" style={{ color: '#1e293b' }}>{exames.fa !== null && exames.fa !== undefined ? exames.fa : '-'}</p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>U/L</span>
+          </div>
+
+          {/* Potássio */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: kAlto ? 'rgba(254, 242, 242, 0.95)' : 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: kAlto ? '1px solid #fecaca' : '1px solid rgba(187, 247, 208, 0.6)' }}>
+            <p className="text-muted text-xs uppercase font-semibold">Potássio (K⁺)</p>
+            <p className="font-bold text-lg mt-0.5" style={{ color: kAlto ? '#dc2626' : '#1e293b' }}>
+              {exames.k !== null && exames.k !== undefined ? exames.k : '-'}
+            </p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: 3.5 - 5.5</span>
+          </div>
+
+          {/* Sódio */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
+            <p className="text-muted text-xs uppercase font-semibold">Sódio (Na⁺)</p>
+            <p className="font-bold text-lg mt-0.5" style={{ color: '#1e293b' }}>{exames.na !== null && exames.na !== undefined ? exames.na : '-'}</p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>mEq/L</span>
+          </div>
+
+          {/* Bicarbonato */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: hco3Baixo ? 'rgba(254, 242, 242, 0.95)' : 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: hco3Baixo ? '1px solid #fecaca' : '1px solid rgba(187, 247, 208, 0.6)' }}>
+            <p className="text-muted text-xs uppercase font-semibold">Bicarbonato</p>
+            <p className="font-bold text-lg mt-0.5" style={{ color: hco3Baixo ? '#dc2626' : '#1e293b' }}>
+              {exames.hco3 !== null && exames.hco3 !== undefined ? exames.hco3 : '-'}
+            </p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: 22 - 26</span>
+          </div>
+
+          {/* Kt/V */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
             <p className="text-muted text-xs uppercase font-semibold">Kt/V</p>
-            <p className="font-bold text-lg mt-1" style={{ color: '#1e293b' }}>{exames.ktv !== null && exames.ktv !== undefined ? exames.ktv : '-'}</p>
-            <span className="text-xs text-muted" style={{ fontSize: '0.7rem' }}>Adequação</span>
+            <p className="font-bold text-lg mt-0.5" style={{ color: '#1e293b' }}>{exames.ktv !== null && exames.ktv !== undefined ? exames.ktv : '-'}</p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: &ge; 1.2</span>
+          </div>
+
+          {/* Albumina */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: albuminaBaixa ? 'rgba(254, 242, 242, 0.95)' : 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: albuminaBaixa ? '1px solid #fecaca' : '1px solid rgba(187, 247, 208, 0.6)' }}>
+            <p className="text-muted text-xs uppercase font-semibold">Albumina</p>
+            <p className="font-bold text-lg mt-0.5" style={{ color: albuminaBaixa ? '#dc2626' : '#1e293b' }}>
+              {exames.albumina !== null && exames.albumina !== undefined ? `${exames.albumina} g/dL` : '-'}
+            </p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: &ge; 3.8</span>
+          </div>
+
+          {/* PCR */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
+            <p className="text-muted text-xs uppercase font-semibold">PCR</p>
+            <p className="font-bold text-lg mt-0.5" style={{ color: '#1e293b' }}>{exames.pcr !== null && exames.pcr !== undefined ? `${exames.pcr} mg/L` : '-'}</p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: &lt; 5.0</span>
+          </div>
+
+          {/* Creatinina */}
+          <div className="glass-panel" style={{ padding: '0.85rem', textAlign: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '12px', border: '1px solid rgba(187, 247, 208, 0.6)' }}>
+            <p className="text-muted text-xs uppercase font-semibold">Creatinina</p>
+            <p className="font-bold text-lg mt-0.5" style={{ color: '#1e293b' }}>{exames.creatinina !== null && exames.creatinina !== undefined ? exames.creatinina : '-'}</p>
+            <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>mg/dL</span>
           </div>
         </div>
       </section>
@@ -606,7 +689,7 @@ export default function PatientProfile() {
               <Calendar size={20} color="#7c3aed" /> Histórico Cronológico de Exames
             </h2>
             <p className="text-xs" style={{ color: '#5b21b6', marginTop: '2px' }}>
-              Lançamentos históricos organizados do mais recente para o mais antigo
+              Lançamentos históricos com perfil laboratorial completo
             </p>
           </div>
           <button className="btn btn-primary" onClick={handleOpenNewExam} style={{ padding: '0.45rem 0.9rem', fontSize: '0.8rem', background: '#7c3aed' }}>
@@ -624,54 +707,64 @@ export default function PatientProfile() {
           </div>
         ) : (
           <div style={{ overflowX: 'auto', background: 'rgba(255, 255, 255, 0.7)', borderRadius: '12px', border: '1px solid rgba(221, 214, 254, 0.7)' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', textAlign: 'left' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left', minWidth: '780px' }}>
               <thead>
                 <tr style={{ background: 'rgba(245, 243, 255, 0.9)', borderBottom: '2px solid #ddd6fe' }}>
-                  <th style={{ padding: '0.85rem 0.75rem', color: '#5b21b6' }}>Data</th>
-                  <th style={{ padding: '0.85rem 0.75rem', color: '#5b21b6' }}>Hb</th>
-                  <th style={{ padding: '0.85rem 0.75rem', color: '#5b21b6' }}>IST</th>
-                  <th style={{ padding: '0.85rem 0.75rem', color: '#5b21b6' }}>Ferritina</th>
-                  <th style={{ padding: '0.85rem 0.75rem', color: '#5b21b6' }}>PTH</th>
-                  <th style={{ padding: '0.85rem 0.75rem', color: '#5b21b6' }}>Fósforo</th>
-                  <th style={{ padding: '0.85rem 0.75rem', color: '#5b21b6' }}>Cálcio</th>
-                  <th style={{ padding: '0.85rem 0.75rem', color: '#5b21b6' }}>Vit. D</th>
-                  <th style={{ padding: '0.85rem 0.75rem', color: '#5b21b6', textAlign: 'right' }}>Ações</th>
+                  <th style={{ padding: '0.75rem 0.6rem', color: '#5b21b6' }}>Data</th>
+                  <th style={{ padding: '0.75rem 0.6rem', color: '#5b21b6' }}>Hb (g/dL)</th>
+                  <th style={{ padding: '0.75rem 0.6rem', color: '#5b21b6' }}>IST / Ferr</th>
+                  <th style={{ padding: '0.75rem 0.6rem', color: '#5b21b6' }}>PTH (pg/mL)</th>
+                  <th style={{ padding: '0.75rem 0.6rem', color: '#5b21b6' }}>P / Ca</th>
+                  <th style={{ padding: '0.75rem 0.6rem', color: '#5b21b6' }}>K⁺ / HCO₃⁻</th>
+                  <th style={{ padding: '0.75rem 0.6rem', color: '#5b21b6' }}>Kt/V</th>
+                  <th style={{ padding: '0.75rem 0.6rem', color: '#5b21b6' }}>Albumina</th>
+                  <th style={{ padding: '0.75rem 0.6rem', color: '#5b21b6' }}>PCR</th>
+                  <th style={{ padding: '0.75rem 0.6rem', color: '#5b21b6', textAlign: 'right' }}>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {historicoExames.map((item, idx) => (
                   <tr key={idx} style={{ borderBottom: '1px solid rgba(221, 214, 254, 0.4)', transition: 'background 0.15s' }}>
-                    <td style={{ padding: '0.8rem 0.75rem', fontWeight: '600', color: '#1e293b' }}>
+                    <td style={{ padding: '0.75rem 0.6rem', fontWeight: '600', color: '#1e293b' }}>
                       {item.dataExame ? new Date(item.dataExame + 'T12:00:00').toLocaleDateString('pt-BR') : 'Data não inf.'}
                     </td>
-                    <td style={{ padding: '0.8rem 0.75rem', color: (item.hb && item.hb < 10) ? '#dc2626' : '#1e293b', fontWeight: (item.hb && item.hb < 10) ? '700' : 'normal' }}>
-                      {item.hb || '-'}
+                    <td style={{ padding: '0.75rem 0.6rem', color: (item.hb && item.hb < 10) ? '#dc2626' : '#1e293b', fontWeight: (item.hb && item.hb < 10) ? '700' : 'normal' }}>
+                      {item.hb ? `${item.hb}` : '-'} {item.ht ? `(${item.ht}%)` : ''}
                     </td>
-                    <td style={{ padding: '0.8rem 0.75rem' }}>{item.ist ? `${item.ist}%` : '-'}</td>
-                    <td style={{ padding: '0.8rem 0.75rem' }}>{item.ferritina || '-'}</td>
-                    <td style={{ padding: '0.8rem 0.75rem', color: (item.pth && item.pth > 600) ? '#dc2626' : '#1e293b', fontWeight: (item.pth && item.pth > 600) ? '700' : 'normal' }}>
+                    <td style={{ padding: '0.75rem 0.6rem' }}>
+                      {item.ist ? `${item.ist}%` : '-'} / {item.ferritina || '-'}
+                    </td>
+                    <td style={{ padding: '0.75rem 0.6rem', color: (item.pth && item.pth > 600) ? '#dc2626' : '#1e293b', fontWeight: (item.pth && item.pth > 600) ? '700' : 'normal' }}>
                       {item.pth || '-'}
                     </td>
-                    <td style={{ padding: '0.8rem 0.75rem' }}>{item.fosforo || '-'}</td>
-                    <td style={{ padding: '0.8rem 0.75rem' }}>{item.ca || '-'}</td>
-                    <td style={{ padding: '0.8rem 0.75rem' }}>{item.vitD || '-'}</td>
-                    <td style={{ padding: '0.8rem 0.75rem', textAlign: 'right' }}>
+                    <td style={{ padding: '0.75rem 0.6rem' }}>
+                      {item.fosforo || '-'} / {item.ca || '-'}
+                    </td>
+                    <td style={{ padding: '0.75rem 0.6rem', color: (item.k && item.k > 5.5) ? '#dc2626' : '#1e293b', fontWeight: (item.k && item.k > 5.5) ? '700' : 'normal' }}>
+                      {item.k || '-'} / {item.hco3 || '-'}
+                    </td>
+                    <td style={{ padding: '0.75rem 0.6rem' }}>{item.ktv || '-'}</td>
+                    <td style={{ padding: '0.75rem 0.6rem', color: (item.albumina && item.albumina < 3.8) ? '#dc2626' : '#1e293b', fontWeight: (item.albumina && item.albumina < 3.8) ? '700' : 'normal' }}>
+                      {item.albumina ? `${item.albumina} g/dL` : '-'}
+                    </td>
+                    <td style={{ padding: '0.75rem 0.6rem' }}>{item.pcr ? `${item.pcr}` : '-'}</td>
+                    <td style={{ padding: '0.75rem 0.6rem', textAlign: 'right' }}>
                       <div className="flex justify-end gap-1.5">
                         <button 
                           className="btn btn-outline" 
                           onClick={() => handleEditExam(item, idx)}
-                          style={{ padding: '0.3rem 0.55rem', borderRadius: '6px', fontSize: '0.75rem', background: 'white' }}
+                          style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', background: 'white' }}
                           title="Editar este exame"
                         >
-                          <Edit size={13} color="var(--primary)" />
+                          <Edit size={12} color="var(--primary)" />
                         </button>
                         <button 
                           className="btn btn-outline" 
                           onClick={() => handleDeleteExam(idx)}
-                          style={{ padding: '0.3rem 0.55rem', borderRadius: '6px', fontSize: '0.75rem', background: 'white' }}
+                          style={{ padding: '0.25rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', background: 'white' }}
                           title="Excluir este registro"
                         >
-                          <Trash2 size={13} color="var(--danger)" />
+                          <Trash2 size={12} color="var(--danger)" />
                         </button>
                       </div>
                     </td>

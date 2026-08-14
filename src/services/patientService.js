@@ -189,15 +189,25 @@ export async function savePatientExam(patientId, examData, examIndex = null) {
     historicoExames: historico,
     exames: {
       hb: latestExam.hb !== undefined ? latestExam.hb : (patient.exames?.hb || null),
+      ht: latestExam.ht !== undefined ? latestExam.ht : (patient.exames?.ht || null),
       ist: latestExam.ist !== undefined ? latestExam.ist : (patient.exames?.ist || null),
       ferritina: latestExam.ferritina !== undefined ? latestExam.ferritina : (patient.exames?.ferritina || null),
       pth: latestExam.pth !== undefined ? latestExam.pth : (patient.exames?.pth || null),
       fosforo: latestExam.fosforo !== undefined ? latestExam.fosforo : (patient.exames?.fosforo || null),
       ca: latestExam.ca !== undefined ? latestExam.ca : (patient.exames?.ca || null),
       vitD: latestExam.vitD !== undefined ? latestExam.vitD : (patient.exames?.vitD || null),
+      fa: latestExam.fa !== undefined ? latestExam.fa : (patient.exames?.fa || null),
       k: latestExam.k !== undefined ? latestExam.k : (patient.exames?.k || null),
+      na: latestExam.na !== undefined ? latestExam.na : (patient.exames?.na || null),
+      hco3: latestExam.hco3 !== undefined ? latestExam.hco3 : (patient.exames?.hco3 || null),
+      ktv: latestExam.ktv !== undefined ? latestExam.ktv : (patient.exames?.ktv || null),
+      ureiaPre: latestExam.ureiaPre !== undefined ? latestExam.ureiaPre : (patient.exames?.ureiaPre || null),
+      ureiaPos: latestExam.ureiaPos !== undefined ? latestExam.ureiaPos : (patient.exames?.ureiaPos || null),
       creatinina: latestExam.creatinina !== undefined ? latestExam.creatinina : (patient.exames?.creatinina || null),
-      ktv: latestExam.ktv !== undefined ? latestExam.ktv : (patient.exames?.ktv || null)
+      albumina: latestExam.albumina !== undefined ? latestExam.albumina : (patient.exames?.albumina || null),
+      pcr: latestExam.pcr !== undefined ? latestExam.pcr : (patient.exames?.pcr || null),
+      glicemia: latestExam.glicemia !== undefined ? latestExam.glicemia : (patient.exames?.glicemia || null),
+      hba1c: latestExam.hba1c !== undefined ? latestExam.hba1c : (patient.exames?.hba1c || null)
     },
     medicamentos: (patient.medicamentos && (Array.isArray(patient.medicamentos) ? patient.medicamentos.length > 0 : Object.keys(patient.medicamentos).length > 0)) ? patient.medicamentos : (latestExam.medicamentos || []),
     atualizadoEm: new Date().toISOString()
