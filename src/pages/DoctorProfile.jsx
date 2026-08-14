@@ -23,13 +23,15 @@ export default function DoctorProfile() {
   const [saving, setSaving] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
 
+  const currentDoctorId = localStorage.getItem('activeDoctorId') || 'dr-marcelo';
+
   useEffect(() => {
-    const unsubscribe = subscribeDoctorProfile('dra-gisele', (data) => {
+    const unsubscribe = subscribeDoctorProfile(currentDoctorId, (data) => {
       setProfile(data);
       setLoading(false);
     });
     return () => unsubscribe();
-  }, []);
+  }, [currentDoctorId]);
 
   const handleChange = (field, value) => {
     setProfile(prev => ({ ...prev, [field]: value }));
@@ -39,7 +41,7 @@ export default function DoctorProfile() {
     e.preventDefault();
     try {
       setSaving(true);
-      await saveDoctorProfile('dra-gisele', profile);
+      await saveDoctorProfile(currentDoctorId, profile);
       setFeedbackMessage({ type: 'success', text: 'Dados cadastrais atualizados com sucesso no Firestore!' });
       setTimeout(() => setFeedbackMessage(null), 4000);
     } catch (err) {

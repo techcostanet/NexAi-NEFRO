@@ -12,6 +12,7 @@ import {
 import { db } from "../config/firebase";
 import localPatients from "../data/patients_db.json";
 import { normalizeMedicamentosList } from "../data/dialysisMedications";
+import { DEMO_PATIENTS_DATA } from "../data/demoPatients";
 
 const PATIENTS_COLLECTION = "patients";
 
@@ -361,4 +362,23 @@ export async function seedFirestoreWithLocalData() {
   }
 
   return localPatients.length;
+}
+
+/**
+ * Sincroniza e Restaura a Base Completa de Demonstração Nefrológica no Firestore
+ */
+export async function seedDemoPatientsToFirestore() {
+  if (!db) throw new Error("Firestore não conectado");
+
+  const batch = writeBatch(db);
+  DEMO_PATIENTS_DATA.forEach(patient => {
+    const docRef = doc(db, PATIENTS_COLLECTION, patient.id);
+    batch.set(docRef, {
+      ...patient,
+      atualizadoEm: new Date().toISOString()
+    }, { merge: true });
+  });
+
+  await batch.commit();
+  return DEMO_PATIENTS_DATA.length;
 }

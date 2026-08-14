@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.8] - 2026-08-14
+### Alterações
+- Adiciona conta de demonstracao completa do Dr. Marcelo Ramos, gestao de medicos no Admin e pacientes clinicos de teste no Firestore
+
 ## [1.1.7] - 2026-08-14
 ### Alterações
 - Remove campos redundantes de medicamentos do modal de exames e adiciona painel laboratorial nefrologico completo

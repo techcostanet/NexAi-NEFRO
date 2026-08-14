@@ -34,8 +34,10 @@ export default function DoctorDashboard() {
   const [patientToEdit, setPatientToEdit] = useState(null);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
+  const currentDoctorId = localStorage.getItem('activeDoctorId') || 'dr-marcelo';
+
   useEffect(() => {
-    const unsubDoc = subscribeDoctorProfile('dra-gisele', (data) => {
+    const unsubDoc = subscribeDoctorProfile(currentDoctorId, (data) => {
       if (data) setDoctor(data);
     });
 
