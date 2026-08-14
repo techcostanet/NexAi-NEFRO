@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Activity, Droplet, Pill, AlertTriangle } from 'lucide-react';
-import patientsData from '../data/patients_db.json';
+import { ArrowLeft, Activity, Droplet, Pill, AlertTriangle, Loader2 } from 'lucide-react';
+import { getPatientById } from '../services/patientService';
 
 export default function PatientProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [patient, setPatient] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const patient = patientsData.find(p => p.id === id);
+  useEffect(() => {
+    async function loadPatient() {
+      try {
+        setLoading(true);
+        const data = await getPatientById(id);
+        setPatient(data);
+      } catch (err) {
+        console.error("Erro ao carregar paciente:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadPatient();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="container flex items-center justify-center h-screen flex-col gap-4">
+        <Loader2 className="animate-spin" size={32} color="var(--primary)" />
+        <p className="text-muted">Carregando dados do paciente...</p>
+      </div>
+    );
+  }
 
   if (!patient) {
     return (
@@ -18,9 +42,13 @@ export default function PatientProfile() {
     );
   }
 
+  const exames = patient.exames || {};
+  const acessoVascular = patient.acessoVascular || {};
+  const medicamentos = patient.medicamentos || {};
+
   // Alerta de exames fora da meta
-  const hbBaixa = patient.exames.hb && patient.exames.hb < 10;
-  const pthAlto = patient.exames.pth && patient.exames.pth > 600;
+  const hbBaixa = exames.hb && exames.hb < 10;
+  const pthAlto = exames.pth && exames.pth > 600;
 
   return (
     <div className="container" style={{ paddingBottom: '5rem' }}>
@@ -28,7 +56,10 @@ export default function PatientProfile() {
         <button className="btn btn-outline" onClick={() => navigate(-1)} style={{ padding: '0.5rem' }}>
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-xl font-bold truncate">{patient.nome}</h1>
+        <div>
+          <h1 className="text-xl font-bold truncate">{patient.nome}</h1>
+          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{patient.turno}</span>
+        </div>
       </header>
 
       {/* Acesso Vascular */}
@@ -40,15 +71,15 @@ export default function PatientProfile() {
           <div className="flex flex-col gap-2">
             <div className="flex justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
               <span className="text-muted text-sm">Tipo</span>
-              <span className="font-semibold text-sm">{patient.acessoVascular.tipo}</span>
+              <span className="font-semibold text-sm">{acessoVascular.tipo || 'Não informado'}</span>
             </div>
             <div className="flex justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
               <span className="text-muted text-sm">Fluxo de Sangue</span>
-              <span className="font-semibold text-sm">{patient.acessoVascular.fluxoSangue ? `${patient.acessoVascular.fluxoSangue} ml/min` : '-'}</span>
+              <span className="font-semibold text-sm">{acessoVascular.fluxoSangue ? `${acessoVascular.fluxoSangue} ml/min` : '-'}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted text-sm">Fluxo Dialisato</span>
-              <span className="font-semibold text-sm">{patient.acessoVascular.fluxoDialisato ? `${patient.acessoVascular.fluxoDialisato} ml/min` : '-'}</span>
+              <span className="font-semibold text-sm">{acessoVascular.fluxoDialisato ? `${acessoVascular.fluxoDialisato} ml/min` : '-'}</span>
             </div>
           </div>
         </div>
@@ -85,34 +116,34 @@ export default function PatientProfile() {
             <div>
               <p className="text-muted text-sm">Hemoglobina</p>
               <p className="font-bold" style={{ color: hbBaixa ? 'var(--danger)' : 'inherit' }}>
-                {patient.exames.hb || '-'} g/dL
+                {exames.hb ? `${exames.hb} g/dL` : '-'}
               </p>
             </div>
             <div>
               <p className="text-muted text-sm">IST</p>
-              <p className="font-bold">{patient.exames.ist || '-'}%</p>
+              <p className="font-bold">{exames.ist ? `${exames.ist}%` : '-'}</p>
             </div>
             <div>
               <p className="text-muted text-sm">Ferritina</p>
-              <p className="font-bold">{patient.exames.ferritina || '-'}</p>
+              <p className="font-bold">{exames.ferritina || '-'}</p>
             </div>
             <div>
               <p className="text-muted text-sm">PTH</p>
               <p className="font-bold" style={{ color: pthAlto ? 'var(--danger)' : 'inherit' }}>
-                {patient.exames.pth || '-'}
+                {exames.pth || '-'}
               </p>
             </div>
             <div>
               <p className="text-muted text-sm">Fósforo</p>
-              <p className="font-bold">{patient.exames.fosforo || '-'}</p>
+              <p className="font-bold">{exames.fosforo || '-'}</p>
             </div>
             <div>
               <p className="text-muted text-sm">Cálcio</p>
-              <p className="font-bold">{patient.exames.ca || '-'}</p>
+              <p className="font-bold">{exames.ca || '-'}</p>
             </div>
             <div>
               <p className="text-muted text-sm">Vit. D</p>
-              <p className="font-bold">{patient.exames.vitD || '-'}</p>
+              <p className="font-bold">{exames.vitD || '-'}</p>
             </div>
           </div>
         </div>
@@ -125,15 +156,15 @@ export default function PatientProfile() {
         </h2>
         <div className="glass-panel" style={{ padding: '1.25rem' }}>
           <ul className="text-sm font-semibold flex flex-col gap-3" style={{ listStyleType: 'none' }}>
-            {patient.medicamentos.epo && <li><span className="text-muted font-normal block">EPO:</span> {patient.medicamentos.epo}</li>}
-            {patient.medicamentos.nor && <li><span className="text-muted font-normal block">Noripurum:</span> {patient.medicamentos.nor}</li>}
-            {patient.medicamentos.paricalcitol && <li><span className="text-muted font-normal block">Paricalcitol:</span> {patient.medicamentos.paricalcitol}</li>}
-            {patient.medicamentos.cinacalcete && <li><span className="text-muted font-normal block">Cinacalcete:</span> {patient.medicamentos.cinacalcete}</li>}
-            {patient.medicamentos.sevelamer && <li><span className="text-muted font-normal block">Sevelamer:</span> {patient.medicamentos.sevelamer}</li>}
-            {patient.medicamentos.caco3 && <li><span className="text-muted font-normal block">Carbonato de Cálcio:</span> {patient.medicamentos.caco3}</li>}
+            {medicamentos.epo && <li><span className="text-muted font-normal block">EPO:</span> {medicamentos.epo}</li>}
+            {medicamentos.nor && <li><span className="text-muted font-normal block">Noripurum:</span> {medicamentos.nor}</li>}
+            {medicamentos.paricalcitol && <li><span className="text-muted font-normal block">Paricalcitol:</span> {medicamentos.paricalcitol}</li>}
+            {medicamentos.cinacalcete && <li><span className="text-muted font-normal block">Cinacalcete:</span> {medicamentos.cinacalcete}</li>}
+            {medicamentos.sevelamer && <li><span className="text-muted font-normal block">Sevelamer:</span> {medicamentos.sevelamer}</li>}
+            {medicamentos.caco3 && <li><span className="text-muted font-normal block">Carbonato de Cálcio:</span> {medicamentos.caco3}</li>}
             
-            {(!patient.medicamentos.epo && !patient.medicamentos.nor && !patient.medicamentos.paricalcitol && !patient.medicamentos.cinacalcete && !patient.medicamentos.sevelamer && !patient.medicamentos.caco3) && (
-              <li className="text-muted font-normal">Nenhuma medicação registrada na planilha.</li>
+            {(!medicamentos.epo && !medicamentos.nor && !medicamentos.paricalcitol && !medicamentos.cinacalcete && !medicamentos.sevelamer && !medicamentos.caco3) && (
+              <li className="text-muted font-normal">Nenhuma medicação registrada.</li>
             )}
           </ul>
         </div>
