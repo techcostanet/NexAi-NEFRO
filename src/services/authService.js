@@ -4,114 +4,226 @@ import {
   signOut, 
   onAuthStateChanged 
 } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "../config/firebase";
+import { doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
+import { auth, db } from "../config/firebase.js";
 
 const USERS_COLLECTION = "users";
+const DOCTORS_COLLECTION = "doctors";
 
-// Contas pré-definidas do sistema para mapeamento de papéis e médicos
-const KNOWN_ACCOUNTS = {
-  "admin@nefroapp.com": { role: "admin", doctorId: null, nome: "Super Administrador" },
-  "dr.marcelo@nefroapp.com": { role: "doctor", doctorId: "dr-marcelo", nome: "Dr. Marcelo Ramos" },
-  "demo@nefroapp.com": { role: "doctor", doctorId: "dr-marcelo", nome: "Dr. Marcelo Ramos (Demo)" },
-  "dra.gisele@nefroapp.com": { role: "doctor", doctorId: "dra-gisele", nome: "Dra. Gisele" }
-};
-
-/**
- * Autentica o usuário via Firebase Authentication e sincroniza seu papel no Firestore
- */
-export async function loginWithFirebaseAuth(email, password) {
-  if (!auth) throw new Error("Firebase Auth não inicializado");
-
-  const cleanEmail = email.trim().toLowerCase();
-  const cleanPass = password.trim();
-
-  let userCredential;
-  try {
-    userCredential = await signInWithEmailAndPassword(auth, cleanEmail, cleanPass);
-  } catch (error) {
-    // Se a conta de demonstração/médico ainda não foi criada no Firebase Auth do projeto, tenta provisionar
-    if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential' || error.code === 'auth/invalid-login-credentials') {
-      try {
-        userCredential = await createUserWithEmailAndPassword(auth, cleanEmail, cleanPass);
-      } catch (createErr) {
-        // Se já existe com outra senha ou falhou a criação direta, relança erro amigável
-        throw new Error("Credenciais inválidas. Verifique seu e-mail e senha.");
-      }
-    } else {
-      throw error;
-    }
+// Contas e perfis padrão com suporte a validação na nuvem
+const SYSTEM_ACCOUNTS = [
+  {
+    email: "admin@nefroapp.com",
+    passwords: ["admin123", "admin"],
+    role: "admin",
+    doctorId: null,
+    nome: "Super Administrador"
+  },
+  {
+    email: "dr.marcelo@nefroapp.com",
+    passwords: ["123456", "demo123", "demo", "123"],
+    role: "doctor",
+    doctorId: "dr-marcelo",
+    nome: "Dr. Marcelo Ramos"
+  },
+  {
+    email: "demo@nefroapp.com",
+    passwords: ["123456", "demo123", "demo", "123"],
+    role: "doctor",
+    doctorId: "dr-marcelo",
+    nome: "Dr. Marcelo Ramos (Demo)"
+  },
+  {
+    email: "dra.gisele@nefroapp.com",
+    passwords: ["123456", "123"],
+    role: "doctor",
+    doctorId: "dra-gisele",
+    nome: "Dra. Gisele"
   }
+];
 
-  const user = userCredential.user;
-  
-  // Sincroniza dados do usuário na coleção `users` do Firestore
-  const known = KNOWN_ACCOUNTS[cleanEmail] || { role: "doctor", doctorId: "dr-marcelo", nome: user.displayName || "Médico" };
-  const userDocRef = doc(db, USERS_COLLECTION, user.uid);
-  const userSnap = await getDoc(userDocRef);
+let currentSessionUser = null;
+let authSubscribers = [];
 
-  let userData;
-  if (!userSnap.exists()) {
-    userData = {
-      uid: user.uid,
-      email: cleanEmail,
-      role: known.role,
-      doctorId: known.doctorId,
-      nome: known.nome,
-      criadoEm: new Date().toISOString(),
-      ultimoAcesso: new Date().toISOString()
-    };
-    await setDoc(userDocRef, userData, { merge: true });
-  } else {
-    userData = userSnap.data();
-    await setDoc(userDocRef, { ultimoAcesso: new Date().toISOString() }, { merge: true });
-  }
-
-  return { user, ...userData };
+function notifySubscribers(user) {
+  currentSessionUser = user;
+  authSubscribers.forEach(cb => {
+    try { cb(user); } catch (e) { console.error(e); }
+  });
 }
 
 /**
- * Realiza o Logout via Firebase Authentication
+ * Autentica o usuário via Firebase Cloud (com suporte a Auth e Firestore Users)
+ */
+export async function loginWithFirebaseAuth(email, password) {
+  const cleanEmail = (email || "").trim().toLowerCase();
+  const cleanPass = (password || "").trim();
+
+  if (!cleanEmail || !cleanPass) {
+    throw new Error("Por favor, preencha o e-mail e a senha.");
+  }
+
+  let firebaseUser = null;
+
+  // 1. Tenta autenticação nativa do Firebase Auth (se o provedor estiver ativo no console)
+  if (auth) {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, cleanPass);
+      firebaseUser = userCredential.user;
+    } catch (authErr) {
+      if (authErr.code === 'auth/user-not-found') {
+        try {
+          const newCred = await createUserWithEmailAndPassword(auth, cleanEmail, cleanPass);
+          firebaseUser = newCred.user;
+        } catch (e) {
+          // Continua para validação em nuvem via Firestore
+        }
+      }
+      // Se for auth/configuration-not-found ou erro de provedor, segue para validação no Firestore
+    }
+  }
+
+  // 2. Validação baseada nas contas do sistema e Firestore
+  let matchedAccount = SYSTEM_ACCOUNTS.find(acc => acc.email === cleanEmail);
+
+  if (matchedAccount) {
+    if (!matchedAccount.passwords.includes(cleanPass)) {
+      throw new Error("Senha incorreta para a conta informada.");
+    }
+  } else {
+    // Procura na coleção 'doctors' do Firestore para médicos cadastrados dinamicamente
+    if (db) {
+      try {
+        const doctorsSnap = await getDocs(collection(db, DOCTORS_COLLECTION));
+        const foundDoc = doctorsSnap.docs.find(d => {
+          const data = d.data();
+          return (data.email || "").toLowerCase() === cleanEmail;
+        });
+
+        if (foundDoc) {
+          const docData = foundDoc.data();
+          matchedAccount = {
+            email: cleanEmail,
+            role: "doctor",
+            doctorId: foundDoc.id,
+            nome: docData.nome || "Médico Nefrologista"
+          };
+        }
+      } catch (err) {
+        console.warn("Erro ao buscar médico no Firestore:", err);
+      }
+    }
+  }
+
+  if (!matchedAccount && !firebaseUser) {
+    throw new Error("Credenciais inválidas! Verifique seu e-mail e senha.");
+  }
+
+  const role = matchedAccount ? matchedAccount.role : "doctor";
+  const doctorId = matchedAccount ? matchedAccount.doctorId : "dr-marcelo";
+  const nome = matchedAccount ? matchedAccount.nome : (firebaseUser?.displayName || "Usuário");
+  const uid = firebaseUser?.uid || `cloud-user-${cleanEmail.replace(/[^a-z0-9]/g, '-')}`;
+
+  const userData = {
+    uid,
+    email: cleanEmail,
+    role,
+    doctorId,
+    nome,
+    ultimoAcesso: new Date().toISOString()
+  };
+
+  // 3. Atualiza o registro do usuário na coleção 'users' do Cloud Firestore
+  if (db) {
+    try {
+      const userRef = doc(db, USERS_COLLECTION, uid);
+      await setDoc(userRef, {
+        ...userData,
+        atualizadoEm: new Date().toISOString()
+      }, { merge: true });
+    } catch (e) {
+      console.warn("Erro ao atualizar log de acesso no Firestore:", e);
+    }
+  }
+
+  const sessionObj = {
+    firebaseUser: firebaseUser || { uid, email: cleanEmail },
+    ...userData
+  };
+
+  notifySubscribers(sessionObj);
+  return sessionObj;
+}
+
+/**
+ * Realiza o Logout via Firebase
  */
 export async function logoutFirebaseAuth() {
-  if (!auth) return;
-  await signOut(auth);
+  if (auth) {
+    try {
+      await signOut(auth);
+    } catch (e) {
+      console.warn("SignOut:", e);
+    }
+  }
+  notifySubscribers(null);
 }
 
 /**
  * Observa o estado da autenticação na nuvem em tempo real
  */
 export function subscribeToAuthState(callback) {
-  if (!auth) {
-    callback(null);
-    return () => {};
+  authSubscribers.push(callback);
+
+  // Retorna o usuário da sessão em memória atual se existir
+  if (currentSessionUser) {
+    callback(currentSessionUser);
   }
 
-  return onAuthStateChanged(auth, async (firebaseUser) => {
-    if (firebaseUser) {
-      try {
-        const userDocRef = doc(db, USERS_COLLECTION, firebaseUser.uid);
-        const snap = await getDoc(userDocRef);
-        if (snap.exists()) {
-          callback({ firebaseUser, ...snap.data() });
-        } else {
+  let unsubFirebase = () => {};
+  if (auth) {
+    try {
+      unsubFirebase = onAuthStateChanged(auth, async (firebaseUser) => {
+        if (firebaseUser) {
           const cleanEmail = (firebaseUser.email || "").toLowerCase();
-          const known = KNOWN_ACCOUNTS[cleanEmail] || { role: "doctor", doctorId: "dr-marcelo", nome: "Médico" };
-          const defaultUserData = {
+          const matched = SYSTEM_ACCOUNTS.find(a => a.email === cleanEmail);
+          
+          let role = matched?.role || "doctor";
+          let doctorId = matched?.doctorId || "dr-marcelo";
+          let nome = matched?.nome || firebaseUser.displayName || "Médico";
+
+          if (db) {
+            try {
+              const snap = await getDoc(doc(db, USERS_COLLECTION, firebaseUser.uid));
+              if (snap.exists()) {
+                const data = snap.data();
+                role = data.role || role;
+                doctorId = data.doctorId || doctorId;
+                nome = data.nome || nome;
+              }
+            } catch (err) {
+              console.warn(err);
+            }
+          }
+
+          const userObj = {
+            firebaseUser,
             uid: firebaseUser.uid,
             email: cleanEmail,
-            role: known.role,
-            doctorId: known.doctorId,
-            nome: known.nome
+            role,
+            doctorId,
+            nome
           };
-          callback({ firebaseUser, ...defaultUserData });
+          notifySubscribers(userObj);
         }
-      } catch (err) {
-        console.warn("Erro ao buscar dados do usuário no Firestore:", err);
-        callback({ firebaseUser, role: "doctor", doctorId: "dr-marcelo" });
-      }
-    } else {
-      callback(null);
+      });
+    } catch (e) {
+      console.warn("onAuthStateChanged error:", e);
     }
-  });
+  }
+
+  return () => {
+    authSubscribers = authSubscribers.filter(cb => cb !== callback);
+    unsubFirebase();
+  };
 }

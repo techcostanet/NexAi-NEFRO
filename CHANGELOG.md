@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.11] - 2026-08-15
+### Alterações
+- Corrige autenticacao na nuvem para suportar contas administrativas, medicas e Firestore com resiliencia total
+
 ## [1.1.10] - 2026-08-15
 ### Alterações
 - Adequacao estrita para arquitetura 100% Cloud: integracao com Firebase Auth e Firebase Storage, remocao total de localStorage e eliminacao de persistencia JSON local

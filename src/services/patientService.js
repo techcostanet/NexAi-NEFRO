@@ -9,9 +9,9 @@ import {
   onSnapshot, 
   writeBatch 
 } from "firebase/firestore";
-import { db } from "../config/firebase";
-import { normalizeMedicamentosList } from "../data/dialysisMedications";
-import { DEMO_PATIENTS_DATA } from "../data/demoPatients";
+import { db } from "../config/firebase.js";
+import { normalizeMedicamentosList } from "../data/dialysisMedications.js";
+import { DEMO_PATIENTS_DATA } from "../data/demoPatients.js";
 
 const PATIENTS_COLLECTION = "patients";
 

@@ -1,5 +1,5 @@
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
-import { storage } from "../config/firebase";
+import { storage } from "../config/firebase.js";
 
 /**
  * Serviço 100% Cloud para upload de arquivos no Firebase Storage
