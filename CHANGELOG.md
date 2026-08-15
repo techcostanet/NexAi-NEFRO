@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.9] - 2026-08-15
+### Alterações
+- Ajusta subtítulo para Gestão Nefrológica e remove bloco de acessos rápidos da tela de login
+
 ## [1.1.8] - 2026-08-14
 ### Alterações
 - Adiciona conta de demonstracao completa do Dr. Marcelo Ramos, gestao de medicos no Admin e pacientes clinicos de teste no Firestore
