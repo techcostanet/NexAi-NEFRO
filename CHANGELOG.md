@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.15] - 2026-08-15
+### Alterações
+- Corrige vazamento de sessao F5 e redesign locais de atuacao
+
 ## [1.1.14] - 2026-08-15
 ### Alterações
 - Implementa edicao de locais de atuacao, pausa/desativacao sem perda de dados, registro de RT e contato de enfermagem no Firestore

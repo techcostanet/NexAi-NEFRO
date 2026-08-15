@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginWithFirebaseAuth, logoutFirebaseAuth, subscribeToAuthState } from '../services/authService';
+import { loginWithFirebaseAuth, logoutFirebaseAuth, subscribeToAuthState, updateActiveTenant } from '../services/authService';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState(null); // 'admin' | 'doctor'
-  const [activeDoctorId, setActiveDoctorId] = useState('dr-marcelo');
+  const [activeDoctorId, setActiveDoctorId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -15,8 +15,10 @@ export function AuthProvider({ children }) {
       if (userData) {
         setCurrentUser(userData.firebaseUser || userData);
         setUserRole(userData.role || 'doctor');
-        if (userData.doctorId) {
-          setActiveDoctorId(userData.doctorId);
+        
+        const tenantToUse = userData.activeTenantId || userData.doctorId;
+        if (tenantToUse) {
+          setActiveDoctorId(tenantToUse);
         }
       } else {
         setCurrentUser(null);
@@ -34,8 +36,10 @@ export function AuthProvider({ children }) {
       const authResult = await loginWithFirebaseAuth(email, password);
       setCurrentUser(authResult.user);
       setUserRole(authResult.role);
-      if (authResult.doctorId) {
-        setActiveDoctorId(authResult.doctorId);
+      
+      const tenantToUse = authResult.activeTenantId || authResult.doctorId;
+      if (tenantToUse) {
+        setActiveDoctorId(tenantToUse);
       }
       return authResult;
     } finally {
@@ -49,14 +53,17 @@ export function AuthProvider({ children }) {
       await logoutFirebaseAuth();
       setCurrentUser(null);
       setUserRole(null);
-      setActiveDoctorId('dr-marcelo');
+      setActiveDoctorId(null);
     } finally {
       setLoading(false);
     }
   };
 
-  const selectDoctor = (doctorId) => {
+  const selectDoctor = async (doctorId) => {
     setActiveDoctorId(doctorId);
+    if (currentUser?.uid) {
+      await updateActiveTenant(currentUser.uid, doctorId);
+    }
   };
 
   const value = {

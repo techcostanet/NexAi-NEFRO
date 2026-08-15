@@ -120,7 +120,7 @@ export async function loginWithFirebaseAuth(email, password) {
   }
 
   const role = matchedAccount ? matchedAccount.role : "doctor";
-  const doctorId = matchedAccount ? matchedAccount.doctorId : "dr-marcelo";
+  const doctorId = matchedAccount ? matchedAccount.doctorId : null;
   const nome = matchedAccount ? matchedAccount.nome : (firebaseUser?.displayName || "Usuário");
   const uid = firebaseUser?.uid || `cloud-user-${cleanEmail.replace(/[^a-z0-9]/g, '-')}`;
 
@@ -129,6 +129,7 @@ export async function loginWithFirebaseAuth(email, password) {
     email: cleanEmail,
     role,
     doctorId,
+    activeTenantId: doctorId,
     nome,
     ultimoAcesso: new Date().toISOString()
   };
@@ -189,8 +190,9 @@ export function subscribeToAuthState(callback) {
           const matched = SYSTEM_ACCOUNTS.find(a => a.email === cleanEmail);
           
           let role = matched?.role || "doctor";
-          let doctorId = matched?.doctorId || "dr-marcelo";
+          let doctorId = matched?.doctorId || null;
           let nome = matched?.nome || firebaseUser.displayName || "Médico";
+          let activeTenantId = doctorId;
 
           if (db) {
             try {
@@ -199,6 +201,7 @@ export function subscribeToAuthState(callback) {
                 const data = snap.data();
                 role = data.role || role;
                 doctorId = data.doctorId || doctorId;
+                activeTenantId = data.activeTenantId || doctorId;
                 nome = data.nome || nome;
               }
             } catch (err) {
@@ -212,6 +215,7 @@ export function subscribeToAuthState(callback) {
             email: cleanEmail,
             role,
             doctorId,
+            activeTenantId,
             nome
           };
           notifySubscribers(userObj);
@@ -226,4 +230,20 @@ export function subscribeToAuthState(callback) {
     authSubscribers = authSubscribers.filter(cb => cb !== callback);
     unsubFirebase();
   };
+}
+
+/**
+ * Atualiza o tenant ativo (médico acessado) no Firestore
+ */
+export async function updateActiveTenant(uid, tenantId) {
+  if (!db || !uid || !tenantId) return;
+  try {
+    const userRef = doc(db, USERS_COLLECTION, uid);
+    await setDoc(userRef, { 
+      activeTenantId: tenantId, 
+      atualizadoEm: new Date().toISOString() 
+    }, { merge: true });
+  } catch (e) {
+    console.warn("Erro ao atualizar tenant na nuvem:", e);
+  }
 }

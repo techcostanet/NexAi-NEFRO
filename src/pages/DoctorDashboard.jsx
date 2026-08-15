@@ -46,9 +46,11 @@ export default function DoctorDashboard() {
   const [patientToEdit, setPatientToEdit] = useState(null);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
-  const currentDoctorId = activeDoctorId || 'dr-marcelo';
+  const currentDoctorId = activeDoctorId;
 
   useEffect(() => {
+    if (!currentDoctorId) return;
+
     const unsubDoc = subscribeDoctorProfile(currentDoctorId, (data) => {
       if (data) setDoctor(data);
     });

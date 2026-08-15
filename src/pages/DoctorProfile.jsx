@@ -75,9 +75,10 @@ export default function DoctorProfile() {
     status: 'Ativo'
   });
 
-  const currentDoctorId = activeDoctorId || 'dr-marcelo';
+  const currentDoctorId = activeDoctorId;
 
   useEffect(() => {
+    if (!currentDoctorId) return;
     const unsubscribe = subscribeDoctorProfile(currentDoctorId, (data) => {
       setProfile(data);
       setLoading(false);
@@ -316,62 +317,44 @@ export default function DoctorProfile() {
               return (
                 <div 
                   key={loc.id} 
-                  className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between"
+                  className="bg-white rounded-2xl flex flex-col justify-between"
                   style={{ 
-                    transition: 'all 0.15s',
-                    opacity: isInactive ? 0.65 : 1,
+                    transition: 'all 0.2s ease',
+                    opacity: isInactive ? 0.7 : 1,
                     background: isInactive ? '#f8fafc' : '#ffffff',
-                    borderLeft: isInactive ? '4px solid #94a3b8' : '4px solid #2563eb'
+                    border: '1px solid var(--border)',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                    padding: '1.25rem'
                   }}
                 >
                   <div>
                     {/* Top Bar do Card */}
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-1.5">
-                        <span 
-                          style={{ 
-                            fontSize: '0.7rem', 
-                            padding: '2px 7px', 
-                            borderRadius: '6px', 
-                            fontWeight: 'bold',
-                            background: loc.tipo?.includes('Hemodiálise') ? '#dbeafe' : loc.tipo?.includes('Hospital') ? '#fee2e2' : '#ede9fe',
-                            color: loc.tipo?.includes('Hemodiálise') ? '#1d4ed8' : loc.tipo?.includes('Hospital') ? '#b91c1c' : '#6d28d9'
-                          }}
-                        >
-                          {loc.tipo}
-                        </span>
-
-                        <span 
-                          style={{ 
-                            fontSize: '0.68rem', 
-                            padding: '1px 6px', 
-                            borderRadius: '6px', 
-                            fontWeight: 'bold',
-                            background: isInactive ? '#e2e8f0' : '#dcfce7',
-                            color: isInactive ? '#64748b' : '#15803d'
-                          }}
-                        >
-                          {isInactive ? 'Inativo' : 'Ativo'}
-                        </span>
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex flex-col gap-1.5 pr-2">
+                        <strong className="text-base block text-slate-800 font-bold leading-tight">{loc.nome}</strong>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{loc.tipo}</span>
+                          {isInactive && <span style={{ fontSize: '0.65rem', padding: '2px 6px', borderRadius: '6px', background: '#e2e8f0', color: '#475569', fontWeight: '600' }}>Inativo</span>}
+                        </div>
                       </div>
 
                       {/* Ações: Pausar, Editar, Excluir */}
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-0.5 ml-auto">
                         <button 
                           type="button"
                           onClick={() => handleToggleLocationStatus(loc)}
                           title={isInactive ? "Reativar este local" : "Desativar/Pausar este local"}
-                          className="p-1 text-slate-400 hover:text-blue-600 transition rounded"
+                          className="p-1.5 text-slate-400 hover:text-blue-600 transition rounded-md hover:bg-blue-50"
                           style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
                         >
-                          {isInactive ? <PlayCircle size={16} color="#16a34a" /> : <PauseCircle size={16} color="#64748b" />}
+                          {isInactive ? <PlayCircle size={16} color="#16a34a" /> : <PauseCircle size={16} />}
                         </button>
 
                         <button 
                           type="button"
                           onClick={() => handleOpenEditLocation(loc)}
                           title="Editar dados deste local"
-                          className="p-1 text-slate-400 hover:text-blue-600 transition rounded"
+                          className="p-1.5 text-slate-400 hover:text-blue-600 transition rounded-md hover:bg-blue-50"
                           style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
                         >
                           <Edit2 size={15} />
@@ -380,7 +363,7 @@ export default function DoctorProfile() {
                         <button 
                           type="button" 
                           onClick={() => handleRemoveLocation(loc.id, loc.nome)}
-                          className="p-1 text-slate-400 hover:text-red-600 transition rounded"
+                          className="p-1.5 text-slate-400 hover:text-red-600 transition rounded-md hover:bg-red-50"
                           title="Excluir este local"
                           style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
                         >
@@ -389,42 +372,41 @@ export default function DoctorProfile() {
                       </div>
                     </div>
 
-                    <strong className="text-sm block text-slate-800 font-bold mb-1.5">{loc.nome}</strong>
-
                     {/* Detalhes Clínicos do Local */}
-                    <div className="flex flex-col gap-1 text-xs text-slate-600 mb-2">
+                    <div className="flex flex-col gap-2.5 text-sm text-slate-600 mt-2">
                       {loc.rtNome && (
-                        <div className="flex items-center gap-1.5 text-blue-800 font-medium">
-                          <ShieldCheck size={13} color="#2563eb" />
-                          <span>RT: {loc.rtNome} {loc.rtCrm ? `(${loc.rtCrm})` : ''}</span>
+                        <div className="flex items-start gap-2">
+                          <ShieldCheck size={16} color="var(--primary)" style={{ marginTop: '2px' }} />
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-slate-700">RT: {loc.rtNome}</span>
+                            {loc.rtCrm && <span className="text-xs text-muted">CRM: {loc.rtCrm}</span>}
+                          </div>
                         </div>
                       )}
 
                       {loc.telefoneEnfermagem && (
-                        <div className="flex items-center gap-1.5 text-emerald-700 font-medium">
-                          <PhoneCall size={12} color="#059669" />
-                          <span>Enfermagem: {loc.telefoneEnfermagem}</span>
-                        </div>
-                      )}
-
-                      {loc.diasSemana && (
-                        <div className="flex items-center gap-1.5 text-slate-600">
-                          <Calendar size={12} color="#64748b" />
-                          <span>Dias: {loc.diasSemana}</span>
+                        <div className="flex items-center gap-2">
+                          <PhoneCall size={15} color="var(--text-muted)" />
+                          <span>{loc.telefoneEnfermagem}</span>
                         </div>
                       )}
 
                       {loc.turnos && (
-                        <div className="flex items-center gap-1.5 text-slate-600">
-                          <Clock size={12} color="#64748b" />
-                          <span>Turnos: {loc.turnos}</span>
+                        <div className="flex items-start gap-2">
+                          <Clock size={15} color="var(--text-muted)" style={{ marginTop: '2px' }} />
+                          <span className="leading-snug">
+                            {loc.diasSemana ? <><strong className="text-slate-600 font-medium">{loc.diasSemana}</strong><br/></> : ''}
+                            <span className="text-xs text-slate-500">{loc.turnos}</span>
+                          </span>
                         </div>
                       )}
 
                       {loc.cidade && (
-                        <div className="flex items-center gap-1.5 text-muted mt-0.5">
-                          <MapPin size={12} color="#94a3b8" />
-                          <span>{loc.cidade} {loc.endereco ? `• ${loc.endereco}` : ''}</span>
+                        <div className="flex items-start gap-2 pt-3 mt-1 border-t border-slate-100">
+                          <MapPin size={15} color="var(--text-muted)" style={{ marginTop: '2px' }} />
+                          <span className="text-xs text-slate-500 leading-relaxed">
+                            {loc.cidade} {loc.endereco ? `— ${loc.endereco}` : ''}
+                          </span>
                         </div>
                       )}
                     </div>
