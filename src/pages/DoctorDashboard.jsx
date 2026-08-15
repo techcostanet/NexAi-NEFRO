@@ -16,7 +16,11 @@ import {
   Clock,
   AlertTriangle,
   Building2,
-  MapPin
+  MapPin,
+  LayoutGrid,
+  Rows3,
+  Table,
+  FileText
 } from 'lucide-react';
 import { subscribeToPatients } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
@@ -42,6 +46,7 @@ export default function DoctorDashboard() {
   const [filterTurno, setFilterTurno] = useState('Todos');
   const [filterStatus, setFilterStatus] = useState('Todos');
   const [filterMedAlert, setFilterMedAlert] = useState(false);
+  const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'compact' | 'table'
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
   const [patientToEdit, setPatientToEdit] = useState(null);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
@@ -248,19 +253,18 @@ export default function DoctorDashboard() {
           className="glass-panel mb-4 animate-in" 
           style={{ 
             padding: '1rem 1.25rem', 
-            background: 'rgba(254, 242, 242, 0.95)', 
-            border: '1px solid #fecaca', 
-            color: '#b91c1c', 
             borderRadius: '16px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '10px' 
+            background: '#fee2e2', 
+            border: '1px solid #fca5a5', 
+            color: '#991b1b',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
           }}
         >
           <AlertTriangle size={22} color="#dc2626" />
-          <div>
-            <strong className="block text-sm">Atenção: Licença Médica Temporariamente {doctor.statusLicenca}</strong>
-            <span className="text-xs">Seus dados clínicos e prontuários estão preservados com segurança na nuvem. Entre em contato com a administração para reativação da licença.</span>
+          <div className="text-sm">
+            <strong>Sua assinatura está atualmente suspensa ou pendente.</strong> O acesso à edição e cadastro de pacientes está restrito. Entre em contato com o suporte ou regularize seu plano.
           </div>
         </div>
       )}
@@ -332,10 +336,10 @@ export default function DoctorDashboard() {
                     gap: '5px',
                     boxShadow: isSelected ? '0 2px 6px rgba(37,99,235,0.25)' : 'none'
                   }}
-                  title={isInactive ? "Unidade inativa/pausada" : `${loc.tipo} • RT: ${loc.rtNome || 'Não inf.'}`}
+                  title={isInactive ? "Unidade inativa" : `${loc.tipo} • RT: ${loc.rtNome || 'Não inf.'}`}
                 >
                   <span>{loc.tipo?.includes('Hemodiálise') ? '🏥' : loc.tipo?.includes('Hospital') ? '🏨' : '🩺'}</span>
-                  <span>{loc.nome} {isInactive ? '(Pausado)' : ''}</span>
+                  <span>{loc.nome} {isInactive ? '(Inativo)' : ''}</span>
                   <span style={{ 
                     fontSize: '0.72rem', 
                     padding: '1px 6px', 
@@ -364,18 +368,95 @@ export default function DoctorDashboard() {
         </button>
       </div>
 
-      {/* Painel de Filtros e Busca */}
-      <div className="glass-panel" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '16px' }}>
-        <div style={{ position: 'relative', flex: '1 1 250px' }}>
-          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-          <input 
-            type="text" 
-            className="input-field" 
-            placeholder="Buscar por nome do paciente..." 
-            style={{ paddingLeft: '2.5rem' }}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+      {/* Painel de Filtros, Busca e Seleção de Visualização */}
+      <div className="glass-panel" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '16px' }}>
+        <div style={{ display: 'flex', gap: '0.75rem', flex: '1 1 320px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ position: 'relative', flex: '1 1 220px' }}>
+            <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <input 
+              type="text" 
+              className="input-field" 
+              placeholder="Buscar por nome do paciente..." 
+              style={{ paddingLeft: '2.5rem' }}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* Seletor de Modo de Visualização (Cards / Compacto / Tabela) */}
+          <div style={{ display: 'inline-flex', background: '#f1f5f9', padding: '3px', borderRadius: '12px', border: '1px solid #cbd5e1' }}>
+            <button 
+              type="button"
+              onClick={() => setViewMode('cards')}
+              style={{
+                padding: '6px 11px',
+                borderRadius: '8px',
+                fontSize: '0.78rem',
+                fontWeight: viewMode === 'cards' ? 'bold' : '500',
+                background: viewMode === 'cards' ? '#ffffff' : 'transparent',
+                color: viewMode === 'cards' ? '#2563eb' : '#64748b',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                boxShadow: viewMode === 'cards' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                transition: 'all 0.15s'
+              }}
+              title="Visualização em Cards Detalhados"
+            >
+              <LayoutGrid size={14} />
+              <span>Cards</span>
+            </button>
+
+            <button 
+              type="button"
+              onClick={() => setViewMode('compact')}
+              style={{
+                padding: '6px 11px',
+                borderRadius: '8px',
+                fontSize: '0.78rem',
+                fontWeight: viewMode === 'compact' ? 'bold' : '500',
+                background: viewMode === 'compact' ? '#ffffff' : 'transparent',
+                color: viewMode === 'compact' ? '#2563eb' : '#64748b',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                boxShadow: viewMode === 'compact' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                transition: 'all 0.15s'
+              }}
+              title="Visualização Compacta para Leitura Rápida"
+            >
+              <Rows3 size={14} />
+              <span>Compacto</span>
+            </button>
+
+            <button 
+              type="button"
+              onClick={() => setViewMode('table')}
+              style={{
+                padding: '6px 11px',
+                borderRadius: '8px',
+                fontSize: '0.78rem',
+                fontWeight: viewMode === 'table' ? 'bold' : '500',
+                background: viewMode === 'table' ? '#ffffff' : 'transparent',
+                color: viewMode === 'table' ? '#2563eb' : '#64748b',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+                boxShadow: viewMode === 'table' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                transition: 'all 0.15s'
+              }}
+              title="Visualização em Tabela para Ronda Clínica"
+            >
+              <Table size={14} />
+              <span>Tabela</span>
+            </button>
+          </div>
         </div>
 
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -434,66 +515,202 @@ export default function DoctorDashboard() {
         </div>
       </div>
 
-      {/* Indicador de Unidade Selecionada */}
+      {/* Indicador de Unidade Selecionada e Quantidade */}
       <div className="flex justify-between items-center mb-3 text-xs text-muted font-semibold">
         <span>
           {filterLocal === 'Todos' ? 'Todos os Pacientes' : `Unidade: ${filterLocal}`} • Exibindo <strong>{filteredPatients.length}</strong> de {patients.length} pacientes
         </span>
       </div>
 
-      {/* Grid de Pacientes */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '1rem' }}>
-        {filteredPatients.length === 0 ? (
-          <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <p>Nenhum paciente encontrado com os filtros selecionados.</p>
-          </div>
-        ) : (
-          filteredPatients.map(patient => {
-            const statusStyle = getStatusStyle(patient.status);
-            const turnoStyle = getTurnoStyle(patient.turno);
-            const medInfo = getPatientMedicationAlerts(patient);
+      {/* ================= MODALIDADE 1: VISUALIZAÇÃO EM CARDS (PADRÃO) ================= */}
+      {viewMode === 'cards' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '1rem' }}>
+          {filteredPatients.length === 0 ? (
+            <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+              <p>Nenhum paciente encontrado com os filtros selecionados.</p>
+            </div>
+          ) : (
+            filteredPatients.map(patient => {
+              const statusStyle = getStatusStyle(patient.status);
+              const turnoStyle = getTurnoStyle(patient.turno);
+              const medInfo = getPatientMedicationAlerts(patient);
 
-            return (
-              <div 
-                key={patient.id} 
-                className="patient-card glass-panel"
-                onClick={() => navigate(`/patient/${patient.id}`)}
-                style={{ 
-                  cursor: 'pointer',
-                  position: 'relative',
-                  padding: '1.25rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  gap: '0.85rem'
-                }}
-              >
-                <div>
-                  <div className="flex justify-between items-start mb-1">
-                    <h3 className="font-bold text-base text-slate-800 tracking-tight" title={patient.nome}>
-                      {patient.nome}
-                    </h3>
+              return (
+                <div 
+                  key={patient.id} 
+                  className="patient-card glass-panel"
+                  onClick={() => navigate(`/patient/${patient.id}`)}
+                  style={{ 
+                    cursor: 'pointer',
+                    position: 'relative',
+                    padding: '1.25rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: '0.85rem',
+                    borderRadius: '16px'
+                  }}
+                >
+                  <div>
+                    <div className="flex justify-between items-start mb-1">
+                      <h3 className="font-bold text-base text-slate-800 tracking-tight" title={patient.nome}>
+                        {patient.nome}
+                      </h3>
+                      <button 
+                        className="btn btn-outline" 
+                        onClick={(e) => handleEditPatient(e, patient)}
+                        style={{ padding: '0.25rem', borderRadius: '8px', border: 'none', background: 'transparent' }}
+                        title="Editar cadastro do paciente"
+                      >
+                        <Edit size={16} color="var(--text-muted)" />
+                      </button>
+                    </div>
+                    
+                    <div className="text-xs text-muted flex items-center gap-1 mb-2 font-medium">
+                      <Building2 size={13} color="#2563eb" />
+                      <span>{patient.clinica || 'Clínica Não Informada'}</span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span 
+                        style={{ 
+                          fontSize: '0.72rem', 
+                          padding: '2px 8px', 
+                          borderRadius: '10px', 
+                          border: '1px solid',
+                          fontWeight: '600',
+                          ...statusStyle
+                        }}
+                      >
+                        {patient.status || 'Ativo'}
+                      </span>
+
+                      <span 
+                        style={{ 
+                          fontSize: '0.72rem', 
+                          padding: '2px 8px', 
+                          borderRadius: '10px', 
+                          border: '1px solid',
+                          fontWeight: '500',
+                          ...turnoStyle
+                        }}
+                      >
+                        {patient.turno || '3º Turno'}
+                      </span>
+
+                      {medInfo.totalMeds > 0 && (
+                        <span 
+                          style={{ 
+                            fontSize: '0.72rem', 
+                            padding: '2px 8px', 
+                            borderRadius: '10px', 
+                            border: '1px solid',
+                            background: '#fffbeb',
+                            borderColor: '#fef3c7',
+                            color: '#b45309',
+                            fontWeight: '500',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px'
+                          }}
+                        >
+                          <Pill size={11} /> {medInfo.totalMeds} meds
+                        </span>
+                      )}
+                    </div>
+
+                    {medInfo.hasAlerts && (
+                      <div 
+                        className="mt-2.5 p-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold"
+                        style={{ 
+                          background: medInfo.expired.length > 0 ? '#fee2e2' : '#fef3c7',
+                          color: medInfo.expired.length > 0 ? '#b91c1c' : '#b45309',
+                          border: '1px solid',
+                          borderColor: medInfo.expired.length > 0 ? '#fecaca' : '#fde68a'
+                        }}
+                      >
+                        <AlertTriangle size={13} />
+                        <span>
+                          {medInfo.expired.length > 0 ? `${medInfo.expired.length} ciclo encerrado` : `${medInfo.expiring.length} medicação a vencer`}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-muted pt-2.5 border-t" style={{ borderColor: 'rgba(226, 232, 240, 0.8)' }}>
+                    <div className="flex items-center gap-1.5 truncate mr-2">
+                      <Activity size={14} color="var(--primary)" />
+                      <span className="truncate">
+                        {patient.acessoVascular?.tipo || 'Acesso não inf.'}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1" style={{ color: 'var(--primary)', fontWeight: '600', flexShrink: 0 }}>
+                      <span>Prontuário</span>
+                      <ChevronRight size={14} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+      )}
+
+      {/* ================= MODALIDADE 2: VISUALIZAÇÃO COMPACTA ================= */}
+      {viewMode === 'compact' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '0.75rem' }}>
+          {filteredPatients.length === 0 ? (
+            <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+              <p>Nenhum paciente encontrado com os filtros selecionados.</p>
+            </div>
+          ) : (
+            filteredPatients.map(patient => {
+              const statusStyle = getStatusStyle(patient.status);
+              const turnoStyle = getTurnoStyle(patient.turno);
+              const medInfo = getPatientMedicationAlerts(patient);
+
+              return (
+                <div 
+                  key={patient.id} 
+                  className="patient-card glass-panel"
+                  onClick={() => navigate(`/patient/${patient.id}`)}
+                  style={{ 
+                    cursor: 'pointer',
+                    padding: '0.85rem 1rem',
+                    borderRadius: '14px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    gap: '0.5rem',
+                    transition: 'all 0.15s ease-in-out'
+                  }}
+                >
+                  <div className="flex justify-between items-start gap-1">
+                    <div className="truncate">
+                      <h4 className="font-bold text-sm text-slate-800 truncate" title={patient.nome}>
+                        {patient.nome}
+                      </h4>
+                      <span className="text-xs text-muted truncate block">
+                        {patient.clinica || 'Dialize Betim'}
+                      </span>
+                    </div>
                     <button 
                       className="btn btn-outline" 
                       onClick={(e) => handleEditPatient(e, patient)}
-                      style={{ padding: '0.25rem', borderRadius: '8px', border: 'none', background: 'transparent' }}
+                      style={{ padding: '0.2rem', borderRadius: '6px', border: 'none', background: 'transparent' }}
                       title="Editar cadastro do paciente"
                     >
-                      <Edit size={16} color="var(--text-muted)" />
+                      <Edit size={14} color="var(--text-muted)" />
                     </button>
-                  </div>
-                  
-                  <div className="text-xs text-muted flex items-center gap-1 mb-2 font-medium">
-                    <Building2 size={13} color="#2563eb" />
-                    <span>{patient.clinica || 'Clínica Não Informada'}</span>
                   </div>
 
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span 
                       style={{ 
-                        fontSize: '0.72rem', 
-                        padding: '2px 8px', 
-                        borderRadius: '10px', 
+                        fontSize: '0.68rem', 
+                        padding: '1px 6px', 
+                        borderRadius: '6px', 
                         border: '1px solid',
                         fontWeight: '600',
                         ...statusStyle
@@ -504,9 +721,9 @@ export default function DoctorDashboard() {
 
                     <span 
                       style={{ 
-                        fontSize: '0.72rem', 
-                        padding: '2px 8px', 
-                        borderRadius: '10px', 
+                        fontSize: '0.68rem', 
+                        padding: '1px 6px', 
+                        borderRadius: '6px', 
                         border: '1px solid',
                         fontWeight: '500',
                         ...turnoStyle
@@ -515,63 +732,168 @@ export default function DoctorDashboard() {
                       {patient.turno || '3º Turno'}
                     </span>
 
-                    {medInfo.totalMeds > 0 && (
-                      <span 
-                        style={{ 
-                          fontSize: '0.72rem', 
-                          padding: '2px 8px', 
-                          borderRadius: '10px', 
-                          border: '1px solid',
-                          background: '#fffbeb',
-                          borderColor: '#fef3c7',
-                          color: '#b45309',
-                          fontWeight: '500',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '3px'
-                        }}
-                      >
-                        <Pill size={11} /> {medInfo.totalMeds} meds
+                    <span style={{ fontSize: '0.68rem', background: '#eff6ff', color: '#1e40af', padding: '1px 6px', borderRadius: '6px', fontWeight: '500' }}>
+                      {patient.acessoVascular?.tipo || 'FAV'}
+                    </span>
+
+                    {medInfo.hasAlerts && (
+                      <span style={{ fontSize: '0.68rem', background: '#fee2e2', color: '#b91c1c', padding: '1px 6px', borderRadius: '6px', fontWeight: 'bold' }} title="Alertas de medicação">
+                        ⚠️ Alerta
                       </span>
                     )}
                   </div>
-
-                  {medInfo.hasAlerts && (
-                    <div 
-                      className="mt-2.5 p-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold"
-                      style={{ 
-                        background: medInfo.expired.length > 0 ? '#fee2e2' : '#fef3c7',
-                        color: medInfo.expired.length > 0 ? '#b91c1c' : '#b45309',
-                        border: '1px solid',
-                        borderColor: medInfo.expired.length > 0 ? '#fecaca' : '#fde68a'
-                      }}
-                    >
-                      <AlertTriangle size={13} />
-                      <span>
-                        {medInfo.expired.length > 0 ? `${medInfo.expired.length} ciclo encerrado` : `${medInfo.expiring.length} medicação a vencer`}
-                      </span>
-                    </div>
-                  )}
                 </div>
+              );
+            })
+          )}
+        </div>
+      )}
 
-                <div className="flex items-center justify-between text-xs text-muted pt-2.5 border-t" style={{ borderColor: 'rgba(226, 232, 240, 0.8)' }}>
-                  <div className="flex items-center gap-1.5 truncate mr-2">
-                    <Activity size={14} color="var(--primary)" />
-                    <span className="truncate">
-                      {patient.acessoVascular?.tipo || 'Acesso não inf.'}
-                    </span>
-                  </div>
+      {/* ================= MODALIDADE 3: VISUALIZAÇÃO EM TABELA (RONDA CLÍNICA) ================= */}
+      {viewMode === 'table' && (
+        <div className="glass-panel" style={{ padding: '0', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+          {filteredPatients.length === 0 ? (
+            <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+              <p>Nenhum paciente encontrado com os filtros selecionados.</p>
+            </div>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
+                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Paciente</th>
+                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Unidade</th>
+                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Turno</th>
+                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Status</th>
+                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Acesso Vascular</th>
+                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Medicações & Alertas</th>
+                    <th style={{ padding: '0.85rem 1rem', textAlign: 'right', color: '#475569' }}>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPatients.map((patient, idx) => {
+                    const statusStyle = getStatusStyle(patient.status);
+                    const turnoStyle = getTurnoStyle(patient.turno);
+                    const medInfo = getPatientMedicationAlerts(patient);
 
-                  <div className="flex items-center gap-1" style={{ color: 'var(--primary)', fontWeight: '600', flexShrink: 0 }}>
-                    <span>Prontuário</span>
-                    <ChevronRight size={14} />
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        )}
-      </div>
+                    return (
+                      <tr 
+                        key={patient.id || idx}
+                        onClick={() => navigate(`/patient/${patient.id}`)}
+                        style={{ 
+                          borderBottom: '1px solid var(--border)', 
+                          cursor: 'pointer',
+                          transition: 'background 0.15s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(239, 246, 255, 0.6)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                      >
+                        <td style={{ padding: '0.85rem 1rem', fontWeight: 'bold', color: '#1e293b' }}>
+                          <div className="flex items-center gap-2">
+                            <span>{patient.nome}</span>
+                            {patient.idade && (
+                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>
+                                ({patient.idade} anos)
+                              </span>
+                            )}
+                          </div>
+                        </td>
+
+                        <td style={{ padding: '0.85rem 1rem', color: '#64748b' }}>
+                          <div className="flex items-center gap-1">
+                            <Building2 size={13} color="#2563eb" />
+                            <span>{patient.clinica || 'Dialize Betim'}</span>
+                          </div>
+                        </td>
+
+                        <td style={{ padding: '0.85rem 1rem' }}>
+                          <span 
+                            style={{ 
+                              fontSize: '0.72rem', 
+                              padding: '2px 8px', 
+                              borderRadius: '8px', 
+                              border: '1px solid',
+                              fontWeight: '500',
+                              ...turnoStyle
+                            }}
+                          >
+                            {patient.turno || '3º Turno'}
+                          </span>
+                        </td>
+
+                        <td style={{ padding: '0.85rem 1rem' }}>
+                          <span 
+                            style={{ 
+                              fontSize: '0.72rem', 
+                              padding: '2px 8px', 
+                              borderRadius: '8px', 
+                              border: '1px solid',
+                              fontWeight: '600',
+                              ...statusStyle
+                            }}
+                          >
+                            {patient.status || 'Ativo'}
+                          </span>
+                        </td>
+
+                        <td style={{ padding: '0.85rem 1rem', color: '#334155' }}>
+                          <div className="flex items-center gap-1">
+                            <Activity size={13} color="var(--primary)" />
+                            <span>{patient.acessoVascular?.tipo || 'FAV'} {patient.acessoVascular?.ladoMembro ? `(${patient.acessoVascular.ladoMembro})` : ''}</span>
+                          </div>
+                        </td>
+
+                        <td style={{ padding: '0.85rem 1rem' }}>
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {medInfo.totalMeds > 0 ? (
+                              <span style={{ fontSize: '0.72rem', background: '#f1f5f9', padding: '2px 7px', borderRadius: '6px', color: '#475569' }}>
+                                {medInfo.totalMeds} prescrições
+                              </span>
+                            ) : (
+                              <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>-</span>
+                            )}
+
+                            {medInfo.hasAlerts && (
+                              <span style={{ fontSize: '0.72rem', background: '#fee2e2', color: '#b91c1c', padding: '2px 7px', borderRadius: '6px', fontWeight: 'bold' }}>
+                                ⚠️ {medInfo.expired.length > 0 ? 'Vencido' : 'A vencer'}
+                              </span>
+                            )}
+                          </div>
+                        </td>
+
+                        <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
+                          <div className="flex justify-end items-center gap-2">
+                            <button 
+                              className="btn btn-outline" 
+                              onClick={(e) => handleEditPatient(e, patient)}
+                              style={{ padding: '0.3rem 0.6rem', fontSize: '0.75rem' }}
+                              title="Editar paciente"
+                            >
+                              <Edit size={13} />
+                            </button>
+
+                            <button 
+                              className="btn btn-primary"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/patient/${patient.id}`);
+                              }}
+                              style={{ padding: '0.3rem 0.75rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <span>Prontuário</span>
+                              <ChevronRight size={13} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Modais */}
       <PatientFormModal 

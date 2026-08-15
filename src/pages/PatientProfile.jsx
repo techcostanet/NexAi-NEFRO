@@ -251,7 +251,7 @@ export default function PatientProfile() {
         <div className="card-pastel-amber mb-6 animate-in" style={{ padding: '1.25rem', borderRadius: '16px' }}>
           <div className="flex justify-between items-center mb-2 flex-wrap gap-2">
             <h3 className="font-bold text-sm flex items-center gap-2" style={{ color: '#92400e' }}>
-              <Clock size={18} /> Alertas de Prescrições com Prazo / Término
+              <Clock size={18} /> Alertas de Prescrições
             </h3>
             <span style={{ fontSize: '0.75rem', padding: '2px 10px', borderRadius: '12px', background: '#fef3c7', color: '#92400e', fontWeight: 'bold' }}>
               {medAlerts.length} {medAlerts.length === 1 ? 'pendência' : 'pendências'}
@@ -274,7 +274,7 @@ export default function PatientProfile() {
                       onClick={() => handleEditMedication(m)}
                       style={{ padding: '0.3rem 0.7rem', fontSize: '0.75rem', background: '#ffffff', borderColor: '#fde68a', color: '#b45309' }}
                     >
-                      Renovar / Ajustar
+                      Renovar Prescrição
                     </button>
                     <button 
                       className="btn btn-outline" 
@@ -310,7 +310,7 @@ export default function PatientProfile() {
               <strong className="font-semibold">{acessoVascular.tipo || 'Não informado'}</strong>
             </div>
             <div className="flex justify-between border-b pb-2" style={{ borderColor: 'rgba(191, 219, 254, 0.6)' }}>
-              <span className="text-muted" style={{ color: '#475569' }}>Membro / Local:</span>
+              <span className="text-muted" style={{ color: '#475569' }}>Localização:</span>
               <strong className="font-semibold">{acessoVascular.ladoMembro || '-'}</strong>
             </div>
             <div className="flex justify-between border-b pb-2" style={{ borderColor: 'rgba(191, 219, 254, 0.6)' }}>
@@ -395,7 +395,7 @@ export default function PatientProfile() {
                   fontWeight: '600'
                 }}
               >
-                Ciclos / Prazos ({medicamentosList.filter(m => m.tipo === 'temporario' && m.ativo !== false).length})
+                Ciclos com Prazo ({medicamentosList.filter(m => m.tipo === 'temporario' && m.ativo !== false).length})
               </button>
               {medAlerts.length > 0 && (
                 <button

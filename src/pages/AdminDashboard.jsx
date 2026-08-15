@@ -493,10 +493,10 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Card Inadimplência / Churn */}
+        {/* Card Inadimplência */}
         <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px', background: 'linear-gradient(135deg, rgba(254, 242, 242, 0.8), rgba(255, 255, 255, 0.9))', border: '1px solid #fecaca' }}>
           <div className="flex justify-between items-start mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-muted">Inadimplência / Churn</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-muted">Inadimplência</span>
             <div style={{ padding: '6px', background: '#fee2e2', borderRadius: '8px', color: '#dc2626' }}>
               <AlertTriangle size={18} />
             </div>
@@ -606,8 +606,8 @@ export default function AdminDashboard() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
-                    <th style={{ padding: '0.85rem 1rem' }}>Médico / Responsável</th>
-                    <th style={{ padding: '0.85rem 1rem' }}>CRM / RQE / CPF</th>
+                    <th style={{ padding: '0.85rem 1rem' }}>Médico Responsável</th>
+                    <th style={{ padding: '0.85rem 1rem' }}>Registro Profissional</th>
                     <th style={{ padding: '0.85rem 1rem' }}>Plano & Mensalidade</th>
                     <th style={{ padding: '0.85rem 1rem' }}>Vigência & Vencimento</th>
                     <th style={{ padding: '0.85rem 1rem' }}>Status</th>
@@ -1028,7 +1028,7 @@ export default function AdminDashboard() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold mb-1 block">Telefone / WhatsApp</label>
+                  <label className="text-xs font-semibold mb-1 block">Telefone</label>
                   <input 
                     type="text" 
                     className="input-field" 
@@ -1086,7 +1086,7 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold mb-1 block">Clínica / Serviço Principal</label>
+                <label className="text-xs font-semibold mb-1 block">Clínica Principal</label>
                 <input 
                   type="text" 
                   className="input-field" 
@@ -1113,7 +1113,7 @@ export default function AdminDashboard() {
                   >
                     <option value="Mensal">Mensal (R$ 490/mês)</option>
                     <option value="Anual">Anual (R$ 4.900/ano)</option>
-                    <option value="Demonstração">Demonstração / Trial</option>
+                    <option value="Demonstração">Demonstração</option>
                   </select>
                 </div>
 

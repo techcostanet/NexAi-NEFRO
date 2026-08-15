@@ -196,7 +196,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block">Unidade / Local de Atendimento *</label>
+                <label className="text-sm font-semibold mb-1 block">Unidade de Atendimento *</label>
                 {locaisAtuacao && locaisAtuacao.length > 0 && !customClinic ? (
                   <div className="flex flex-col gap-1">
                     <select 
@@ -245,7 +245,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block">Hospital / Retaguarda</label>
+                <label className="text-sm font-semibold mb-1 block">Hospital de Retaguarda</label>
                 <input 
                   type="text" 
                   className="input-field" 
@@ -265,7 +265,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                   <option value="1º Turno">1º Turno (Manhã)</option>
                   <option value="2º Turno">2º Turno (Tarde)</option>
                   <option value="3º Turno">3º Turno (Noite)</option>
-                  <option value="4º Turno">4º Turno / Noturno</option>
+                  <option value="4º Turno">4º Turno</option>
                   <option value="Diálise Peritoneal">Diálise Peritoneal</option>
                 </select>
               </div>
@@ -330,7 +330,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block">Membro / Localização</label>
+                <label className="text-sm font-semibold mb-1 block">Localização do Acesso</label>
                 <input 
                   type="text" 
                   className="input-field" 

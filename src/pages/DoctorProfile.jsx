@@ -426,7 +426,7 @@ export default function DoctorProfile() {
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
             <div>
-              <label className="text-sm font-semibold mb-1 block">Nome Completo / Como deseja ser chamado</label>
+              <label className="text-sm font-semibold mb-1 block">Nome Completo</label>
               <input 
                 type="text" 
                 className="input-field" 
@@ -436,7 +436,7 @@ export default function DoctorProfile() {
               />
             </div>
             <div>
-              <label className="text-sm font-semibold mb-1 block">Título / Cargo</label>
+              <label className="text-sm font-semibold mb-1 block">Título Profissional</label>
               <input 
                 type="text" 
                 className="input-field" 
@@ -507,7 +507,7 @@ export default function DoctorProfile() {
               />
             </div>
             <div>
-              <label className="text-sm font-semibold mb-1 block">Telefone / WhatsApp Pessoal</label>
+              <label className="text-sm font-semibold mb-1 block">Telefone</label>
               <input 
                 type="text" 
                 className="input-field" 
@@ -517,7 +517,7 @@ export default function DoctorProfile() {
               />
             </div>
             <div style={{ gridColumn: '1 / -1' }}>
-              <label className="text-sm font-semibold mb-1 block">Biografia / Observações Clínicas</label>
+              <label className="text-sm font-semibold mb-1 block">Biografia</label>
               <textarea 
                 className="input-field" 
                 rows={3}
@@ -593,14 +593,14 @@ export default function DoctorProfile() {
 
             <form onSubmit={handleSaveLocation} className="flex flex-col gap-3.5">
               <div>
-                <label className="text-xs font-bold text-slate-700 mb-1 block">Nome do Local / Instituição *</label>
+                <label className="text-xs font-bold text-slate-700 mb-1 block">Nome da Unidade *</label>
                 <input 
                   type="text" 
                   className="input-field" 
                   placeholder="Ex: Centro de Diálise Fresenius Zona Sul ou Hospital Santa Clara" 
                   value={locationFormData.nome}
                   onChange={(e) => setLocationFormData(prev => ({ ...prev, nome: e.target.value }))}
-                  required
+                  required 
                 />
               </div>
 
@@ -613,8 +613,8 @@ export default function DoctorProfile() {
                     onChange={(e) => setLocationFormData(prev => ({ ...prev, tipo: e.target.value }))}
                   >
                     <option value="Clínica de Hemodiálise">🏥 Clínica de Hemodiálise</option>
-                    <option value="Hospital Geral / UTI">🏨 Hospital Geral / UTI</option>
-                    <option value="Consultório / Ambulatório">🩺 Consultório / Ambulatório</option>
+                    <option value="Hospital Geral">🏨 Hospital Geral</option>
+                    <option value="Ambulatório">🩺 Ambulatório</option>
                     <option value="Centro de Transplante">🏢 Centro de Transplante</option>
                   </select>
                 </div>
@@ -627,7 +627,7 @@ export default function DoctorProfile() {
                     onChange={(e) => setLocationFormData(prev => ({ ...prev, status: e.target.value }))}
                   >
                     <option value="Ativo">🟢 Ativo (Em atendimento)</option>
-                    <option value="Inativo">⏸️ Inativo (Pausado / Sem ronda)</option>
+                    <option value="Inativo">⏸️ Inativo</option>
                   </select>
                 </div>
               </div>
@@ -663,7 +663,7 @@ export default function DoctorProfile() {
                   </div>
 
                   <div style={{ gridColumn: '1 / -1' }}>
-                    <label className="text-xs font-semibold text-slate-700 mb-1 block">Telefone / WhatsApp da Enfermagem / Recepção</label>
+                    <label className="text-xs font-semibold text-slate-700 mb-1 block">Contato da Enfermagem</label>
                     <input 
                       type="text" 
                       className="input-field" 
@@ -689,7 +689,7 @@ export default function DoctorProfile() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 mb-1 block">Turnos / Horários de Ronda</label>
+                  <label className="text-xs font-bold text-slate-700 mb-1 block">Turnos de Atendimento</label>
                   <input 
                     type="text" 
                     className="input-field" 
@@ -700,7 +700,7 @@ export default function DoctorProfile() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 mb-1 block">Cidade / UF</label>
+                  <label className="text-xs font-bold text-slate-700 mb-1 block">Cidade</label>
                   <input 
                     type="text" 
                     className="input-field" 
@@ -711,7 +711,7 @@ export default function DoctorProfile() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 mb-1 block">Endereço / Referência</label>
+                  <label className="text-xs font-bold text-slate-700 mb-1 block">Endereço</label>
                   <input 
                     type="text" 
                     className="input-field" 

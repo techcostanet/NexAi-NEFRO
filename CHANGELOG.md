@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.19] - 2026-08-15
+### Alterações
+- Adiciona 3 modos de visualizacao, migra pacientes para Dialize Betim e simplifica rotulos do sistema
+
 ## [1.1.18] - 2026-08-15
 ### Alterações
 - Corrige persistencia do currentUser no login e compatibilidade de senhas
