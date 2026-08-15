@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : {};
 
@@ -17,14 +18,17 @@ const firebaseConfig = {
 let app;
 let auth;
 let db;
+let storage;
 
 try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
-  console.log("Firebase inicializado com sucesso no projeto:", firebaseConfig.projectId);
+  storage = getStorage(app);
+  console.log("Firebase 100% Cloud inicializado com sucesso:", firebaseConfig.projectId);
 } catch (error) {
-  console.error("Erro ao inicializar Firebase:", error);
+  console.error("Erro ao inicializar Firebase Cloud:", error);
 }
 
-export { app, auth, db };
+export { app, auth, db, storage };
+

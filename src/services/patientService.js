@@ -10,7 +10,6 @@ import {
   writeBatch 
 } from "firebase/firestore";
 import { db } from "../config/firebase";
-import localPatients from "../data/patients_db.json";
 import { normalizeMedicamentosList } from "../data/dialysisMedications";
 import { DEMO_PATIENTS_DATA } from "../data/demoPatients";
 
@@ -47,11 +46,11 @@ export function calculateAge(birthDateStr) {
 }
 
 /**
- * Escuta todos os pacientes em tempo real do Firestore
+ * Escuta todos os pacientes em tempo real exclusivamente do Cloud Firestore
  */
 export function subscribeToPatients(callback, onError) {
   if (!db) {
-    if (callback) callback(localPatients, true);
+    if (callback) callback([]);
     return () => {};
   }
 
@@ -60,37 +59,32 @@ export function subscribeToPatients(callback, onError) {
     return onSnapshot(
       colRef, 
       (snapshot) => {
-        if (snapshot.empty) {
-          callback(localPatients, true);
-        } else {
-          const list = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          }));
-          list.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
-          callback(list, false);
-        }
+        const list = snapshot.docs.map(docSnap => ({
+          id: docSnap.id,
+          ...docSnap.data()
+        }));
+        list.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
+        if (callback) callback(list);
       },
       (error) => {
-        console.warn("Erro ao ler do Firestore (usando fallback local):", error);
+        console.error("Erro ao ler coleção 'patients' do Cloud Firestore:", error);
         if (onError) onError(error);
-        if (callback) callback(localPatients, true);
+        if (callback) callback([]);
       }
     );
   } catch (err) {
     console.error("Falha ao configurar snapshot do Firestore:", err);
-    if (callback) callback(localPatients, true);
+    if (callback) callback([]);
     return () => {};
   }
 }
 
 /**
- * Escuta um paciente específico em tempo real
+ * Escuta um paciente específico em tempo real diretamente do Cloud Firestore
  */
 export function subscribeToPatientById(id, callback, onError) {
-  if (!db) {
-    const p = localPatients.find(item => item.id === id) || null;
-    if (callback) callback(p);
+  if (!db || !id) {
+    if (callback) callback(null);
     return () => {};
   }
 
@@ -101,42 +95,39 @@ export function subscribeToPatientById(id, callback, onError) {
       if (snap.exists()) {
         callback({ id: snap.id, ...snap.data() });
       } else {
-        const fallback = localPatients.find(item => item.id === id) || null;
-        callback(fallback);
+        callback(null);
       }
     },
     (err) => {
-      console.warn("Erro ao escutar paciente:", err);
+      console.error("Erro ao escutar paciente no Firestore:", err);
       if (onError) onError(err);
-      const fallback = localPatients.find(item => item.id === id) || null;
-      if (callback) callback(fallback);
+      if (callback) callback(null);
     }
   );
 }
 
 /**
- * Busca um único paciente por ID
+ * Busca um único paciente por ID no Cloud Firestore
  */
 export async function getPatientById(id) {
-  if (db) {
-    try {
-      const docRef = doc(db, PATIENTS_COLLECTION, id);
-      const snap = await getDoc(docRef);
-      if (snap.exists()) {
-        return { id: snap.id, ...snap.data() };
-      }
-    } catch (err) {
-      console.warn("Erro ao buscar paciente no Firestore:", err);
+  if (!db || !id) return null;
+  try {
+    const docRef = doc(db, PATIENTS_COLLECTION, id);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      return { id: snap.id, ...snap.data() };
     }
+  } catch (err) {
+    console.error("Erro ao buscar paciente no Firestore:", err);
   }
-  return localPatients.find(p => p.id === id) || null;
+  return null;
 }
 
 /**
- * Cadastra ou Atualiza um paciente completo
+ * Cadastra ou Atualiza um paciente completo no Cloud Firestore
  */
 export async function savePatient(patientData) {
-  if (!db) throw new Error("Firestore não inicializado");
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
   
   const id = patientData.id || generatePatientId(patientData.nome);
   const docRef = doc(db, PATIENTS_COLLECTION, id);
@@ -156,13 +147,13 @@ export async function savePatient(patientData) {
 }
 
 /**
- * Adiciona ou atualiza um exame com data no histórico do paciente
+ * Adiciona ou atualiza um exame com data no histórico do paciente no Firestore
  */
 export async function savePatientExam(patientId, examData, examIndex = null) {
-  if (!db) throw new Error("Firestore não inicializado");
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
   
   const patient = await getPatientById(patientId);
-  if (!patient) throw new Error("Paciente não encontrado");
+  if (!patient) throw new Error("Paciente não encontrado no Firestore");
 
   const historico = Array.isArray(patient.historicoExames) ? [...patient.historicoExames] : [];
 
@@ -220,10 +211,10 @@ export async function savePatientExam(patientId, examData, examIndex = null) {
 }
 
 /**
- * Remove um exame do histórico
+ * Remove um exame do histórico do paciente no Firestore
  */
 export async function deletePatientExam(patientId, examIndex) {
-  if (!db) throw new Error("Firestore não inicializado");
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
   const patient = await getPatientById(patientId);
   if (!patient || !Array.isArray(patient.historicoExames)) return;
 
@@ -238,12 +229,12 @@ export async function deletePatientExam(patientId, examIndex) {
 }
 
 /**
- * Adiciona ou atualiza uma medicação no paciente
+ * Adiciona ou atualiza uma medicação no paciente no Firestore
  */
 export async function savePatientMedication(patientId, medData, medId = null) {
-  if (!db) throw new Error("Firestore não inicializado");
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
   const patient = await getPatientById(patientId);
-  if (!patient) throw new Error("Paciente não encontrado");
+  if (!patient) throw new Error("Paciente não encontrado no Firestore");
 
   let currentMeds = normalizeMedicamentosList(patient.medicamentos);
   const targetId = medId || medData.id || `med-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
@@ -272,12 +263,12 @@ export async function savePatientMedication(patientId, medData, medId = null) {
 }
 
 /**
- * Remove uma medicação do paciente
+ * Remove uma medicação do paciente no Firestore
  */
 export async function deletePatientMedication(patientId, medId) {
-  if (!db) throw new Error("Firestore não inicializado");
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
   const patient = await getPatientById(patientId);
-  if (!patient) throw new Error("Paciente não encontrado");
+  if (!patient) throw new Error("Paciente não encontrado no Firestore");
 
   let currentMeds = normalizeMedicamentosList(patient.medicamentos);
   currentMeds = currentMeds.filter(m => m.id !== medId);
@@ -292,12 +283,12 @@ export async function deletePatientMedication(patientId, medId) {
 }
 
 /**
- * Alterna o status ativo/suspenso de uma medicação
+ * Alterna o status ativo/suspenso de uma medicação no Firestore
  */
 export async function toggleMedicationStatus(patientId, medId, active) {
-  if (!db) throw new Error("Firestore não inicializado");
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
   const patient = await getPatientById(patientId);
-  if (!patient) throw new Error("Paciente não encontrado");
+  if (!patient) throw new Error("Paciente não encontrado no Firestore");
 
   let currentMeds = normalizeMedicamentosList(patient.medicamentos);
   currentMeds = currentMeds.map(m => {
@@ -317,58 +308,19 @@ export async function toggleMedicationStatus(patientId, medId, active) {
 }
 
 /**
- * Exclui um paciente do Firestore
+ * Exclui um paciente permanentemente do Cloud Firestore
  */
 export async function deletePatient(id) {
-  if (!db) throw new Error("Firestore não inicializado");
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
   const docRef = doc(db, PATIENTS_COLLECTION, id);
   await deleteDoc(docRef);
-}
-
-/**
- * Sincroniza/Importa dados iniciais locais para o Firestore
- */
-export async function seedFirestoreWithLocalData() {
-  if (!db) throw new Error("Firestore não conectado");
-
-  const batchSize = 400;
-  const chunks = [];
-  
-  for (let i = 0; i < localPatients.length; i += batchSize) {
-    chunks.push(localPatients.slice(i, i + batchSize));
-  }
-
-  for (const chunk of chunks) {
-    const batch = writeBatch(db);
-    chunk.forEach(patient => {
-      const docRef = doc(db, PATIENTS_COLLECTION, patient.id);
-      // Cria histórico inicial com os exames atuais
-      const patientWithHistory = {
-        ...patient,
-        status: patient.status || "Ativo",
-        clinica: patient.clinica || "Clínica Nefrológica NexAi",
-        hospital: patient.hospital || "Hospital de Nefrologia",
-        historicoExames: [
-          {
-            dataExame: "2026-08-01",
-            ...patient.exames,
-            medicamentos: patient.medicamentos || {}
-          }
-        ]
-      };
-      batch.set(docRef, patientWithHistory, { merge: true });
-    });
-    await batch.commit();
-  }
-
-  return localPatients.length;
 }
 
 /**
  * Sincroniza e Restaura a Base Completa de Demonstração Nefrológica no Firestore
  */
 export async function seedDemoPatientsToFirestore() {
-  if (!db) throw new Error("Firestore não conectado");
+  if (!db) throw new Error("Cloud Firestore não conectado.");
 
   const batch = writeBatch(db);
   DEMO_PATIENTS_DATA.forEach(patient => {

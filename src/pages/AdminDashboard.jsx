@@ -18,9 +18,11 @@ import {
 } from 'lucide-react';
 import { subscribeDoctorsList, saveDoctorProfile } from '../services/doctorService';
 import { seedDemoPatientsToFirestore } from '../services/patientService';
+import { useAuth } from '../context/AuthContext';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const { setActiveDoctorId, logout } = useAuth();
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
@@ -47,9 +49,13 @@ export default function AdminDashboard() {
   }, []);
 
   const handleAccessDoctor = (doctor) => {
-    localStorage.setItem('activeDoctorId', doctor.id);
-    localStorage.setItem('userRole', 'doctor');
+    setActiveDoctorId(doctor.id);
     navigate('/doctor');
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
   };
 
   const handleResetDemoData = async () => {
@@ -126,7 +132,7 @@ export default function AdminDashboard() {
 
           <button 
             className="btn btn-outline" 
-            onClick={() => navigate('/login')} 
+            onClick={handleLogout} 
             style={{ padding: '0.55rem', borderRadius: '12px' }}
             title="Sair do painel"
           >

@@ -2,43 +2,37 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import KidneyIcon from '../components/KidneyIcon';
 import { APP_VERSION } from '../version';
+import { useAuth } from '../context/AuthContext';
+import { Loader2 } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e?.preventDefault();
     setError('');
+    setIsSubmitting(true);
 
-    const cleanEmail = email.trim().toLowerCase();
-    const cleanPass = password.trim();
-
-    if (cleanEmail === 'admin@nefroapp.com' && (cleanPass === 'admin123' || cleanPass === 'admin')) {
-      localStorage.setItem('userRole', 'admin');
-      navigate('/admin');
-    } else if (cleanEmail === 'dr.marcelo@nefroapp.com' || cleanEmail === 'demo@nefroapp.com' || cleanEmail === 'demo') {
-      if (cleanPass === '123456' || cleanPass === 'demo123' || cleanPass === 'demo' || cleanPass === '123') {
-        localStorage.setItem('activeDoctorId', 'dr-marcelo');
-        localStorage.setItem('userRole', 'doctor');
-        navigate('/doctor');
+    try {
+      const authResult = await login(email, password);
+      if (authResult.role === 'admin') {
+        navigate('/admin');
       } else {
-        setError('Senha incorreta para a conta informada.');
-      }
-    } else if (cleanEmail === 'dra.gisele@nefroapp.com') {
-      if (cleanPass === '123456' || cleanPass === '123') {
-        localStorage.setItem('activeDoctorId', 'dra-gisele');
-        localStorage.setItem('userRole', 'doctor');
         navigate('/doctor');
-      } else {
-        setError('Senha incorreta para esta conta.');
       }
-    } else {
-      setError('Credenciais inválidas! Verifique seu e-mail e senha.');
+    } catch (err) {
+      console.error("Erro no login:", err);
+      setError(err.message || 'Credenciais inválidas! Verifique seu e-mail e senha.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
 
   return (
     <div className="flex items-center justify-center" style={{ minHeight: '100vh', padding: '1.5rem 1rem' }}>
@@ -99,8 +93,20 @@ export default function Login() {
 
           {error && <p style={{ color: 'var(--danger)', fontSize: '0.82rem', textAlign: 'center', fontWeight: '500' }}>{error}</p>}
 
-          <button type="submit" className="btn btn-primary w-full mt-2" style={{ padding: '0.75rem' }}>
-            Acessar Sistema
+          <button 
+            type="submit" 
+            className="btn btn-primary w-full mt-2" 
+            style={{ padding: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="animate-spin" size={18} />
+                <span>Autenticando na Nuvem...</span>
+              </>
+            ) : (
+              <span>Acessar Sistema</span>
+            )}
           </button>
         </form>
 

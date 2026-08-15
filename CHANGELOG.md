@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.10] - 2026-08-15
+### Alterações
+- Adequacao estrita para arquitetura 100% Cloud: integracao com Firebase Auth e Firebase Storage, remocao total de localStorage e eliminacao de persistencia JSON local
+
 ## [1.1.9] - 2026-08-15
 ### Alterações
 - Ajusta subtítulo para Gestão Nefrológica e remove bloco de acessos rápidos da tela de login

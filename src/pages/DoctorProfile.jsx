@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Stethoscope, Mail, Phone, Building2, Award, CheckCircle, Save, Loader2 } from 'lucide-react';
 import { subscribeDoctorProfile, saveDoctorProfile } from '../services/doctorService';
+import { useAuth } from '../context/AuthContext';
 
 export default function DoctorProfile() {
   const navigate = useNavigate();
+  const { activeDoctorId } = useAuth();
   const [profile, setProfile] = useState({
     nome: '',
     titulo: '',
@@ -23,7 +25,7 @@ export default function DoctorProfile() {
   const [saving, setSaving] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
 
-  const currentDoctorId = localStorage.getItem('activeDoctorId') || 'dr-marcelo';
+  const currentDoctorId = activeDoctorId || 'dr-marcelo';
 
   useEffect(() => {
     const unsubscribe = subscribeDoctorProfile(currentDoctorId, (data) => {

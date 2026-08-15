@@ -21,10 +21,12 @@ import { subscribeDoctorProfile } from '../services/doctorService';
 import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
 import PatientFormModal from '../components/PatientFormModal';
 import ChangelogModal from '../components/ChangelogModal';
+import { useAuth } from '../context/AuthContext';
 
 export default function DoctorDashboard() {
   const navigate = useNavigate();
-  const [doctor, setDoctor] = useState({ nome: 'Dra. Gisele', crm: '123456', ufCrm: 'SP' });
+  const { activeDoctorId, logout } = useAuth();
+  const [doctor, setDoctor] = useState({ nome: 'Dr. Marcelo Ramos', crm: '654321', ufCrm: 'SP' });
   const [patients, setPatients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterTurno, setFilterTurno] = useState('Todos');
@@ -34,7 +36,7 @@ export default function DoctorDashboard() {
   const [patientToEdit, setPatientToEdit] = useState(null);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
-  const currentDoctorId = localStorage.getItem('activeDoctorId') || 'dr-marcelo';
+  const currentDoctorId = activeDoctorId || 'dr-marcelo';
 
   useEffect(() => {
     const unsubDoc = subscribeDoctorProfile(currentDoctorId, (data) => {
@@ -49,7 +51,12 @@ export default function DoctorDashboard() {
       unsubDoc();
       unsubPatients();
     };
-  }, []);
+  }, [currentDoctorId]);
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
 
   const handleOpenNewPatient = () => {
     setPatientToEdit(null);
@@ -176,7 +183,7 @@ export default function DoctorDashboard() {
 
           <button 
             className="btn btn-outline" 
-            onClick={() => navigate('/login')} 
+            onClick={handleLogout} 
             style={{ padding: '0.55rem', borderRadius: '12px' }}
             title="Sair do sistema"
           >

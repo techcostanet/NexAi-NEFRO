@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import Login from './pages/Login';
 import AdminDashboard from './pages/AdminDashboard';
 import DoctorDashboard from './pages/DoctorDashboard';
@@ -13,18 +14,20 @@ function App() {
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
   return (
-    <Router>
-      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flex: 1 }}>
-          <Routes>
-            <Route path="/" element={<Navigate to="/login" />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/doctor" element={<DoctorDashboard />} />
-            <Route path="/doctor/profile" element={<DoctorProfile />} />
-            <Route path="/patient/:id" element={<PatientProfile />} />
-          </Routes>
-        </div>
+    <AuthProvider>
+      <Router>
+        <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1 }}>
+            <Routes>
+              <Route path="/" element={<Navigate to="/login" />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/doctor" element={<DoctorDashboard />} />
+              <Route path="/doctor/profile" element={<DoctorProfile />} />
+              <Route path="/patient/:id" element={<PatientProfile />} />
+            </Routes>
+          </div>
+
         
         <footer style={{ 
           textAlign: 'center', 
@@ -67,6 +70,7 @@ function App() {
         />
       </div>
     </Router>
+  </AuthProvider>
   );
 }
 
