@@ -175,6 +175,7 @@ export default function DoctorDashboard() {
           <button 
             className="btn btn-primary" 
             onClick={handleOpenNewPatient}
+            disabled={doctor.statusLicenca === 'Suspenso' || doctor.statusLicenca === 'Cancelado'}
             style={{ padding: '0.55rem 1.1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
           >
             <UserPlus size={16} />
@@ -191,6 +192,28 @@ export default function DoctorDashboard() {
           </button>
         </div>
       </header>
+
+      {(doctor.statusLicenca === 'Suspenso' || doctor.statusLicenca === 'Cancelado') && (
+        <div 
+          className="glass-panel mb-4 animate-in" 
+          style={{ 
+            padding: '1rem 1.25rem', 
+            background: 'rgba(254, 242, 242, 0.95)', 
+            border: '1px solid #fecaca', 
+            color: '#b91c1c', 
+            borderRadius: '16px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '10px' 
+          }}
+        >
+          <AlertTriangle size={22} color="#dc2626" />
+          <div>
+            <strong className="block text-sm">Atenção: Licença Médica Temporariamente {doctor.statusLicenca}</strong>
+            <span className="text-xs">Seus dados clínicos e prontuários estão preservados com segurança na nuvem. Entre em contato com a administração para reativação da licença.</span>
+          </div>
+        </div>
+      )}
 
       {/* Painel de Filtros e Busca com Toque Pastel Suave */}
       <div className="glass-panel" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '16px' }}>

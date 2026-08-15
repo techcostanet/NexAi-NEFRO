@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.12] - 2026-08-15
+### Alterações
+- Implementa modernizacao completa do Painel Super Administrador: Modelo de licencas com CRM/CPF/Vigencia, metricas SaaS (MRR/ARR/Churn), auditoria de impersonacao no Firestore e seguranca sem senhas em tela
+
 ## [1.1.11] - 2026-08-15
 ### Alterações
 - Corrige autenticacao na nuvem para suportar contas administrativas, medicas e Firestore com resiliencia total
