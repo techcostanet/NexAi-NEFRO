@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.16] - 2026-08-15
+### Alterações
+- Corrige tela de carregamento infinito do Auth
+
 ## [1.1.15] - 2026-08-15
 ### Alterações
 - Corrige vazamento de sessao F5 e redesign locais de atuacao

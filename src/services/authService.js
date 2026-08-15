@@ -219,6 +219,8 @@ export function subscribeToAuthState(callback) {
             nome
           };
           notifySubscribers(userObj);
+        } else {
+          notifySubscribers(null);
         }
       });
     } catch (e) {
