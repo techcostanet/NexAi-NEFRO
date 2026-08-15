@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
     setLoading(true);
     try {
       const authResult = await loginWithFirebaseAuth(email, password);
-      setCurrentUser(authResult.user);
+      setCurrentUser(authResult.firebaseUser || authResult);
       setUserRole(authResult.role);
       
       const tenantToUse = authResult.activeTenantId || authResult.doctorId;

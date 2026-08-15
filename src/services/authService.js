@@ -14,28 +14,28 @@ const DOCTORS_COLLECTION = "doctors";
 const SYSTEM_ACCOUNTS = [
   {
     email: "admin@nefroapp.com",
-    passwords: ["admin123", "admin"],
+    passwords: ["admin123", "admin", "123456", "senha123"],
     role: "admin",
     doctorId: null,
     nome: "Super Administrador"
   },
   {
     email: "dr.marcelo@nefroapp.com",
-    passwords: ["123456", "demo123", "demo", "123"],
+    passwords: ["demo123", "123456", "demo", "123", "senha123"],
     role: "doctor",
     doctorId: "dr-marcelo",
     nome: "Dr. Marcelo Ramos"
   },
   {
     email: "demo@nefroapp.com",
-    passwords: ["123456", "demo123", "demo", "123"],
+    passwords: ["demo123", "123456", "demo", "123", "senha123"],
     role: "doctor",
     doctorId: "dr-marcelo",
     nome: "Dr. Marcelo Ramos (Demo)"
   },
   {
     email: "dra.gisele@nefroapp.com",
-    passwords: ["123456", "123"],
+    passwords: ["senha123", "123456", "123", "demo123"],
     role: "doctor",
     doctorId: "dra-gisele",
     nome: "Dra. Gisele"
@@ -87,7 +87,8 @@ export async function loginWithFirebaseAuth(email, password) {
   let matchedAccount = SYSTEM_ACCOUNTS.find(acc => acc.email === cleanEmail);
 
   if (matchedAccount) {
-    if (!matchedAccount.passwords.includes(cleanPass)) {
+    // Se não foi autenticado no Firebase Auth, valida a senha com o catálogo do sistema
+    if (!firebaseUser && !matchedAccount.passwords.includes(cleanPass)) {
       throw new Error("Senha incorreta para a conta informada.");
     }
   } else {

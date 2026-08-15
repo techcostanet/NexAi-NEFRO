@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.18] - 2026-08-15
+### Alterações
+- Corrige persistencia do currentUser no login e compatibilidade de senhas
+
 ## [1.1.17] - 2026-08-15
 ### Alterações
 - Forca redirecionamento para login quando sem sessao e remove fallbacks visuais
