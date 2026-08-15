@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.20] - 2026-08-15
+### Alterações
+- Reformulacao completa do Prontuario com abas clinicas, exames balanceados e registro de evolucoes
+
 ## [1.1.19] - 2026-08-15
 ### Alterações
 - Adiciona 3 modos de visualizacao, migra pacientes para Dialize Betim e simplifica rotulos do sistema

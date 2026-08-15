@@ -308,6 +308,62 @@ export async function toggleMedicationStatus(patientId, medId, active) {
 }
 
 /**
+ * Adiciona ou edita uma evolução médica / nota de ronda no paciente no Firestore
+ */
+export async function savePatientEvolution(patientId, evolutionData, evolutionId = null) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado no Firestore");
+
+  const evolucoes = Array.isArray(patient.evolucoes) ? [...patient.evolucoes] : [];
+  const targetId = evolutionId || evolutionData.id || `evo-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+
+  const evolutionRecord = {
+    ...evolutionData,
+    id: targetId,
+    dataHora: evolutionData.dataHora || new Date().toISOString(),
+    registradoEm: new Date().toISOString()
+  };
+
+  const existingIdx = evolucoes.findIndex(e => e.id === targetId);
+  if (existingIdx !== -1) {
+    evolucoes[existingIdx] = evolutionRecord;
+  } else {
+    evolucoes.unshift(evolutionRecord);
+  }
+
+  // Ordena por data e hora decrescente
+  evolucoes.sort((a, b) => new Date(b.dataHora || 0) - new Date(a.dataHora || 0));
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    evolucoes,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return evolucoes;
+}
+
+/**
+ * Remove uma evolução do histórico do paciente no Firestore
+ */
+export async function deletePatientEvolution(patientId, evolutionId) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient || !Array.isArray(patient.evolucoes)) return;
+
+  const evolucoes = patient.evolucoes.filter(e => e.id !== evolutionId);
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    evolucoes,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return evolucoes;
+}
+
+/**
  * Exclui um paciente permanentemente do Cloud Firestore
  */
 export async function deletePatient(id) {
