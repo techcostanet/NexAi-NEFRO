@@ -10,6 +10,14 @@ import ChangelogModal from './components/ChangelogModal';
 import { APP_VERSION } from './version';
 import { Sparkles, Loader2 } from 'lucide-react';
 
+function ProtectedRoute({ children }) {
+  const { currentUser } = useAuth();
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
 function AppContent() {
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
   const { loading } = useAuth();
@@ -30,10 +38,10 @@ function AppContent() {
             <Routes>
               <Route path="/" element={<Navigate to="/login" />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/doctor" element={<DoctorDashboard />} />
-              <Route path="/doctor/profile" element={<DoctorProfile />} />
-              <Route path="/patient/:id" element={<PatientProfile />} />
+              <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+              <Route path="/doctor" element={<ProtectedRoute><DoctorDashboard /></ProtectedRoute>} />
+              <Route path="/doctor/profile" element={<ProtectedRoute><DoctorProfile /></ProtectedRoute>} />
+              <Route path="/patient/:id" element={<ProtectedRoute><PatientProfile /></ProtectedRoute>} />
             </Routes>
           </div>
 

@@ -30,9 +30,9 @@ export default function DoctorDashboard() {
   const { activeDoctorId, logout } = useAuth();
   
   const [doctor, setDoctor] = useState({ 
-    nome: 'Dr. Marcelo Ramos', 
-    crm: '654321', 
-    ufCrm: 'SP',
+    nome: 'Carregando...', 
+    crm: '', 
+    ufCrm: '',
     locaisAtuacao: []
   });
   
