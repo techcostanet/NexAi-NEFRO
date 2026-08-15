@@ -56,6 +56,7 @@ O banco de dados do NexAi-NEFRO é organizado nas seguintes coleções principai
 - `dataInicioAssinatura`: string (ISO 8601)
 - `dataFimAssinatura`: string (ISO 8601)
 - `historicoPagamentos`: array of objects `[{ id, data, valor, plano, status, metodo, referencia }]`
+- `locaisAtuacao`: array of objects `[{ id, nome, tipo, cidade, turnos, criadoEm }]` (Unidades de atendimento e clínicas cadastradas pelo médico)
 - `pacientesCount`: number
 - `atualizadoEm`: string (ISO 8601)
 

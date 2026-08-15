@@ -38,6 +38,11 @@ export const DEFAULT_DOCTORS = [
         referencia: "Ciclo Inicial Trial"
       }
     ],
+    locaisAtuacao: [
+      { id: "loc-01", nome: "Centro Nefrológico NexAi & Hospital do Rim", tipo: "Clínica de Hemodiálise", cidade: "São Paulo/SP", turnos: "1º, 2º e 3º Turnos" },
+      { id: "loc-02", nome: "Hospital Estadual de Nefrologia", tipo: "Hospital Geral / UTI", cidade: "São Paulo/SP", turnos: "Interconsultas e UTI" },
+      { id: "loc-03", nome: "Consultório Privado Dr. Marcelo", tipo: "Consultório / Ambulatório", cidade: "São Paulo/SP", turnos: "Manhã / Tarde" }
+    ],
     pacientesCount: 6,
     criadoEm: "2026-08-01T00:00:00.000Z"
   },
@@ -81,6 +86,10 @@ export const DEFAULT_DOCTORS = [
         metodo: "Cartão de Crédito",
         referencia: "Mensalidade Ago/Set 2026"
       }
+    ],
+    locaisAtuacao: [
+      { id: "loc-04", nome: "Clínica Nefrológica NexAi", tipo: "Clínica de Hemodiálise", cidade: "São Paulo/SP", turnos: "1º, 2º e 3º Turnos" },
+      { id: "loc-05", nome: "Hospital Geral de Nefrologia", tipo: "Hospital Geral", cidade: "São Paulo/SP", turnos: "Plantão e Interconsulta" }
     ],
     pacientesCount: 15,
     criadoEm: "2026-07-15T00:00:00.000Z"
@@ -269,3 +278,57 @@ export async function renewDoctorLicense(doctorId, mesesAdicionais = 1, paymentI
 
   return { ...docData, ...payload };
 }
+
+/**
+ * Adiciona um novo local de atuação / clínica ao perfil do médico no Firestore
+ */
+export async function addDoctorLocation(doctorId, locationData) {
+  if (!db) throw new Error("Firestore não inicializado");
+  const docRef = doc(db, DOCTORS_COLLECTION, doctorId);
+  const snap = await getDoc(docRef);
+  
+  if (!snap.exists()) throw new Error("Médico não encontrado");
+  const docData = snap.data();
+
+  const locais = Array.isArray(docData.locaisAtuacao) ? [...docData.locaisAtuacao] : [];
+  const newLoc = {
+    id: `loc-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    nome: locationData.nome.trim(),
+    tipo: locationData.tipo || "Clínica de Hemodiálise",
+    cidade: locationData.cidade || "",
+    turnos: locationData.turnos || "Todos os Turnos",
+    criadoEm: new Date().toISOString()
+  };
+
+  locais.push(newLoc);
+
+  await updateDoc(docRef, {
+    locaisAtuacao: locais,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return locais;
+}
+
+/**
+ * Remove um local de atuação do perfil do médico no Firestore
+ */
+export async function removeDoctorLocation(doctorId, locationId) {
+  if (!db) throw new Error("Firestore não inicializado");
+  const docRef = doc(db, DOCTORS_COLLECTION, doctorId);
+  const snap = await getDoc(docRef);
+  
+  if (!snap.exists()) throw new Error("Médico não encontrado");
+  const docData = snap.data();
+
+  let locais = Array.isArray(docData.locaisAtuacao) ? [...docData.locaisAtuacao] : [];
+  locais = locais.filter(l => l.id !== locationId);
+
+  await updateDoc(docRef, {
+    locaisAtuacao: locais,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return locais;
+}
+

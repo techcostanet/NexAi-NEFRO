@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { X, Save, User, Activity, Building, Calendar, Loader2 } from 'lucide-react';
 import { savePatient, calculateAge } from '../services/patientService';
 
-export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSaved }) {
+export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSaved, locaisAtuacao = [] }) {
+  const [customClinic, setCustomClinic] = useState(false);
   const [formData, setFormData] = useState({
     nome: '',
     clinica: 'Clínica Nefrológica NexAi',
@@ -27,11 +28,14 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
   const [error, setError] = useState('');
 
   useEffect(() => {
+    const defaultClinic = (locaisAtuacao && locaisAtuacao.length > 0) ? locaisAtuacao[0].nome : 'Clínica Nefrológica NexAi';
     if (patientToEdit) {
+      const isKnown = locaisAtuacao.some(l => l.nome === patientToEdit.clinica);
+      setCustomClinic(!isKnown && !!patientToEdit.clinica);
       setFormData({
         id: patientToEdit.id,
         nome: patientToEdit.nome || '',
-        clinica: patientToEdit.clinica || 'Clínica Nefrológica NexAi',
+        clinica: patientToEdit.clinica || defaultClinic,
         hospital: patientToEdit.hospital || 'Hospital de Nefrologia',
         turno: patientToEdit.turno || '3º Turno',
         dataNascimento: patientToEdit.dataNascimento || '',
@@ -50,9 +54,10 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         historicoExames: patientToEdit.historicoExames || []
       });
     } else {
+      setCustomClinic(false);
       setFormData({
         nome: '',
-        clinica: 'Clínica Nefrológica NexAi',
+        clinica: defaultClinic,
         hospital: 'Hospital de Nefrologia',
         turno: '3º Turno',
         dataNascimento: '',
@@ -72,7 +77,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       });
     }
     setError('');
-  }, [patientToEdit, isOpen]);
+  }, [patientToEdit, isOpen, locaisAtuacao]);
 
   if (!isOpen) return null;
 
@@ -143,7 +148,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
           width: '100%', 
           maxWidth: '650px', 
           maxHeight: '90vh', 
-          overflowY: 'auto',
+          overflowY: 'auto', 
           padding: '2rem',
           boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
           position: 'relative'
@@ -191,21 +196,61 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block">Clínica</label>
-                <input 
-                  type="text" 
-                  className="input-field" 
-                  value={formData.clinica}
-                  onChange={(e) => setFormData(prev => ({ ...prev, clinica: e.target.value }))}
-                />
+                <label className="text-sm font-semibold mb-1 block">Unidade / Local de Atendimento *</label>
+                {locaisAtuacao && locaisAtuacao.length > 0 && !customClinic ? (
+                  <div className="flex flex-col gap-1">
+                    <select 
+                      className="input-field"
+                      value={formData.clinica}
+                      onChange={(e) => {
+                        if (e.target.value === '__custom__') {
+                          setCustomClinic(true);
+                          setFormData(prev => ({ ...prev, clinica: '' }));
+                        } else {
+                          setFormData(prev => ({ ...prev, clinica: e.target.value }));
+                        }
+                      }}
+                    >
+                      {locaisAtuacao.map(loc => (
+                        <option key={loc.id} value={loc.nome}>
+                          {loc.tipo?.includes('Hemodiálise') ? '🏥' : loc.tipo?.includes('Hospital') ? '🏨' : '🩺'} {loc.nome}
+                        </option>
+                      ))}
+                      <option value="__custom__">➕ Outro local (digitar)...</option>
+                    </select>
+                  </div>
+                ) : (
+                  <div>
+                    <input 
+                      type="text" 
+                      className="input-field" 
+                      placeholder="Ex: Centro de Diálise NexAi"
+                      value={formData.clinica}
+                      onChange={(e) => setFormData(prev => ({ ...prev, clinica: e.target.value }))}
+                    />
+                    {locaisAtuacao && locaisAtuacao.length > 0 && (
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          setCustomClinic(false);
+                          setFormData(prev => ({ ...prev, clinica: locaisAtuacao[0]?.nome || '' }));
+                        }}
+                        className="text-xs text-blue-600 hover:underline mt-1 block"
+                      >
+                        ← Selecionar da lista de locais
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block">Hospital / Vínculo</label>
+                <label className="text-sm font-semibold mb-1 block">Hospital / Retaguarda</label>
                 <input 
                   type="text" 
                   className="input-field" 
                   value={formData.hospital}
+                  placeholder="Ex: Hospital do Rim"
                   onChange={(e) => setFormData(prev => ({ ...prev, hospital: e.target.value }))}
                 />
               </div>

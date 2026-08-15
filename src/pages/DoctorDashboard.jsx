@@ -14,7 +14,9 @@ import {
   Sparkles,
   Pill,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Building2,
+  MapPin
 } from 'lucide-react';
 import { subscribeToPatients } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
@@ -26,9 +28,17 @@ import { useAuth } from '../context/AuthContext';
 export default function DoctorDashboard() {
   const navigate = useNavigate();
   const { activeDoctorId, logout } = useAuth();
-  const [doctor, setDoctor] = useState({ nome: 'Dr. Marcelo Ramos', crm: '654321', ufCrm: 'SP' });
+  
+  const [doctor, setDoctor] = useState({ 
+    nome: 'Dr. Marcelo Ramos', 
+    crm: '654321', 
+    ufCrm: 'SP',
+    locaisAtuacao: []
+  });
+  
   const [patients, setPatients] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filterLocal, setFilterLocal] = useState('Todos');
   const [filterTurno, setFilterTurno] = useState('Todos');
   const [filterStatus, setFilterStatus] = useState('Todos');
   const [filterMedAlert, setFilterMedAlert] = useState(false);
@@ -91,52 +101,90 @@ export default function DoctorDashboard() {
     };
   };
 
+  const locaisList = Array.isArray(doctor.locaisAtuacao) ? doctor.locaisAtuacao : [];
+
+  // Filtragem completa de pacientes
   const filteredPatients = patients.filter(p => {
     const matchesSearch = (p.nome || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                           (p.clinica || '').toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Filtro por Local de Atuação
+    const matchesLocal = filterLocal === 'Todos' || 
+                         p.clinica === filterLocal || 
+                         (p.clinica && p.clinica.toLowerCase().includes(filterLocal.toLowerCase()));
+
     const matchesTurno = filterTurno === 'Todos' || p.turno === filterTurno;
     const matchesStatus = filterStatus === 'Todos' || (p.status || 'Ativo') === filterStatus;
     
     if (filterMedAlert) {
       const medAlerts = getPatientMedicationAlerts(p);
-      return matchesSearch && matchesTurno && matchesStatus && medAlerts.hasAlerts;
+      return matchesSearch && matchesLocal && matchesTurno && matchesStatus && medAlerts.hasAlerts;
     }
 
-    return matchesSearch && matchesTurno && matchesStatus;
+    return matchesSearch && matchesLocal && matchesTurno && matchesStatus;
   });
 
   const getStatusStyle = (status = 'Ativo') => {
     switch (status) {
       case 'Ativo':
+        return { background: '#e0f2fe', color: '#0369a1', borderColor: '#bae6fd' };
       case 'Em Tratamento':
-        return { bg: 'rgba(240, 253, 244, 0.95)', color: '#047857', border: '#bbf7d0' };
+        return { background: '#fef3c7', color: '#b45309', borderColor: '#fde68a' };
       case 'Internado':
-        return { bg: 'rgba(254, 242, 242, 0.95)', color: '#b91c1c', border: '#fecaca' };
+        return { background: '#fee2e2', color: '#b91c1c', borderColor: '#fecaca' };
       case 'Transferido':
+        return { background: '#f1f5f9', color: '#475569', borderColor: '#e2e8f0' };
       case 'Transplante':
-        return { bg: 'rgba(245, 243, 255, 0.95)', color: '#6d28d9', border: '#ddd6fe' };
+        return { background: '#dcfce7', color: '#15803d', borderColor: '#bbf7d0' };
+      case 'Inativo':
+        return { background: '#f8fafc', color: '#64748b', borderColor: '#cbd5e1' };
       default:
-        return { bg: 'rgba(248, 250, 252, 0.95)', color: '#475569', border: '#cbd5e1' };
+        return { background: '#f1f5f9', color: '#475569', borderColor: '#e2e8f0' };
     }
   };
 
-  // Contagem global de pacientes com alertas de medicação
-  const patientsWithMedAlertsCount = patients.filter(p => getPatientMedicationAlerts(p).hasAlerts).length;
+  const getTurnoStyle = (turno = '1º Turno') => {
+    switch (turno) {
+      case '1º Turno':
+        return { background: '#f0fdf4', color: '#166534', borderColor: '#bbf7d0' };
+      case '2º Turno':
+        return { background: '#fffbeb', color: '#92400e', borderColor: '#fde68a' };
+      case '3º Turno':
+        return { background: '#eff6ff', color: '#1e40af', borderColor: '#bfdbfe' };
+      case '4º Turno':
+        return { background: '#faf5ff', color: '#6b21a8', borderColor: '#e9d5ff' };
+      case 'Diálise Peritoneal':
+        return { background: '#ecfdf5', color: '#065f46', borderColor: '#a7f3d0' };
+      default:
+        return { background: '#f8fafc', color: '#334155', borderColor: '#e2e8f0' };
+    }
+  };
+
+  // Contagem de alertas globais
+  const totalAlerts = patients.reduce((acc, p) => {
+    const alerts = getPatientMedicationAlerts(p);
+    return alerts.hasAlerts ? acc + 1 : acc;
+  }, 0);
 
   return (
-    <div className="container" style={{ paddingBottom: '5rem', maxWidth: '1100px' }}>
-      {/* Cabeçalho do Médico com Notas de Versão Centralizadas */}
-      <header className="flex justify-between items-center mt-2 mb-6 flex-wrap gap-4" style={{ position: 'relative' }}>
+    <div className="container" style={{ paddingBottom: '5rem' }}>
+      
+      {/* Cabeçalho */}
+      <header className="flex justify-between items-center mt-3 mb-4 flex-wrap gap-4">
         <div>
-          <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>
-            Olá, {doctor.nome || 'Doutor(a)'}
-          </h1>
-          <p className="text-muted text-sm mt-1">
-            {doctor.especialidade || 'Gestão Nefrológica'} • CRM {doctor.crm || '---'}/{doctor.ufCrm || 'UF'}
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>
+              Olá, {doctor.nome || 'Médico'}
+            </h1>
+            <span style={{ fontSize: '0.72rem', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' }}>
+              100% Cloud
+            </span>
+          </div>
+          <p className="text-muted text-sm mt-0.5">
+            {doctor.especialidade || 'Nefrologia Clínica e Hemodiálise'} • CRM {doctor.crm}/{doctor.ufCrm}
           </p>
         </div>
 
-        {/* Botão Central de Notas de Versão */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <button 
             className="btn btn-outline" 
@@ -157,7 +205,7 @@ export default function DoctorDashboard() {
             title="Ver Notas de Versão e atualizações do sistema"
           >
             <Sparkles size={14} color="#2563eb" />
-            <span>Notas de Versão (Release Notes)</span>
+            <span>Notas de Versão</span>
           </button>
         </div>
 
@@ -166,10 +214,10 @@ export default function DoctorDashboard() {
             className="btn btn-outline" 
             onClick={() => navigate('/doctor/profile')}
             style={{ padding: '0.55rem 0.95rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
-            title="Ver e editar dados cadastrais do médico"
+            title="Ver e editar dados cadastrais e locais de atendimento"
           >
             <UserCog size={16} color="var(--primary)" />
-            <span>Dados do Médico</span>
+            <span>Dados & Locais</span>
           </button>
 
           <button 
@@ -215,14 +263,111 @@ export default function DoctorDashboard() {
         </div>
       )}
 
-      {/* Painel de Filtros e Busca com Toque Pastel Suave */}
+      {/* BARRA DE SELEÇÃO RÁPIDA DE LOCAL DE ATUAÇÃO */}
+      <div 
+        className="glass-panel mb-4" 
+        style={{ 
+          padding: '0.85rem 1.25rem', 
+          borderRadius: '16px', 
+          background: 'linear-gradient(135deg, rgba(239, 246, 255, 0.85), rgba(255, 255, 255, 0.95))',
+          border: '1px solid #bfdbfe',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '0.75rem'
+        }}
+      >
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-blue-900 mr-1">
+            <Building2 size={16} color="#2563eb" />
+            <span>Unidade de Trabalho:</span>
+          </div>
+
+          <div className="flex gap-1.5 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setFilterLocal('Todos')}
+              style={{
+                padding: '5px 12px',
+                borderRadius: '10px',
+                fontSize: '0.8rem',
+                fontWeight: filterLocal === 'Todos' ? 'bold' : '500',
+                background: filterLocal === 'Todos' ? '#2563eb' : '#ffffff',
+                color: filterLocal === 'Todos' ? '#ffffff' : '#475569',
+                border: '1px solid',
+                borderColor: filterLocal === 'Todos' ? '#2563eb' : '#cbd5e1',
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+                boxShadow: filterLocal === 'Todos' ? '0 2px 6px rgba(37,99,235,0.25)' : 'none'
+              }}
+            >
+              🏢 Todas as Unidades ({patients.length})
+            </button>
+
+            {locaisList.map(loc => {
+              const count = patients.filter(p => p.clinica === loc.nome || (p.clinica && p.clinica.toLowerCase().includes(loc.nome.toLowerCase()))).length;
+              const isSelected = filterLocal === loc.nome;
+              return (
+                <button
+                  key={loc.id}
+                  type="button"
+                  onClick={() => setFilterLocal(loc.nome)}
+                  style={{
+                    padding: '5px 12px',
+                    borderRadius: '10px',
+                    fontSize: '0.8rem',
+                    fontWeight: isSelected ? 'bold' : '500',
+                    background: isSelected ? '#2563eb' : '#ffffff',
+                    color: isSelected ? '#ffffff' : '#475569',
+                    border: '1px solid',
+                    borderColor: isSelected ? '#2563eb' : '#cbd5e1',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    boxShadow: isSelected ? '0 2px 6px rgba(37,99,235,0.25)' : 'none'
+                  }}
+                >
+                  <span>{loc.tipo?.includes('Hemodiálise') ? '🏥' : loc.tipo?.includes('Hospital') ? '🏨' : '🩺'}</span>
+                  <span>{loc.nome}</span>
+                  <span style={{ 
+                    fontSize: '0.72rem', 
+                    padding: '1px 6px', 
+                    borderRadius: '6px', 
+                    background: isSelected ? 'rgba(255,255,255,0.25)' : '#f1f5f9',
+                    color: isSelected ? '#ffffff' : '#64748b',
+                    fontWeight: 'bold'
+                  }}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => navigate('/doctor/profile')}
+          className="text-xs text-blue-700 hover:text-blue-900 font-semibold flex items-center gap-1"
+          style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+          title="Cadastrar novas clínicas ou hospitais"
+        >
+          <span>Gerenciar Locais</span>
+          <ChevronRight size={14} />
+        </button>
+      </div>
+
+      {/* Painel de Filtros e Busca */}
       <div className="glass-panel" style={{ padding: '1rem 1.25rem', marginBottom: '1.5rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center', background: 'rgba(255, 255, 255, 0.85)', borderRadius: '16px' }}>
         <div style={{ position: 'relative', flex: '1 1 250px' }}>
           <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
           <input 
             type="text" 
             className="input-field" 
-            placeholder="Buscar por nome ou clínica..." 
+            placeholder="Buscar por nome do paciente..." 
             style={{ paddingLeft: '2.5rem' }}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -259,173 +404,145 @@ export default function DoctorDashboard() {
             <option value="Inativo">Inativos</option>
           </select>
 
-          {/* Filtro Rápido para Alertas de Medicamentos */}
-          <button
+          <button 
             type="button"
+            className="btn"
             onClick={() => setFilterMedAlert(!filterMedAlert)}
-            style={{
-              padding: '0.5rem 0.85rem',
-              borderRadius: '12px',
-              border: '1px solid',
-              borderColor: filterMedAlert ? '#d97706' : '#e2e8f0',
-              background: filterMedAlert ? '#fef3c7' : '#ffffff',
-              color: filterMedAlert ? '#b45309' : '#64748b',
-              fontWeight: '600',
+            style={{ 
+              padding: '0.55rem 0.85rem',
               fontSize: '0.85rem',
+              borderRadius: '12px',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
+              border: '1px solid',
+              background: filterMedAlert ? '#fef3c7' : '#ffffff',
+              borderColor: filterMedAlert ? '#f59e0b' : 'var(--border)',
+              color: filterMedAlert ? '#b45309' : 'var(--text-main)',
+              fontWeight: filterMedAlert ? 'bold' : '500',
               cursor: 'pointer'
             }}
-            title="Filtrar pacientes com medicamentos vencendo ou vencidos"
+            title="Mostrar apenas pacientes com ciclos de medicação a vencer ou expirados"
           >
-            <Clock size={15} color={filterMedAlert ? '#b45309' : '#64748b'} />
-            <span>Ciclos a Vencer {patientsWithMedAlertsCount > 0 ? `(${patientsWithMedAlertsCount})` : ''}</span>
+            <Clock size={16} color={filterMedAlert ? '#b45309' : '#64748b'} />
+            <span>Ciclos a Vencer ({totalAlerts})</span>
           </button>
         </div>
       </div>
 
-      {/* Contagem */}
-      <div className="flex justify-between items-center mb-3 px-1">
-        <span className="text-xs text-muted font-semibold uppercase tracking-wider">
-          Total de Pacientes: {filteredPatients.length}
+      {/* Indicador de Unidade Selecionada */}
+      <div className="flex justify-between items-center mb-3 text-xs text-muted font-semibold">
+        <span>
+          {filterLocal === 'Todos' ? 'Todos os Pacientes' : `Unidade: ${filterLocal}`} • Exibindo <strong>{filteredPatients.length}</strong> de {patients.length} pacientes
         </span>
-        {filterMedAlert && (
-          <span style={{ fontSize: '0.75rem', color: '#b45309', fontWeight: 'bold' }}>
-            Exibindo apenas pacientes com ciclos/prazos de medicamentos pendentes
-          </span>
-        )}
       </div>
 
-      {/* Lista de Pacientes em Grid de Cards com Visual Refinado */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' }}>
+      {/* Grid de Pacientes */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '1rem' }}>
         {filteredPatients.length === 0 ? (
-          <div className="glass-panel text-center" style={{ gridColumn: '1 / -1', padding: '3.5rem 1rem', borderRadius: '16px' }}>
-            <User size={40} color="var(--text-muted)" style={{ margin: '0 auto 0.75rem', opacity: 0.4 }} />
-            <p className="font-semibold text-lg">Nenhum paciente encontrado</p>
-            <p className="text-muted text-sm mt-1">Cadastre um novo paciente ou ajuste os filtros acima.</p>
-            <button className="btn btn-primary mt-4" onClick={handleOpenNewPatient}>
-              <UserPlus size={16} /> Cadastrar Paciente
-            </button>
+          <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+            <p>Nenhum paciente encontrado com os filtros selecionados.</p>
           </div>
         ) : (
           filteredPatients.map(patient => {
-            const statusTheme = getStatusStyle(patient.status);
+            const statusStyle = getStatusStyle(patient.status);
+            const turnoStyle = getTurnoStyle(patient.turno);
             const medInfo = getPatientMedicationAlerts(patient);
 
             return (
               <div 
                 key={patient.id} 
-                className="glass-panel animate-in" 
+                className="patient-card glass-panel"
+                onClick={() => navigate(`/patient/${patient.id}`)}
                 style={{ 
-                  padding: '1.25rem', 
-                  cursor: 'pointer', 
-                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                  borderRadius: '16px',
-                  background: 'rgba(255, 255, 255, 0.85)',
-                  border: medInfo.hasAlerts ? '1px solid #fde68a' : '1px solid rgba(226, 232, 240, 0.9)',
-                  boxShadow: medInfo.hasAlerts ? '0 4px 16px rgba(217, 119, 6, 0.06)' : '0 4px 16px rgba(0, 0, 0, 0.03)',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  padding: '1.25rem',
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'space-between'
-                }}
-                onClick={() => navigate(`/patient/${patient.id}`)}
-                onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-3px)';
-                  e.currentTarget.style.boxShadow = '0 10px 25px rgba(37, 99, 235, 0.08)';
-                  e.currentTarget.style.borderColor = '#bfdbfe';
-                }}
-                onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.03)';
-                  e.currentTarget.style.borderColor = medInfo.hasAlerts ? '#fde68a' : 'rgba(226, 232, 240, 0.9)';
+                  justifyContent: 'space-between',
+                  gap: '0.85rem'
                 }}
               >
                 <div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="font-bold text-base" style={{ color: 'var(--text-main)', lineHeight: '1.3' }}>
+                  <div className="flex justify-between items-start mb-1">
+                    <h3 className="font-bold text-base text-slate-800 tracking-tight" title={patient.nome}>
                       {patient.nome}
                     </h3>
                     <button 
                       className="btn btn-outline" 
                       onClick={(e) => handleEditPatient(e, patient)}
-                      style={{ padding: '0.35rem', borderRadius: '8px', flexShrink: 0 }}
+                      style={{ padding: '0.25rem', borderRadius: '8px', border: 'none', background: 'transparent' }}
                       title="Editar cadastro do paciente"
                     >
-                      <Edit size={14} color="var(--primary)" />
+                      <Edit size={16} color="var(--text-muted)" />
                     </button>
                   </div>
+                  
+                  <div className="text-xs text-muted flex items-center gap-1 mb-2 font-medium">
+                    <Building2 size={13} color="#2563eb" />
+                    <span>{patient.clinica || 'Clínica Não Informada'}</span>
+                  </div>
 
-                  <p className="text-xs text-muted mb-3">
-                    {patient.clinica || 'Clínica NexAi'} {patient.idade ? `• ${patient.idade} anos` : ''}
-                  </p>
-
-                  <div className="flex items-center gap-1.5 flex-wrap mb-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <span 
                       style={{ 
                         fontSize: '0.72rem', 
-                        background: statusTheme.bg, 
-                        color: statusTheme.color, 
-                        border: `1px solid ${statusTheme.border}`,
                         padding: '2px 8px', 
                         borderRadius: '10px', 
-                        fontWeight: '600' 
+                        border: '1px solid',
+                        fontWeight: '600',
+                        ...statusStyle
                       }}
                     >
                       {patient.status || 'Ativo'}
                     </span>
+
                     <span 
                       style={{ 
                         fontSize: '0.72rem', 
-                        background: 'rgba(239, 246, 255, 0.9)', 
-                        color: '#1d4ed8', 
-                        border: '1px solid #bfdbfe',
                         padding: '2px 8px', 
                         borderRadius: '10px', 
-                        fontWeight: '600' 
+                        border: '1px solid',
+                        fontWeight: '500',
+                        ...turnoStyle
                       }}
                     >
-                      {patient.turno}
+                      {patient.turno || '3º Turno'}
                     </span>
 
                     {medInfo.totalMeds > 0 && (
                       <span 
                         style={{ 
                           fontSize: '0.72rem', 
-                          background: '#fffbeb', 
-                          color: '#b45309', 
-                          border: '1px solid #fef3c7',
                           padding: '2px 8px', 
                           borderRadius: '10px', 
-                          fontWeight: '600',
+                          border: '1px solid',
+                          background: '#fffbeb',
+                          borderColor: '#fef3c7',
+                          color: '#b45309',
+                          fontWeight: '500',
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: '3px'
                         }}
                       >
-                        <Pill size={11} /> {medInfo.totalMeds} {medInfo.totalMeds === 1 ? 'med' : 'meds'}
+                        <Pill size={11} /> {medInfo.totalMeds} meds
                       </span>
                     )}
                   </div>
 
-                  {/* Indicador de Alerta de Medicamentos */}
                   {medInfo.hasAlerts && (
                     <div 
+                      className="mt-2.5 p-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold"
                       style={{ 
-                        fontSize: '0.72rem', 
-                        background: medInfo.expired.length > 0 ? 'rgba(254, 242, 242, 0.9)' : 'rgba(254, 243, 199, 0.9)',
-                        color: medInfo.expired.length > 0 ? '#b91c1c' : '#92400e',
-                        border: `1px solid ${medInfo.expired.length > 0 ? '#fecaca' : '#fde68a'}`,
-                        padding: '3px 8px',
-                        borderRadius: '8px',
-                        fontWeight: '600',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        marginBottom: '0.75rem'
+                        background: medInfo.expired.length > 0 ? '#fee2e2' : '#fef3c7',
+                        color: medInfo.expired.length > 0 ? '#b91c1c' : '#b45309',
+                        border: '1px solid',
+                        borderColor: medInfo.expired.length > 0 ? '#fecaca' : '#fde68a'
                       }}
                     >
-                      <Clock size={12} />
+                      <AlertTriangle size={13} />
                       <span>
                         {medInfo.expired.length > 0 ? `${medInfo.expired.length} ciclo encerrado` : `${medInfo.expiring.length} medicação a vencer`}
                       </span>
@@ -457,6 +574,7 @@ export default function DoctorDashboard() {
         isOpen={isPatientModalOpen}
         onClose={() => setIsPatientModalOpen(false)}
         patientToEdit={patientToEdit}
+        locaisAtuacao={doctor.locaisAtuacao || []}
       />
 
       <ChangelogModal 
