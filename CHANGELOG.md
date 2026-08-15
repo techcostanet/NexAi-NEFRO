@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.14] - 2026-08-15
+### Alterações
+- Implementa edicao de locais de atuacao, pausa/desativacao sem perda de dados, registro de RT e contato de enfermagem no Firestore
+
 ## [1.1.13] - 2026-08-15
 ### Alterações
 - Implementa gestao de multi-locais de atuacao medica (clinicas/hospitais), vinculo dinamico no cadastro de pacientes e filtro por unidade no dashboard

@@ -213,7 +213,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                     >
                       {locaisAtuacao.map(loc => (
                         <option key={loc.id} value={loc.nome}>
-                          {loc.tipo?.includes('Hemodiálise') ? '🏥' : loc.tipo?.includes('Hospital') ? '🏨' : '🩺'} {loc.nome}
+                          {loc.tipo?.includes('Hemodiálise') ? '🏥' : loc.tipo?.includes('Hospital') ? '🏨' : '🩺'} {loc.nome} {loc.status === 'Inativo' ? '(Inativo)' : ''}
                         </option>
                       ))}
                       <option value="__custom__">➕ Outro local (digitar)...</option>

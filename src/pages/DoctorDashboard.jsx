@@ -305,9 +305,10 @@ export default function DoctorDashboard() {
               🏢 Todas as Unidades ({patients.length})
             </button>
 
-            {locaisList.map(loc => {
+            {locaisList.filter(loc => loc.status !== 'Inativo' || filterLocal === loc.nome).map(loc => {
               const count = patients.filter(p => p.clinica === loc.nome || (p.clinica && p.clinica.toLowerCase().includes(loc.nome.toLowerCase()))).length;
               const isSelected = filterLocal === loc.nome;
+              const isInactive = loc.status === 'Inativo';
               return (
                 <button
                   key={loc.id}
@@ -318,10 +319,10 @@ export default function DoctorDashboard() {
                     borderRadius: '10px',
                     fontSize: '0.8rem',
                     fontWeight: isSelected ? 'bold' : '500',
-                    background: isSelected ? '#2563eb' : '#ffffff',
-                    color: isSelected ? '#ffffff' : '#475569',
+                    background: isSelected ? '#2563eb' : isInactive ? '#f1f5f9' : '#ffffff',
+                    color: isSelected ? '#ffffff' : isInactive ? '#94a3b8' : '#475569',
                     border: '1px solid',
-                    borderColor: isSelected ? '#2563eb' : '#cbd5e1',
+                    borderColor: isSelected ? '#2563eb' : isInactive ? '#cbd5e1' : '#cbd5e1',
                     cursor: 'pointer',
                     transition: 'all 0.15s',
                     display: 'inline-flex',
@@ -329,9 +330,10 @@ export default function DoctorDashboard() {
                     gap: '5px',
                     boxShadow: isSelected ? '0 2px 6px rgba(37,99,235,0.25)' : 'none'
                   }}
+                  title={isInactive ? "Unidade inativa/pausada" : `${loc.tipo} • RT: ${loc.rtNome || 'Não inf.'}`}
                 >
                   <span>{loc.tipo?.includes('Hemodiálise') ? '🏥' : loc.tipo?.includes('Hospital') ? '🏨' : '🩺'}</span>
-                  <span>{loc.nome}</span>
+                  <span>{loc.nome} {isInactive ? '(Pausado)' : ''}</span>
                   <span style={{ 
                     fontSize: '0.72rem', 
                     padding: '1px 6px', 

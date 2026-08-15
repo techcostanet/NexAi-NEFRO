@@ -16,12 +16,21 @@ import {
   MapPin,
   Clock,
   Building,
-  Check
+  Check,
+  Edit2,
+  ShieldCheck,
+  PauseCircle,
+  PlayCircle,
+  X,
+  PhoneCall,
+  Calendar
 } from 'lucide-react';
 import { 
   subscribeDoctorProfile, 
   saveDoctorProfile, 
   addDoctorLocation, 
+  updateDoctorLocation,
+  toggleDoctorLocationStatus,
   removeDoctorLocation 
 } from '../services/doctorService';
 import { useAuth } from '../context/AuthContext';
@@ -50,12 +59,21 @@ export default function DoctorProfile() {
   const [saving, setSaving] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
 
-  // Estado para Adicionar Novo Local de Atuação
-  const [isAddingLocation, setIsAddingLocation] = useState(false);
-  const [newLocNome, setNewLocNome] = useState('');
-  const [newLocTipo, setNewLocTipo] = useState('Clínica de Hemodiálise');
-  const [newLocCidade, setNewLocCidade] = useState('São Paulo/SP');
-  const [newLocTurnos, setNewLocTurnos] = useState('1º, 2º e 3º Turnos');
+  // Estado para Adicionar / Editar Local de Atuação
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [editingLocationId, setEditingLocationId] = useState(null);
+  const [locationFormData, setLocationFormData] = useState({
+    nome: '',
+    tipo: 'Clínica de Hemodiálise',
+    cidade: 'São Paulo/SP',
+    endereco: '',
+    diasSemana: 'Seg/Qua/Sex',
+    turnos: '1º, 2º e 3º Turnos',
+    rtNome: '',
+    rtCrm: '',
+    telefoneEnfermagem: '',
+    status: 'Ativo'
+  });
 
   const currentDoctorId = activeDoctorId || 'dr-marcelo';
 
@@ -76,7 +94,7 @@ export default function DoctorProfile() {
     try {
       setSaving(true);
       await saveDoctorProfile(currentDoctorId, profile);
-      setFeedbackMessage({ type: 'success', text: 'Dados cadastrais e locais de atendimento atualizados no Firestore!' });
+      setFeedbackMessage({ type: 'success', text: 'Dados cadastrais atualizados com sucesso no Firestore!' });
       setTimeout(() => setFeedbackMessage(null), 4000);
     } catch (err) {
       console.error(err);
@@ -87,30 +105,77 @@ export default function DoctorProfile() {
     }
   };
 
-  const handleAddLocation = async (e) => {
+  const handleOpenAddLocation = () => {
+    setEditingLocationId(null);
+    setLocationFormData({
+      nome: '',
+      tipo: 'Clínica de Hemodiálise',
+      cidade: profile.ufCrm ? `São Paulo/${profile.ufCrm}` : 'São Paulo/SP',
+      endereco: '',
+      diasSemana: 'Seg/Qua/Sex',
+      turnos: '1º, 2º e 3º Turnos',
+      rtNome: profile.nome || '',
+      rtCrm: profile.crm ? `${profile.crm}/${profile.ufCrm || 'SP'}` : '',
+      telefoneEnfermagem: '',
+      status: 'Ativo'
+    });
+    setIsLocationModalOpen(true);
+  };
+
+  const handleOpenEditLocation = (loc) => {
+    setEditingLocationId(loc.id);
+    setLocationFormData({
+      nome: loc.nome || '',
+      tipo: loc.tipo || 'Clínica de Hemodiálise',
+      cidade: loc.cidade || '',
+      endereco: loc.endereco || '',
+      diasSemana: loc.diasSemana || 'Seg/Qua/Sex',
+      turnos: loc.turnos || '1º, 2º e 3º Turnos',
+      rtNome: loc.rtNome || '',
+      rtCrm: loc.rtCrm || '',
+      telefoneEnfermagem: loc.telefoneEnfermagem || '',
+      status: loc.status || 'Ativo'
+    });
+    setIsLocationModalOpen(true);
+  };
+
+  const handleSaveLocation = async (e) => {
     e.preventDefault();
-    if (!newLocNome.trim()) return;
+    if (!locationFormData.nome.trim()) return;
 
     try {
-      const updatedLocais = await addDoctorLocation(currentDoctorId, {
-        nome: newLocNome.trim(),
-        tipo: newLocTipo,
-        cidade: newLocCidade.trim(),
-        turnos: newLocTurnos.trim()
-      });
+      let updatedLocais;
+      if (editingLocationId) {
+        updatedLocais = await updateDoctorLocation(currentDoctorId, editingLocationId, locationFormData);
+        setFeedbackMessage({ type: 'success', text: 'Local de atendimento atualizado com sucesso!' });
+      } else {
+        updatedLocais = await addDoctorLocation(currentDoctorId, locationFormData);
+        setFeedbackMessage({ type: 'success', text: 'Novo local de atendimento adicionado com sucesso!' });
+      }
       setProfile(prev => ({ ...prev, locaisAtuacao: updatedLocais }));
-      setNewLocNome('');
-      setIsAddingLocation(false);
-      setFeedbackMessage({ type: 'success', text: 'Novo local de atendimento adicionado com sucesso!' });
+      setIsLocationModalOpen(false);
       setTimeout(() => setFeedbackMessage(null), 3500);
     } catch (err) {
       console.error(err);
-      setFeedbackMessage({ type: 'error', text: 'Erro ao adicionar local de atendimento.' });
+      setFeedbackMessage({ type: 'error', text: 'Erro ao salvar local de atendimento.' });
+    }
+  };
+
+  const handleToggleLocationStatus = async (loc) => {
+    try {
+      const updatedLocais = await toggleDoctorLocationStatus(currentDoctorId, loc.id);
+      setProfile(prev => ({ ...prev, locaisAtuacao: updatedLocais }));
+      const novoStatus = loc.status === 'Inativo' ? 'reativado' : 'pausado/desativado';
+      setFeedbackMessage({ type: 'success', text: `Local "${loc.nome}" foi ${novoStatus}.` });
+      setTimeout(() => setFeedbackMessage(null), 3500);
+    } catch (err) {
+      console.error(err);
+      setFeedbackMessage({ type: 'error', text: 'Erro ao alterar status do local.' });
     }
   };
 
   const handleRemoveLocation = async (locationId, locationNome) => {
-    if (window.confirm(`Deseja remover "${locationNome}" dos seus locais de atendimento?`)) {
+    if (window.confirm(`Tem certeza que deseja excluir "${locationNome}" dos seus locais de atendimento?`)) {
       try {
         const updatedLocais = await removeDoctorLocation(currentDoctorId, locationId);
         setProfile(prev => ({ ...prev, locaisAtuacao: updatedLocais }));
@@ -133,9 +198,10 @@ export default function DoctorProfile() {
   }
 
   const locaisList = Array.isArray(profile.locaisAtuacao) ? profile.locaisAtuacao : [];
+  const ativasCount = locaisList.filter(l => l.status !== 'Inativo').length;
 
   return (
-    <div className="container" style={{ paddingBottom: '5rem', maxWidth: '850px' }}>
+    <div className="container" style={{ paddingBottom: '5rem', maxWidth: '880px' }}>
       <header className="flex items-center mt-3 mb-6" style={{ gap: '1.5rem' }}>
         <button 
           className="btn btn-outline" 
@@ -154,7 +220,7 @@ export default function DoctorProfile() {
         </button>
         <div>
           <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>Perfil e Locais de Atuação</h1>
-          <p className="text-muted text-sm mt-0.5">Gestão de credenciais médicas e unidades de atendimento na nuvem</p>
+          <p className="text-muted text-sm mt-0.5">Gestão de credenciais médicas, RTs e unidades de atendimento na nuvem</p>
         </div>
       </header>
 
@@ -210,13 +276,13 @@ export default function DoctorProfile() {
               </span>
             )}
             <span style={{ fontSize: '0.75rem', background: '#eff6ff', color: '#1d4ed8', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' }}>
-              {locaisList.length} Unidades Cadastradas
+              {ativasCount} Unidades Ativas ({locaisList.length} total)
             </span>
           </div>
         </div>
       </div>
 
-      {/* SEÇÃO PRINCIPAL: LOCAIS DE ATUAÇÃO & UNIDADES */}
+      {/* SEÇÃO PRINCIPAL: LOCAIS DE ATUAÇÃO COM RT & CONTATOS */}
       <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
         <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
           <div>
@@ -224,139 +290,148 @@ export default function DoctorProfile() {
               <Building2 size={18} /> Meus Locais de Atuação & Clínicas
             </h3>
             <p className="text-muted text-xs mt-0.5">
-              Cadastre onde você atende (Clínicas de Hemodiálise, Hospitais, Consultórios) para filtrar seus pacientes no Dashboard
+              Cadastre onde você atende, configure o Responsável Técnico (RT), contato da enfermagem e turnos de atendimento
             </p>
           </div>
 
           <button 
             type="button" 
             className="btn btn-primary"
-            onClick={() => setIsAddingLocation(!isAddingLocation)}
-            style={{ padding: '0.45rem 0.9rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+            onClick={handleOpenAddLocation}
+            style={{ padding: '0.45rem 0.95rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
           >
-            <Plus size={15} /> {isAddingLocation ? 'Cancelar' : 'Adicionar Local'}
+            <Plus size={15} /> Adicionar Local
           </button>
         </div>
-
-        {/* Formulário para Adicionar Local */}
-        {isAddingLocation && (
-          <form onSubmit={handleAddLocation} className="p-4 bg-slate-50 border border-slate-200 rounded-xl mb-4 animate-in flex flex-col gap-3">
-            <h4 className="font-bold text-sm text-slate-800">Novo Local de Atendimento</h4>
-            
-            <div>
-              <label className="text-xs font-semibold mb-1 block">Nome do Local / Instituição *</label>
-              <input 
-                type="text" 
-                className="input-field" 
-                placeholder="Ex: Centro de Diálise Fresenius Zona Sul ou Hospital Santa Clara" 
-                value={newLocNome}
-                onChange={(e) => setNewLocNome(e.target.value)}
-                required
-              />
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.6rem' }}>
-              <div>
-                <label className="text-xs font-semibold mb-1 block">Tipo de Unidade</label>
-                <select 
-                  className="input-field"
-                  value={newLocTipo}
-                  onChange={(e) => setNewLocTipo(e.target.value)}
-                >
-                  <option value="Clínica de Hemodiálise">🏥 Clínica de Hemodiálise</option>
-                  <option value="Hospital Geral / UTI">🏨 Hospital Geral / UTI</option>
-                  <option value="Consultório / Ambulatório">🩺 Consultório / Ambulatório</option>
-                  <option value="Centro de Transplante">🏢 Centro de Transplante</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold mb-1 block">Cidade / UF</label>
-                <input 
-                  type="text" 
-                  className="input-field" 
-                  placeholder="São Paulo/SP" 
-                  value={newLocCidade}
-                  onChange={(e) => setNewLocCidade(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold mb-1 block">Turnos / Horários de Ronda</label>
-                <input 
-                  type="text" 
-                  className="input-field" 
-                  placeholder="Ex: 1º e 2º Turnos (Seg/Qua/Sex)" 
-                  value={newLocTurnos}
-                  onChange={(e) => setNewLocTurnos(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 mt-2">
-              <button type="button" className="btn btn-outline" onClick={() => setIsAddingLocation(false)} style={{ padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
-                Cancelar
-              </button>
-              <button type="submit" className="btn btn-primary" style={{ padding: '0.4rem 1rem', fontSize: '0.8rem' }}>
-                Salvar Local
-              </button>
-            </div>
-          </form>
-        )}
 
         {/* Lista de Locais Cadastrados */}
         {locaisList.length === 0 ? (
           <div className="text-center py-6 border border-dashed rounded-xl text-muted text-sm">
-            Nenhum local de atuação cadastrado. Adicione seus hospitais e clínicas acima.
+            Nenhum local de atuação cadastrado. Clique no botão acima para adicionar sua primeira clínica ou hospital.
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '0.85rem' }}>
-            {locaisList.map((loc) => (
-              <div 
-                key={loc.id} 
-                className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between"
-                style={{ transition: 'all 0.15s' }}
-              >
-                <div>
-                  <div className="flex justify-between items-start mb-1">
-                    <span 
-                      style={{ 
-                        fontSize: '0.7rem', 
-                        padding: '2px 7px', 
-                        borderRadius: '6px', 
-                        fontWeight: 'bold',
-                        background: loc.tipo?.includes('Hemodiálise') ? '#dbeafe' : loc.tipo?.includes('Hospital') ? '#fee2e2' : '#ede9fe',
-                        color: loc.tipo?.includes('Hemodiálise') ? '#1d4ed8' : loc.tipo?.includes('Hospital') ? '#b91c1c' : '#6d28d9'
-                      }}
-                    >
-                      {loc.tipo}
-                    </span>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+            {locaisList.map((loc) => {
+              const isInactive = loc.status === 'Inativo';
+              return (
+                <div 
+                  key={loc.id} 
+                  className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between"
+                  style={{ 
+                    transition: 'all 0.15s',
+                    opacity: isInactive ? 0.65 : 1,
+                    background: isInactive ? '#f8fafc' : '#ffffff',
+                    borderLeft: isInactive ? '4px solid #94a3b8' : '4px solid #2563eb'
+                  }}
+                >
+                  <div>
+                    {/* Top Bar do Card */}
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-1.5">
+                        <span 
+                          style={{ 
+                            fontSize: '0.7rem', 
+                            padding: '2px 7px', 
+                            borderRadius: '6px', 
+                            fontWeight: 'bold',
+                            background: loc.tipo?.includes('Hemodiálise') ? '#dbeafe' : loc.tipo?.includes('Hospital') ? '#fee2e2' : '#ede9fe',
+                            color: loc.tipo?.includes('Hemodiálise') ? '#1d4ed8' : loc.tipo?.includes('Hospital') ? '#b91c1c' : '#6d28d9'
+                          }}
+                        >
+                          {loc.tipo}
+                        </span>
 
-                    <button 
-                      type="button" 
-                      onClick={() => handleRemoveLocation(loc.id, loc.nome)}
-                      className="text-slate-400 hover:text-red-600 transition"
-                      title="Excluir este local"
-                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '2px' }}
-                    >
-                      <Trash2 size={15} />
-                    </button>
+                        <span 
+                          style={{ 
+                            fontSize: '0.68rem', 
+                            padding: '1px 6px', 
+                            borderRadius: '6px', 
+                            fontWeight: 'bold',
+                            background: isInactive ? '#e2e8f0' : '#dcfce7',
+                            color: isInactive ? '#64748b' : '#15803d'
+                          }}
+                        >
+                          {isInactive ? 'Inativo' : 'Ativo'}
+                        </span>
+                      </div>
+
+                      {/* Ações: Pausar, Editar, Excluir */}
+                      <div className="flex items-center gap-1">
+                        <button 
+                          type="button"
+                          onClick={() => handleToggleLocationStatus(loc)}
+                          title={isInactive ? "Reativar este local" : "Desativar/Pausar este local"}
+                          className="p-1 text-slate-400 hover:text-blue-600 transition rounded"
+                          style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                        >
+                          {isInactive ? <PlayCircle size={16} color="#16a34a" /> : <PauseCircle size={16} color="#64748b" />}
+                        </button>
+
+                        <button 
+                          type="button"
+                          onClick={() => handleOpenEditLocation(loc)}
+                          title="Editar dados deste local"
+                          className="p-1 text-slate-400 hover:text-blue-600 transition rounded"
+                          style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                        >
+                          <Edit2 size={15} />
+                        </button>
+
+                        <button 
+                          type="button" 
+                          onClick={() => handleRemoveLocation(loc.id, loc.nome)}
+                          className="p-1 text-slate-400 hover:text-red-600 transition rounded"
+                          title="Excluir este local"
+                          style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </div>
+
+                    <strong className="text-sm block text-slate-800 font-bold mb-1.5">{loc.nome}</strong>
+
+                    {/* Detalhes Clínicos do Local */}
+                    <div className="flex flex-col gap-1 text-xs text-slate-600 mb-2">
+                      {loc.rtNome && (
+                        <div className="flex items-center gap-1.5 text-blue-800 font-medium">
+                          <ShieldCheck size={13} color="#2563eb" />
+                          <span>RT: {loc.rtNome} {loc.rtCrm ? `(${loc.rtCrm})` : ''}</span>
+                        </div>
+                      )}
+
+                      {loc.telefoneEnfermagem && (
+                        <div className="flex items-center gap-1.5 text-emerald-700 font-medium">
+                          <PhoneCall size={12} color="#059669" />
+                          <span>Enfermagem: {loc.telefoneEnfermagem}</span>
+                        </div>
+                      )}
+
+                      {loc.diasSemana && (
+                        <div className="flex items-center gap-1.5 text-slate-600">
+                          <Calendar size={12} color="#64748b" />
+                          <span>Dias: {loc.diasSemana}</span>
+                        </div>
+                      )}
+
+                      {loc.turnos && (
+                        <div className="flex items-center gap-1.5 text-slate-600">
+                          <Clock size={12} color="#64748b" />
+                          <span>Turnos: {loc.turnos}</span>
+                        </div>
+                      )}
+
+                      {loc.cidade && (
+                        <div className="flex items-center gap-1.5 text-muted mt-0.5">
+                          <MapPin size={12} color="#94a3b8" />
+                          <span>{loc.cidade} {loc.endereco ? `• ${loc.endereco}` : ''}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-
-                  <strong className="text-sm block text-slate-800 mt-1">{loc.nome}</strong>
-                  {loc.cidade && (
-                    <div className="text-xs text-muted flex items-center gap-1 mt-1">
-                      <MapPin size={12} /> {loc.cidade}
-                    </div>
-                  )}
-                  {loc.turnos && (
-                    <div className="text-xs text-slate-600 flex items-center gap-1 mt-0.5">
-                      <Clock size={12} /> {loc.turnos}
-                    </div>
-                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
@@ -365,7 +440,7 @@ export default function DoctorProfile() {
         {/* Identificação Profissional */}
         <div className="glass-panel" style={{ padding: '1.5rem' }}>
           <h3 className="font-bold text-base mb-4 flex items-center gap-2" style={{ color: 'var(--primary)' }}>
-            <User size={18} /> Identificação Profissional
+            <User size={18} /> Identificação Profissional do Médico
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
             <div>
@@ -450,7 +525,7 @@ export default function DoctorProfile() {
               />
             </div>
             <div>
-              <label className="text-sm font-semibold mb-1 block">Telefone / WhatsApp</label>
+              <label className="text-sm font-semibold mb-1 block">Telefone / WhatsApp Pessoal</label>
               <input 
                 type="text" 
                 className="input-field" 
@@ -483,6 +558,204 @@ export default function DoctorProfile() {
           </button>
         </div>
       </form>
+
+      {/* MODAL DE ADICIONAR / EDITAR LOCAL DE ATENDIMENTO */}
+      {isLocationModalOpen && (
+        <div 
+          style={{ 
+            position: 'fixed', 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            backgroundColor: 'rgba(15, 23, 42, 0.65)', 
+            backdropFilter: 'blur(5px)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            zIndex: 9999,
+            padding: '1rem'
+          }}
+          onClick={() => setIsLocationModalOpen(false)}
+        >
+          <div 
+            className="glass-panel animate-in"
+            style={{ 
+              background: '#ffffff', 
+              width: '100%', 
+              maxWidth: '580px', 
+              maxHeight: '90vh', 
+              overflowY: 'auto',
+              padding: '1.75rem',
+              borderRadius: '20px',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4 border-b pb-3" style={{ borderColor: 'var(--border)' }}>
+              <div className="flex items-center gap-2">
+                <Building2 size={22} color="var(--primary)" />
+                <h3 className="font-bold text-lg text-slate-800">
+                  {editingLocationId ? 'Editar Local de Atendimento' : 'Novo Local de Atendimento'}
+                </h3>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setIsLocationModalOpen(false)}
+                className="p-1 rounded-full text-slate-400 hover:text-slate-600 transition"
+                style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveLocation} className="flex flex-col gap-3.5">
+              <div>
+                <label className="text-xs font-bold text-slate-700 mb-1 block">Nome do Local / Instituição *</label>
+                <input 
+                  type="text" 
+                  className="input-field" 
+                  placeholder="Ex: Centro de Diálise Fresenius Zona Sul ou Hospital Santa Clara" 
+                  value={locationFormData.nome}
+                  onChange={(e) => setLocationFormData(prev => ({ ...prev, nome: e.target.value }))}
+                  required
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 mb-1 block">Tipo de Unidade</label>
+                  <select 
+                    className="input-field"
+                    value={locationFormData.tipo}
+                    onChange={(e) => setLocationFormData(prev => ({ ...prev, tipo: e.target.value }))}
+                  >
+                    <option value="Clínica de Hemodiálise">🏥 Clínica de Hemodiálise</option>
+                    <option value="Hospital Geral / UTI">🏨 Hospital Geral / UTI</option>
+                    <option value="Consultório / Ambulatório">🩺 Consultório / Ambulatório</option>
+                    <option value="Centro de Transplante">🏢 Centro de Transplante</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 mb-1 block">Status da Unidade</label>
+                  <select 
+                    className="input-field"
+                    value={locationFormData.status}
+                    onChange={(e) => setLocationFormData(prev => ({ ...prev, status: e.target.value }))}
+                  >
+                    <option value="Ativo">🟢 Ativo (Em atendimento)</option>
+                    <option value="Inativo">⏸️ Inativo (Pausado / Sem ronda)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Responsável Técnico e Enfermagem */}
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl flex flex-col gap-2.5">
+                <div className="flex items-center gap-1.5 text-blue-900 font-bold text-xs">
+                  <ShieldCheck size={16} color="#2563eb" />
+                  <span>Responsável Técnico (RT) & Contato de Apoio</span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.6rem' }}>
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 mb-1 block">Nome do RT da Unidade</label>
+                    <input 
+                      type="text" 
+                      className="input-field" 
+                      placeholder="Ex: Dr. Carlos Andrade" 
+                      value={locationFormData.rtNome}
+                      onChange={(e) => setLocationFormData(prev => ({ ...prev, rtNome: e.target.value }))}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-700 mb-1 block">CRM do RT</label>
+                    <input 
+                      type="text" 
+                      className="input-field" 
+                      placeholder="Ex: 145890/SP" 
+                      value={locationFormData.rtCrm}
+                      onChange={(e) => setLocationFormData(prev => ({ ...prev, rtCrm: e.target.value }))}
+                    />
+                  </div>
+
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <label className="text-xs font-semibold text-slate-700 mb-1 block">Telefone / WhatsApp da Enfermagem / Recepção</label>
+                    <input 
+                      type="text" 
+                      className="input-field" 
+                      placeholder="Ex: (11) 98888-2222 (Posto de Diálise)" 
+                      value={locationFormData.telefoneEnfermagem}
+                      onChange={(e) => setLocationFormData(prev => ({ ...prev, telefoneEnfermagem: e.target.value }))}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Turnos e Horários */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.6rem' }}>
+                <div>
+                  <label className="text-xs font-bold text-slate-700 mb-1 block">Dias de Atendimento</label>
+                  <input 
+                    type="text" 
+                    className="input-field" 
+                    placeholder="Ex: Seg/Qua/Sex ou Ter/Qui/Sáb" 
+                    value={locationFormData.diasSemana}
+                    onChange={(e) => setLocationFormData(prev => ({ ...prev, diasSemana: e.target.value }))}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 mb-1 block">Turnos / Horários de Ronda</label>
+                  <input 
+                    type="text" 
+                    className="input-field" 
+                    placeholder="Ex: 1º e 2º Turnos (Manhã)" 
+                    value={locationFormData.turnos}
+                    onChange={(e) => setLocationFormData(prev => ({ ...prev, turnos: e.target.value }))}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 mb-1 block">Cidade / UF</label>
+                  <input 
+                    type="text" 
+                    className="input-field" 
+                    placeholder="Ex: São Paulo/SP" 
+                    value={locationFormData.cidade}
+                    onChange={(e) => setLocationFormData(prev => ({ ...prev, cidade: e.target.value }))}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-700 mb-1 block">Endereço / Referência</label>
+                  <input 
+                    type="text" 
+                    className="input-field" 
+                    placeholder="Ex: Av. Paulista, 1000" 
+                    value={locationFormData.endereco}
+                    onChange={(e) => setLocationFormData(prev => ({ ...prev, endereco: e.target.value }))}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2 mt-3 pt-3 border-t">
+                <button 
+                  type="button" 
+                  className="btn btn-outline" 
+                  onClick={() => setIsLocationModalOpen(false)}
+                >
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  {editingLocationId ? 'Salvar Alterações' : 'Adicionar Local'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -39,9 +39,45 @@ export const DEFAULT_DOCTORS = [
       }
     ],
     locaisAtuacao: [
-      { id: "loc-01", nome: "Centro Nefrológico NexAi & Hospital do Rim", tipo: "Clínica de Hemodiálise", cidade: "São Paulo/SP", turnos: "1º, 2º e 3º Turnos" },
-      { id: "loc-02", nome: "Hospital Estadual de Nefrologia", tipo: "Hospital Geral / UTI", cidade: "São Paulo/SP", turnos: "Interconsultas e UTI" },
-      { id: "loc-03", nome: "Consultório Privado Dr. Marcelo", tipo: "Consultório / Ambulatório", cidade: "São Paulo/SP", turnos: "Manhã / Tarde" }
+      { 
+        id: "loc-01", 
+        nome: "Centro Nefrológico NexAi & Hospital do Rim", 
+        tipo: "Clínica de Hemodiálise", 
+        cidade: "São Paulo/SP", 
+        turnos: "1º, 2º e 3º Turnos",
+        diasSemana: "Seg/Qua/Sex",
+        rtNome: "Dr. Marcelo Ramos",
+        rtCrm: "654321/SP",
+        telefoneEnfermagem: "(11) 97123-4567",
+        status: "Ativo",
+        criadoEm: "2026-08-01T00:00:00.000Z"
+      },
+      { 
+        id: "loc-02", 
+        nome: "Hospital Estadual de Nefrologia", 
+        tipo: "Hospital Geral / UTI", 
+        cidade: "São Paulo/SP", 
+        turnos: "Interconsultas e UTI",
+        diasSemana: "Diário / Sobreaviso",
+        rtNome: "Dr. Roberto Silveira",
+        rtCrm: "112233/SP",
+        telefoneEnfermagem: "(11) 98888-1111",
+        status: "Ativo",
+        criadoEm: "2026-08-01T00:00:00.000Z"
+      },
+      { 
+        id: "loc-03", 
+        nome: "Consultório Privado Dr. Marcelo", 
+        tipo: "Consultório / Ambulatório", 
+        cidade: "São Paulo/SP", 
+        turnos: "Manhã / Tarde",
+        diasSemana: "Ter/Qui",
+        rtNome: "Dr. Marcelo Ramos",
+        rtCrm: "654321/SP",
+        telefoneEnfermagem: "(11) 97123-4567",
+        status: "Ativo",
+        criadoEm: "2026-08-01T00:00:00.000Z"
+      }
     ],
     pacientesCount: 6,
     criadoEm: "2026-08-01T00:00:00.000Z"
@@ -88,8 +124,32 @@ export const DEFAULT_DOCTORS = [
       }
     ],
     locaisAtuacao: [
-      { id: "loc-04", nome: "Clínica Nefrológica NexAi", tipo: "Clínica de Hemodiálise", cidade: "São Paulo/SP", turnos: "1º, 2º e 3º Turnos" },
-      { id: "loc-05", nome: "Hospital Geral de Nefrologia", tipo: "Hospital Geral", cidade: "São Paulo/SP", turnos: "Plantão e Interconsulta" }
+      { 
+        id: "loc-04", 
+        nome: "Clínica Nefrológica NexAi", 
+        tipo: "Clínica de Hemodiálise", 
+        cidade: "São Paulo/SP", 
+        turnos: "1º, 2º e 3º Turnos",
+        diasSemana: "Seg/Qua/Sex",
+        rtNome: "Dra. Gisele",
+        rtCrm: "123456/SP",
+        telefoneEnfermagem: "(11) 98765-4321",
+        status: "Ativo",
+        criadoEm: "2026-07-15T00:00:00.000Z"
+      },
+      { 
+        id: "loc-05", 
+        nome: "Hospital Geral de Nefrologia", 
+        tipo: "Hospital Geral", 
+        cidade: "São Paulo/SP", 
+        turnos: "Plantão e Interconsulta",
+        diasSemana: "Ter/Qui/Sáb",
+        rtNome: "Dr. Fernando Duarte",
+        rtCrm: "78910/SP",
+        telefoneEnfermagem: "(11) 97777-3333",
+        status: "Ativo",
+        criadoEm: "2026-07-15T00:00:00.000Z"
+      }
     ],
     pacientesCount: 15,
     criadoEm: "2026-07-15T00:00:00.000Z"
@@ -296,11 +356,81 @@ export async function addDoctorLocation(doctorId, locationData) {
     nome: locationData.nome.trim(),
     tipo: locationData.tipo || "Clínica de Hemodiálise",
     cidade: locationData.cidade || "",
+    endereco: locationData.endereco || "",
     turnos: locationData.turnos || "Todos os Turnos",
+    diasSemana: locationData.diasSemana || "Seg/Qua/Sex",
+    rtNome: locationData.rtNome || "",
+    rtCrm: locationData.rtCrm || "",
+    telefoneEnfermagem: locationData.telefoneEnfermagem || "",
+    status: locationData.status || "Ativo",
     criadoEm: new Date().toISOString()
   };
 
   locais.push(newLoc);
+
+  await updateDoc(docRef, {
+    locaisAtuacao: locais,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return locais;
+}
+
+/**
+ * Atualiza um local de atuação existente no Firestore
+ */
+export async function updateDoctorLocation(doctorId, locationId, updatedData) {
+  if (!db) throw new Error("Firestore não inicializado");
+  const docRef = doc(db, DOCTORS_COLLECTION, doctorId);
+  const snap = await getDoc(docRef);
+  
+  if (!snap.exists()) throw new Error("Médico não encontrado");
+  const docData = snap.data();
+
+  const locais = Array.isArray(docData.locaisAtuacao) ? [...docData.locaisAtuacao] : [];
+  const index = locais.findIndex(l => l.id === locationId);
+  
+  if (index === -1) throw new Error("Local de atuação não encontrado");
+
+  locais[index] = {
+    ...locais[index],
+    ...updatedData,
+    id: locationId,
+    atualizadoEm: new Date().toISOString()
+  };
+
+  await updateDoc(docRef, {
+    locaisAtuacao: locais,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return locais;
+}
+
+/**
+ * Alterna o status do local de atuação entre 'Ativo' e 'Inativo'
+ */
+export async function toggleDoctorLocationStatus(doctorId, locationId) {
+  if (!db) throw new Error("Firestore não inicializado");
+  const docRef = doc(db, DOCTORS_COLLECTION, doctorId);
+  const snap = await getDoc(docRef);
+  
+  if (!snap.exists()) throw new Error("Médico não encontrado");
+  const docData = snap.data();
+
+  const locais = Array.isArray(docData.locaisAtuacao) ? [...docData.locaisAtuacao] : [];
+  const index = locais.findIndex(l => l.id === locationId);
+  
+  if (index === -1) throw new Error("Local de atuação não encontrado");
+
+  const statusAtual = locais[index].status || 'Ativo';
+  const novoStatus = statusAtual === 'Ativo' ? 'Inativo' : 'Ativo';
+
+  locais[index] = {
+    ...locais[index],
+    status: novoStatus,
+    atualizadoEm: new Date().toISOString()
+  };
 
   await updateDoc(docRef, {
     locaisAtuacao: locais,
@@ -331,4 +461,5 @@ export async function removeDoctorLocation(doctorId, locationId) {
 
   return locais;
 }
+
 
