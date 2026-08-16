@@ -8,7 +8,6 @@ import {
   Stethoscope, 
   Sparkles, 
   RotateCcw, 
-  ExternalLink, 
   CheckCircle, 
   AlertCircle,
   Building,
@@ -25,12 +24,15 @@ import {
   RefreshCw,
   Edit,
   History,
+  Trash2,
   FileText,
   Search,
   CheckCircle2,
   Lock,
   Zap,
-  Activity
+  Activity,
+  Sliders,
+  Settings
 } from 'lucide-react';
 import { 
   subscribeDoctorsList, 
@@ -38,17 +40,27 @@ import {
   toggleDoctorLicenseStatus, 
   renewDoctorLicense 
 } from '../services/doctorService';
+import { 
+  subscribeSystemPlans, 
+  deleteSystemPlan, 
+  toggleSystemPlanStatus, 
+  subscribeGatewayConfig 
+} from '../services/financialService';
 import { seedDemoPatientsToFirestore } from '../services/patientService';
 import { logAuditEvent, subscribeAuditLogs } from '../services/auditService';
 import { useAuth } from '../context/AuthContext';
+import PlanModal from '../components/PlanModal';
+import GatewayModal from '../components/GatewayModal';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const { setActiveDoctorId, logout, currentUser } = useAuth();
+  const { logout, currentUser } = useAuth();
   
   const [activeTab, setActiveTab] = useState('licenses'); // 'licenses' | 'audit' | 'financial'
   const [doctors, setDoctors] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
+  const [systemPlans, setSystemPlans] = useState([]);
+  const [gatewayConfig, setGatewayConfig] = useState({});
   const [loading, setLoading] = useState(true);
   const [auditLoading, setAuditLoading] = useState(true);
   const [seeding, setSeeding] = useState(false);
@@ -58,7 +70,7 @@ export default function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('Todos');
 
-  // Modais
+  // Modais de Licença Médica
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('create'); // 'create' | 'edit'
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -71,6 +83,11 @@ export default function AdminDashboard() {
 
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [historyDoctor, setHistoryDoctor] = useState(null);
+
+  // Modais Financeiros (CRUD Planos & Gateways)
+  const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+  const [planToEdit, setPlanToEdit] = useState(null);
+  const [isGatewayModalOpen, setIsGatewayModalOpen] = useState(false);
 
   // Form State para Nova / Editar Licença
   const [doctorForm, setDoctorForm] = useState({
@@ -92,18 +109,28 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const unsubDocs = subscribeDoctorsList((list) => {
-      setDoctors(list);
+      setDoctors(list || []);
       setLoading(false);
     });
 
     const unsubAudit = subscribeAuditLogs((logs) => {
-      setAuditLogs(logs);
+      setAuditLogs(logs || []);
       setAuditLoading(false);
+    });
+
+    const unsubPlans = subscribeSystemPlans((plans) => {
+      setSystemPlans(plans || []);
+    });
+
+    const unsubGateways = subscribeGatewayConfig((config) => {
+      setGatewayConfig(config || {});
     });
 
     return () => {
       unsubDocs();
       unsubAudit();
+      unsubPlans();
+      unsubGateways();
     };
   }, []);
 
@@ -129,26 +156,6 @@ export default function AdminDashboard() {
     const today = new Date();
     const diffTime = end.getTime() - today.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  };
-
-  // Impersonação com Auditoria
-  const handleAccessDoctor = async (doctor) => {
-    try {
-      await logAuditEvent({
-        tipoAcao: 'IMPERSONATION',
-        descricao: `Acesso administrativo auditado (impersonação) ao painel do médico ${doctor.nome} (CRM ${doctor.crm}/${doctor.ufCrm})`,
-        targetDoctorId: doctor.id,
-        targetDoctorName: doctor.nome,
-        adminEmail: currentUser?.email || 'admin@nefroapp.com',
-        detalhes: { doctorId: doctor.id, statusLicenca: doctor.statusLicenca }
-      });
-      setActiveDoctorId(doctor.id);
-      navigate('/doctor');
-    } catch (err) {
-      console.error(err);
-      setActiveDoctorId(doctor.id);
-      navigate('/doctor');
-    }
   };
 
   const handleLogout = async () => {
@@ -182,7 +189,7 @@ export default function AdminDashboard() {
     const isCurrentlyActive = doctor.statusLicenca === 'Ativo' || doctor.statusLicenca === 'Trial';
     const targetStatus = isCurrentlyActive ? 'Suspenso' : 'Ativo';
     const confirmMsg = isCurrentlyActive 
-      ? `Deseja suspender/pausar a licença de ${doctor.nome}? O acesso será bloqueado, mas todos os prontuários permanecerão intactos na nuvem.`
+      ? `Deseja suspender/pausar a licença de ${doctor.nome}? O acesso será bloqueado temporariamente com segurança.`
       : `Deseja reativar a licença de ${doctor.nome}? O acesso ao sistema será liberado imediatamente.`;
 
     if (window.confirm(confirmMsg)) {
@@ -190,7 +197,7 @@ export default function AdminDashboard() {
         await toggleDoctorLicenseStatus(
           doctor.id, 
           targetStatus, 
-          isCurrentlyActive ? 'Pausa solicitada pelo Super Administrador' : 'Reativação de licença',
+          isCurrentlyActive ? 'Pausa administrativa de licença' : 'Reativação de licença',
           currentUser?.email || 'admin@nefroapp.com'
         );
         setFeedback({ 
@@ -358,6 +365,41 @@ export default function AdminDashboard() {
     setIsHistoryModalOpen(true);
   };
 
+  // Ações do Módulo Financeiro
+  const handleOpenCreatePlan = () => {
+    setPlanToEdit(null);
+    setIsPlanModalOpen(true);
+  };
+
+  const handleOpenEditPlan = (plan) => {
+    setPlanToEdit(plan);
+    setIsPlanModalOpen(true);
+  };
+
+  const handleTogglePlan = async (plan) => {
+    try {
+      const next = await toggleSystemPlanStatus(plan.id, plan.status, plan.nome, currentUser?.email);
+      setFeedback({ type: 'success', text: `Plano '${plan.nome}' agora está ${next}.` });
+      setTimeout(() => setFeedback(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setFeedback({ type: 'error', text: 'Erro ao alterar status do plano.' });
+    }
+  };
+
+  const handleDeletePlan = async (plan) => {
+    if (window.confirm(`Deseja realmente remover o plano '${plan.nome}' do catálogo?`)) {
+      try {
+        await deleteSystemPlan(plan.id, plan.nome, currentUser?.email);
+        setFeedback({ type: 'success', text: `Plano '${plan.nome}' removido com sucesso!` });
+        setTimeout(() => setFeedback(null), 3000);
+      } catch (err) {
+        console.error(err);
+        setFeedback({ type: 'error', text: 'Erro ao remover plano.' });
+      }
+    }
+  };
+
   // Filtragem da Lista de Médicos
   const filteredDoctors = doctors.filter(d => {
     const matchesSearch = 
@@ -386,12 +428,12 @@ export default function AdminDashboard() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>Painel Super Administrador</h1>
+              <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>Painel Administrador</h1>
               <span style={{ fontSize: '0.72rem', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' }}>
                 100% Cloud Firestore
               </span>
             </div>
-            <p className="text-muted text-sm mt-0.5">Gestão de Licenças Médicas, Segurança, Auditoria e Finanças</p>
+            <p className="text-muted text-sm mt-0.5">Gestão de Licenças, Auditoria e Finanças</p>
           </div>
         </div>
 
@@ -404,7 +446,7 @@ export default function AdminDashboard() {
             title="Restaura os 6 pacientes de teste com exames e prescrições completas"
           >
             {seeding ? <Loader2 className="animate-spin" size={15} /> : <RotateCcw size={15} />}
-            <span>{seeding ? 'Restaurando...' : 'Restaurar Base de Demonstração'}</span>
+            <span>{seeding ? 'Restaurando...' : 'Restaurar Base'}</span>
           </button>
 
           <button 
@@ -444,7 +486,7 @@ export default function AdminDashboard() {
         {/* Card MRR */}
         <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px', background: 'linear-gradient(135deg, rgba(240, 253, 244, 0.8), rgba(255, 255, 255, 0.9))', border: '1px solid #bbf7d0' }}>
           <div className="flex justify-between items-start mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-muted">MRR (Mensalidade Recorrente)</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-muted">MRR (Mensal)</span>
             <div style={{ padding: '6px', background: '#dcfce7', borderRadius: '8px', color: '#15803d' }}>
               <DollarSign size={18} />
             </div>
@@ -454,20 +496,20 @@ export default function AdminDashboard() {
           </div>
           <div className="text-xs text-muted mt-1 flex items-center gap-1">
             <TrendingUp size={13} color="#16a34a" />
-            <span>ARR Projetado: <strong>R$ {arr.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}/ano</strong></span>
+            <span>ARR: <strong>R$ {arr.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}/ano</strong></span>
           </div>
         </div>
 
         {/* Card Médicos e Licenças */}
         <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px', background: 'linear-gradient(135deg, rgba(239, 246, 255, 0.8), rgba(255, 255, 255, 0.9))', border: '1px solid #bfdbfe' }}>
           <div className="flex justify-between items-start mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-muted">Médicos & Licenças</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-muted">Licenças</span>
             <div style={{ padding: '6px', background: '#dbeafe', borderRadius: '8px', color: '#1d4ed8' }}>
               <Stethoscope size={18} />
             </div>
           </div>
           <div className="text-2xl font-bold text-slate-800">
-            {doctors.length} <span className="text-xs font-normal text-muted">médicos cadastrados</span>
+            {doctors.length} <span className="text-xs font-normal text-muted">cadastradas</span>
           </div>
           <div className="text-xs text-muted mt-1 flex items-center gap-2 flex-wrap">
             <span style={{ color: '#16a34a', fontWeight: '600' }}>● {activeDoctors.length} Ativos</span>
@@ -479,17 +521,17 @@ export default function AdminDashboard() {
         {/* Card Conformidade e Auditoria */}
         <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px', background: 'linear-gradient(135deg, rgba(250, 245, 255, 0.8), rgba(255, 255, 255, 0.9))', border: '1px solid #e9d5ff' }}>
           <div className="flex justify-between items-start mb-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-muted">Segurança & Auditoria</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-muted">Auditoria</span>
             <div style={{ padding: '6px', background: '#ede9fe', borderRadius: '8px', color: '#7c3aed' }}>
               <Lock size={18} />
             </div>
           </div>
           <div className="text-2xl font-bold text-slate-800">
-            {auditLogs.length} <span className="text-xs font-normal text-muted">eventos auditados</span>
+            {auditLogs.length} <span className="text-xs font-normal text-muted">eventos</span>
           </div>
           <div className="text-xs text-muted mt-1 flex items-center gap-1">
             <CheckCircle2 size={13} color="#7c3aed" />
-            <span>Trilha imutável gravada no Cloud Firestore</span>
+            <span>Trilha imutável no Cloud Firestore</span>
           </div>
         </div>
 
@@ -502,15 +544,15 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="text-2xl font-bold text-slate-800">
-            {churnRate}% <span className="text-xs font-normal text-muted">({churnCount} suspensos/cancelados)</span>
+            {churnRate}% <span className="text-xs font-normal text-muted">({churnCount} suspensos)</span>
           </div>
           <div className="text-xs text-muted mt-1">
-            <span>Controle automático de suspensão sem perda de dados</span>
+            <span>Controle automático de suspensão</span>
           </div>
         </div>
       </div>
 
-      {/* Navegação por Abas no Painel */}
+      {/* Navegação por Abas no Painel (Títulos de 1 Palavra) */}
       <div className="flex gap-2 mb-4 border-b pb-2 flex-wrap" style={{ borderColor: 'var(--border)' }}>
         <button
           className={`btn ${activeTab === 'licenses' ? 'btn-primary' : 'btn-outline'}`}
@@ -518,7 +560,7 @@ export default function AdminDashboard() {
           style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
         >
           <Stethoscope size={16} />
-          <span>Gestão de Licenças por Médico ({doctors.length})</span>
+          <span>Licenças ({doctors.length})</span>
         </button>
 
         <button
@@ -527,7 +569,7 @@ export default function AdminDashboard() {
           style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
         >
           <Activity size={16} />
-          <span>Trilha de Auditoria & Impersonação ({auditLogs.length})</span>
+          <span>Auditoria ({auditLogs.length})</span>
         </button>
 
         <button
@@ -536,17 +578,17 @@ export default function AdminDashboard() {
           style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
         >
           <CreditCard size={16} />
-          <span>Módulo Financeiro & Gateways</span>
+          <span>Financeiro</span>
         </button>
       </div>
 
-      {/* ================= ABA 1: GESTÃO DE LICENÇAS MÉDICAS ================= */}
+      {/* ================= ABA 1: LICENÇAS (100% LGPD COMPLIANT) ================= */}
       {activeTab === 'licenses' && (
         <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px' }}>
           <div className="flex justify-between items-center mb-4 flex-wrap gap-3">
             <div>
-              <h2 className="font-bold text-lg">Controle de Assinaturas & Licenças Médicas</h2>
-              <p className="text-muted text-xs mt-0.5">Vínculo com CRM, CPF, vigência de contrato e controle de acesso</p>
+              <h2 className="font-bold text-lg">Licenças</h2>
+              <p className="text-muted text-xs mt-0.5">Gestão de assinaturas médicas, CRM e vigências contratuais</p>
             </div>
 
             <button 
@@ -554,7 +596,7 @@ export default function AdminDashboard() {
               onClick={handleOpenCreateModal}
               style={{ padding: '0.5rem 1rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
             >
-              <Plus size={16} /> Nova Licença Médica
+              <Plus size={16} /> Nova Licença
             </button>
           </div>
 
@@ -606,12 +648,12 @@ export default function AdminDashboard() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
-                    <th style={{ padding: '0.85rem 1rem' }}>Médico Responsável</th>
-                    <th style={{ padding: '0.85rem 1rem' }}>Registro Profissional</th>
-                    <th style={{ padding: '0.85rem 1rem' }}>Plano & Mensalidade</th>
-                    <th style={{ padding: '0.85rem 1rem' }}>Vigência & Vencimento</th>
+                    <th style={{ padding: '0.85rem 1rem' }}>Médico</th>
+                    <th style={{ padding: '0.85rem 1rem' }}>Registro</th>
+                    <th style={{ padding: '0.85rem 1rem' }}>Plano</th>
+                    <th style={{ padding: '0.85rem 1rem' }}>Vigência</th>
                     <th style={{ padding: '0.85rem 1rem' }}>Status</th>
-                    <th style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>Ações de Gestão</th>
+                    <th style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -665,7 +707,7 @@ export default function AdminDashboard() {
                             <div className="text-xs text-muted">
                               {Number(docItem.valorMensalidade) > 0 
                                 ? `R$ ${Number(docItem.valorMensalidade).toFixed(2)}/mês` 
-                                : 'Gratuito (Demonstração)'}
+                                : 'Gratuito (Trial)'}
                             </div>
                           </td>
 
@@ -718,16 +760,6 @@ export default function AdminDashboard() {
 
                           <td style={{ padding: '0.85rem 1rem', textAlign: 'right' }}>
                             <div className="flex items-center justify-end gap-1 flex-wrap">
-                              {/* Botão Acessar / Impersonar */}
-                              <button 
-                                className="btn btn-outline" 
-                                onClick={() => handleAccessDoctor(docItem)}
-                                style={{ padding: '0.35rem 0.65rem', fontSize: '0.75rem', color: '#2563eb', borderColor: '#bfdbfe', background: '#eff6ff', fontWeight: '600' }}
-                                title="Acessar com registro de auditoria na nuvem"
-                              >
-                                <ExternalLink size={13} /> Acessar
-                              </button>
-
                               {/* Botão Pausar / Reativar */}
                               <button 
                                 className="btn btn-outline" 
@@ -739,7 +771,7 @@ export default function AdminDashboard() {
                                   borderColor: isSuspended ? '#bbf7d0' : '#fde68a',
                                   background: isSuspended ? '#f0fdf4' : '#fffbeb'
                                 }}
-                                title={isSuspended ? "Reativar licença médica" : "Pausar/Suspender licença (dados continuam seguros)"}
+                                title={isSuspended ? "Reativar licença médica" : "Pausar/Suspender licença"}
                               >
                                 {isSuspended ? <PlayCircle size={13} /> : <PauseCircle size={13} />}
                                 <span>{isSuspended ? 'Reativar' : 'Pausar'}</span>
@@ -787,20 +819,20 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* ================= ABA 2: TRILHA DE AUDITORIA & SEGURANÇA ================= */}
+      {/* ================= ABA 2: AUDITORIA ================= */}
       {activeTab === 'audit' && (
         <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px' }}>
           <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
             <div>
               <h2 className="font-bold text-lg flex items-center gap-2">
-                <Shield size={20} color="#7c3aed" /> Trilha de Auditoria & Conformidade
+                <Shield size={20} color="#7c3aed" /> Auditoria
               </h2>
               <p className="text-muted text-xs mt-0.5">
-                Logs imutáveis gravados no Firestore para rastrear impersonações, alterações de licença e acessos
+                Logs imutáveis no Firestore para rastreabilidade de licenças, pagamentos e acessos
               </p>
             </div>
             <span style={{ fontSize: '0.75rem', background: '#ede9fe', color: '#6d28d9', padding: '4px 10px', borderRadius: '10px', fontWeight: '600' }}>
-              Proteção de Dados Médicos
+              LGPD & Segurança
             </span>
           </div>
 
@@ -818,11 +850,11 @@ export default function AdminDashboard() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.83rem', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
-                    <th style={{ padding: '0.75rem 1rem' }}>Data & Hora</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Tipo de Ação</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Descrição do Evento</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Admin Responsável</th>
-                    <th style={{ padding: '0.75rem 1rem' }}>Médico Alvo</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Data</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Ação</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Descrição</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Responsável</th>
+                    <th style={{ padding: '0.75rem 1rem' }}>Alvo</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -838,11 +870,9 @@ export default function AdminDashboard() {
                             padding: '2px 8px', 
                             borderRadius: '6px', 
                             fontWeight: 'bold',
-                            background: log.tipoAcao === 'IMPERSONATION' ? '#fef3c7' :
-                                        log.tipoAcao === 'LICENSE_PAUSED' ? '#fee2e2' :
+                            background: log.tipoAcao === 'LICENSE_PAUSED' ? '#fee2e2' :
                                         log.tipoAcao === 'LICENSE_RENEWED' ? '#dcfce7' : '#ede9fe',
-                            color: log.tipoAcao === 'IMPERSONATION' ? '#b45309' :
-                                   log.tipoAcao === 'LICENSE_PAUSED' ? '#b91c1c' :
+                            color: log.tipoAcao === 'LICENSE_PAUSED' ? '#b91c1c' :
                                    log.tipoAcao === 'LICENSE_RENEWED' ? '#15803d' : '#6d28d9'
                           }}
                         >
@@ -867,96 +897,203 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* ================= ABA 3: MÓDULO FINANCEIRO & GATEWAYS ================= */}
+      {/* ================= ABA 3: FINANCEIRO (CRUD DINÂMICO DE PLANOS & GATEWAYS) ================= */}
       {activeTab === 'financial' && (
         <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px' }}>
-          <h2 className="font-bold text-lg mb-1 flex items-center gap-2">
-            <CreditCard size={20} color="#16a34a" /> Configuração Financeira & Integração de Cobrança
-          </h2>
-          <p className="text-muted text-xs mb-5">
-            Gestão de precificação recorrente por médico, controle de faturamento e integração com gateways
-          </p>
+          <div className="flex justify-between items-center mb-5 flex-wrap gap-2">
+            <div>
+              <h2 className="font-bold text-lg flex items-center gap-2">
+                <CreditCard size={20} color="#16a34a" /> Financeiro
+              </h2>
+              <p className="text-muted text-xs mt-0.5">
+                Gestão de planos, precificação e conectores de pagamento no Cloud Firestore
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button 
+                className="btn btn-outline" 
+                onClick={() => setIsGatewayModalOpen(true)}
+                style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+              >
+                <Settings size={15} /> Configurar Gateways
+              </button>
+              <button 
+                className="btn btn-primary" 
+                onClick={handleOpenCreatePlan}
+                style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+              >
+                <Plus size={15} /> Novo Plano
+              </button>
+            </div>
+          </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
             
-            {/* Tabela de Planos Padrão */}
-            <div className="bg-white p-4 rounded-xl border border-slate-200">
-              <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#0f172a' }}>
-                <Zap size={16} color="#eab308" /> Catálogo de Planos Médicos
-              </h3>
-              
-              <div className="flex flex-col gap-3">
-                <div className="p-3 rounded-lg border border-emerald-200 bg-emerald-50/50 flex justify-between items-center">
-                  <div>
-                    <strong className="text-sm block text-emerald-900">Plano Mensal Nefrologia</strong>
-                    <span className="text-xs text-muted">Acesso ilimitado a prontuários e diálise</span>
-                  </div>
-                  <div className="text-right">
-                    <strong className="text-sm block text-emerald-700">R$ 490,00</strong>
-                    <span className="text-xs text-muted">por mês</span>
-                  </div>
+            {/* Seção 1: Planos */}
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-bold text-sm flex items-center gap-2" style={{ color: '#0f172a' }}>
+                    <Zap size={16} color="#eab308" /> Planos
+                  </h3>
+                  <span className="text-xs text-muted">{systemPlans.length} planos cadastrados</span>
                 </div>
+                
+                <div className="flex flex-col gap-3">
+                  {systemPlans.map((plan) => {
+                    const isInactive = plan.status === 'Inativo';
+                    return (
+                      <div 
+                        key={plan.id} 
+                        className="p-3.5 rounded-xl border transition-all"
+                        style={{
+                          background: isInactive ? '#f8fafc' : plan.destaque ? 'rgba(239, 246, 255, 0.6)' : '#ffffff',
+                          borderColor: isInactive ? '#e2e8f0' : plan.destaque ? '#bfdbfe' : '#e2e8f0',
+                          opacity: isInactive ? 0.7 : 1
+                        }}
+                      >
+                        <div className="flex justify-between items-start mb-1.5">
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <strong className="text-sm text-slate-900">{plan.nome}</strong>
+                              {plan.destaque && (
+                                <span style={{ fontSize: '0.65rem', background: '#dbeafe', color: '#1d4ed8', padding: '1px 5px', borderRadius: '4px', fontWeight: 'bold' }}>
+                                  Destaque
+                                </span>
+                              )}
+                              <span 
+                                style={{ 
+                                  fontSize: '0.65rem', 
+                                  background: plan.status === 'Ativo' ? '#dcfce7' : '#fee2e2', 
+                                  color: plan.status === 'Ativo' ? '#15803d' : '#b91c1c', 
+                                  padding: '1px 5px', 
+                                  borderRadius: '4px', 
+                                  fontWeight: 'bold' 
+                                }}
+                              >
+                                {plan.status}
+                              </span>
+                            </div>
+                            <span className="text-xs text-muted block mt-0.5">{plan.descricao}</span>
+                          </div>
+                          
+                          <div className="text-right">
+                            <strong className="text-sm block" style={{ color: Number(plan.valor) === 0 ? '#7c3aed' : '#059669' }}>
+                              {Number(plan.valor) === 0 ? 'Gratuito' : `R$ ${Number(plan.valor).toFixed(2)}`}
+                            </strong>
+                            <span className="text-xs text-muted">/{plan.intervalo}</span>
+                          </div>
+                        </div>
 
-                <div className="p-3 rounded-lg border border-blue-200 bg-blue-50/50 flex justify-between items-center">
-                  <div>
-                    <strong className="text-sm block text-blue-900">Plano Anual com Desconto</strong>
-                    <span className="text-xs text-muted">Cobrança única anual (+2 meses grátis)</span>
-                  </div>
-                  <div className="text-right">
-                    <strong className="text-sm block text-blue-700">R$ 4.900,00</strong>
-                    <span className="text-xs text-muted">por ano</span>
-                  </div>
-                </div>
+                        {/* Recursos do Plano */}
+                        {Array.isArray(plan.recursos) && plan.recursos.length > 0 && (
+                          <div className="mt-2 pt-2 border-t border-slate-100 flex flex-wrap gap-1">
+                            {plan.recursos.map((rec, i) => (
+                              <span key={i} style={{ fontSize: '0.68rem', background: '#f1f5f9', color: '#475569', padding: '2px 6px', borderRadius: '4px' }}>
+                                ✓ {rec}
+                              </span>
+                            ))}
+                          </div>
+                        )}
 
-                <div className="p-3 rounded-lg border border-purple-200 bg-purple-50/50 flex justify-between items-center">
-                  <div>
-                    <strong className="text-sm block text-purple-900">Plano Trial / Demonstração</strong>
-                    <span className="text-xs text-muted">Avaliação médica por período determinado</span>
-                  </div>
-                  <div className="text-right">
-                    <strong className="text-sm block text-purple-700">Gratuito</strong>
-                    <span className="text-xs text-muted">Trial ativo</span>
-                  </div>
+                        {/* Ações de Edição e Exclusão */}
+                        <div className="flex justify-end gap-1.5 mt-2.5 pt-2 border-t border-slate-100">
+                          <button
+                            type="button"
+                            className="btn btn-outline"
+                            onClick={() => handleTogglePlan(plan)}
+                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                          >
+                            {plan.status === 'Ativo' ? 'Pausar' : 'Ativar'}
+                          </button>
+                          
+                          <button
+                            type="button"
+                            className="btn btn-outline"
+                            onClick={() => handleOpenEditPlan(plan)}
+                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                          >
+                            <Edit size={12} /> Editar
+                          </button>
+
+                          <button
+                            type="button"
+                            className="btn btn-outline"
+                            onClick={() => handleDeletePlan(plan)}
+                            style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem', color: '#dc2626' }}
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
 
-            {/* Gateways de Pagamento */}
-            <div className="bg-white p-4 rounded-xl border border-slate-200">
-              <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#0f172a' }}>
-                <Building size={16} color="#2563eb" /> Conectores de Gateways de Pagamento
-              </h3>
-              
-              <div className="flex flex-col gap-2.5">
-                <div className="p-3 rounded-lg border border-slate-200 flex justify-between items-center">
-                  <div>
-                    <strong className="text-xs block text-slate-800">PIX Instantâneo Automático</strong>
-                    <span className="text-xs text-muted">Geração de QR Code e confirmação imediata</span>
-                  </div>
-                  <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
-                    Ativo
-                  </span>
+            {/* Seção 2: Gateways */}
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
+              <div>
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="font-bold text-sm flex items-center gap-2" style={{ color: '#0f172a' }}>
+                    <Building size={16} color="#2563eb" /> Gateways
+                  </h3>
+                  <span className="text-xs text-muted">Cloud Firestore</span>
                 </div>
+                
+                <div className="flex flex-col gap-3">
+                  {/* Card PIX */}
+                  <div className="p-3.5 rounded-xl border border-emerald-200 bg-emerald-50/40">
+                    <div className="flex justify-between items-center mb-1">
+                      <strong className="text-xs block text-emerald-900 font-bold">PIX Instantâneo</strong>
+                      <span style={{ fontSize: '0.7rem', background: gatewayConfig.pix?.ativo ? '#dcfce7' : '#fee2e2', color: gatewayConfig.pix?.ativo ? '#15803d' : '#b91c1c', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
+                        {gatewayConfig.pix?.ativo ? 'Ativo' : 'Desativado'}
+                      </span>
+                    </div>
+                    <div className="text-xs text-muted">Chave: <strong>{gatewayConfig.pix?.chavePix || 'CNPJ Cadastrado'}</strong></div>
+                    <div className="text-xs text-muted">Banco: {gatewayConfig.pix?.banco || 'Cora / BB'}</div>
+                  </div>
 
-                <div className="p-3 rounded-lg border border-slate-200 flex justify-between items-center">
-                  <div>
-                    <strong className="text-xs block text-slate-800">Asaas / Mercado Pago / Stripe</strong>
-                    <span className="text-xs text-muted">Cobrança recorrente em cartão de crédito</span>
+                  {/* Card Cartão / Asaas */}
+                  <div className="p-3.5 rounded-xl border border-indigo-200 bg-indigo-50/40">
+                    <div className="flex justify-between items-center mb-1">
+                      <strong className="text-xs block text-indigo-900 font-bold">Cartão & Recorrência</strong>
+                      <span style={{ fontSize: '0.7rem', background: '#e0e7ff', color: '#3730a3', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
+                        {gatewayConfig.cartao?.provedor || 'Asaas'} ({gatewayConfig.cartao?.ambiente || 'sandbox'})
+                      </span>
+                    </div>
+                    <div className="text-xs text-muted">Status: <strong>{gatewayConfig.cartao?.ativo ? 'Integrado e Ativo' : 'Pausado'}</strong></div>
+                    <div className="text-xs text-muted">Webhook: {gatewayConfig.cartao?.webhookUrl || 'Configurado'}</div>
                   </div>
-                  <span style={{ fontSize: '0.7rem', background: '#e0e7ff', color: '#3730a3', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
-                    Webhook Pronto
-                  </span>
-                </div>
 
-                <div className="p-3 rounded-lg border border-slate-200 flex justify-between items-center">
-                  <div>
-                    <strong className="text-xs block text-slate-800">Suspensão Automática por Inadimplência</strong>
-                    <span className="text-xs text-muted">Pausa o acesso após 5 dias de vencimento</span>
+                  {/* Card Regras de Inadimplência */}
+                  <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                    <div className="flex justify-between items-center mb-1">
+                      <strong className="text-xs block text-slate-800 font-bold">Inadimplência & Suspensão</strong>
+                      <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
+                        {gatewayConfig.regrasCobranca?.suspensaoAutomatica ? 'Automático' : 'Manual'}
+                      </span>
+                    </div>
+                    <div className="text-xs text-muted">
+                      Tolerância: <strong>{gatewayConfig.regrasCobranca?.diasTolerancia || 5} dias</strong> após o vencimento
+                    </div>
+                    <div className="text-xs text-muted">
+                      Notificações: {gatewayConfig.regrasCobranca?.notificarEmail ? 'E-mail ativado' : 'Desativado'}
+                    </div>
                   </div>
-                  <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
-                    Configurado
-                  </span>
                 </div>
+              </div>
+
+              <div className="mt-4 pt-3 border-t">
+                <button
+                  type="button"
+                  className="btn btn-outline w-full"
+                  onClick={() => setIsGatewayModalOpen(true)}
+                  style={{ fontSize: '0.8rem', padding: '0.45rem' }}
+                >
+                  <Sliders size={14} /> Editar Chaves e Parâmetros
+                </button>
               </div>
             </div>
           </div>
@@ -997,7 +1134,7 @@ export default function AdminDashboard() {
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-bold mb-1">
-              {modalMode === 'create' ? 'Cadastrar Nova Licença Médica' : 'Editar Licença Médica'}
+              {modalMode === 'create' ? 'Cadastrar Licença' : 'Editar Licença'}
             </h2>
             <p className="text-xs text-muted mb-4">
               {modalMode === 'create' ? 'Adiciona um novo médico assinante no Firestore' : `Atualiza dados de ${doctorForm.nome}`}
@@ -1200,7 +1337,7 @@ export default function AdminDashboard() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-xl font-bold mb-1">Renovar Licença Médica</h2>
+            <h2 className="text-xl font-bold mb-1">Renovar Licença</h2>
             <p className="text-xs text-muted mb-4">
               Médico: <strong>{renewDoctor.nome}</strong> (CRM {renewDoctor.crm}/{renewDoctor.ufCrm})
             </p>
@@ -1301,7 +1438,7 @@ export default function AdminDashboard() {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-xl font-bold mb-1">Histórico Financeiro da Licença</h2>
+            <h2 className="text-xl font-bold mb-1">Histórico Financeiro</h2>
             <p className="text-xs text-muted mb-4">
               Médico: <strong>{historyDoctor.nome}</strong> (CRM {historyDoctor.crm}/{historyDoctor.ufCrm})
             </p>
@@ -1341,6 +1478,30 @@ export default function AdminDashboard() {
           </div>
         </div>
       )}
+
+      {/* ================= MODAL: PLANOS (CRUD) ================= */}
+      <PlanModal
+        isOpen={isPlanModalOpen}
+        onClose={() => setIsPlanModalOpen(false)}
+        planToEdit={planToEdit}
+        adminEmail={currentUser?.email || 'admin@nefroapp.com'}
+        onSaved={() => {
+          setFeedback({ type: 'success', text: planToEdit ? 'Plano atualizado no Firestore!' : 'Novo plano criado com sucesso!' });
+          setTimeout(() => setFeedback(null), 3000);
+        }}
+      />
+
+      {/* ================= MODAL: CONFIGURAÇÃO DE GATEWAYS ================= */}
+      <GatewayModal
+        isOpen={isGatewayModalOpen}
+        onClose={() => setIsGatewayModalOpen(false)}
+        currentConfig={gatewayConfig}
+        adminEmail={currentUser?.email || 'admin@nefroapp.com'}
+        onSaved={() => {
+          setFeedback({ type: 'success', text: 'Configurações de gateways atualizadas no Firestore!' });
+          setTimeout(() => setFeedback(null), 3000);
+        }}
+      />
 
     </div>
   );
