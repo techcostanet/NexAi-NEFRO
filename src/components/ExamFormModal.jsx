@@ -55,6 +55,8 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!isOpen) return;
+
     if (examToEdit) {
       setFormData({
         dataExame: examToEdit.dataExame || new Date().toISOString().split('T')[0],

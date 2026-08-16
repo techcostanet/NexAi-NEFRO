@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.24] - 2026-08-16
+### Alterações
+- Eliminação de loop de renderização em modais de pacientes e restauração completa da navegação do botão voltar
+
 ## [1.1.23] - 2026-08-16
 ### Alterações
 - Correção do botão voltar ao painel de pacientes, remoção do termo Ronda de Hemodiálise e correção da abertura da edição de evolução clínica

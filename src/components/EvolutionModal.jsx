@@ -29,6 +29,8 @@ export default function EvolutionModal({
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!isOpen) return;
+
     if (evolutionToEdit) {
       setFormData({
         id: evolutionToEdit.id,

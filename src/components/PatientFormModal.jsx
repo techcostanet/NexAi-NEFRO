@@ -28,6 +28,8 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!isOpen) return;
+
     const defaultClinic = (locaisAtuacao && locaisAtuacao.length > 0) ? locaisAtuacao[0].nome : 'Clínica Nefrológica NexAi';
     if (patientToEdit) {
       const isKnown = locaisAtuacao.some(l => l.nome === patientToEdit.clinica);
