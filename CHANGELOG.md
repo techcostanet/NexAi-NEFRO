@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.21] - 2026-08-16
+### Alterações
+- Ajuste de espacamento dos icones e simplificacao dos botoes superiores para palavra unica
+
 ## [1.1.20] - 2026-08-15
 ### Alterações
 - Reformulacao completa do Prontuario com abas clinicas, exames balanceados e registro de evolucoes

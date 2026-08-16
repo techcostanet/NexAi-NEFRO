@@ -209,18 +209,18 @@ export default function PatientProfile() {
                   {patient.nome}
                 </h1>
                 
-                <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: '8px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', fontWeight: '600' }}>
+                <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: '8px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', fontWeight: '600', whiteSpace: 'nowrap' }}>
                   {patient.status || 'Ativo'}
                 </span>
 
-                <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: '8px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', fontWeight: '600' }}>
+                <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: '8px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', fontWeight: '600', whiteSpace: 'nowrap' }}>
                   {patient.turno || '3º Turno'}
                 </span>
               </div>
 
               <div className="flex items-center gap-3 mt-1.5 flex-wrap text-xs text-muted font-medium">
-                <span className="flex items-center gap-1">
-                  <Building2 size={13} color="#2563eb" />
+                <span className="flex items-center gap-1.5" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <Building2 size={14} color="#2563eb" style={{ flexShrink: 0 }} />
                   <strong>{patient.clinica || 'Dialize Betim'}</strong>
                 </span>
                 
@@ -244,25 +244,28 @@ export default function PatientProfile() {
             <button 
               className="btn btn-outline" 
               onClick={() => setIsPatientModalOpen(true)}
-              style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}
+              style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+              title="Editar cadastro do paciente"
             >
               <Edit size={14} color="var(--primary)" />
-              <span>Editar Cadastro</span>
+              <span>Editar</span>
             </button>
 
             <button 
               className="btn btn-outline" 
               onClick={handleOpenNewExam}
-              style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}
+              style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+              title="Lançar novos exames"
             >
               <FlaskConical size={14} color="#059669" />
-              <span>Lançar Exame</span>
+              <span>Exames</span>
             </button>
 
             <button 
               className="btn btn-outline" 
               onClick={handleOpenNewMedication}
-              style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}
+              style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+              title="Prescrever medicamentos"
             >
               <Pill size={14} color="#d97706" />
               <span>Prescrever</span>
@@ -271,10 +274,11 @@ export default function PatientProfile() {
             <button 
               className="btn btn-primary" 
               onClick={handleOpenNewEvolution}
-              style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}
+              style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+              title="Nova evolução médica"
             >
               <Plus size={14} />
-              <span>Nova Evolução</span>
+              <span>Evolução</span>
             </button>
           </div>
         </div>
@@ -597,8 +601,8 @@ export default function PatientProfile() {
             
             {/* 1. Anemia & Perfil de Ferro */}
             <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
-              <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-rose-800 mb-2.5">
-                <Droplet size={14} color="#e11d48" />
+              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-rose-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Droplet size={15} color="#e11d48" style={{ flexShrink: 0 }} />
                 <span>Anemia & Perfil de Ferro</span>
               </div>
               
@@ -626,8 +630,8 @@ export default function PatientProfile() {
 
             {/* 2. Metabolismo Mineral & Ósseo (DMO) */}
             <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
-              <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-amber-800 mb-2.5">
-                <Activity size={14} color="#d97706" />
+              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-amber-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Activity size={15} color="#d97706" style={{ flexShrink: 0 }} />
                 <span>Distúrbio Mineral Ósseo</span>
               </div>
               
@@ -657,8 +661,8 @@ export default function PatientProfile() {
 
             {/* 3. Eletrólitos & Gasometria */}
             <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
-              <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-blue-800 mb-2.5">
-                <HeartPulse size={14} color="#2563eb" />
+              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-blue-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <HeartPulse size={15} color="#2563eb" style={{ flexShrink: 0 }} />
                 <span>Eletrólitos & Gasometria</span>
               </div>
               
@@ -688,8 +692,8 @@ export default function PatientProfile() {
 
             {/* 4. Adequação Dialítica, Nutrição & Inflamação */}
             <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
-              <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-emerald-800 mb-2.5">
-                <ShieldCheck size={14} color="#059669" />
+              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-emerald-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <ShieldCheck size={15} color="#059669" style={{ flexShrink: 0 }} />
                 <span>Adequação & Nutrição</span>
               </div>
               
