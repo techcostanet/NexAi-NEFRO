@@ -330,19 +330,19 @@ export default function PatientProfile() {
         <button
           className={`btn ${activeTab === 'overview' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setActiveTab('overview')}
-          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
         >
           <Activity size={16} />
-          <span>Visão Geral</span>
+          <span>Resumo</span>
         </button>
 
         <button
           className={`btn ${activeTab === 'exams' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setActiveTab('exams')}
-          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
         >
           <FlaskConical size={16} />
-          <span>Exames & Laboratório</span>
+          <span>Exames</span>
           {historicoExames.length > 0 && (
             <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '10px', background: activeTab === 'exams' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'exams' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
               {historicoExames.length}
@@ -353,7 +353,7 @@ export default function PatientProfile() {
         <button
           className={`btn ${activeTab === 'medications' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setActiveTab('medications')}
-          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
         >
           <Pill size={16} />
           <span>Prescrições</span>
@@ -367,10 +367,10 @@ export default function PatientProfile() {
         <button
           className={`btn ${activeTab === 'evolucoes' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setActiveTab('evolucoes')}
-          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
         >
           <FileText size={16} />
-          <span>Evoluções & Ronda</span>
+          <span>Evoluções</span>
           {evolucoes.length > 0 && (
             <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '10px', background: activeTab === 'evolucoes' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'evolucoes' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
               {evolucoes.length}
@@ -740,12 +740,12 @@ export default function PatientProfile() {
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left' }}>
                   <thead>
                     <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Data Coleta</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Hb (g/dL)</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>IST / Ferritina</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>PTH (pg/mL)</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Fósforo / Cálcio</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Potássio (K⁺)</th>
+                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Data</th>
+                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Hb</th>
+                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>IST/Ferritina</th>
+                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>PTH</th>
+                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>P/Ca</th>
+                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Potássio</th>
                       <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Kt/V</th>
                       <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Albumina</th>
                       <th style={{ padding: '0.65rem 0.8rem', textAlign: 'right', color: '#475569' }}>Ações</th>

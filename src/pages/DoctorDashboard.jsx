@@ -20,7 +20,10 @@ import {
   LayoutGrid,
   Rows3,
   Table,
-  FileText
+  FileText,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown
 } from 'lucide-react';
 import { subscribeToPatients } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
@@ -47,6 +50,7 @@ export default function DoctorDashboard() {
   const [filterStatus, setFilterStatus] = useState('Todos');
   const [filterMedAlert, setFilterMedAlert] = useState(false);
   const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'compact' | 'table'
+  const [sortConfig, setSortConfig] = useState({ key: 'nome', direction: 'asc' });
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
   const [patientToEdit, setPatientToEdit] = useState(null);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
@@ -129,6 +133,43 @@ export default function DoctorDashboard() {
     }
 
     return matchesSearch && matchesLocal && matchesTurno && matchesStatus;
+  });
+
+  const handleSort = (key) => {
+    setSortConfig(prev => {
+      if (prev.key === key) {
+        return { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
+      }
+      return { key, direction: 'asc' };
+    });
+  };
+
+  const sortedPatients = [...filteredPatients].sort((a, b) => {
+    if (!sortConfig.key) return 0;
+    const factor = sortConfig.direction === 'asc' ? 1 : -1;
+
+    switch (sortConfig.key) {
+      case 'nome':
+        return factor * (a.nome || '').localeCompare(b.nome || '', 'pt-BR');
+      case 'clinica':
+        return factor * (a.clinica || 'Dialize Betim').localeCompare(b.clinica || 'Dialize Betim', 'pt-BR');
+      case 'turno':
+        return factor * (a.turno || '3º Turno').localeCompare(b.turno || '3º Turno', 'pt-BR');
+      case 'status':
+        return factor * (a.status || 'Ativo').localeCompare(b.status || 'Ativo', 'pt-BR');
+      case 'acesso': {
+        const aTipo = a.acessoVascular?.tipo || 'FAV';
+        const bTipo = b.acessoVascular?.tipo || 'FAV';
+        return factor * aTipo.localeCompare(bTipo, 'pt-BR');
+      }
+      case 'medicacoes': {
+        const aMeds = getPatientMedicationAlerts(a).totalMeds;
+        const bMeds = getPatientMedicationAlerts(b).totalMeds;
+        return factor * (aMeds - bMeds);
+      }
+      default:
+        return 0;
+    }
   });
 
   const getStatusStyle = (status = 'Ativo') => {
@@ -752,7 +793,7 @@ export default function DoctorDashboard() {
       {/* ================= MODALIDADE 3: VISUALIZAÇÃO EM TABELA (RONDA CLÍNICA) ================= */}
       {viewMode === 'table' && (
         <div className="glass-panel" style={{ padding: '0', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border)' }}>
-          {filteredPatients.length === 0 ? (
+          {sortedPatients.length === 0 ? (
             <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
               <p>Nenhum paciente encontrado com os filtros selecionados.</p>
             </div>
@@ -761,17 +802,103 @@ export default function DoctorDashboard() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.84rem', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
-                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Paciente</th>
-                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Unidade</th>
-                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Turno</th>
-                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Status</th>
-                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Acesso Vascular</th>
-                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>Medicações & Alertas</th>
-                    <th style={{ padding: '0.85rem 1rem', textAlign: 'right', color: '#475569' }}>Ações</th>
+                    <th 
+                      onClick={() => handleSort('nome')}
+                      style={{ padding: '0.85rem 1rem', color: '#475569', cursor: 'pointer', userSelect: 'none' }}
+                      title="Clique para ordenar por Paciente"
+                    >
+                      <div className="flex items-center gap-1.5" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                        <span>Paciente</span>
+                        {sortConfig.key === 'nome' ? (
+                          sortConfig.direction === 'asc' ? <ArrowUp size={13} color="var(--primary)" /> : <ArrowDown size={13} color="var(--primary)" />
+                        ) : (
+                          <ArrowUpDown size={12} color="#94a3b8" />
+                        )}
+                      </div>
+                    </th>
+
+                    <th 
+                      onClick={() => handleSort('clinica')}
+                      style={{ padding: '0.85rem 1rem', color: '#475569', cursor: 'pointer', userSelect: 'none' }}
+                      title="Clique para ordenar por Unidade"
+                    >
+                      <div className="flex items-center gap-1.5" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                        <span>Unidade</span>
+                        {sortConfig.key === 'clinica' ? (
+                          sortConfig.direction === 'asc' ? <ArrowUp size={13} color="var(--primary)" /> : <ArrowDown size={13} color="var(--primary)" />
+                        ) : (
+                          <ArrowUpDown size={12} color="#94a3b8" />
+                        )}
+                      </div>
+                    </th>
+
+                    <th 
+                      onClick={() => handleSort('turno')}
+                      style={{ padding: '0.85rem 1rem', color: '#475569', cursor: 'pointer', userSelect: 'none' }}
+                      title="Clique para ordenar por Turno"
+                    >
+                      <div className="flex items-center gap-1.5" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                        <span>Turno</span>
+                        {sortConfig.key === 'turno' ? (
+                          sortConfig.direction === 'asc' ? <ArrowUp size={13} color="var(--primary)" /> : <ArrowDown size={13} color="var(--primary)" />
+                        ) : (
+                          <ArrowUpDown size={12} color="#94a3b8" />
+                        )}
+                      </div>
+                    </th>
+
+                    <th 
+                      onClick={() => handleSort('status')}
+                      style={{ padding: '0.85rem 1rem', color: '#475569', cursor: 'pointer', userSelect: 'none' }}
+                      title="Clique para ordenar por Status"
+                    >
+                      <div className="flex items-center gap-1.5" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                        <span>Status</span>
+                        {sortConfig.key === 'status' ? (
+                          sortConfig.direction === 'asc' ? <ArrowUp size={13} color="var(--primary)" /> : <ArrowDown size={13} color="var(--primary)" />
+                        ) : (
+                          <ArrowUpDown size={12} color="#94a3b8" />
+                        )}
+                      </div>
+                    </th>
+
+                    <th 
+                      onClick={() => handleSort('acesso')}
+                      style={{ padding: '0.85rem 1rem', color: '#475569', cursor: 'pointer', userSelect: 'none' }}
+                      title="Clique para ordenar por Acesso"
+                    >
+                      <div className="flex items-center gap-1.5" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                        <span>Acesso</span>
+                        {sortConfig.key === 'acesso' ? (
+                          sortConfig.direction === 'asc' ? <ArrowUp size={13} color="var(--primary)" /> : <ArrowDown size={13} color="var(--primary)" />
+                        ) : (
+                          <ArrowUpDown size={12} color="#94a3b8" />
+                        )}
+                      </div>
+                    </th>
+
+                    <th 
+                      onClick={() => handleSort('medicacoes')}
+                      style={{ padding: '0.85rem 1rem', color: '#475569', cursor: 'pointer', userSelect: 'none' }}
+                      title="Clique para ordenar por Medicações"
+                    >
+                      <div className="flex items-center gap-1.5" style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                        <span>Medicações</span>
+                        {sortConfig.key === 'medicacoes' ? (
+                          sortConfig.direction === 'asc' ? <ArrowUp size={13} color="var(--primary)" /> : <ArrowDown size={13} color="var(--primary)" />
+                        ) : (
+                          <ArrowUpDown size={12} color="#94a3b8" />
+                        )}
+                      </div>
+                    </th>
+
+                    <th style={{ padding: '0.85rem 1rem', textAlign: 'right', color: '#475569' }}>
+                      <span>Ações</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredPatients.map((patient, idx) => {
+                  {sortedPatients.map((patient, idx) => {
                     const statusStyle = getStatusStyle(patient.status);
                     const turnoStyle = getTurnoStyle(patient.turno);
                     const medInfo = getPatientMedicationAlerts(patient);

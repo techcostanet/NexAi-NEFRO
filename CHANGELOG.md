@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.22] - 2026-08-16
+### Alterações
+- Adiciona auto organizacao clicavel nas colunas da tabela e simplifica abas e cabecalhos para palavra unica
+
 ## [1.1.21] - 2026-08-16
 ### Alterações
 - Ajuste de espacamento dos icones e simplificacao dos botoes superiores para palavra unica
