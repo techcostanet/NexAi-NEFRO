@@ -33,6 +33,7 @@ import {
   toggleMedicationStatus,
   deletePatientEvolution
 } from '../services/patientService';
+import { subscribeDoctorProfile } from '../services/doctorService';
 import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
 import { useAuth } from '../context/AuthContext';
 import PatientFormModal from '../components/PatientFormModal';
@@ -46,6 +47,7 @@ export default function PatientProfile() {
   const { activeDoctorId } = useAuth();
   
   const [patient, setPatient] = useState(null);
+  const [doctorInfo, setDoctorInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'exams' | 'medications' | 'evolutions'
   
@@ -71,6 +73,14 @@ export default function PatientProfile() {
 
     return () => unsubscribe();
   }, [id]);
+
+  useEffect(() => {
+    const docIdToUse = activeDoctorId || 'dr-marcelo';
+    const unsubDoc = subscribeDoctorProfile(docIdToUse, (data) => {
+      if (data) setDoctorInfo(data);
+    });
+    return () => unsubDoc();
+  }, [activeDoctorId]);
 
   // Ações de Exames
   const handleOpenNewExam = () => {
@@ -195,9 +205,12 @@ export default function PatientProfile() {
           
           <div className="flex items-start gap-3.5">
             <button 
+              type="button"
               className="btn btn-outline mt-0.5" 
-              onClick={() => navigate('/doctor')} 
-              style={{ padding: '0.6rem', borderRadius: '12px' }}
+              onClick={() => {
+                navigate('/doctor');
+              }} 
+              style={{ padding: '0.6rem', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               title="Voltar para a lista de pacientes"
             >
               <ArrowLeft size={18} color="var(--primary)" />
@@ -981,14 +994,14 @@ export default function PatientProfile() {
         </div>
       )}
 
-      {/* ================= ABA 4: EVOLUÇÕES & RONDA DE DIÁLISE ================= */}
+      {/* ================= ABA 4: EVOLUÇÕES CLÍNICAS ================= */}
       {activeTab === 'evolucoes' && (
         <div className="flex flex-col gap-4 animate-in">
           <div className="flex justify-between items-center flex-wrap gap-2">
             <div>
               <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
                 <FileText size={18} color="var(--primary)" />
-                <span>Evoluções Clínicas & Rondas de Hemodiálise</span>
+                <span>Evoluções Clínicas</span>
               </h2>
               <p className="text-xs text-muted">Histórico de anotações médicas, intercorrências e condutas na sessão</p>
             </div>
@@ -1022,29 +1035,33 @@ export default function PatientProfile() {
                         {new Date(evo.dataHora).toLocaleString('pt-BR')}
                       </strong>
                       <span style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '8px', background: '#eff6ff', color: '#1e40af', fontWeight: '600' }}>
-                        {evo.tipoAtendimento || 'Ronda de Hemodiálise'}
+                        {evo.tipoAtendimento === 'Ronda de Hemodiálise' ? 'Hemodiálise' : (evo.tipoAtendimento || 'Hemodiálise')}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-1.5">
                       <button 
+                        type="button"
                         className="btn btn-outline" 
                         onClick={() => handleEditEvolution(evo)}
                         style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                        title="Editar evolução"
                       >
                         <Edit size={12} color="var(--primary)" />
                       </button>
                       <button 
+                        type="button"
                         className="btn btn-outline" 
                         onClick={() => handleDeleteEvolution(evo.id)}
                         style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                        title="Excluir evolução"
                       >
                         <Trash2 size={12} color="var(--danger)" />
                       </button>
                     </div>
                   </div>
 
-                  {/* Parâmetros Vitais da Ronda */}
+                  {/* Parâmetros Vitais da Sessão */}
                   <div className="flex items-center gap-3 text-xs text-muted mb-2 flex-wrap font-medium p-2 bg-slate-50 rounded-xl">
                     {evo.paPre && <span>PA Pré: <strong>{evo.paPre}</strong></span>}
                     {evo.paPos && <span>• PA Pós: <strong>{evo.paPos}</strong></span>}
@@ -1101,6 +1118,7 @@ export default function PatientProfile() {
         onClose={() => setIsEvolutionModalOpen(false)}
         patientId={patient.id}
         evolutionToEdit={evolutionToEdit}
+        doctorInfo={doctorInfo}
       />
     </div>
   );

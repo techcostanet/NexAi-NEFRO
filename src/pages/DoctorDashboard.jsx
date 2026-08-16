@@ -58,14 +58,15 @@ export default function DoctorDashboard() {
   const currentDoctorId = activeDoctorId;
 
   useEffect(() => {
-    if (!currentDoctorId) return;
-
-    const unsubDoc = subscribeDoctorProfile(currentDoctorId, (data) => {
-      if (data) setDoctor(data);
+    // Escuta a lista de pacientes em tempo real
+    const unsubPatients = subscribeToPatients((data) => {
+      setPatients(data || []);
     });
 
-    const unsubPatients = subscribeToPatients((data) => {
-      setPatients(data);
+    // Escuta perfil do médico ativo com fallback resiliente
+    const docIdToUse = currentDoctorId || 'dr-marcelo';
+    const unsubDoc = subscribeDoctorProfile(docIdToUse, (data) => {
+      if (data) setDoctor(data);
     });
 
     return () => {
@@ -492,7 +493,7 @@ export default function DoctorDashboard() {
                 boxShadow: viewMode === 'table' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
                 transition: 'all 0.15s'
               }}
-              title="Visualização em Tabela para Ronda Clínica"
+              title="Visualização em Tabela de Pacientes"
             >
               <Table size={14} />
               <span>Tabela</span>
@@ -790,7 +791,7 @@ export default function DoctorDashboard() {
         </div>
       )}
 
-      {/* ================= MODALIDADE 3: VISUALIZAÇÃO EM TABELA (RONDA CLÍNICA) ================= */}
+      {/* ================= MODALIDADE 3: VISUALIZAÇÃO EM TABELA ================= */}
       {viewMode === 'table' && (
         <div className="glass-panel" style={{ padding: '0', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border)' }}>
           {sortedPatients.length === 0 ? (

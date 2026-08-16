@@ -308,7 +308,7 @@ export async function toggleMedicationStatus(patientId, medId, active) {
 }
 
 /**
- * Adiciona ou edita uma evolução médica / nota de ronda no paciente no Firestore
+ * Adiciona ou edita uma evolução médica no prontuário do paciente no Firestore
  */
 export async function savePatientEvolution(patientId, evolutionData, evolutionId = null) {
   if (!db) throw new Error("Cloud Firestore não inicializado.");

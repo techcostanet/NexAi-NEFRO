@@ -12,7 +12,7 @@ export default function EvolutionModal({
 }) {
   const [formData, setFormData] = useState({
     dataHora: '',
-    tipoAtendimento: 'Ronda de Hemodiálise',
+    tipoAtendimento: 'Hemodiálise',
     intercorrencias: 'Nenhuma',
     paPre: '',
     paPos: '',
@@ -33,7 +33,7 @@ export default function EvolutionModal({
       setFormData({
         id: evolutionToEdit.id,
         dataHora: evolutionToEdit.dataHora ? evolutionToEdit.dataHora.slice(0, 16) : new Date().toISOString().slice(0, 16),
-        tipoAtendimento: evolutionToEdit.tipoAtendimento || 'Ronda de Hemodiálise',
+        tipoAtendimento: (evolutionToEdit.tipoAtendimento === 'Ronda de Hemodiálise' ? 'Hemodiálise' : evolutionToEdit.tipoAtendimento) || 'Hemodiálise',
         intercorrencias: evolutionToEdit.intercorrencias || 'Nenhuma',
         paPre: evolutionToEdit.paPre || '',
         paPos: evolutionToEdit.paPos || '',
@@ -42,8 +42,8 @@ export default function EvolutionModal({
         ufRetirada: evolutionToEdit.ufRetirada || '',
         qbEfetivo: evolutionToEdit.qbEfetivo || '',
         condutaClinica: evolutionToEdit.condutaClinica || '',
-        medicoNome: evolutionToEdit.medicoNome || doctorInfo?.nome || 'Médico Nefrologista',
-        medicoCrm: evolutionToEdit.medicoCrm || doctorInfo?.crm ? `${doctorInfo.crm}/${doctorInfo.ufCrm || 'SP'}` : ''
+        medicoNome: evolutionToEdit.medicoNome || doctorInfo?.nome || 'Dra. Gisele',
+        medicoCrm: evolutionToEdit.medicoCrm || (doctorInfo?.crm ? `${doctorInfo.crm}/${doctorInfo?.ufCrm || 'SP'}` : '123456/SP')
       });
     } else {
       const now = new Date();
@@ -52,7 +52,7 @@ export default function EvolutionModal({
       
       setFormData({
         dataHora: localIso,
-        tipoAtendimento: 'Ronda de Hemodiálise',
+        tipoAtendimento: 'Hemodiálise',
         intercorrencias: 'Nenhuma',
         paPre: '130/80',
         paPos: '120/80',
@@ -128,7 +128,7 @@ export default function EvolutionModal({
             <FileText size={22} color="var(--primary)" />
             <div>
               <h2 className="text-lg font-bold">
-                {evolutionToEdit ? 'Editar Evolução Médica' : 'Nova Evolução da Ronda de Hemodiálise'}
+                {evolutionToEdit ? 'Editar Evolução Clínica' : 'Nova Evolução Clínica'}
               </h2>
               <span className="text-xs text-muted">Registro clínico oficial no Cloud Firestore</span>
             </div>
@@ -152,7 +152,7 @@ export default function EvolutionModal({
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.75rem' }}>
             <div>
-              <label className="text-xs font-semibold mb-1 block text-slate-700">Data e Hora da Ronda *</label>
+              <label className="text-xs font-semibold mb-1 block text-slate-700">Data e Hora da Evolução *</label>
               <input 
                 type="datetime-local" 
                 className="input-field" 
@@ -169,7 +169,7 @@ export default function EvolutionModal({
                 value={formData.tipoAtendimento}
                 onChange={(e) => setFormData(prev => ({ ...prev, tipoAtendimento: e.target.value }))}
               >
-                <option value="Ronda de Hemodiálise">🏥 Ronda de Hemodiálise</option>
+                <option value="Hemodiálise">🏥 Sessão de Hemodiálise</option>
                 <option value="Consulta Ambulatorial">🩺 Consulta Ambulatorial</option>
                 <option value="Interconsulta Hospitalar">🏨 Interconsulta Hospitalar</option>
                 <option value="Avaliação de Acesso Vascular">🩸 Avaliação de Acesso</option>
@@ -264,7 +264,7 @@ export default function EvolutionModal({
             <textarea 
               className="input-field" 
               rows={4}
-              placeholder="Descreva o estado clínico do paciente durante a ronda, estabilidade hemodinâmica, ajustes em prescrições ou encaminhamentos..."
+              placeholder="Descreva o estado clínico do paciente durante a sessão de hemodiálise, estabilidade hemodinâmica, intercorrências e conduta médica..."
               value={formData.condutaClinica}
               onChange={(e) => setFormData(prev => ({ ...prev, condutaClinica: e.target.value }))}
               required
