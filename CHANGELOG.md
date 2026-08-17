@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.26] - 2026-08-17
+### Alterações
+- Lançamento da Landing Page de Vendas de Alta Conversão, Checkout Self-Service com Asaas/PIX, Trial 7 Dias e Onboarding Instantâneo
+
 ## [1.1.25] - 2026-08-16
 ### Alterações
 - Adequação LGPD no painel admin, simplificação de textos para 1 palavra e módulo financeiro interativo com Firestore

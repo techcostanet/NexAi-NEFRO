@@ -6,6 +6,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../config/firebase.js";
+import { logAuditEvent } from "./auditService.js";
 
 const USERS_COLLECTION = "users";
 const DOCTORS_COLLECTION = "doctors";
@@ -250,3 +251,150 @@ export async function updateActiveTenant(uid, tenantId) {
     console.warn("Erro ao atualizar tenant na nuvem:", e);
   }
 }
+
+/**
+ * Registra um novo médico assinante via página de vendas (Self-Service Onboarding)
+ */
+export async function registerDoctorSelfService({
+  nome,
+  crm,
+  ufCrm = "SP",
+  cpf = "",
+  rqe = "",
+  email,
+  telefone = "",
+  senha,
+  clinicaPrincipal = "",
+  plan,
+  paymentMethod = "PIX"
+}) {
+  const cleanEmail = (email || "").trim().toLowerCase();
+  const cleanNome = (nome || "").trim();
+  const cleanCrm = (crm || "").trim();
+  const cleanUf = (ufCrm || "SP").trim().toUpperCase();
+  const doctorId = `doc-${cleanCrm.replace(/\D/g, '') || Date.now()}-${cleanUf.toLowerCase()}`;
+  
+  let firebaseUser = null;
+  let uid = `user-${Date.now()}`;
+
+  // 1. Tenta criar usuário no Firebase Authentication
+  if (auth && senha) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, cleanEmail, senha);
+      firebaseUser = userCredential.user;
+      uid = firebaseUser.uid;
+    } catch (authErr) {
+      console.warn("Firebase Auth createUser warning:", authErr.code, authErr.message);
+      if (authErr.code === 'auth/email-already-in-use') {
+        try {
+          const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, senha);
+          firebaseUser = userCredential.user;
+          uid = firebaseUser.uid;
+        } catch (signErr) {
+          console.warn("Sign in error:", signErr);
+        }
+      }
+    }
+  }
+
+  // 2. Calcula vigência e status da assinatura
+  const isTrial = plan?.intervalo === 'trial' || Number(plan?.valor) === 0;
+  const hoje = new Date();
+  const dataFim = new Date();
+  if (isTrial) {
+    dataFim.setDate(dataFim.getDate() + 7);
+  } else if (plan?.intervalo === 'anual') {
+    dataFim.setFullYear(dataFim.getFullYear() + 1);
+  } else {
+    dataFim.setMonth(dataFim.getMonth() + 1);
+  }
+
+  const doctorProfile = {
+    id: doctorId,
+    nome: cleanNome,
+    cpf: cpf || '',
+    crm: cleanCrm,
+    ufCrm: cleanUf,
+    rqe: rqe || '',
+    titulo: 'Médico(a) Nefrologista',
+    especialidade: 'Nefrologia Clínica e Hemodiálise',
+    email: cleanEmail,
+    telefone: telefone || '',
+    clinicaPrincipal: clinicaPrincipal || 'Clínica Nefrológica',
+    hospitalVinculo: 'Hospital Especializado',
+    unidadeDialise: clinicaPrincipal || 'Unidade de Hemodiálise',
+    statusLicenca: isTrial ? 'Trial' : 'Ativo',
+    tipoConta: isTrial ? 'Medico / Demonstração' : 'Médico Assinante',
+    plano: plan?.nome || (isTrial ? 'Avaliação Gratuita (7 Dias)' : 'Plano Mensal'),
+    valorMensalidade: Number(plan?.valor) || 0,
+    dataInicioAssinatura: hoje.toISOString(),
+    dataFimAssinatura: dataFim.toISOString(),
+    pacientesCount: 6,
+    locaisAtuacao: [
+      {
+        id: `loc-${Date.now()}-1`,
+        nome: clinicaPrincipal || 'Clínica Nefrológica Principal',
+        tipo: 'Clínica de Hemodiálise',
+        cidade: 'São Paulo - SP',
+        turnos: ['1º Turno (06:00 - 10:00)', '2º Turno (10:30 - 14:30)', '3º Turno (15:00 - 19:00)']
+      }
+    ],
+    historicoPagamentos: [
+      {
+        id: `pag-${Date.now()}`,
+        data: hoje.toISOString(),
+        valor: Number(plan?.valor) || 0,
+        plano: plan?.nome || (isTrial ? 'Trial 7 Dias' : 'Assinatura'),
+        status: isTrial ? 'Trial Ativo' : 'Pago',
+        metodo: isTrial ? 'Gratuito' : paymentMethod,
+        referencia: isTrial ? 'Início do Teste Grátis de 7 Dias' : `Contratação via Landing Page (${paymentMethod})`
+      }
+    ],
+    criadoEm: hoje.toISOString(),
+    atualizadoEm: hoje.toISOString()
+  };
+
+  // 3. Grava no Cloud Firestore
+  if (db) {
+    try {
+      await setDoc(doc(db, DOCTORS_COLLECTION, doctorId), doctorProfile, { merge: true });
+
+      await setDoc(doc(db, USERS_COLLECTION, uid), {
+        uid,
+        email: cleanEmail,
+        role: "doctor",
+        doctorId: doctorId,
+        activeTenantId: doctorId,
+        nome: cleanNome,
+        criadoEm: hoje.toISOString(),
+        ultimoAcesso: hoje.toISOString()
+      }, { merge: true });
+
+      await logAuditEvent({
+        tipoAcao: 'LICENSE_CREATED_SELF_SERVICE',
+        descricao: `Novo médico cadastrado via Landing Page: ${cleanNome} (CRM ${cleanCrm}/${cleanUf}) - Plano ${doctorProfile.plano} (${isTrial ? 'Trial 7 dias' : paymentMethod})`,
+        targetDoctorId: doctorId,
+        targetDoctorName: cleanNome,
+        adminEmail: cleanEmail,
+        detalhes: { doctorId, plan, paymentMethod, isTrial }
+      });
+    } catch (dbErr) {
+      console.error("Erro ao salvar cadastro no Firestore:", dbErr);
+    }
+  }
+
+  // 4. Configura sessão ativa
+  const sessionUser = {
+    firebaseUser,
+    uid,
+    email: cleanEmail,
+    role: "doctor",
+    doctorId: doctorId,
+    activeTenantId: doctorId,
+    nome: cleanNome
+  };
+
+  notifySubscribers(sessionUser);
+  return sessionUser;
+}
+

@@ -110,7 +110,19 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        {/* Link para Landing Page / Novos Clientes */}
+        <div className="mt-5 pt-4 border-t border-slate-100 text-center">
+          <p className="text-xs text-slate-600 mb-2 font-medium">Ainda não possui uma licença médica?</p>
+          <button 
+            type="button" 
+            onClick={() => navigate('/')}
+            className="btn btn-outline w-full text-xs font-bold py-2 text-blue-600 border-blue-200 bg-blue-50/50 hover:bg-blue-100 transition"
+          >
+            Conhecer Planos & Testar 7 Dias Grátis ➡️
+          </button>
+        </div>
+
+        <div className="mt-5 text-center">
           <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
             Versão {APP_VERSION} • Produção Cloud Firestore
           </span>
