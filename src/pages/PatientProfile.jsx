@@ -44,7 +44,7 @@ import EvolutionModal from '../components/EvolutionModal';
 export default function PatientProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { activeDoctorId } = useAuth();
+  const { activeDoctorId, userRole } = useAuth();
   
   const [patient, setPatient] = useState(null);
   const [doctorInfo, setDoctorInfo] = useState(null);
@@ -67,16 +67,28 @@ export default function PatientProfile() {
   useEffect(() => {
     setLoading(true);
     const unsubscribe = subscribeToPatientById(id, (data) => {
-      setPatient(data);
+      if (data) {
+        // Validação de isolamento: se for médico, apenas acessa seus próprios pacientes
+        if (userRole !== 'admin' && activeDoctorId && data.doctorId && data.doctorId !== activeDoctorId) {
+          console.warn("Acesso bloqueado: o paciente pertence a outro médico.");
+          setPatient(null);
+          setLoading(false);
+          navigate('/doctor');
+          return;
+        }
+        setPatient(data);
+      } else {
+        setPatient(null);
+      }
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [id]);
+  }, [id, activeDoctorId, userRole, navigate]);
 
   useEffect(() => {
-    const docIdToUse = activeDoctorId || 'dr-marcelo';
-    const unsubDoc = subscribeDoctorProfile(docIdToUse, (data) => {
+    if (!activeDoctorId) return;
+    const unsubDoc = subscribeDoctorProfile(activeDoctorId, (data) => {
       if (data) setDoctorInfo(data);
     });
     return () => unsubDoc();

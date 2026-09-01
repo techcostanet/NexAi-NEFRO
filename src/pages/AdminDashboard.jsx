@@ -167,7 +167,7 @@ export default function AdminDashboard() {
     if (window.confirm("Deseja restaurar a base de dados de demonstração no Cloud Firestore? Isso recriará os 6 pacientes clínicos com todos os exames, alertas e ciclos de medicação.")) {
       try {
         setSeeding(true);
-        await seedDemoPatientsToFirestore();
+        await seedDemoPatientsToFirestore('dr-marcelo');
         await logAuditEvent({
           tipoAcao: 'DEMO_RESET',
           descricao: 'Restauração da base completa de demonstração clínica no Firestore',
@@ -288,6 +288,7 @@ export default function AdminDashboard() {
 
       if (isCreate) {
         payload.criadoEm = new Date().toISOString();
+        payload.pacientesCount = 0;
         payload.historicoPagamentos = [
           {
             id: `pag-${Date.now()}`,

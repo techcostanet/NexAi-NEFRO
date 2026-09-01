@@ -44,8 +44,8 @@ export default function EvolutionModal({
         ufRetirada: evolutionToEdit.ufRetirada || '',
         qbEfetivo: evolutionToEdit.qbEfetivo || '',
         condutaClinica: evolutionToEdit.condutaClinica || '',
-        medicoNome: evolutionToEdit.medicoNome || doctorInfo?.nome || 'Dra. Gisele',
-        medicoCrm: evolutionToEdit.medicoCrm || (doctorInfo?.crm ? `${doctorInfo.crm}/${doctorInfo?.ufCrm || 'SP'}` : '123456/SP')
+        medicoNome: evolutionToEdit.medicoNome || doctorInfo?.nome || 'Médico(a) Responsável',
+        medicoCrm: evolutionToEdit.medicoCrm || (doctorInfo?.crm ? `${doctorInfo.crm}/${doctorInfo?.ufCrm || 'SP'}` : '')
       });
     } else {
       const now = new Date();
@@ -63,8 +63,8 @@ export default function EvolutionModal({
         ufRetirada: '2000',
         qbEfetivo: '300',
         condutaClinica: '',
-        medicoNome: doctorInfo?.nome || 'Dra. Gisele',
-        medicoCrm: doctorInfo?.crm ? `${doctorInfo.crm}/${doctorInfo.ufCrm || 'SP'}` : '123456/SP'
+        medicoNome: doctorInfo?.nome || 'Médico(a) Responsável',
+        medicoCrm: doctorInfo?.crm ? `${doctorInfo.crm}/${doctorInfo.ufCrm || 'SP'}` : ''
       });
     }
     setError('');

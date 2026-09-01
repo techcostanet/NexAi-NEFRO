@@ -7,7 +7,9 @@ import {
   updateDoc, 
   deleteDoc,
   onSnapshot, 
-  writeBatch 
+  writeBatch,
+  query,
+  where
 } from "firebase/firestore";
 import { db } from "../config/firebase.js";
 import { normalizeMedicamentosList } from "../data/dialysisMedications.js";
@@ -46,23 +48,55 @@ export function calculateAge(birthDateStr) {
 }
 
 /**
- * Escuta todos os pacientes em tempo real exclusivamente do Cloud Firestore
+ * Escuta os pacientes em tempo real exclusivamente do Cloud Firestore com isolamento por médico
+ * @param {string|Function} doctorIdOrCallback - ID do médico ou callback (compatibilidade reversa)
+ * @param {Function} [callbackOrOnError] - Função de callback que recebe a lista de pacientes
+ * @param {Function} [maybeOnError] - Função de tratamento de erro
  */
-export function subscribeToPatients(callback, onError) {
+export function subscribeToPatients(doctorIdOrCallback, callbackOrOnError, maybeOnError) {
+  let doctorId = null;
+  let callback = null;
+  let onError = null;
+
+  if (typeof doctorIdOrCallback === 'function') {
+    callback = doctorIdOrCallback;
+    onError = callbackOrOnError;
+  } else {
+    doctorId = doctorIdOrCallback;
+    callback = callbackOrOnError;
+    onError = maybeOnError;
+  }
+
   if (!db) {
+    if (callback) callback([]);
+    return () => {};
+  }
+
+  // Se doctorId foi explicitamente fornecido como vazio ou null para um médico logado
+  if (doctorId !== null && doctorId !== undefined && typeof doctorId === 'string' && doctorId.trim() === '') {
     if (callback) callback([]);
     return () => {};
   }
 
   try {
     const colRef = collection(db, PATIENTS_COLLECTION);
+    const q = doctorId 
+      ? query(colRef, where("doctorId", "==", doctorId))
+      : colRef;
+
     return onSnapshot(
-      colRef, 
+      q, 
       (snapshot) => {
-        const list = snapshot.docs.map(docSnap => ({
+        let list = snapshot.docs.map(docSnap => ({
           id: docSnap.id,
           ...docSnap.data()
         }));
+
+        // Isolamento de segurança rigoroso em memória
+        if (doctorId) {
+          list = list.filter(p => p.doctorId === doctorId);
+        }
+
         list.sort((a, b) => (a.nome || "").localeCompare(b.nome || ""));
         if (callback) callback(list);
       },
@@ -373,9 +407,10 @@ export async function deletePatient(id) {
 }
 
 /**
- * Sincroniza e Restaura a Base Completa de Demonstração Nefrológica no Firestore
+ * Sincroniza e Restaura a Base Completa de Demonstração Nefrológica no Firestore vinculada ao médico indicado
+ * @param {string} [targetDoctorId='dr-marcelo'] - ID do médico destinatário da demonstração
  */
-export async function seedDemoPatientsToFirestore() {
+export async function seedDemoPatientsToFirestore(targetDoctorId = 'dr-marcelo') {
   if (!db) throw new Error("Cloud Firestore não conectado.");
 
   const batch = writeBatch(db);
@@ -383,6 +418,7 @@ export async function seedDemoPatientsToFirestore() {
     const docRef = doc(db, PATIENTS_COLLECTION, patient.id);
     batch.set(docRef, {
       ...patient,
+      doctorId: targetDoctorId,
       atualizadoEm: new Date().toISOString()
     }, { merge: true });
   });

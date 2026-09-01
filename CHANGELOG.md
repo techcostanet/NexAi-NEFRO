@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.27] - 2026-09-01
+### Alterações
+- Correção de segurança e multi-tenancy: isolamento estrito de pacientes por doctorId no Cloud Firestore, listagem vazia para novas contas médicas e bloqueio de acesso não autorizado
+
 ## [1.1.26] - 2026-08-17
 ### Alterações
 - Lançamento da Landing Page de Vendas de Alta Conversão, Checkout Self-Service com Asaas/PIX, Trial 7 Dias e Onboarding Instantâneo

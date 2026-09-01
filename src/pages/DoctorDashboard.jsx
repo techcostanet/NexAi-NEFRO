@@ -58,14 +58,18 @@ export default function DoctorDashboard() {
   const currentDoctorId = activeDoctorId;
 
   useEffect(() => {
-    // Escuta a lista de pacientes em tempo real
-    const unsubPatients = subscribeToPatients((data) => {
+    if (!currentDoctorId) {
+      setPatients([]);
+      return;
+    }
+
+    // Escuta a lista de pacientes em tempo real filtrada estritamente pelo médico ativo
+    const unsubPatients = subscribeToPatients(currentDoctorId, (data) => {
       setPatients(data || []);
     });
 
-    // Escuta perfil do médico ativo com fallback resiliente
-    const docIdToUse = currentDoctorId || 'dr-marcelo';
-    const unsubDoc = subscribeDoctorProfile(docIdToUse, (data) => {
+    // Escuta perfil do médico ativo
+    const unsubDoc = subscribeDoctorProfile(currentDoctorId, (data) => {
       if (data) setDoctor(data);
     });
 
@@ -568,8 +572,31 @@ export default function DoctorDashboard() {
       {viewMode === 'cards' && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '1rem' }}>
           {filteredPatients.length === 0 ? (
-            <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <p>Nenhum paciente encontrado com os filtros selecionados.</p>
+            <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '3.5rem 1.5rem', textAlign: 'center', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
+              <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
+                <UserPlus size={28} />
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '4px' }}>
+                  {patients.length === 0 ? 'Nenhum paciente cadastrado ainda' : 'Nenhum paciente encontrado'}
+                </h3>
+                <p style={{ fontSize: '0.85rem', maxWidth: '440px', margin: '0 auto', color: 'var(--text-muted)' }}>
+                  {patients.length === 0 
+                    ? 'Seu consultório está pronto! Cadastre seu primeiro paciente no botão abaixo para iniciar o acompanhamento dialítico e prontuário.' 
+                    : 'Nenhum paciente corresponde aos filtros ou busca selecionada.'}
+                </p>
+              </div>
+              {patients.length === 0 && (
+                <button 
+                  type="button"
+                  className="btn btn-primary" 
+                  onClick={handleOpenNewPatient}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '0.6rem 1.25rem', borderRadius: '12px' }}
+                >
+                  <UserPlus size={16} />
+                  <span>Cadastrar Primeiro Paciente</span>
+                </button>
+              )}
             </div>
           ) : (
             filteredPatients.map(patient => {
@@ -703,8 +730,22 @@ export default function DoctorDashboard() {
       {viewMode === 'compact' && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '0.75rem' }}>
           {filteredPatients.length === 0 ? (
-            <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <p>Nenhum paciente encontrado com os filtros selecionados.</p>
+            <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '3rem 1.5rem', textAlign: 'center', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.85rem' }}>
+              <UserPlus size={24} color="var(--primary)" />
+              <p style={{ fontWeight: '600', color: 'var(--text-main)', margin: 0 }}>
+                {patients.length === 0 ? 'Nenhum paciente cadastrado ainda' : 'Nenhum paciente encontrado'}
+              </p>
+              {patients.length === 0 && (
+                <button 
+                  type="button"
+                  className="btn btn-primary" 
+                  onClick={handleOpenNewPatient}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.8rem' }}
+                >
+                  <UserPlus size={14} />
+                  <span>Cadastrar Primeiro Paciente</span>
+                </button>
+              )}
             </div>
           ) : (
             filteredPatients.map(patient => {
@@ -795,8 +836,22 @@ export default function DoctorDashboard() {
       {viewMode === 'table' && (
         <div className="glass-panel" style={{ padding: '0', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border)' }}>
           {sortedPatients.length === 0 ? (
-            <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-              <p>Nenhum paciente encontrado com os filtros selecionados.</p>
+            <div style={{ padding: '3.5rem 1.5rem', textAlign: 'center', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.85rem' }}>
+              <UserPlus size={24} color="var(--primary)" />
+              <p style={{ fontWeight: '600', color: 'var(--text-main)', margin: 0 }}>
+                {patients.length === 0 ? 'Nenhum paciente cadastrado ainda' : 'Nenhum paciente encontrado com os filtros selecionados.'}
+              </p>
+              {patients.length === 0 && (
+                <button 
+                  type="button"
+                  className="btn btn-primary" 
+                  onClick={handleOpenNewPatient}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.8rem' }}
+                >
+                  <UserPlus size={14} />
+                  <span>Cadastrar Primeiro Paciente</span>
+                </button>
+              )}
             </div>
           ) : (
             <div style={{ overflowX: 'auto' }}>
@@ -1029,6 +1084,7 @@ export default function DoctorDashboard() {
         onClose={() => setIsPatientModalOpen(false)}
         patientToEdit={patientToEdit}
         locaisAtuacao={doctor.locaisAtuacao || []}
+        doctorId={currentDoctorId}
       />
 
       <ChangelogModal 

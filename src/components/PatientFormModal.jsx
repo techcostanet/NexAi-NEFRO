@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, User, Activity, Building, Calendar, Loader2 } from 'lucide-react';
 import { savePatient, calculateAge } from '../services/patientService';
+import { useAuth } from '../context/AuthContext';
 
-export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSaved, locaisAtuacao = [] }) {
+export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSaved, locaisAtuacao = [], doctorId }) {
+  const { activeDoctorId } = useAuth();
+  const effectiveDoctorId = doctorId || activeDoctorId;
   const [customClinic, setCustomClinic] = useState(false);
   const [formData, setFormData] = useState({
     nome: '',
@@ -36,6 +39,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       setCustomClinic(!isKnown && !!patientToEdit.clinica);
       setFormData({
         id: patientToEdit.id,
+        doctorId: patientToEdit.doctorId || effectiveDoctorId || null,
         nome: patientToEdit.nome || '',
         clinica: patientToEdit.clinica || defaultClinic,
         hospital: patientToEdit.hospital || 'Hospital de Nefrologia',
@@ -58,6 +62,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
     } else {
       setCustomClinic(false);
       setFormData({
+        doctorId: effectiveDoctorId || null,
         nome: '',
         clinica: defaultClinic,
         hospital: 'Hospital de Nefrologia',
@@ -79,7 +84,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       });
     }
     setError('');
-  }, [patientToEdit, isOpen, locaisAtuacao]);
+  }, [patientToEdit, isOpen, locaisAtuacao, effectiveDoctorId]);
 
   if (!isOpen) return null;
 
@@ -105,6 +110,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       
       const payload = {
         ...formData,
+        doctorId: patientToEdit?.doctorId || formData.doctorId || effectiveDoctorId || null,
         nome: formData.nome.trim().toUpperCase(),
         idade: formData.idade ? Number(formData.idade) : (calculateAge(formData.dataNascimento) || null),
         acessoVascular: {

@@ -329,7 +329,7 @@ export async function registerDoctorSelfService({
     valorMensalidade: Number(plan?.valor) || 0,
     dataInicioAssinatura: hoje.toISOString(),
     dataFimAssinatura: dataFim.toISOString(),
-    pacientesCount: 6,
+    pacientesCount: 0,
     locaisAtuacao: [
       {
         id: `loc-${Date.now()}-1`,
