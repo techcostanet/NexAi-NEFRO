@@ -3,10 +3,37 @@ import { X, Save, User, Activity, Building, Calendar, Loader2 } from 'lucide-rea
 import { savePatient, calculateAge } from '../services/patientService';
 import { useAuth } from '../context/AuthContext';
 
-export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSaved, locaisAtuacao = [], doctorId }) {
+const TIPOS_ACESSO_PADRAO = [
+  { value: 'FAV', label: 'FAV (Fístula Arteriovenosa)' },
+  { value: 'CDL', label: 'CDL (Cateter Duplo Lúmen)' },
+  { value: 'Permcath', label: 'Permcath (Cateter Tunelizado)' },
+  { value: 'Prótese', label: 'Prótese / Enxerto Vascular' },
+  { value: 'Cateter Peritoneal', label: 'Cateter Peritoneal (Tenckhoff)' },
+];
+
+const LOCALIZACOES_ACESSO_PADRAO = [
+  { value: 'MSE', label: 'MSE - Membro Superior Esquerdo' },
+  { value: 'MSD', label: 'MSD - Membro Superior Direito' },
+  { value: 'Jugular Interna', label: 'Jugular Interna' },
+  { value: 'Jugular Interna Direita (JID)', label: 'Jugular Interna Direita (JID)' },
+  { value: 'Jugular Interna Esquerda (JIE)', label: 'Jugular Interna Esquerda (JIE)' },
+  { value: 'Subclávia Direita', label: 'Subclávia Direita' },
+  { value: 'Subclávia Esquerda', label: 'Subclávia Esquerda' },
+  { value: 'Femoral Direita', label: 'Femoral Direita' },
+  { value: 'Femoral Esquerda', label: 'Femoral Esquerda' },
+  { value: 'MIE', label: 'MIE - Membro Inferior Esquerdo' },
+  { value: 'MID', label: 'MID - Membro Inferior Direito' },
+  { value: 'Abdominal / Peritoneal', label: 'Abdominal / Peritoneal' },
+];
+
+const EMPTY_LOCAIS = [];
+
+export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSaved, locaisAtuacao = EMPTY_LOCAIS, doctorId }) {
   const { activeDoctorId } = useAuth();
   const effectiveDoctorId = doctorId || activeDoctorId;
   const [customClinic, setCustomClinic] = useState(false);
+  const [customTipoAcesso, setCustomTipoAcesso] = useState(false);
+  const [customLadoMembro, setCustomLadoMembro] = useState(false);
   const [formData, setFormData] = useState({
     nome: '',
     clinica: 'Clínica Nefrológica NexAi',
@@ -37,6 +64,15 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
     if (patientToEdit) {
       const isKnown = locaisAtuacao.some(l => l.nome === patientToEdit.clinica);
       setCustomClinic(!isKnown && !!patientToEdit.clinica);
+
+      const currentTipo = patientToEdit.acessoVascular?.tipo || 'FAV';
+      const isKnownTipo = TIPOS_ACESSO_PADRAO.some(t => t.value === currentTipo);
+      setCustomTipoAcesso(!isKnownTipo && !!patientToEdit.acessoVascular?.tipo);
+
+      const currentLado = patientToEdit.acessoVascular?.ladoMembro || 'MSE';
+      const isKnownLado = LOCALIZACOES_ACESSO_PADRAO.some(l => l.value === currentLado);
+      setCustomLadoMembro(!isKnownLado && !!patientToEdit.acessoVascular?.ladoMembro);
+
       setFormData({
         id: patientToEdit.id,
         doctorId: patientToEdit.doctorId || effectiveDoctorId || null,
@@ -48,12 +84,12 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         idade: patientToEdit.idade !== undefined && patientToEdit.idade !== null ? patientToEdit.idade : (calculateAge(patientToEdit.dataNascimento) || ''),
         status: patientToEdit.status || 'Ativo',
         acessoVascular: {
-          tipo: patientToEdit.acessoVascular?.tipo || 'FAV',
+          tipo: currentTipo,
           fluxoSangue: patientToEdit.acessoVascular?.fluxoSangue || '',
           fluxoDialisato: patientToEdit.acessoVascular?.fluxoDialisato || '',
           agulha: patientToEdit.acessoVascular?.agulha || '',
           dataConfeccao: patientToEdit.acessoVascular?.dataConfeccao || '',
-          ladoMembro: patientToEdit.acessoVascular?.ladoMembro || ''
+          ladoMembro: currentLado
         },
         exames: patientToEdit.exames || {},
         medicamentos: patientToEdit.medicamentos || {},
@@ -61,6 +97,8 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       });
     } else {
       setCustomClinic(false);
+      setCustomTipoAcesso(false);
+      setCustomLadoMembro(false);
       setFormData({
         doctorId: effectiveDoctorId || null,
         nome: '',
@@ -325,30 +363,112 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
               <div>
                 <label className="text-sm font-semibold mb-1 block">Tipo de Acesso</label>
-                <input 
-                  type="text" 
-                  className="input-field" 
-                  placeholder="Ex: FAV BCE 15/10/2024, CDL..." 
-                  value={formData.acessoVascular.tipo}
-                  onChange={(e) => setFormData(prev => ({ 
-                    ...prev, 
-                    acessoVascular: { ...prev.acessoVascular, tipo: e.target.value } 
-                  }))}
-                />
+                {!customTipoAcesso ? (
+                  <select 
+                    className="input-field" 
+                    value={formData.acessoVascular.tipo}
+                    onChange={(e) => {
+                      if (e.target.value === '__custom__') {
+                        setCustomTipoAcesso(true);
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          acessoVascular: { ...prev.acessoVascular, tipo: '' } 
+                        }));
+                      } else {
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          acessoVascular: { ...prev.acessoVascular, tipo: e.target.value } 
+                        }));
+                      }
+                    }}
+                  >
+                    {TIPOS_ACESSO_PADRAO.map(t => (
+                      <option key={t.value} value={t.value}>{t.label}</option>
+                    ))}
+                    <option value="__custom__">➕ Outro tipo (digitar)...</option>
+                  </select>
+                ) : (
+                  <div>
+                    <input 
+                      type="text" 
+                      className="input-field" 
+                      placeholder="Ex: Prótese PTFE, Outro..." 
+                      value={formData.acessoVascular.tipo}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        acessoVascular: { ...prev.acessoVascular, tipo: e.target.value } 
+                      }))}
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setCustomTipoAcesso(false);
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          acessoVascular: { ...prev.acessoVascular, tipo: 'FAV' } 
+                        }));
+                      }}
+                      className="text-xs text-blue-600 hover:underline mt-1 block"
+                    >
+                      ← Selecionar da lista de tipos
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div>
                 <label className="text-sm font-semibold mb-1 block">Localização do Acesso</label>
-                <input 
-                  type="text" 
-                  className="input-field" 
-                  placeholder="Ex: MSE, MSD, VJI D" 
-                  value={formData.acessoVascular.ladoMembro}
-                  onChange={(e) => setFormData(prev => ({ 
-                    ...prev, 
-                    acessoVascular: { ...prev.acessoVascular, ladoMembro: e.target.value } 
-                  }))}
-                />
+                {!customLadoMembro ? (
+                  <select 
+                    className="input-field" 
+                    value={formData.acessoVascular.ladoMembro}
+                    onChange={(e) => {
+                      if (e.target.value === '__custom__') {
+                        setCustomLadoMembro(true);
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          acessoVascular: { ...prev.acessoVascular, ladoMembro: '' } 
+                        }));
+                      } else {
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          acessoVascular: { ...prev.acessoVascular, ladoMembro: e.target.value } 
+                        }));
+                      }
+                    }}
+                  >
+                    {LOCALIZACOES_ACESSO_PADRAO.map(loc => (
+                      <option key={loc.value} value={loc.value}>{loc.label}</option>
+                    ))}
+                    <option value="__custom__">➕ Outra localização (digitar)...</option>
+                  </select>
+                ) : (
+                  <div>
+                    <input 
+                      type="text" 
+                      className="input-field" 
+                      placeholder="Ex: Radiocefálica Esquerda..." 
+                      value={formData.acessoVascular.ladoMembro}
+                      onChange={(e) => setFormData(prev => ({ 
+                        ...prev, 
+                        acessoVascular: { ...prev.acessoVascular, ladoMembro: e.target.value } 
+                      }))}
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setCustomLadoMembro(false);
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          acessoVascular: { ...prev.acessoVascular, ladoMembro: 'MSE' } 
+                        }));
+                      }}
+                      className="text-xs text-blue-600 hover:underline mt-1 block"
+                    >
+                      ← Selecionar da lista de locais
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div>

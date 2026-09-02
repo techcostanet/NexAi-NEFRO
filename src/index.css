@@ -183,6 +183,9 @@ svg {
 
 .flex { display: flex; }
 .inline-flex { display: inline-flex; }
+.block { display: block; }
+.inline-block { display: inline-block; }
+.hidden { display: none; }
 .flex-col { flex-direction: column; }
 .items-center { align-items: center; }
 .items-start { align-items: flex-start; }

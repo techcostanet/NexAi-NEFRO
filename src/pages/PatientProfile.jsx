@@ -212,64 +212,74 @@ export default function PatientProfile() {
     <div className="container" style={{ paddingBottom: '5rem', maxWidth: '1100px' }}>
       
       {/* ================= CABEÇALHO CLÍNICO DO PACIENTE ================= */}
-      <header className="glass-panel mt-3 mb-4 p-4" style={{ borderRadius: '18px', background: 'rgba(255, 255, 255, 0.92)' }}>
+      <header className="glass-panel mt-3 mb-5" style={{ borderRadius: '20px', background: 'rgba(255, 255, 255, 0.95)', padding: '1.5rem 1.75rem', boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)' }}>
         <div className="flex justify-between items-start flex-wrap gap-4">
           
-          <div className="flex items-start gap-3.5">
+          <div className="flex items-start gap-4">
             <button 
               type="button"
-              className="btn btn-outline mt-0.5" 
+              className="btn btn-outline" 
               onClick={() => {
                 navigate('/doctor');
               }} 
-              style={{ padding: '0.6rem', borderRadius: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ 
+                padding: '0.65rem', 
+                borderRadius: '12px', 
+                cursor: 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                marginTop: '2px',
+                border: '1px solid #e2e8f0',
+                background: '#ffffff'
+              }}
               title="Voltar para a lista de pacientes"
             >
               <ArrowLeft size={18} color="var(--primary)" />
             </button>
 
             <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h1 className="text-2xl font-bold text-slate-800 tracking-tight" style={{ lineHeight: '1.25' }}>
                   {patient.nome}
                 </h1>
                 
-                <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: '8px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: '0.75rem', padding: '3px 10px', borderRadius: '20px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', fontWeight: '600', whiteSpace: 'nowrap' }}>
                   {patient.status || 'Ativo'}
                 </span>
 
-                <span style={{ fontSize: '0.75rem', padding: '2px 8px', borderRadius: '8px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: '0.75rem', padding: '3px 10px', borderRadius: '20px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', fontWeight: '600', whiteSpace: 'nowrap' }}>
                   {patient.turno || '3º Turno'}
                 </span>
               </div>
 
-              <div className="flex items-center gap-3 mt-1.5 flex-wrap text-xs text-muted font-medium">
-                <span className="flex items-center gap-1.5" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <Building2 size={14} color="#2563eb" style={{ flexShrink: 0 }} />
-                  <strong>{patient.clinica || 'Dialize Betim'}</strong>
+              <div className="flex items-center gap-3.5 mt-2.5 flex-wrap text-sm text-slate-600 font-medium">
+                <span className="flex items-center gap-1.5" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                  <Building2 size={15} color="#2563eb" style={{ flexShrink: 0 }} />
+                  <strong className="text-slate-800">{patient.clinica || 'Dialize Betim'}</strong>
                 </span>
                 
                 {patient.idade && (
-                  <span>• {patient.idade} anos {patient.sexo ? `(${patient.sexo})` : ''}</span>
+                  <span className="text-slate-500">• {patient.idade} anos {patient.sexo ? `(${patient.sexo})` : ''}</span>
                 )}
                 
                 {patient.dataNascimento && (
-                  <span>• Nasc: {new Date(patient.dataNascimento + 'T12:00:00').toLocaleDateString('pt-BR')}</span>
+                  <span className="text-slate-500">• Nasc: {new Date(patient.dataNascimento + 'T12:00:00').toLocaleDateString('pt-BR')}</span>
                 )}
 
                 {patient.etiologiaDRC && (
-                  <span>• Etiologia: <strong>{patient.etiologiaDRC}</strong></span>
+                  <span className="text-slate-500">• Etiologia: <strong className="text-slate-700">{patient.etiologiaDRC}</strong></span>
                 )}
               </div>
             </div>
           </div>
 
           {/* Ações Rápidas no Cabeçalho */}
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-2.5 flex-wrap">
             <button 
               className="btn btn-outline" 
               onClick={() => setIsPatientModalOpen(true)}
-              style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+              style={{ padding: '0.5rem 0.9rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', borderRadius: '10px' }}
               title="Editar cadastro do paciente"
             >
               <Edit size={14} color="var(--primary)" />
@@ -279,7 +289,7 @@ export default function PatientProfile() {
             <button 
               className="btn btn-outline" 
               onClick={handleOpenNewExam}
-              style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+              style={{ padding: '0.5rem 0.9rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', borderRadius: '10px' }}
               title="Lançar novos exames"
             >
               <FlaskConical size={14} color="#059669" />
@@ -289,7 +299,7 @@ export default function PatientProfile() {
             <button 
               className="btn btn-outline" 
               onClick={handleOpenNewMedication}
-              style={{ padding: '0.45rem 0.85rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+              style={{ padding: '0.5rem 0.9rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', borderRadius: '10px' }}
               title="Prescrever medicamentos"
             >
               <Pill size={14} color="#d97706" />
@@ -299,7 +309,7 @@ export default function PatientProfile() {
             <button 
               className="btn btn-primary" 
               onClick={handleOpenNewEvolution}
-              style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+              style={{ padding: '0.5rem 1rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', borderRadius: '10px' }}
               title="Nova evolução médica"
             >
               <Plus size={14} />
@@ -310,19 +320,46 @@ export default function PatientProfile() {
 
         {/* Alertas Críticos Globais do Paciente */}
         {(hasLabAlerts || medAlerts.length > 0) && (
-          <div className="mt-3 pt-3 border-t flex flex-col gap-2" style={{ borderColor: 'rgba(226, 232, 240, 0.8)' }}>
+          <div className="mt-4 pt-4 border-t flex flex-col gap-2.5" style={{ borderColor: 'rgba(226, 232, 240, 0.8)' }}>
             {hasLabAlerts && (
-              <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-xs text-red-800 flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-2">
-                  <AlertTriangle size={16} color="#dc2626" />
-                  <span>
-                    <strong>Atenção Laboratorial:</strong> {hbBaixa ? 'Hb < 10,0 • ' : ''}{pthAlto ? 'PTH > 600 • ' : ''}{fosforoAlto ? 'Fósforo > 5,5 • ' : ''}{kAlto ? 'Potássio > 5,5 • ' : ''}{albuminaBaixa ? 'Albumina < 3,8 • ' : ''}{hco3Baixo ? 'Acidose (HCO₃ < 22)' : ''}
+              <div 
+                style={{
+                  padding: '0.85rem 1.25rem',
+                  borderRadius: '14px',
+                  background: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  color: '#991b1b',
+                  fontSize: '0.82rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.75rem'
+                }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <AlertTriangle size={18} color="#dc2626" style={{ flexShrink: 0 }} />
+                  <span style={{ lineHeight: '1.4' }}>
+                    <strong style={{ color: '#b91c1c' }}>Atenção Laboratorial:</strong> {hbBaixa ? 'Hb < 10,0 • ' : ''}{pthAlto ? 'PTH > 600 • ' : ''}{fosforoAlto ? 'Fósforo > 5,5 • ' : ''}{kAlto ? 'Potássio > 5,5 • ' : ''}{albuminaBaixa ? 'Albumina < 3,8 • ' : ''}{hco3Baixo ? 'Acidose (HCO₃ < 22)' : ''}
                   </span>
                 </div>
                 <button 
                   onClick={() => setActiveTab('exams')}
-                  className="font-bold underline text-red-900 hover:text-red-700"
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.75rem' }}
+                  className="hover:underline"
+                  style={{ 
+                    background: 'rgba(220, 38, 38, 0.08)', 
+                    color: '#991b1b', 
+                    border: '1px solid rgba(220, 38, 38, 0.2)', 
+                    cursor: 'pointer', 
+                    fontSize: '0.78rem',
+                    fontWeight: '600',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '8px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    whiteSpace: 'nowrap'
+                  }}
                 >
                   Ver Exames →
                 </button>
@@ -330,17 +367,44 @@ export default function PatientProfile() {
             )}
 
             {medAlerts.length > 0 && (
-              <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-2">
-                  <Clock size={16} color="#d97706" />
-                  <span>
-                    <strong>Alertas de Prescrição:</strong> {medAlerts.length} medicamento(s) com ciclo encerrado ou a vencer nos próximos dias.
+              <div 
+                style={{
+                  padding: '0.85rem 1.25rem',
+                  borderRadius: '14px',
+                  background: '#fffbeb',
+                  border: '1px solid #fde68a',
+                  color: '#92400e',
+                  fontSize: '0.82rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.75rem'
+                }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Clock size={18} color="#d97706" style={{ flexShrink: 0 }} />
+                  <span style={{ lineHeight: '1.4' }}>
+                    <strong style={{ color: '#b45309' }}>Alertas de Prescrição:</strong> {medAlerts.length} medicamento(s) com ciclo encerrado ou a vencer nos próximos dias.
                   </span>
                 </div>
                 <button 
                   onClick={() => setActiveTab('medications')}
-                  className="font-bold underline text-amber-950 hover:text-amber-800"
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '0.75rem' }}
+                  className="hover:underline"
+                  style={{ 
+                    background: 'rgba(217, 119, 6, 0.08)', 
+                    color: '#92400e', 
+                    border: '1px solid rgba(217, 119, 6, 0.2)', 
+                    cursor: 'pointer', 
+                    fontSize: '0.78rem',
+                    fontWeight: '600',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '8px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    whiteSpace: 'nowrap'
+                  }}
                 >
                   Gerenciar Prescrições →
                 </button>
@@ -532,8 +596,8 @@ export default function PatientProfile() {
             </section>
 
             {/* Resumo de Indicadores Laboratoriais Chave */}
-            <section className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
-              <div className="flex justify-between items-center mb-3">
+            <section className="glass-panel" style={{ padding: '1.35rem', borderRadius: '18px' }}>
+              <div className="flex justify-between items-center mb-3.5">
                 <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
                   <FlaskConical size={16} color="#059669" />
                   <span>Resumo Laboratorial Mais Recente</span>
@@ -547,53 +611,155 @@ export default function PatientProfile() {
                 </button>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
-                <div className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                  <span className="text-muted text-xs block" style={{ fontSize: '0.68rem' }}>Hemoglobina</span>
-                  <strong className="text-sm font-bold block" style={{ color: hbBaixa ? '#dc2626' : '#1e293b' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    padding: '0.85rem 0.6rem', 
+                    borderRadius: '14px', 
+                    background: hbBaixa ? '#fef2f2' : '#f8fafc', 
+                    border: `1px solid ${hbBaixa ? '#fecaca' : '#e2e8f0'}`,
+                    textAlign: 'center',
+                    minHeight: '84px'
+                  }}
+                >
+                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                    Hemoglobina
+                  </span>
+                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: hbBaixa ? '#dc2626' : '#0f172a', lineHeight: 1.2 }}>
                     {exames.hb || '-'}
-                  </strong>
-                  <span className="text-muted" style={{ fontSize: '0.62rem' }}>g/dL</span>
+                  </span>
+                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
+                    g/dL
+                  </span>
                 </div>
 
-                <div className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                  <span className="text-muted text-xs block" style={{ fontSize: '0.68rem' }}>PTH Intacto</span>
-                  <strong className="text-sm font-bold block" style={{ color: pthAlto ? '#dc2626' : '#1e293b' }}>
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    padding: '0.85rem 0.6rem', 
+                    borderRadius: '14px', 
+                    background: pthAlto ? '#fef2f2' : '#f8fafc', 
+                    border: `1px solid ${pthAlto ? '#fecaca' : '#e2e8f0'}`,
+                    textAlign: 'center',
+                    minHeight: '84px'
+                  }}
+                >
+                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                    PTH Intacto
+                  </span>
+                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: pthAlto ? '#dc2626' : '#0f172a', lineHeight: 1.2 }}>
                     {exames.pth || '-'}
-                  </strong>
-                  <span className="text-muted" style={{ fontSize: '0.62rem' }}>pg/mL</span>
+                  </span>
+                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
+                    pg/mL
+                  </span>
                 </div>
 
-                <div className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                  <span className="text-muted text-xs block" style={{ fontSize: '0.68rem' }}>Fósforo</span>
-                  <strong className="text-sm font-bold block" style={{ color: fosforoAlto ? '#dc2626' : '#1e293b' }}>
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    padding: '0.85rem 0.6rem', 
+                    borderRadius: '14px', 
+                    background: fosforoAlto ? '#fef2f2' : '#f8fafc', 
+                    border: `1px solid ${fosforoAlto ? '#fecaca' : '#e2e8f0'}`,
+                    textAlign: 'center',
+                    minHeight: '84px'
+                  }}
+                >
+                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                    Fósforo
+                  </span>
+                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: fosforoAlto ? '#dc2626' : '#0f172a', lineHeight: 1.2 }}>
                     {exames.fosforo || '-'}
-                  </strong>
-                  <span className="text-muted" style={{ fontSize: '0.62rem' }}>mg/dL</span>
+                  </span>
+                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
+                    mg/dL
+                  </span>
                 </div>
 
-                <div className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                  <span className="text-muted text-xs block" style={{ fontSize: '0.68rem' }}>Potássio (K⁺)</span>
-                  <strong className="text-sm font-bold block" style={{ color: kAlto ? '#dc2626' : '#1e293b' }}>
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    padding: '0.85rem 0.6rem', 
+                    borderRadius: '14px', 
+                    background: kAlto ? '#fef2f2' : '#f8fafc', 
+                    border: `1px solid ${kAlto ? '#fecaca' : '#e2e8f0'}`,
+                    textAlign: 'center',
+                    minHeight: '84px'
+                  }}
+                >
+                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                    Potássio (K⁺)
+                  </span>
+                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: kAlto ? '#dc2626' : '#0f172a', lineHeight: 1.2 }}>
                     {exames.k || '-'}
-                  </strong>
-                  <span className="text-muted" style={{ fontSize: '0.62rem' }}>mEq/L</span>
+                  </span>
+                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
+                    mEq/L
+                  </span>
                 </div>
 
-                <div className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                  <span className="text-muted text-xs block" style={{ fontSize: '0.68rem' }}>Kt/V</span>
-                  <strong className="text-sm font-bold block text-slate-800">
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    padding: '0.85rem 0.6rem', 
+                    borderRadius: '14px', 
+                    background: '#f8fafc', 
+                    border: '1px solid #e2e8f0',
+                    textAlign: 'center',
+                    minHeight: '84px'
+                  }}
+                >
+                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                    Kt/V
+                  </span>
+                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: '#0f172a', lineHeight: 1.2 }}>
                     {exames.ktv || '-'}
-                  </strong>
-                  <span className="text-muted" style={{ fontSize: '0.62rem' }}>Meta ≥ 1.2</span>
+                  </span>
+                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
+                    Meta ≥ 1.2
+                  </span>
                 </div>
 
-                <div className="p-2 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                  <span className="text-muted text-xs block" style={{ fontSize: '0.68rem' }}>Albumina</span>
-                  <strong className="text-sm font-bold block" style={{ color: albuminaBaixa ? '#dc2626' : '#1e293b' }}>
+                <div 
+                  style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center', 
+                    justifyContent: 'center', 
+                    padding: '0.85rem 0.6rem', 
+                    borderRadius: '14px', 
+                    background: albuminaBaixa ? '#fef2f2' : '#f8fafc', 
+                    border: `1px solid ${albuminaBaixa ? '#fecaca' : '#e2e8f0'}`,
+                    textAlign: 'center',
+                    minHeight: '84px'
+                  }}
+                >
+                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                    Albumina
+                  </span>
+                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: albuminaBaixa ? '#dc2626' : '#0f172a', lineHeight: 1.2 }}>
                     {exames.albumina || '-'}
-                  </strong>
-                  <span className="text-muted" style={{ fontSize: '0.62rem' }}>g/dL</span>
+                  </span>
+                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
+                    g/dL
+                  </span>
                 </div>
               </div>
             </section>

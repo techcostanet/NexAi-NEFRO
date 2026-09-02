@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.28] - 2026-09-02
+### Alterações
+- Conversão de campos de acesso vascular para seleção e harmonização de layout
+
 ## [1.1.27] - 2026-09-01
 ### Alterações
 - Correção de segurança e multi-tenancy: isolamento estrito de pacientes por doctorId no Cloud Firestore, listagem vazia para novas contas médicas e bloqueio de acesso não autorizado
