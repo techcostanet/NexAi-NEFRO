@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.29] - 2026-09-02
+### Alterações
+- Etiologia da DRC com selecao nefrologica padrao, ordenacao cronologica decrescente de exames e importador inteligente multi-formato (XLS, PDF, DOCX, Fotos)
+
 ## [1.1.28] - 2026-09-02
 ### Alterações
 - Conversão de campos de acesso vascular para seleção e harmonização de layout

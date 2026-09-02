@@ -23,13 +23,15 @@ import {
   FileText,
   ArrowUpDown,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  UploadCloud
 } from 'lucide-react';
 import { subscribeToPatients } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
 import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
 import PatientFormModal from '../components/PatientFormModal';
 import ChangelogModal from '../components/ChangelogModal';
+import ExamImportModal from '../components/ExamImportModal';
 import { useAuth } from '../context/AuthContext';
 
 export default function DoctorDashboard() {
@@ -54,6 +56,7 @@ export default function DoctorDashboard() {
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
   const [patientToEdit, setPatientToEdit] = useState(null);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const currentDoctorId = activeDoctorId;
 
@@ -271,6 +274,27 @@ export default function DoctorDashboard() {
           >
             <UserCog size={16} color="var(--primary)" />
             <span>Dados & Locais</span>
+          </button>
+
+          <button 
+            className="btn btn-outline" 
+            onClick={() => setIsImportModalOpen(true)}
+            disabled={doctor.statusLicenca === 'Suspenso' || doctor.statusLicenca === 'Cancelado'}
+            style={{ 
+              padding: '0.55rem 0.95rem', 
+              fontSize: '0.85rem', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '6px', 
+              borderColor: '#bfdbfe', 
+              background: '#eff6ff', 
+              color: '#1d4ed8',
+              fontWeight: '600'
+            }}
+            title="Importar exames laboratoriais em lote via Excel, PDF, Word ou Foto"
+          >
+            <UploadCloud size={16} color="#2563eb" />
+            <span>Importar</span>
           </button>
 
           <button 
@@ -1090,6 +1114,13 @@ export default function DoctorDashboard() {
       <ChangelogModal 
         isOpen={isChangelogOpen}
         onClose={() => setIsChangelogOpen(false)}
+      />
+
+      <ExamImportModal 
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        patients={patients}
+        doctorId={currentDoctorId}
       />
     </div>
   );

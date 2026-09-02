@@ -11,6 +11,17 @@ const TIPOS_ACESSO_PADRAO = [
   { value: 'Cateter Peritoneal', label: 'Cateter Peritoneal (Tenckhoff)' },
 ];
 
+export const ETIOLOGIAS_DRC_PADRAO = [
+  { value: 'Diabetes Mellitus / Nefropatia Diabética', label: 'Diabetes Mellitus / Nefropatia Diabética' },
+  { value: 'Hipertensão Arterial Sistêmica (HAS)', label: 'Hipertensão Arterial Sistêmica (HAS / Nefroesclerose)' },
+  { value: 'Glomerulonefrite Crônica (GNC)', label: 'Glomerulonefrite Crônica (GNC / Glomerulopatias)' },
+  { value: 'Doença Renal Policística Autossômica Dominante (DRPAD)', label: 'Doença Renal Policística Autossômica Dominante (DRPAD)' },
+  { value: 'Nefropatia Lúpica / Doenças Autoimunes', label: 'Nefropatia Lúpica / Doenças Autoimunes / Vasculites' },
+  { value: 'Uropatia Obstrutiva / Litíase Renal', label: 'Uropatia Obstrutiva / Litíase Renal' },
+  { value: 'Nefrite Túbulo-Intersticial Crônica (NTIC)', label: 'Nefrite Túbulo-Intersticial Crônica (NTIC)' },
+  { value: 'Doença Renal Indeterminada / Desconhecida', label: 'Doença Renal Indeterminada / Desconhecida' },
+];
+
 const LOCALIZACOES_ACESSO_PADRAO = [
   { value: 'MSE', label: 'MSE - Membro Superior Esquerdo' },
   { value: 'MSD', label: 'MSD - Membro Superior Direito' },
@@ -34,11 +45,13 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
   const [customClinic, setCustomClinic] = useState(false);
   const [customTipoAcesso, setCustomTipoAcesso] = useState(false);
   const [customLadoMembro, setCustomLadoMembro] = useState(false);
+  const [customEtiologia, setCustomEtiologia] = useState(false);
   const [formData, setFormData] = useState({
     nome: '',
     clinica: 'Clínica Nefrológica NexAi',
     hospital: 'Hospital de Nefrologia',
     turno: '3º Turno',
+    etiologiaDRC: 'Diabetes Mellitus / Nefropatia Diabética',
     dataNascimento: '',
     idade: '',
     status: 'Ativo',
@@ -73,6 +86,10 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       const isKnownLado = LOCALIZACOES_ACESSO_PADRAO.some(l => l.value === currentLado);
       setCustomLadoMembro(!isKnownLado && !!patientToEdit.acessoVascular?.ladoMembro);
 
+      const currentEtiologia = patientToEdit.etiologiaDRC || '';
+      const isKnownEtiologia = ETIOLOGIAS_DRC_PADRAO.some(e => e.value === currentEtiologia);
+      setCustomEtiologia(!isKnownEtiologia && !!currentEtiologia);
+
       setFormData({
         id: patientToEdit.id,
         doctorId: patientToEdit.doctorId || effectiveDoctorId || null,
@@ -80,6 +97,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         clinica: patientToEdit.clinica || defaultClinic,
         hospital: patientToEdit.hospital || 'Hospital de Nefrologia',
         turno: patientToEdit.turno || '3º Turno',
+        etiologiaDRC: currentEtiologia || 'Diabetes Mellitus / Nefropatia Diabética',
         dataNascimento: patientToEdit.dataNascimento || '',
         idade: patientToEdit.idade !== undefined && patientToEdit.idade !== null ? patientToEdit.idade : (calculateAge(patientToEdit.dataNascimento) || ''),
         status: patientToEdit.status || 'Ativo',
@@ -99,12 +117,14 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       setCustomClinic(false);
       setCustomTipoAcesso(false);
       setCustomLadoMembro(false);
+      setCustomEtiologia(false);
       setFormData({
         doctorId: effectiveDoctorId || null,
         nome: '',
         clinica: defaultClinic,
         hospital: 'Hospital de Nefrologia',
         turno: '3º Turno',
+        etiologiaDRC: 'Diabetes Mellitus / Nefropatia Diabética',
         dataNascimento: '',
         idade: '',
         status: 'Ativo',
@@ -351,6 +371,53 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                   value={formData.idade}
                   onChange={(e) => setFormData(prev => ({ ...prev, idade: e.target.value }))}
                 />
+              </div>
+
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label className="text-sm font-semibold mb-1 block flex items-center justify-between">
+                  <span>Etiologia da DRC (Causa Básica / Nefropatia)</span>
+                  <span className="text-xs text-muted font-normal">Padrão SBN</span>
+                </label>
+                {!customEtiologia ? (
+                  <select 
+                    className="input-field"
+                    value={formData.etiologiaDRC}
+                    onChange={(e) => {
+                      if (e.target.value === '__custom__') {
+                        setCustomEtiologia(true);
+                        setFormData(prev => ({ ...prev, etiologiaDRC: '' }));
+                      } else {
+                        setFormData(prev => ({ ...prev, etiologiaDRC: e.target.value }));
+                      }
+                    }}
+                  >
+                    <option value="">-- Selecione a etiologia --</option>
+                    {ETIOLOGIAS_DRC_PADRAO.map(et => (
+                      <option key={et.value} value={et.value}>{et.label}</option>
+                    ))}
+                    <option value="__custom__">➕ Outra etiologia (digitar livremente)...</option>
+                  </select>
+                ) : (
+                  <div>
+                    <input 
+                      type="text" 
+                      className="input-field" 
+                      placeholder="Ex: Mieloma Múltiplo, Amiloidose, Alport, etc..." 
+                      value={formData.etiologiaDRC}
+                      onChange={(e) => setFormData(prev => ({ ...prev, etiologiaDRC: e.target.value }))}
+                    />
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        setCustomEtiologia(false);
+                        setFormData(prev => ({ ...prev, etiologiaDRC: ETIOLOGIAS_DRC_PADRAO[0].value }));
+                      }}
+                      className="text-xs text-blue-600 hover:underline mt-1 block"
+                    >
+                      ← Selecionar da lista de etiologias padrão
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

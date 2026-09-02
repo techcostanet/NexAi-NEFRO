@@ -87,11 +87,13 @@ async function main() {
 
   // 4. Compilar aplicação
   console.log(`\n🔨 Compilando aplicação (Vite Build)...`);
-  runCommand('npm run build');
+  const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+  const npxCmd = process.platform === 'win32' ? 'npx.cmd' : 'npx';
+  runCommand(`${npmCmd} run build`);
 
   // 5. Deploy no Firebase Hosting
   console.log(`\n☁️ Publicando no Firebase Hosting...`);
-  runCommand('npx firebase-tools deploy --only hosting --project nexai-nefro');
+  runCommand(`${npxCmd} firebase-tools deploy --only hosting --project nexai-nefro`);
 
   // 6. Commit, Tag e Push no GitHub
   console.log(`\n🐙 Sincronizando com o GitHub...`);

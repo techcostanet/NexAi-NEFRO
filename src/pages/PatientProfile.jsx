@@ -24,7 +24,8 @@ import {
   Phone,
   AlertCircle,
   FlaskConical,
-  ChevronRight
+  ChevronRight,
+  UploadCloud
 } from 'lucide-react';
 import { 
   subscribeToPatientById, 
@@ -40,6 +41,7 @@ import PatientFormModal from '../components/PatientFormModal';
 import ExamFormModal from '../components/ExamFormModal';
 import MedicationModal from '../components/MedicationModal';
 import EvolutionModal from '../components/EvolutionModal';
+import ExamImportModal from '../components/ExamImportModal';
 
 export default function PatientProfile() {
   const { id } = useParams();
@@ -56,6 +58,7 @@ export default function PatientProfile() {
   const [isExamModalOpen, setIsExamModalOpen] = useState(false);
   const [examToEdit, setExamToEdit] = useState(null);
   const [examIndexToEdit, setExamIndexToEdit] = useState(null);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   const [isMedicationModalOpen, setIsMedicationModalOpen] = useState(false);
   const [medicationToEdit, setMedicationToEdit] = useState(null);
@@ -177,6 +180,12 @@ export default function PatientProfile() {
   const acessoVascular = patient.acessoVascular || {};
   const medicamentosList = normalizeMedicamentosList(patient.medicamentos);
   const historicoExames = Array.isArray(patient.historicoExames) ? patient.historicoExames : [];
+  
+  // Ordena histórico cronológico: coletas mais recentes no topo, preservando o índice original para edições e exclusões
+  const sortedHistoricoExames = [...historicoExames]
+    .map((item, originalIndex) => ({ ...item, _originalIndex: originalIndex }))
+    .sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
+
   const evolucoes = Array.isArray(patient.evolucoes) ? patient.evolucoes : [];
 
   // Alertas Laboratoriais
@@ -267,8 +276,23 @@ export default function PatientProfile() {
                   <span className="text-slate-500">• Nasc: {new Date(patient.dataNascimento + 'T12:00:00').toLocaleDateString('pt-BR')}</span>
                 )}
 
-                {patient.etiologiaDRC && (
-                  <span className="text-slate-500">• Etiologia: <strong className="text-slate-700">{patient.etiologiaDRC}</strong></span>
+                {patient.etiologiaDRC ? (
+                  <span 
+                    className="text-slate-500 cursor-pointer hover:text-blue-600 transition-colors" 
+                    onClick={() => setIsPatientModalOpen(true)}
+                    title="Clique para editar a etiologia da DRC"
+                  >
+                    • Etiologia: <strong className="text-slate-700 hover:text-blue-700">{patient.etiologiaDRC}</strong>
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsPatientModalOpen(true)}
+                    className="text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md hover:bg-blue-100 transition-colors"
+                    title="Definir etiologia da DRC"
+                  >
+                    + Definir Etiologia
+                  </button>
                 )}
               </div>
             </div>
@@ -294,6 +318,16 @@ export default function PatientProfile() {
             >
               <FlaskConical size={14} color="#059669" />
               <span>Exames</span>
+            </button>
+
+            <button 
+              className="btn btn-outline" 
+              onClick={() => setIsImportModalOpen(true)}
+              style={{ padding: '0.5rem 0.9rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#bfdbfe', background: '#eff6ff', color: '#1d4ed8' }}
+              title="Importar laudo em PDF, Excel ou foto para este paciente"
+            >
+              <UploadCloud size={14} color="#2563eb" />
+              <span>Importar</span>
             </button>
 
             <button 
@@ -781,10 +815,32 @@ export default function PatientProfile() {
               <p className="text-xs text-muted">Resultados mais recentes agrupados por perfil clínico funcional</p>
             </div>
             
-            <button className="btn btn-primary" onClick={handleOpenNewExam} style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
-              <Plus size={14} />
-              <span>Novo Registro de Exame</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                className="btn btn-outline" 
+                onClick={() => setIsImportModalOpen(true)}
+                style={{ 
+                  padding: '0.45rem 0.95rem', 
+                  fontSize: '0.8rem', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '5px',
+                  borderColor: '#bfdbfe',
+                  background: '#eff6ff',
+                  color: '#1d4ed8',
+                  fontWeight: '600'
+                }}
+                title="Importar laudo em PDF, foto ou planilha para este paciente"
+              >
+                <UploadCloud size={14} color="#2563eb" />
+                <span>Importar Laudo</span>
+              </button>
+
+              <button className="btn btn-primary" onClick={handleOpenNewExam} style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Plus size={14} />
+                <span>Novo Registro de Exame</span>
+              </button>
+            </div>
           </div>
 
           {/* 4 Painéis Temáticos Perfeitamente Balanceados (Sem vazios) */}
@@ -943,7 +999,7 @@ export default function PatientProfile() {
                     </tr>
                   </thead>
                   <tbody>
-                    {historicoExames.map((item, idx) => (
+                    {sortedHistoricoExames.map((item, idx) => (
                       <tr key={idx} style={{ borderBottom: '1px solid var(--border)' }}>
                         <td style={{ padding: '0.65rem 0.8rem', fontWeight: 'bold', color: '#1e293b' }}>
                           {item.dataExame ? new Date(item.dataExame + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}
@@ -969,7 +1025,7 @@ export default function PatientProfile() {
                           <div className="flex justify-end gap-1">
                             <button 
                               className="btn btn-outline" 
-                              onClick={() => handleEditExam(item, idx)}
+                              onClick={() => handleEditExam(item, item._originalIndex)}
                               style={{ padding: '0.25rem 0.45rem', fontSize: '0.7rem' }}
                               title="Editar este exame"
                             >
@@ -977,7 +1033,7 @@ export default function PatientProfile() {
                             </button>
                             <button 
                               className="btn btn-outline" 
-                              onClick={() => handleDeleteExam(idx)}
+                              onClick={() => handleDeleteExam(item._originalIndex)}
                               style={{ padding: '0.25rem 0.45rem', fontSize: '0.7rem' }}
                               title="Excluir este exame"
                             >
@@ -1297,6 +1353,14 @@ export default function PatientProfile() {
         patientId={patient.id}
         evolutionToEdit={evolutionToEdit}
         doctorInfo={doctorInfo}
+      />
+
+      <ExamImportModal 
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+        patients={[patient]}
+        doctorId={patient.doctorId || activeDoctorId}
+        preselectedPatientId={patient.id}
       />
     </div>
   );
