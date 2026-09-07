@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.37] - 2026-09-07
+### Alterações
+- Correção visual definitiva dos cards de preços, espaçamento e FAQ na Landing Page
+
 ## [1.1.36] - 2026-09-07
 ### Alterações
 - Ajusta layout do FAQ, alinhamento e espaçamento nos cards de preço e substitui menções ao Firebase por Tecnologia Google

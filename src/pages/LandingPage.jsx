@@ -716,17 +716,28 @@ export default function LandingPage() {
       <section id="planos" style={{ padding: '5rem 1.5rem', background: 'radial-gradient(ellipse at bottom, rgba(239, 246, 255, 0.8) 0%, rgba(248, 250, 252, 1) 100%)' }}>
         <div className="container" style={{ maxWidth: '1100px', textAlign: 'center' }}>
           
-          <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Planos Transparentes</span>
-          <h2 className="text-3xl font-black text-slate-900 mt-1" style={{ letterSpacing: '-0.02em' }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2563eb' }}>
+            Planos Transparentes
+          </span>
+          <h2 style={{ fontSize: '2rem', fontWeight: '900', color: '#0f172a', marginTop: '0.25rem', letterSpacing: '-0.02em' }}>
             Investimento acessível com retorno imediato em produtividade
           </h2>
-          <p className="text-muted text-sm max-w-xl mx-auto mt-2 mb-8">
+          <p style={{ fontSize: '0.95rem', color: '#64748b', maxWidth: '36rem', margin: '0.5rem auto 2rem auto', lineHeight: '1.5' }}>
             Escolha o plano ideal para sua prática nefrológica. Cancele ou altere a qualquer momento.
           </p>
 
           {/* Toggle Mensal / Anual */}
-          <div className="flex justify-center items-center gap-3 mb-16 mt-4">
-            <span className={`text-sm font-bold ${billingCycle === 'mensal' ? 'text-slate-900' : 'text-slate-500'}`}>
+          <div 
+            style={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center', 
+              gap: '1rem', 
+              marginTop: '1.5rem', 
+              marginBottom: '3.5rem' 
+            }}
+          >
+            <span style={{ fontSize: '0.95rem', fontWeight: '700', color: billingCycle === 'mensal' ? '#0f172a' : '#64748b' }}>
               Mensal
             </span>
 
@@ -757,43 +768,92 @@ export default function LandingPage() {
               />
             </div>
 
-            <div className="flex items-center gap-1.5">
-              <span className={`text-sm font-bold ${billingCycle === 'anual' ? 'text-slate-900' : 'text-slate-500'}`}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span style={{ fontSize: '0.95rem', fontWeight: '700', color: billingCycle === 'anual' ? '#0f172a' : '#64748b' }}>
                 Anual
               </span>
-              <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '3px 10px', borderRadius: '8px', fontWeight: 'bold' }}>
+              <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#15803d', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold' }}>
                 2 MESES GRÁTIS 🔥
               </span>
             </div>
           </div>
 
           {/* Grid de Cards de Planos */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', alignItems: 'stretch' }}>
+          <div 
+            style={{ 
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+              gap: '2rem', 
+              alignItems: 'stretch',
+              paddingTop: '1.5rem'
+            }}
+          >
             
             {/* Card 1: Trial 7 Dias */}
-            <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between text-left">
+            <div 
+              style={{
+                background: '#ffffff',
+                borderRadius: '24px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                padding: '2.5rem 2rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                textAlign: 'left'
+              }}
+            >
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-purple-600 block mb-1">Sem Compromisso</span>
-                <h3 className="text-xl font-bold text-slate-900">Avaliação Gratuita</h3>
-                <p className="text-xs text-muted mt-1 mb-4">Teste completo por 7 dias para conhecer todos os recursos</p>
+                <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#9333ea', display: 'block', marginBottom: '0.5rem' }}>
+                  Sem Compromisso
+                </span>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0f172a', margin: '0 0 0.35rem 0' }}>
+                  Avaliação Gratuita
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '0 0 1.5rem 0' }}>
+                  Teste completo por 7 dias para conhecer todos os recursos
+                </p>
 
-                <div className="mb-6">
-                  <span className="text-3xl font-extrabold text-slate-900">Grátis</span>
-                  <span className="text-xs text-muted block mt-0.5">por 7 dias completos</span>
+                <div style={{ marginBottom: '1.75rem' }}>
+                  <span style={{ fontSize: '2.5rem', fontWeight: '800', color: '#0f172a', lineHeight: 1, display: 'block' }}>
+                    Grátis
+                  </span>
+                  <span style={{ fontSize: '0.85rem', color: '#64748b', display: 'block', marginTop: '0.35rem' }}>
+                    por 7 dias completos
+                  </span>
                 </div>
 
-                <ul className="text-sm text-slate-600 flex flex-col gap-3 mb-8">
-                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Acesso total a prontuários e diálise</span></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>6 pacientes demonstrativos inclusos</span></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Sem necessidade de cartão de crédito</span></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Hospedado com Tecnologia Google</span></li>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem 0', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.9rem', color: '#334155' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Acesso total a prontuários e diálise</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>6 pacientes demonstrativos inclusos</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Sem necessidade de cartão de crédito</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Hospedado com Tecnologia Google</span>
+                  </li>
                 </ul>
               </div>
 
               <button 
                 type="button" 
                 onClick={handleStartTrial}
-                className="btn btn-outline w-full py-3 text-sm font-bold"
+                className="btn btn-outline"
+                style={{ 
+                  width: '100%', 
+                  padding: '0.85rem 1.5rem', 
+                  fontSize: '0.95rem', 
+                  fontWeight: '700', 
+                  borderRadius: '12px' 
+                }}
               >
                 Iniciar Teste Grátis
               </button>
@@ -801,11 +861,18 @@ export default function LandingPage() {
 
             {/* Card 2: Plano Anual (DESTAQUE) */}
             <div 
-              className="p-8 rounded-3xl bg-white flex flex-col justify-between text-left relative"
               style={{ 
+                background: '#ffffff',
+                borderRadius: '24px',
                 border: '2px solid #2563eb', 
                 boxShadow: '0 20px 40px rgba(37, 99, 235, 0.12)',
-                transform: 'scale(1.03)',
+                padding: '2.5rem 2rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                textAlign: 'left',
+                position: 'relative',
+                transform: 'scale(1.02)',
                 zIndex: 10
               }}
             >
@@ -813,92 +880,171 @@ export default function LandingPage() {
               <div 
                 style={{ 
                   position: 'absolute', 
-                  top: '-12px', 
+                  top: '-14px', 
                   left: '50%', 
                   transform: 'translateX(-50%)', 
                   background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
-                  color: 'white', 
-                  padding: '4px 14px', 
+                  color: '#ffffff', 
+                  padding: '6px 18px', 
                   borderRadius: '999px', 
-                  fontSize: '0.72rem', 
-                  fontWeight: 'bold',
-                  boxShadow: '0 4px 10px rgba(37, 99, 235, 0.3)'
+                  fontSize: '0.75rem', 
+                  fontWeight: '700',
+                  letterSpacing: '0.04em',
+                  whiteSpace: 'nowrap',
+                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)'
                 }}
               >
                 MAIS ESCOLHIDO POR MÉDICOS ⭐
               </div>
 
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-600 block mb-1">Melhor Custo-Benefício</span>
-                <h3 className="text-xl font-bold text-slate-900">Plano Anual</h3>
-                <p className="text-xs text-muted mt-1 mb-4">Economize 2 meses de mensalidade com contratação anual</p>
+                <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2563eb', display: 'block', marginBottom: '0.5rem' }}>
+                  Melhor Custo-Benefício
+                </span>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0f172a', margin: '0 0 0.35rem 0' }}>
+                  Plano Anual
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '0 0 1.5rem 0' }}>
+                  Economize 2 meses de mensalidade com contratação anual
+                </p>
 
-                <div className="mb-6">
-                  <div className="flex items-start gap-1">
-                    <span className="text-lg font-bold text-blue-600 mt-1">R$</span>
-                    <span className="text-4xl font-extrabold text-blue-600 tracking-tight">
-                      {plans.find(p => p.intervalo === 'anual') ? plans.find(p => p.intervalo === 'anual').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00'}
+                <div style={{ marginBottom: '1.75rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                    <span style={{ fontSize: '1.25rem', fontWeight: '700', color: '#2563eb' }}>R$</span>
+                    <span style={{ fontSize: '2.5rem', fontWeight: '800', color: '#2563eb', lineHeight: 1, letterSpacing: '-0.03em' }}>
+                      {plans.find(p => p.intervalo === 'anual') ? plans.find(p => p.intervalo === 'anual').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '890,00'}
                     </span>
-                    <span className="text-sm text-muted self-end mb-1">/ano</span>
+                    <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: '500' }}>/ano</span>
                   </div>
-                  <span className="text-xs text-emerald-600 font-bold block mt-1 bg-emerald-50 inline-block px-2 py-1 rounded-md">
+                  <div style={{ display: 'inline-block', fontSize: '0.78rem', fontWeight: '700', color: '#16a34a', background: '#dcfce7', padding: '4px 10px', borderRadius: '8px', marginTop: '0.5rem' }}>
                     {plans.find(p => p.intervalo === 'anual') 
                       ? `Equivalente a R$ ${(plans.find(p => p.intervalo === 'anual').valor / 12).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês` 
-                      : 'Pague 10, use 12'}
-                  </span>
+                      : 'Equivalente a R$ 74,17/mês'}
+                  </div>
                 </div>
 
-                <ul className="text-sm text-slate-700 flex flex-col gap-3 mb-8">
-                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Prontuários e Pacientes Ilimitados</strong></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Evoluções de Hemodiálise Ilimitadas</strong></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Gráficos de PTH, Fósforo, Hb e Kt/V</strong></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Prescrições com Alertas de Ciclos</strong></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Suporte VIP prioritário via WhatsApp</strong></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Backup dedicado na nuvem</strong></li>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem 0', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.9rem', color: '#1e293b' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <strong>Prontuários e Pacientes Ilimitados</strong>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <strong>Evoluções de Hemodiálise Ilimitadas</strong>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <strong>Gráficos de PTH, Fósforo, Hb e Kt/V</strong>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <strong>Prescrições com Alertas de Ciclos</strong>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <strong>Suporte VIP prioritário via WhatsApp</strong>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <strong>Backup dedicado na nuvem</strong>
+                  </li>
                 </ul>
               </div>
 
               <button 
                 type="button" 
                 onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'anual') || { id: 'plano-anual', nome: 'Plano Anual com Desconto', valor: 0.00, intervalo: 'anual' })}
-                className="btn btn-primary w-full py-3.5 text-sm font-bold"
-                style={{ background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', boxShadow: '0 8px 16px rgba(37, 99, 235, 0.3)' }}
+                className="btn"
+                style={{ 
+                  width: '100%', 
+                  padding: '0.95rem 1.5rem', 
+                  fontSize: '0.95rem', 
+                  fontWeight: '700', 
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
+                  color: '#ffffff',
+                  boxShadow: '0 8px 18px rgba(37, 99, 235, 0.35)',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
               >
                 Assinar Plano Anual com 2 Meses Grátis
               </button>
             </div>
 
             {/* Card 3: Plano Mensal */}
-            <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between text-left z-0">
+            <div 
+              style={{
+                background: '#ffffff',
+                borderRadius: '24px',
+                border: '1px solid #e2e8f0',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
+                padding: '2.5rem 2rem',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                textAlign: 'left'
+              }}
+            >
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-1">Flexibilidade Total</span>
-                <h3 className="text-xl font-bold text-slate-900">Plano Mensal</h3>
-                <p className="text-xs text-muted mt-1 mb-4">Acesso completo sem fidelidade ou carência</p>
+                <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#64748b', display: 'block', marginBottom: '0.5rem' }}>
+                  Flexibilidade Total
+                </span>
+                <h3 style={{ fontSize: '1.35rem', fontWeight: '800', color: '#0f172a', margin: '0 0 0.35rem 0' }}>
+                  Plano Mensal
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: '#64748b', margin: '0 0 1.5rem 0' }}>
+                  Acesso completo sem fidelidade ou carência
+                </p>
 
-                <div className="mb-6">
-                  <div className="flex items-start gap-1">
-                    <span className="text-lg font-bold text-slate-900 mt-1">R$</span>
-                    <span className="text-4xl font-extrabold text-slate-900 tracking-tight">
-                      {plans.find(p => p.intervalo === 'mensal') ? plans.find(p => p.intervalo === 'mensal').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00'}
+                <div style={{ marginBottom: '1.75rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                    <span style={{ fontSize: '1.25rem', fontWeight: '700', color: '#0f172a' }}>R$</span>
+                    <span style={{ fontSize: '2.5rem', fontWeight: '800', color: '#0f172a', lineHeight: 1, letterSpacing: '-0.03em' }}>
+                      {plans.find(p => p.intervalo === 'mensal') ? plans.find(p => p.intervalo === 'mensal').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '89,90'}
                     </span>
-                    <span className="text-sm text-muted self-end mb-1">/mês</span>
+                    <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: '500' }}>/mês</span>
                   </div>
-                  <span className="text-xs text-muted block mt-1">Cobrança recorrente mensal</span>
+                  <div style={{ fontSize: '0.85rem', color: '#64748b', marginTop: '0.5rem' }}>
+                    Cobrança recorrente mensal
+                  </div>
                 </div>
 
-                <ul className="text-sm text-slate-600 flex flex-col gap-3 mb-8">
-                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Prontuários e Pacientes Ilimitados</span></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Evoluções de Hemodiálise Ilimitadas</span></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Painel de Exames e Gráficos</span></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Prescrições com Alertas de Ciclos</span></li>
-                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Cancele quando quiser</span></li>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem 0', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.9rem', color: '#334155' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Prontuários e Pacientes Ilimitados</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Evoluções de Hemodiálise Ilimitadas</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Painel de Exames e Gráficos</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Prescrições com Alertas de Ciclos</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Cancele quando quiser</span>
+                  </li>
                 </ul>
               </div>
 
               <button 
                 type="button" 
                 onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'mensal') || { id: 'plano-mensal', nome: 'Plano Mensal Nefrologia', valor: 0.00, intervalo: 'mensal' })}
-                className="btn btn-outline w-full py-3 text-sm font-bold"
+                className="btn btn-outline"
+                style={{ 
+                  width: '100%', 
+                  padding: '0.85rem 1.5rem', 
+                  fontSize: '0.95rem', 
+                  fontWeight: '700', 
+                  borderRadius: '12px' 
+                }}
               >
                 Assinar Plano Mensal
               </button>
@@ -914,33 +1060,76 @@ export default function LandingPage() {
         <div className="container" style={{ maxWidth: '850px' }}>
           
           <div className="text-center mb-12">
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Tire Suas Dúvidas</span>
-            <h2 className="text-3xl font-black text-slate-900 mt-2" style={{ letterSpacing: '-0.02em' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#2563eb' }}>
+              Tire Suas Dúvidas
+            </span>
+            <h2 style={{ fontSize: '2rem', fontWeight: '900', color: '#0f172a', marginTop: '0.5rem', letterSpacing: '-0.02em' }}>
               Perguntas Frequentes de Médicos
             </h2>
           </div>
 
-          <div className="flex flex-col gap-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {faqs.map((faq, idx) => {
               const isOpen = openFaq === idx;
               return (
                 <div 
                   key={idx} 
-                  className={`rounded-2xl border transition-all duration-300 ${isOpen ? 'border-blue-200 bg-white shadow-md' : 'border-slate-200 bg-white hover:border-blue-300 hover:shadow-sm'}`}
+                  style={{
+                    background: '#ffffff',
+                    borderRadius: '16px',
+                    border: isOpen ? '1px solid #93c5fd' : '1px solid #e2e8f0',
+                    boxShadow: isOpen ? '0 8px 24px rgba(37, 99, 235, 0.08)' : '0 2px 6px rgba(0, 0, 0, 0.02)',
+                    overflow: 'hidden',
+                    transition: 'all 0.2s ease'
+                  }}
                 >
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full p-6 text-left font-bold text-[1.05rem] text-slate-800 flex justify-between items-center bg-transparent border-none cursor-pointer"
+                    style={{
+                      width: '100%',
+                      padding: '1.25rem 1.5rem',
+                      textAlign: 'left',
+                      fontWeight: '700',
+                      fontSize: '1.05rem',
+                      color: isOpen ? '#1d4ed8' : '#1e293b',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      background: 'transparent',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit'
+                    }}
                   >
-                    <span className="pr-4">{faq.q}</span>
-                    <div className={`shrink-0 p-1.5 rounded-full transition-colors ${isOpen ? 'bg-blue-100' : 'bg-slate-100'}`}>
+                    <span style={{ paddingRight: '1rem' }}>{faq.q}</span>
+                    <div 
+                      style={{ 
+                        flexShrink: 0, 
+                        padding: '6px', 
+                        borderRadius: '50%', 
+                        background: isOpen ? '#dbeafe' : '#f1f5f9',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        transition: 'background 0.2s ease'
+                      }}
+                    >
                       {isOpen ? <ChevronUp size={20} color="#2563eb" /> : <ChevronDown size={20} color="#64748b" />}
                     </div>
                   </button>
 
                   {isOpen && (
-                    <div className="px-6 pb-6 text-[0.95rem] text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                    <div 
+                      style={{ 
+                        padding: '0 1.5rem 1.25rem 1.5rem', 
+                        fontSize: '0.95rem', 
+                        color: '#475569', 
+                        lineHeight: '1.6', 
+                        borderTop: '1px solid #f1f5f9', 
+                        paddingTop: '1rem' 
+                      }}
+                    >
                       {faq.a}
                     </div>
                   )}
