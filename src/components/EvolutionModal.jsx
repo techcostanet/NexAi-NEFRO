@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, FileText, Activity, AlertTriangle, Clock, User, Loader2 } from 'lucide-react';
-import { savePatientEvolution } from '../services/patientService';
+import { savePatientEvolution, addPatientWeightRecord } from '../services/patientService';
 
 export default function EvolutionModal({ 
   isOpen, 
@@ -83,6 +83,21 @@ export default function EvolutionModal({
       setSaving(true);
       setError('');
       await savePatientEvolution(patientId, formData, evolutionToEdit?.id);
+
+      // Sincroniza aferição de peso com o histórico ponderal do paciente
+      if (formData.pesoPre && !isNaN(parseFloat(String(formData.pesoPre).replace(',', '.')))) {
+        try {
+          await addPatientWeightRecord(patientId, {
+            data: formData.dataHora,
+            peso: formData.pesoPre,
+            tipo: formData.tipoAtendimento === 'Internação' ? 'Internação' : 'Pré-HD',
+            observacoes: `Evolução: ${formData.tipoAtendimento} (PA: ${formData.paPre || '-'})`
+          });
+        } catch (wErr) {
+          console.warn("Registro automático de peso na evolução:", wErr);
+        }
+      }
+
       if (onSaved) onSaved();
       onClose();
     } catch (err) {
@@ -172,6 +187,7 @@ export default function EvolutionModal({
                 onChange={(e) => setFormData(prev => ({ ...prev, tipoAtendimento: e.target.value }))}
               >
                 <option value="Hemodiálise">🏥 Sessão de Hemodiálise</option>
+                <option value="Internação">🛏️ Internação</option>
                 <option value="Consulta Ambulatorial">🩺 Consulta Ambulatorial</option>
                 <option value="Interconsulta Hospitalar">🏨 Interconsulta Hospitalar</option>
                 <option value="Avaliação de Acesso Vascular">🩸 Avaliação de Acesso</option>

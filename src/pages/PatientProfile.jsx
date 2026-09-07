@@ -25,14 +25,26 @@ import {
   AlertCircle,
   FlaskConical,
   ChevronRight,
-  UploadCloud
+  UploadCloud,
+  HeartHandshake,
+  Bug,
+  Printer,
+  FileDown,
+  TrendingUp,
+  CheckSquare,
+  Sparkles,
+  X
 } from 'lucide-react';
 import { 
   subscribeToPatientById, 
   deletePatientExam,
   deletePatientMedication,
   toggleMedicationStatus,
-  deletePatientEvolution
+  deletePatientEvolution,
+  addPatientWeightRecord,
+  deletePatientWeightRecord,
+  deletePatientBloodCulture,
+  STATUS_TRANSPLANTE_OPTIONS
 } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
 import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
@@ -66,6 +78,19 @@ export default function PatientProfile() {
 
   const [isEvolutionModalOpen, setIsEvolutionModalOpen] = useState(false);
   const [evolutionToEdit, setEvolutionToEdit] = useState(null);
+
+  // Novos Modais para Peso, Transplante e Lock Therapy
+  const [isWeightModalOpen, setIsWeightModalOpen] = useState(false);
+  const [weightFormData, setWeightFormData] = useState({
+    data: new Date().toISOString().slice(0, 16),
+    peso: '',
+    tipo: 'Pré-HD',
+    observacoes: ''
+  });
+  const [savingWeight, setSavingWeight] = useState(false);
+  const [isTransplantReportOpen, setIsTransplantReportOpen] = useState(false);
+  const [isLockTherapyModalOpen, setIsLockTherapyModalOpen] = useState(false);
+  const [isChecklistModalOpen, setIsChecklistModalOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -158,6 +183,40 @@ export default function PatientProfile() {
     }
   };
 
+  // Ações de Peso & Evolução Ponderal
+  const handleSaveWeight = async (e) => {
+    e.preventDefault();
+    if (!weightFormData.peso) return;
+    try {
+      setSavingWeight(true);
+      await addPatientWeightRecord(patient.id, weightFormData);
+      setIsWeightModalOpen(false);
+      setWeightFormData({
+        data: new Date().toISOString().slice(0, 16),
+        peso: '',
+        tipo: 'Pré-HD',
+        observacoes: ''
+      });
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao salvar aferição de peso no Firestore.');
+    } finally {
+      setSavingWeight(false);
+    }
+  };
+
+  const handleDeleteWeight = async (weightId) => {
+    if (window.confirm("Deseja realmente excluir esta aferição de peso do histórico?")) {
+      await deletePatientWeightRecord(patient.id, weightId);
+    }
+  };
+
+  const handleDeleteBloodCulture = async (cultureId) => {
+    if (window.confirm("Deseja realmente excluir este laudo de hemocultura?")) {
+      await deletePatientBloodCulture(patient.id, cultureId);
+    }
+  };
+
   if (loading) {
     return (
       <div className="container flex items-center justify-center h-screen flex-col gap-4">
@@ -187,6 +246,29 @@ export default function PatientProfile() {
     .sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
 
   const evolucoes = Array.isArray(patient.evolucoes) ? patient.evolucoes : [];
+  const historicoPesos = Array.isArray(patient.historicoPesos) ? patient.historicoPesos : [];
+  const hemoculturas = Array.isArray(patient.hemoculturas) ? patient.hemoculturas : [];
+
+  // Status de Transplante Renal
+  const statusTransplante = patient.statusTransplante || patient.status || 'Não Avaliado';
+  const transplantOpt = STATUS_TRANSPLANTE_OPTIONS.find(o => o.value === statusTransplante) || {
+    value: statusTransplante,
+    label: statusTransplante,
+    badgeBg: '#f1f5f9',
+    color: '#475569',
+    border: '#cbd5e1'
+  };
+
+  // Cálculos de Ganho Interdialítico & Evolução de Peso (Melhoria 1)
+  const ultimoPeso = historicoPesos.length > 0 ? historicoPesos[0].peso : (patient.ultimoPesoAferido || null);
+  const pesoSecoNum = patient.pesoSeco ? parseFloat(String(patient.pesoSeco).replace(',', '.')) : null;
+  const ganhoKg = (ultimoPeso && pesoSecoNum) ? parseFloat((ultimoPeso - pesoSecoNum).toFixed(2)) : null;
+  const pidgPct = (ganhoKg !== null && pesoSecoNum && pesoSecoNum > 0) ? parseFloat(((ganhoKg / pesoSecoNum) * 100).toFixed(1)) : null;
+  const isHipervolemia = pidgPct !== null && pidgPct > 4.5;
+  const isHipotensaoRisco = ganhoKg !== null && ganhoKg < 0;
+
+  // Hemocultura Crítica / Positiva Recente
+  const hasPositiveCulture = hemoculturas.some(h => h.resultado === 'Positiva');
 
   // Alertas Laboratoriais
   const hbBaixa = exames.hb !== null && exames.hb !== undefined && exames.hb < 10;
@@ -253,8 +335,24 @@ export default function PatientProfile() {
                   {patient.nome}
                 </h1>
                 
-                <span style={{ fontSize: '0.75rem', padding: '3px 10px', borderRadius: '20px', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', fontWeight: '600', whiteSpace: 'nowrap' }}>
-                  {patient.status || 'Ativo'}
+                <span 
+                  style={{ 
+                    fontSize: '0.75rem', 
+                    padding: '3px 12px', 
+                    borderRadius: '20px', 
+                    background: transplantOpt.badgeBg, 
+                    color: transplantOpt.color, 
+                    border: `1px solid ${transplantOpt.border}`, 
+                    fontWeight: '700', 
+                    whiteSpace: 'nowrap',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px'
+                  }}
+                  title="Status no Transplante Renal"
+                >
+                  <HeartHandshake size={14} />
+                  <span>Tx: {transplantOpt.label}</span>
                 </span>
 
                 <span style={{ fontSize: '0.75rem', padding: '3px 10px', borderRadius: '20px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', fontWeight: '600', whiteSpace: 'nowrap' }}>
@@ -299,12 +397,12 @@ export default function PatientProfile() {
           </div>
 
           {/* Ações Rápidas no Cabeçalho */}
-          <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
             <button 
               className="btn btn-outline" 
               onClick={() => setIsPatientModalOpen(true)}
-              style={{ padding: '0.5rem 0.9rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', borderRadius: '10px' }}
-              title="Editar cadastro do paciente"
+              style={{ padding: '0.5rem 0.85rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px' }}
+              title="Editar cadastro completo do paciente"
             >
               <Edit size={14} color="var(--primary)" />
               <span>Editar</span>
@@ -312,9 +410,39 @@ export default function PatientProfile() {
 
             <button 
               className="btn btn-outline" 
+              onClick={() => setIsWeightModalOpen(true)}
+              style={{ padding: '0.5rem 0.85rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#a7f3d0', background: '#ecfdf5', color: '#065f46' }}
+              title="Registrar pesagem e acompanhar evolução"
+            >
+              <Scale size={14} color="#059669" />
+              <span>+ Peso</span>
+            </button>
+
+            <button 
+              className="btn btn-outline" 
+              onClick={() => setIsChecklistModalOpen(true)}
+              style={{ padding: '0.5rem 0.85rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#ddd6fe', background: '#f5f3ff', color: '#6d28d9' }}
+              title="Checklist e Prontidão de Transplante Renal"
+            >
+              <CheckSquare size={14} color="#7c3aed" />
+              <span>Prontidão Tx</span>
+            </button>
+
+            <button 
+              className="btn btn-outline" 
+              onClick={() => setIsTransplantReportOpen(true)}
+              style={{ padding: '0.5rem 0.85rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px' }}
+              title="Emitir Laudo Médico e Relatório de Transplante em PDF"
+            >
+              <Printer size={14} color="#2563eb" />
+              <span>Laudo Tx</span>
+            </button>
+
+            <button 
+              className="btn btn-outline" 
               onClick={handleOpenNewExam}
-              style={{ padding: '0.5rem 0.9rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', borderRadius: '10px' }}
-              title="Lançar novos exames"
+              style={{ padding: '0.5rem 0.85rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px' }}
+              title="Lançar novos exames laboratoriais e microbiologia"
             >
               <FlaskConical size={14} color="#059669" />
               <span>Exames</span>
@@ -333,7 +461,7 @@ export default function PatientProfile() {
             <button 
               className="btn btn-outline" 
               onClick={handleOpenNewMedication}
-              style={{ padding: '0.5rem 0.9rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', borderRadius: '10px' }}
+              style={{ padding: '0.5rem 0.85rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px' }}
               title="Prescrever medicamentos"
             >
               <Pill size={14} color="#d97706" />
@@ -343,7 +471,7 @@ export default function PatientProfile() {
             <button 
               className="btn btn-primary" 
               onClick={handleOpenNewEvolution}
-              style={{ padding: '0.5rem 1rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap', borderRadius: '10px' }}
+              style={{ padding: '0.5rem 0.95rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px' }}
               title="Nova evolução médica"
             >
               <Plus size={14} />
@@ -353,8 +481,68 @@ export default function PatientProfile() {
         </div>
 
         {/* Alertas Críticos Globais do Paciente */}
-        {(hasLabAlerts || medAlerts.length > 0) && (
+        {(hasLabAlerts || medAlerts.length > 0 || hasPositiveCulture || isHipervolemia) && (
           <div className="mt-4 pt-4 border-t flex flex-col gap-2.5" style={{ borderColor: 'rgba(226, 232, 240, 0.8)' }}>
+            {hasPositiveCulture && (
+              <div 
+                style={{
+                  padding: '0.85rem 1.25rem',
+                  borderRadius: '14px',
+                  background: '#fef2f2',
+                  border: '1px solid #f87171',
+                  color: '#991b1b',
+                  fontSize: '0.82rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.75rem'
+                }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Bug size={18} color="#dc2626" style={{ flexShrink: 0 }} />
+                  <span style={{ lineHeight: '1.4' }}>
+                    <strong style={{ color: '#b91c1c' }}>🚨 Alerta de Infecção de Acesso:</strong> Hemocultura positiva identificada ({hemoculturas.find(h => h.resultado === 'Positiva')?.microrganismo || 'Patógeno isolado'}). Checar protocolo de selo de cateter e antibioticoterapia guiada.
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={() => setIsLockTherapyModalOpen(true)}
+                    className="btn"
+                    style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #f87171', fontSize: '0.75rem', padding: '4px 9px', borderRadius: '8px', fontWeight: 'bold' }}
+                  >
+                    Lock Therapy →
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('exams')}
+                    style={{ background: 'transparent', border: 'none', color: '#991b1b', fontSize: '0.75rem', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'underline' }}
+                  >
+                    Ver Culturas
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {isHipervolemia && (
+              <div 
+                style={{
+                  padding: '0.75rem 1.25rem',
+                  borderRadius: '14px',
+                  background: '#fff7ed',
+                  border: '1px solid #fed7aa',
+                  color: '#c2410c',
+                  fontSize: '0.82rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                }}
+              >
+                <AlertTriangle size={18} color="#ea580c" style={{ flexShrink: 0 }} />
+                <span>
+                  <strong>Atenção Volêmica:</strong> Ganho ponderal interdialítico de <strong>+{ganhoKg} kg ({pidgPct}% do peso seco)</strong>. Monitorar risco de hipertensão refratária e edema pulmonar.
+                </span>
+              </div>
+            )}
             {hasLabAlerts && (
               <div 
                 style={{
@@ -545,20 +733,38 @@ export default function PatientProfile() {
               </div>
             </section>
 
-            {/* Card Dados Cadastrais & Clínicos */}
+            {/* Card Dados Cadastrais & Clínicos (100% Editável) */}
             <section className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
-              <h2 className="font-bold text-sm text-slate-800 mb-3 flex items-center gap-2">
-                <User size={16} color="var(--primary)" />
-                <span>Dados Clínicos & Identificação</span>
-              </h2>
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
+                  <User size={16} color="var(--primary)" />
+                  <span>Dados Clínicos & Identificação</span>
+                </h2>
+                <button 
+                  type="button"
+                  onClick={() => setIsPatientModalOpen(true)}
+                  className="btn btn-outline"
+                  style={{ padding: '0.25rem 0.65rem', fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '4px', borderRadius: '8px' }}
+                  title="Editar todos os dados clínicos e identificação"
+                >
+                  <Edit size={12} color="var(--primary)" />
+                  <span>Editar Dados</span>
+                </button>
+              </div>
 
               <div className="flex flex-col gap-2 text-xs">
+                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted">Status Transplante:</span>
+                  <span style={{ fontSize: '0.72rem', padding: '1px 8px', borderRadius: '8px', background: transplantOpt.badgeBg, color: transplantOpt.color, border: `1px solid ${transplantOpt.border}`, fontWeight: 'bold' }}>
+                    {transplantOpt.label}
+                  </span>
+                </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
                   <span className="text-muted">Etiologia DRC:</span>
                   <strong className="text-slate-800 font-semibold">{patient.etiologiaDRC || 'Não informada'}</strong>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Peso Seco:</span>
+                  <span className="text-muted">Peso Seco Alvo:</span>
                   <strong className="text-slate-800 font-semibold">{patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}</strong>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
@@ -569,11 +775,146 @@ export default function PatientProfile() {
                   <span className="text-muted">Hospital de Retaguarda:</span>
                   <strong className="text-slate-800 font-semibold">{patient.hospital || 'Hospital Geral'}</strong>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-start">
                   <span className="text-muted">Alergias:</span>
-                  <strong className="text-slate-800 font-semibold">{Array.isArray(patient.alergias) && patient.alergias.length > 0 ? patient.alergias.join(', ') : 'Nega alergias'}</strong>
+                  <div className="text-right flex flex-wrap justify-end gap-1 max-w-[65%]">
+                    {Array.isArray(patient.alergias) && patient.alergias.length > 0 ? (
+                      patient.alergias.map((al, idx) => (
+                        <span key={idx} style={{ fontSize: '0.68rem', padding: '1px 6px', borderRadius: '6px', background: '#fee2e2', color: '#991b1b', border: '1px solid #fecaca', fontWeight: 'bold' }}>
+                          {al}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-emerald-700 font-semibold">🟢 Nega alergias</span>
+                    )}
+                  </div>
                 </div>
               </div>
+            </section>
+
+            {/* Card Controle Ponderal & Histórico de Peso (Requisito 2 + Melhoria 1 + Melhoria 5) */}
+            <section className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
+                  <Scale size={16} color="#059669" />
+                  <span>Controle Ponderal & Peso ({historicoPesos.length})</span>
+                </h2>
+                <button 
+                  type="button"
+                  onClick={() => setIsWeightModalOpen(true)}
+                  className="btn btn-outline"
+                  style={{ padding: '0.25rem 0.65rem', fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '4px', borderRadius: '8px', color: '#059669', borderColor: '#a7f3d0', background: '#ecfdf5' }}
+                  title="Lançar novo peso do paciente"
+                >
+                  <Plus size={12} />
+                  <span>Registrar Peso</span>
+                </button>
+              </div>
+
+              {/* Destaque Atual: Último Peso vs Peso Seco */}
+              <div className="p-2.5 rounded-xl mb-3 flex items-center justify-between" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <div>
+                  <span className="text-[11px] text-muted block">Último Peso Aferido</span>
+                  <strong className="text-base text-slate-800">{ultimoPeso ? `${ultimoPeso} kg` : 'Não registrado'}</strong>
+                </div>
+                <div className="text-center">
+                  <span className="text-[11px] text-muted block">Meta Peso Seco</span>
+                  <strong className="text-base text-slate-600">{patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}</strong>
+                </div>
+                <div className="text-right">
+                  <span className="text-[11px] text-muted block">Ganho Interdialítico</span>
+                  {ganhoKg !== null ? (
+                    <strong style={{ color: isHipervolemia ? '#dc2626' : (isHipotensaoRisco ? '#2563eb' : '#059669') }}>
+                      {ganhoKg > 0 ? `+${ganhoKg}` : ganhoKg} kg ({pidgPct}%)
+                    </strong>
+                  ) : (
+                    <span className="text-muted">-</span>
+                  )}
+                </div>
+              </div>
+
+              {/* Mini gráfico visual de tendência ponderal (Melhoria 5) */}
+              {historicoPesos.length > 1 && (
+                <div className="mb-3 p-2 bg-slate-50 rounded-xl border border-slate-200">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1">
+                      <TrendingUp size={11} color="var(--primary)" /> Tendência das Últimas Pesagens
+                    </span>
+                    <span className="text-[10px] text-muted">Meta: {patient.pesoSeco || '-'}kg</span>
+                  </div>
+                  <div className="flex items-end justify-between gap-1.5 h-16 pt-2 px-1">
+                    {historicoPesos.slice(0, 6).reverse().map((rec, i) => {
+                      const minP = Math.min(...historicoPesos.slice(0, 6).map(r => r.peso), pesoSecoNum || 50) - 1;
+                      const maxP = Math.max(...historicoPesos.slice(0, 6).map(r => r.peso), pesoSecoNum || 70) + 1;
+                      const range = maxP - minP || 1;
+                      const heightPct = Math.max(15, Math.min(100, ((rec.peso - minP) / range) * 100));
+                      const isOver = pesoSecoNum && rec.peso > pesoSecoNum + 2.5;
+                      return (
+                        <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                          <span className="text-[9px] font-bold text-slate-700">{rec.peso}</span>
+                          <div 
+                            style={{ 
+                              width: '100%', 
+                              height: `${heightPct}%`, 
+                              background: isOver ? '#fb7185' : '#38bdf8', 
+                              borderRadius: '4px 4px 0 0',
+                              transition: 'height 0.3s'
+                            }} 
+                            title={`${new Date(rec.data).toLocaleDateString('pt-BR')} - ${rec.peso}kg (${rec.tipo})`}
+                          />
+                          <span className="text-[8px] text-muted">{new Date(rec.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Histórico Cronológico de Pesagens */}
+              {historicoPesos.length === 0 ? (
+                <div className="text-center py-4 text-xs text-muted">
+                  Nenhuma pesagem registrada ainda. Clique em "+ Registrar Peso" para iniciar o acompanhamento.
+                </div>
+              ) : (
+                <div className="flex flex-col gap-1.5 max-h-48 overflow-y-auto pr-1">
+                  {historicoPesos.map((rec) => (
+                    <div 
+                      key={rec.id} 
+                      className="p-1.5 px-2 rounded-lg bg-slate-50 border border-slate-200 flex justify-between items-center text-xs"
+                    >
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <strong className="text-slate-800">{rec.peso} kg</strong>
+                          <span style={{ fontSize: '0.65rem', padding: '1px 5px', borderRadius: '4px', background: '#e2e8f0', color: '#334155' }}>
+                            {rec.tipo}
+                          </span>
+                        </div>
+                        <span className="text-[10px] text-muted">
+                          {new Date(rec.data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                          {rec.observacoes ? ` • ${rec.observacoes}` : ''}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        {rec.ganhoInterdialitico !== null && (
+                          <span style={{ fontSize: '0.7rem', fontWeight: 'bold', color: rec.ganhoInterdialitico > 2.5 ? '#dc2626' : '#059669' }}>
+                            {rec.ganhoInterdialitico > 0 ? `+${rec.ganhoInterdialitico}` : rec.ganhoInterdialitico} kg
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteWeight(rec.id)}
+                          className="text-slate-400 hover:text-red-600 transition"
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}
+                          title="Excluir esta pesagem"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
           </div>
 
@@ -1048,6 +1389,128 @@ export default function PatientProfile() {
               </div>
             )}
           </div>
+
+          {/* Módulo de Vigilância Microbiológica & Hemoculturas do Acesso (Requisito 6 + Melhoria 4) */}
+          <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px', background: '#fffbeb', border: '1px solid #fde68a' }}>
+            <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <Bug size={18} color="#b45309" />
+                <h3 className="font-bold text-sm text-slate-800">
+                  Microbiologia & Hemoculturas do Acesso Vascular ({hemoculturas.length})
+                </h3>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsLockTherapyModalOpen(true)}
+                  className="btn btn-outline"
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem', borderColor: '#f59e0b', color: '#b45309', background: '#fef3c7' }}
+                  title="Calculadora e Protocolo de Selo de Cateter"
+                >
+                  <Sparkles size={13} />
+                  <span>Protocolo Lock Therapy</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleOpenNewExam}
+                  className="btn btn-primary"
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.75rem' }}
+                >
+                  + Lançar Cultura
+                </button>
+              </div>
+            </div>
+
+            {hemoculturas.length === 0 ? (
+              <div className="text-center py-6 text-xs text-muted">
+                Nenhum laudo de hemocultura lançado para este paciente. Ao registrar exames, preencha o bloco de Microbiologia.
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                {hemoculturas.map((cult) => {
+                  const isPos = cult.resultado === 'Positiva';
+                  const isAguardando = cult.resultado === 'Aguardando Resultado';
+
+                  return (
+                    <div 
+                      key={cult.id} 
+                      className="p-3 rounded-xl border flex flex-col gap-2 text-xs"
+                      style={{ 
+                        background: isPos ? '#fef2f2' : (isAguardando ? '#fffbeb' : '#f0fdf4'),
+                        borderColor: isPos ? '#fecaca' : (isAguardando ? '#fde68a' : '#bbf7d0')
+                      }}
+                    >
+                      <div className="flex justify-between items-start flex-wrap gap-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span 
+                            style={{ 
+                              fontSize: '0.7rem', 
+                              padding: '2px 8px', 
+                              borderRadius: '8px', 
+                              fontWeight: 'bold',
+                              background: isPos ? '#fee2e2' : (isAguardando ? '#fef3c7' : '#dcfce7'),
+                              color: isPos ? '#991b1b' : (isAguardando ? '#92400e' : '#15803d')
+                            }}
+                          >
+                            {cult.resultado}
+                          </span>
+                          <strong className="text-slate-800">
+                            Coleta: {new Date(cult.dataColeta).toLocaleString('pt-BR')}
+                          </strong>
+                          <span className="text-slate-500">• Sítio: <strong>{cult.sitioColeta}</strong></span>
+                          {cult.dtpHoras !== null && cult.dtpHoras !== undefined && (
+                            <span style={{ padding: '1px 6px', borderRadius: '4px', background: '#fee2e2', color: '#991b1b', fontWeight: 'bold' }}>
+                              DTP: {cult.dtpHoras}h {cult.dtpHoras > 2 ? '(Critério: Foco em Cateter)' : ''}
+                            </span>
+                          )}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteBloodCulture(cult.id)}
+                          className="text-slate-400 hover:text-red-600 transition"
+                          style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                          title="Excluir este laudo de hemocultura"
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+
+                      {cult.microrganismo && (
+                        <div className="flex items-center gap-2 text-slate-800">
+                          <Bug size={14} color="#dc2626" />
+                          <span>Patógeno Isolado: <strong className="text-red-700 font-bold">{cult.microrganismo}</strong></span>
+                        </div>
+                      )}
+
+                      {(cult.sensibilidade || cult.resistencia) && (
+                        <div className="p-2 rounded-lg bg-white/70 border border-slate-200 flex flex-col gap-1">
+                          {cult.sensibilidade && (
+                            <span className="text-emerald-800">
+                              <strong>Sensível a:</strong> {cult.sensibilidade}
+                            </span>
+                          )}
+                          {cult.resistencia && (
+                            <span className="text-rose-800">
+                              <strong>Resistente a:</strong> {cult.resistencia}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {cult.conduta && (
+                        <div className="text-slate-700 bg-white/60 p-2 rounded-lg border border-slate-200">
+                          <strong>Conduta Clínica / Selo:</strong> {cult.conduta}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
@@ -1268,8 +1731,18 @@ export default function PatientProfile() {
                       <strong className="text-sm text-slate-800">
                         {new Date(evo.dataHora).toLocaleString('pt-BR')}
                       </strong>
-                      <span style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '8px', background: '#eff6ff', color: '#1e40af', fontWeight: '600' }}>
-                        {evo.tipoAtendimento === 'Ronda de Hemodiálise' ? 'Hemodiálise' : (evo.tipoAtendimento || 'Hemodiálise')}
+                      <span 
+                        style={{ 
+                          fontSize: '0.72rem', 
+                          padding: '2px 8px', 
+                          borderRadius: '8px', 
+                          background: evo.tipoAtendimento === 'Internação' ? '#f3e8ff' : '#eff6ff', 
+                          color: evo.tipoAtendimento === 'Internação' ? '#7e22ce' : '#1e40af', 
+                          border: evo.tipoAtendimento === 'Internação' ? '1px solid #e9d5ff' : 'none',
+                          fontWeight: '600' 
+                        }}
+                      >
+                        {evo.tipoAtendimento === 'Internação' ? '🛏️ Internação' : (evo.tipoAtendimento === 'Ronda de Hemodiálise' ? 'Hemodiálise' : (evo.tipoAtendimento || 'Hemodiálise'))}
                       </span>
                     </div>
 
@@ -1362,6 +1835,497 @@ export default function PatientProfile() {
         doctorId={patient.doctorId || activeDoctorId}
         preselectedPatientId={patient.id}
       />
+      {/* ================= MODAL: REGISTRAR PESO & EVOLUÇÃO PONDERAL (Requisito 2) ================= */}
+      {isWeightModalOpen && (
+        <div 
+          style={{ 
+            position: 'fixed', 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            backgroundColor: 'rgba(15, 23, 42, 0.65)', 
+            backdropFilter: 'blur(6px)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            zIndex: 9999,
+            padding: '1rem'
+          }}
+          onClick={() => setIsWeightModalOpen(false)}
+        >
+          <div 
+            className="glass-panel animate-in" 
+            style={{ 
+              background: 'var(--surface-solid)', 
+              width: '100%', 
+              maxWidth: '480px', 
+              padding: '1.75rem',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
+              borderRadius: '20px'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4 border-b pb-3" style={{ borderColor: 'var(--border)' }}>
+              <div className="flex items-center gap-2">
+                <Scale size={20} color="#059669" />
+                <h2 className="text-base font-bold">Registrar Pesagem do Paciente</h2>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setIsWeightModalOpen(false)} 
+                className="btn btn-outline" 
+                style={{ padding: '0.35rem', borderRadius: '50%' }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveWeight} className="flex flex-col gap-3">
+              <div>
+                <label className="text-xs font-semibold mb-1 block text-slate-700">Data e Hora da Pesagem *</label>
+                <input 
+                  type="datetime-local" 
+                  className="input-field text-xs" 
+                  value={weightFormData.data}
+                  onChange={(e) => setWeightFormData(prev => ({ ...prev, data: e.target.value }))}
+                  required
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                <div>
+                  <label className="text-xs font-semibold mb-1 block text-slate-700">Peso Aferido (kg) *</label>
+                  <input 
+                    type="number" 
+                    step="0.1" 
+                    className="input-field text-sm font-bold" 
+                    placeholder="Ex: 68.5"
+                    value={weightFormData.peso}
+                    onChange={(e) => setWeightFormData(prev => ({ ...prev, peso: e.target.value }))}
+                    required
+                    autoFocus
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold mb-1 block text-slate-700">Momento da Aferição</label>
+                  <select 
+                    className="input-field text-xs"
+                    value={weightFormData.tipo}
+                    onChange={(e) => setWeightFormData(prev => ({ ...prev, tipo: e.target.value }))}
+                  >
+                    <option value="Pré-HD">Pré-Hemodiálise</option>
+                    <option value="Pós-HD">Pós-Hemodiálise</option>
+                    <option value="Consulta">Consulta Ambulatorial</option>
+                    <option value="Internação">Durante Internação</option>
+                    <option value="Outro">Outro</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Cálculo em tempo real de Ganho Interdialítico */}
+              {weightFormData.peso && pesoSecoNum && (
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex justify-between items-center">
+                  <div>
+                    <span className="text-muted block">Meta Peso Seco:</span>
+                    <strong>{pesoSecoNum} kg</strong>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-muted block">Variação / Ganho:</span>
+                    <strong style={{ 
+                      color: (parseFloat(weightFormData.peso) - pesoSecoNum) > 3.0 ? '#dc2626' : '#059669' 
+                    }}>
+                      {(parseFloat(weightFormData.peso) - pesoSecoNum) > 0 ? '+' : ''}
+                      {(parseFloat(weightFormData.peso) - pesoSecoNum).toFixed(2)} kg 
+                      ({(((parseFloat(weightFormData.peso) - pesoSecoNum) / pesoSecoNum) * 100).toFixed(1)}%)
+                    </strong>
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <label className="text-xs font-semibold mb-1 block text-slate-700">Observações Clínicas (Opcional)</label>
+                <input 
+                  type="text" 
+                  className="input-field text-xs" 
+                  placeholder="Ex: Paciente com edema MMII (+/4+), eupneico..."
+                  value={weightFormData.observacoes}
+                  onChange={(e) => setWeightFormData(prev => ({ ...prev, observacoes: e.target.value }))}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 mt-2 pt-3 border-t" style={{ borderColor: 'var(--border)' }}>
+                <button type="button" className="btn btn-outline" onClick={() => setIsWeightModalOpen(false)}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={savingWeight}>
+                  {savingWeight ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                  <span>{savingWeight ? 'Gravando...' : 'Salvar Pesagem'}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: LAUDO DE ENCAMINHAMENTO PARA TRANSPLANTE EM PDF (Melhoria 3) ================= */}
+      {isTransplantReportOpen && (
+        <div 
+          style={{ 
+            position: 'fixed', 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            backgroundColor: 'rgba(15, 23, 42, 0.75)', 
+            backdropFilter: 'blur(6px)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            zIndex: 9999,
+            padding: '1rem'
+          }}
+          onClick={() => setIsTransplantReportOpen(false)}
+        >
+          <div 
+            className="glass-panel animate-in" 
+            style={{ 
+              background: '#ffffff', 
+              color: '#0f172a',
+              width: '100%', 
+              maxWidth: '820px', 
+              maxHeight: '92vh', 
+              overflowY: 'auto', 
+              padding: '2.5rem',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
+              borderRadius: '20px'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Barra superior de ações do relatório */}
+            <div className="flex justify-between items-center mb-6 pb-4 border-b no-print" style={{ borderColor: '#e2e8f0' }}>
+              <div className="flex items-center gap-2">
+                <Printer size={20} color="#2563eb" />
+                <strong className="text-base">Laudo Médico de Encaminhamento ao Transplante Renal</strong>
+              </div>
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={() => window.print()}
+                  className="btn btn-primary"
+                  style={{ padding: '0.45rem 1rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                >
+                  <Printer size={15} />
+                  <span>Imprimir / Salvar PDF</span>
+                </button>
+                <button 
+                  onClick={() => setIsTransplantReportOpen(false)}
+                  className="btn btn-outline"
+                  style={{ padding: '0.45rem', borderRadius: '50%' }}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Documento Timbrado */}
+            <div className="p-6 bg-white border border-slate-200 rounded-xl flex flex-col gap-5 text-sm" style={{ fontFamily: 'system-ui, sans-serif' }}>
+              <div className="border-b pb-4 flex justify-between items-start">
+                <div>
+                  <h1 className="text-xl font-black text-blue-900 tracking-tight">NexAi-NEFRO</h1>
+                  <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider block">
+                    Sistema de Prontuário Eletrônico & Gestão Dialítica em Nuvem
+                  </span>
+                  <span className="text-xs text-slate-600">Unidade: {patient.clinica || 'Centro Nefrológico'} • Hospital: {patient.hospital || 'Hospital do Rim'}</span>
+                </div>
+                <div className="text-right text-xs text-slate-500">
+                  <span>Data de Emissão: <strong>{new Date().toLocaleDateString('pt-BR')}</strong></span>
+                  <span className="block mt-1">Status: <strong>{statusTransplante}</strong></span>
+                </div>
+              </div>
+
+              {/* 1. Identificação do Paciente */}
+              <div>
+                <h3 className="font-bold text-xs uppercase text-slate-700 tracking-wider mb-2 border-b pb-1">
+                  1. Identificação do Paciente Candidato
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', fontSize: '0.8rem' }}>
+                  <div>Nome: <strong className="text-slate-900">{patient.nome}</strong></div>
+                  <div>Nascimento: <strong>{patient.dataNascimento ? new Date(patient.dataNascimento + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}</strong></div>
+                  <div>Idade: <strong>{patient.idade ? `${patient.idade} anos` : '-'}</strong></div>
+                  <div>Etiologia DRC: <strong>{patient.etiologiaDRC || 'Não informada'}</strong></div>
+                  <div>Início Diálise: <strong>{patient.dataInicioDialise ? new Date(patient.dataInicioDialise + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}</strong></div>
+                  <div>Turno Atual: <strong>{patient.turno || '3º Turno'}</strong></div>
+                </div>
+              </div>
+
+              {/* 2. Parâmetros do Acesso Vascular */}
+              <div>
+                <h3 className="font-bold text-xs uppercase text-slate-700 tracking-wider mb-2 border-b pb-1">
+                  2. Acesso Vascular Atual & Parâmetros Dialíticos
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', fontSize: '0.8rem' }}>
+                  <div>Tipo de Acesso: <strong>{acessoVascular.tipo || 'FAV'}</strong></div>
+                  <div>Membro/Local: <strong>{acessoVascular.ladoMembro || '-'}</strong></div>
+                  <div>Fluxo Sangue (Qb): <strong>{acessoVascular.fluxoSangue ? `${acessoVascular.fluxoSangue} ml/min` : '-'}</strong></div>
+                  <div>Peso Seco Alvo: <strong>{patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}</strong></div>
+                  <div>Último Peso Aferido: <strong>{ultimoPeso ? `${ultimoPeso} kg` : '-'}</strong></div>
+                  <div>Alergias: <strong>{Array.isArray(patient.alergias) && patient.alergias.length > 0 ? patient.alergias.join(', ') : 'Nega alergias'}</strong></div>
+                </div>
+              </div>
+
+              {/* 3. Perfil Laboratorial e Microbiologia Recente */}
+              <div>
+                <h3 className="font-bold text-xs uppercase text-slate-700 tracking-wider mb-2 border-b pb-1">
+                  3. Perfil Laboratorial & Vigilância Microbiológica
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.78rem' }} className="mb-2">
+                  <div>Hb: <strong>{exames.hb ? `${exames.hb} g/dL` : '-'}</strong></div>
+                  <div>Ht: <strong>{exames.ht ? `${exames.ht}%` : '-'}</strong></div>
+                  <div>Ferritina: <strong>{exames.ferritina ? `${exames.ferritina} ng/mL` : '-'}</strong></div>
+                  <div>IST: <strong>{exames.ist ? `${exames.ist}%` : '-'}</strong></div>
+                  <div>PTH: <strong>{exames.pth ? `${exames.pth} pg/mL` : '-'}</strong></div>
+                  <div>Fósforo: <strong>{exames.fosforo ? `${exames.fosforo} mg/dL` : '-'}</strong></div>
+                  <div>Cálcio: <strong>{exames.ca ? `${exames.ca} mg/dL` : '-'}</strong></div>
+                  <div>Potássio: <strong>{exames.k ? `${exames.k} mEq/L` : '-'}</strong></div>
+                  <div>Kt/V: <strong>{exames.ktv || '-'}</strong></div>
+                  <div>Albumina: <strong>{exames.albumina ? `${exames.albumina} g/dL` : '-'}</strong></div>
+                  <div>Creatinina: <strong>{exames.creatinina ? `${exames.creatinina} mg/dL` : '-'}</strong></div>
+                  <div>PCR: <strong>{exames.pcr ? `${exames.pcr} mg/L` : '-'}</strong></div>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
+                  <strong>Histórico de Hemoculturas:</strong>{' '}
+                  {hemoculturas.length === 0 ? (
+                    'Sem registro de hemoculturas positivas recentes.'
+                  ) : (
+                    hemoculturas.map(h => `${new Date(h.dataColeta).toLocaleDateString('pt-BR')}: ${h.resultado} (${h.microrganismo || h.sitioColeta})`).join(' • ')
+                  )}
+                </div>
+              </div>
+
+              {/* 4. Prescrições em Uso */}
+              <div>
+                <h3 className="font-bold text-xs uppercase text-slate-700 tracking-wider mb-2 border-b pb-1">
+                  4. Prescrições Ativas no Tratamento Dialítico
+                </h3>
+                <div className="flex flex-col gap-1 text-xs">
+                  {medicamentosList.filter(m => m.ativo !== false).length === 0 ? (
+                    <span className="text-muted">Nenhuma medicação ativa no momento.</span>
+                  ) : (
+                    medicamentosList.filter(m => m.ativo !== false).map((med, i) => (
+                      <div key={i} className="flex justify-between border-b pb-1">
+                        <span>• <strong>{med.nome}</strong> - {med.dosagem} ({med.via || 'Via padrão'})</span>
+                        <span className="text-slate-500">{med.frequencia}</span>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Assinatura Médica */}
+              <div className="mt-8 pt-8 border-t flex justify-between items-end text-center">
+                <div className="text-xs text-slate-400 text-left">
+                  Prontuário autêntico emitido via Cloud Firestore<br />
+                  NexAi-NEFRO Software Médico
+                </div>
+                <div className="flex flex-col items-center">
+                  <div className="w-56 border-b border-slate-400 mb-1" />
+                  <strong className="text-sm text-slate-800">{doctorInfo?.nome || 'Médico(a) Nefrologista Responsável'}</strong>
+                  <span className="text-xs text-slate-500">CRM {doctorInfo?.crm || ''}/{doctorInfo?.ufCrm || 'SP'} • RQE {doctorInfo?.rqe || 'Nefrologia'}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: CHECKLIST & PRONTIDÃO DE TRANSPLANTE (Melhoria 2) ================= */}
+      {isChecklistModalOpen && (
+        <div 
+          style={{ 
+            position: 'fixed', 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            backgroundColor: 'rgba(15, 23, 42, 0.65)', 
+            backdropFilter: 'blur(6px)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            zIndex: 9999,
+            padding: '1rem'
+          }}
+          onClick={() => setIsChecklistModalOpen(false)}
+        >
+          <div 
+            className="glass-panel animate-in" 
+            style={{ 
+              background: 'var(--surface-solid)', 
+              width: '100%', 
+              maxWidth: '600px', 
+              maxHeight: '90vh', 
+              overflowY: 'auto', 
+              padding: '2rem',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
+              borderRadius: '20px'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4 border-b pb-3" style={{ borderColor: 'var(--border)' }}>
+              <div className="flex items-center gap-2">
+                <CheckSquare size={22} color="#7c3aed" />
+                <div>
+                  <h2 className="text-base font-bold">Checklist de Prontidão Pré-Transplante Renal</h2>
+                  <span className="text-xs text-muted">Exames obrigatórios preconizados pelo Sistema Nacional de Transplantes</span>
+                </div>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setIsChecklistModalOpen(false)} 
+                className="btn btn-outline" 
+                style={{ padding: '0.35rem', borderRadius: '50%' }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3 text-xs">
+              <div className="p-3 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 flex justify-between items-center">
+                <span>Status Atual do Paciente:</span>
+                <span className="font-bold px-2 py-1 bg-white rounded-lg border border-purple-300">
+                  {statusTransplante}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                {[
+                  { label: "Sorologia HIV 1 e 2 (Elisa / Quimioluminescência)", validade: "Semestral" },
+                  { label: "Sorologias Hepatite B (HBsAg, Anti-HBs, Anti-HBc total)", validade: "Semestral" },
+                  { label: "Sorologia Hepatite C (Anti-HCV)", validade: "Semestral" },
+                  { label: "Sorologia Chagas (Doença de Chagas) e HTLV I/II", validade: "Anual" },
+                  { label: "Sorologia Citomegalovírus (CMV IgG e IgM)", validade: "Anual" },
+                  { label: "Tipagem Sanguínea ABO e Fator Rh (Duas amostras independentes)", validade: "Definitiva" },
+                  { label: "Painel Imunológico de Anticorpos Citotóxicos (PRA Classe I e II)", validade: "Trimestral" },
+                  { label: "Eletrocardiograma (ECG) + Ecocardiograma Transtorácico (ECO)", validade: "Anual" },
+                  { label: "Radiografia de Tórax em PA e Perfil", validade: "Anual" },
+                  { label: "Ultrassonografia de Rins e Vias Urinárias", validade: "Anual" },
+                  { label: "Parecer de Higiene Odontológica (Ausência de focos sépticos)", validade: "Anual" },
+                  { label: "Avaliação da Equipe Psicossocial e Termo de Consentimento", validade: "Definitiva" },
+                ].map((item, idx) => (
+                  <div key={idx} className="p-2 rounded-lg bg-slate-50 border border-slate-200 flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 size={16} color="#059669" />
+                      <span className="font-medium text-slate-800">{item.label}</span>
+                    </div>
+                    <span className="text-[10px] text-muted">{item.validade}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-4 flex justify-end">
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => setIsChecklistModalOpen(false)}
+                >
+                  Concluir Conferência
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= MODAL: PROTOCOLO LOCK THERAPY (Melhoria 4) ================= */}
+      {isLockTherapyModalOpen && (
+        <div 
+          style={{ 
+            position: 'fixed', 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0, 
+            backgroundColor: 'rgba(15, 23, 42, 0.65)', 
+            backdropFilter: 'blur(6px)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            zIndex: 9999,
+            padding: '1rem'
+          }}
+          onClick={() => setIsLockTherapyModalOpen(false)}
+        >
+          <div 
+            className="glass-panel animate-in" 
+            style={{ 
+              background: 'var(--surface-solid)', 
+              width: '100%', 
+              maxWidth: '560px', 
+              maxHeight: '90vh', 
+              overflowY: 'auto', 
+              padding: '2rem',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
+              borderRadius: '20px'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4 border-b pb-3" style={{ borderColor: 'var(--border)' }}>
+              <div className="flex items-center gap-2">
+                <Bug size={20} color="#b45309" />
+                <div>
+                  <h2 className="text-base font-bold">Calculadora de Selo de Cateter (Lock Therapy)</h2>
+                  <span className="text-xs text-muted">Esterilização intraluminal de cateter em bacteremias</span>
+                </div>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setIsLockTherapyModalOpen(false)} 
+                className="btn btn-outline" 
+                style={{ padding: '0.35rem', borderRadius: '50%' }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3 text-xs">
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900">
+                <strong>Protocolo Recomendado:</strong> Infundir exatamente o volume de priming gravado na ponta do cateter (geralmente entre 1.3 ml e 1.8 ml por via) ao final da diálise, e <strong>aspirar e descartar</strong> antes da sessão seguinte.
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <div className="p-3 rounded-xl border bg-slate-50 flex flex-col gap-1">
+                  <strong className="text-slate-800 text-sm">Opção 1: Vancomicina + Heparina (Gram-positivos / MRSA)</strong>
+                  <span className="text-slate-600">• Vancomicina: Concentração final 5 mg/ml</span>
+                  <span className="text-slate-600">• Heparina: 5.000 UI/ml (relação 1:1)</span>
+                  <span className="text-muted text-[11px]">Preparo: 0,5 ml de Vancomicina (50 mg/ml) + 0,5 ml de Heparina (5.000 UI/ml) + 4 ml de SF 0,9%.</span>
+                </div>
+
+                <div className="p-3 rounded-xl border bg-slate-50 flex flex-col gap-1">
+                  <strong className="text-slate-800 text-sm">Opção 2: Cefazolina + Heparina (MSSA sensível)</strong>
+                  <span className="text-slate-600">• Cefazolina: Concentração final 10 mg/ml</span>
+                  <span className="text-slate-600">• Heparina: 5.000 UI/ml</span>
+                </div>
+
+                <div className="p-3 rounded-xl border bg-slate-50 flex flex-col gap-1">
+                  <strong className="text-slate-800 text-sm">Opção 3: Gentamicina + Heparina (Gram-negativos / Pseudomonas)</strong>
+                  <span className="text-slate-600">• Gentamicina: Concentração final 1 mg/ml</span>
+                  <span className="text-slate-600">• Heparina: 2.500 a 5.000 UI/ml</span>
+                </div>
+              </div>
+
+              <div className="mt-4 flex justify-end">
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => setIsLockTherapyModalOpen(false)}
+                >
+                  Entendido
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -9,13 +9,58 @@ import {
   onSnapshot, 
   writeBatch,
   query,
-  where
+  where,
+  arrayUnion
 } from "firebase/firestore";
 import { db } from "../config/firebase.js";
 import { normalizeMedicamentosList } from "../data/dialysisMedications.js";
 import { DEMO_PATIENTS_DATA } from "../data/demoPatients.js";
 
 const PATIENTS_COLLECTION = "patients";
+const METADATA_COLLECTION = "system_metadata";
+const ALLERGIES_DOC = "allergies_catalog";
+
+export const STATUS_TRANSPLANTE_OPTIONS = [
+  { value: 'Encaminhar / Em Triagem', label: 'Encaminhar / Em Triagem', badgeBg: '#fef3c7', color: '#b45309', border: '#fde68a' },
+  { value: 'Encaminhado / Em Avaliação', label: 'Encaminhado / Em Avaliação', badgeBg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
+  { value: 'Ativo em Lista de Espera', label: 'Ativo em Lista de Espera', badgeBg: '#dcfce7', color: '#15803d', border: '#bbf7d0' },
+  { value: 'Suspenso / Inativo em Lista', label: 'Suspenso / Inativo em Lista', badgeBg: '#ffedd5', color: '#c2410c', border: '#fed7aa' },
+  { value: 'Contraindicado Clínico', label: 'Contraindicado Clínico', badgeBg: '#fee2e2', color: '#b91c1c', border: '#fecaca' },
+  { value: 'Doador Vivo em Investigação', label: 'Doador Vivo em Investigação', badgeBg: '#ecfeff', color: '#0e7490', border: '#a5f3fc' },
+  { value: 'Já Transplantado', label: 'Já Transplantado', badgeBg: '#f3e8ff', color: '#7e22ce', border: '#e9d5ff' },
+  { value: 'Recusa do Paciente', label: 'Recusa do Paciente', badgeBg: '#f1f5f9', color: '#475569', border: '#cbd5e1' },
+  { value: 'Não Avaliado', label: 'Não Avaliado', badgeBg: '#f8fafc', color: '#64748b', border: '#e2e8f0' }
+];
+
+export const ETIOLOGIAS_DRC_PADRAO = [
+  'Nefropatia Diabética',
+  'Nefroesclerose Hipertensiva',
+  'Glomerulonefrite Crônica (GNC)',
+  'Doença Renal Policística Autossômica Dominante (DRPAD)',
+  'Nefropatia por IgA (Doença de Berger)',
+  'Nefrite Lúpica',
+  'Uropatia Obstrutiva',
+  'Nefrite Tubulointersticial Crônica',
+  'Mieloma Múltiplo / Gamopatias',
+  'Indeterminada / Causa Desconhecida'
+];
+
+export const ALLERGIES_PADRAO = [
+  'Dipirona',
+  'Penicilina / Amoxicilina',
+  'Sulfa / Sulfametoxazol',
+  'AINEs (Anti-inflamatórios)',
+  'Contraste Iodado',
+  'Cefalosporinas / Cefazolina',
+  'Vancomicina',
+  'Heparina (HIT)',
+  'Látex',
+  'Fita Adesiva / Micropore',
+  'Ciprofloxacino / Quinolonas',
+  'Morfina / Codeína / Tramadol',
+  'Clorexidina',
+  'Polissulfona / Capilar Dialítico'
+];
 
 /**
  * Normaliza e gera um ID amigável a partir do nome
@@ -426,3 +471,169 @@ export async function seedDemoPatientsToFirestore(targetDoctorId = 'dr-marcelo')
   await batch.commit();
   return DEMO_PATIENTS_DATA.length;
 }
+
+/**
+ * Escuta em tempo real o catálogo unificado de alergias do Cloud Firestore
+ */
+export function subscribeToAllergiesCatalog(callback, onError) {
+  if (!db) {
+    if (callback) callback(ALLERGIES_PADRAO);
+    return () => {};
+  }
+
+  const docRef = doc(db, METADATA_COLLECTION, ALLERGIES_DOC);
+  return onSnapshot(
+    docRef,
+    (snap) => {
+      let list = [...ALLERGIES_PADRAO];
+      if (snap.exists() && Array.isArray(snap.data().allergies)) {
+        const cloudList = snap.data().allergies;
+        const set = new Set([...list, ...cloudList]);
+        list = Array.from(set);
+      } else {
+        // Inicializa o catálogo padrão na primeira execução na nuvem
+        setDoc(docRef, { allergies: ALLERGIES_PADRAO, atualizadoEm: new Date().toISOString() }, { merge: true }).catch(console.error);
+      }
+      list.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+      if (callback) callback(list);
+    },
+    (err) => {
+      console.error("Erro ao escutar catálogo de alergias no Firestore:", err);
+      if (onError) onError(err);
+      if (callback) callback(ALLERGIES_PADRAO);
+    }
+  );
+}
+
+/**
+ * Cadastra uma nova alergia no catálogo global do Cloud Firestore para ser reaproveitada por todos os pacientes
+ */
+export async function addGlobalAllergy(allergyName) {
+  if (!db || !allergyName || !allergyName.trim()) return;
+  const cleaned = allergyName.trim();
+  const docRef = doc(db, METADATA_COLLECTION, ALLERGIES_DOC);
+  await setDoc(docRef, {
+    allergies: arrayUnion(cleaned),
+    atualizadoEm: new Date().toISOString()
+  }, { merge: true });
+}
+
+/**
+ * Adiciona um registro ao histórico de peso do paciente no Cloud Firestore
+ */
+export async function addPatientWeightRecord(patientId, weightData) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado no Firestore");
+
+  const historico = Array.isArray(patient.historicoPesos) ? [...patient.historicoPesos] : [];
+  const pesoNum = parseFloat(String(weightData.peso).replace(',', '.'));
+  if (isNaN(pesoNum) || pesoNum <= 0) {
+    throw new Error("Valor de peso inválido");
+  }
+
+  const pesoSecoRef = patient.pesoSeco ? parseFloat(String(patient.pesoSeco).replace(',', '.')) : null;
+  const ganho = (pesoSecoRef && !isNaN(pesoSecoRef)) ? parseFloat((pesoNum - pesoSecoRef).toFixed(2)) : null;
+
+  const newRecord = {
+    id: weightData.id || `peso-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    data: weightData.data || new Date().toISOString(),
+    peso: pesoNum,
+    tipo: weightData.tipo || 'Pré-HD',
+    pesoSecoReferencia: pesoSecoRef,
+    ganhoInterdialitico: ganho,
+    observacoes: weightData.observacoes || '',
+    registradoEm: new Date().toISOString()
+  };
+
+  historico.unshift(newRecord);
+  historico.sort((a, b) => new Date(b.data || 0) - new Date(a.data || 0));
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    historicoPesos: historico,
+    ultimoPesoAferido: pesoNum,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return historico;
+}
+
+/**
+ * Exclui um registro do histórico de peso do paciente no Firestore
+ */
+export async function deletePatientWeightRecord(patientId, weightId) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient || !Array.isArray(patient.historicoPesos)) return;
+
+  const historico = patient.historicoPesos.filter(w => w.id !== weightId);
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    historicoPesos: historico,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return historico;
+}
+
+/**
+ * Adiciona ou edita um laudo de hemocultura no histórico do paciente no Firestore
+ */
+export async function savePatientBloodCulture(patientId, cultureData, cultureId = null) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado no Firestore");
+
+  const cultures = Array.isArray(patient.hemoculturas) ? [...patient.hemoculturas] : [];
+  const targetId = cultureId || cultureData.id || `hemo-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+
+  const cultureRecord = {
+    id: targetId,
+    dataColeta: cultureData.dataColeta || new Date().toISOString().slice(0, 16),
+    sitioColeta: cultureData.sitioColeta || 'Cateter - Lúmen Venoso',
+    resultado: cultureData.resultado || 'Aguardando Resultado',
+    microrganismo: cultureData.microrganismo ? cultureData.microrganismo.trim() : '',
+    sensibilidade: cultureData.sensibilidade ? cultureData.sensibilidade.trim() : '',
+    resistencia: cultureData.resistencia ? cultureData.resistencia.trim() : '',
+    dtpHoras: (cultureData.dtpHoras !== undefined && cultureData.dtpHoras !== null && cultureData.dtpHoras !== '') ? parseFloat(String(cultureData.dtpHoras).replace(',', '.')) : null,
+    conduta: cultureData.conduta ? cultureData.conduta.trim() : '',
+    registradoEm: new Date().toISOString()
+  };
+
+  const existingIdx = cultures.findIndex(c => c.id === targetId);
+  if (existingIdx !== -1) {
+    cultures[existingIdx] = cultureRecord;
+  } else {
+    cultures.unshift(cultureRecord);
+  }
+
+  cultures.sort((a, b) => new Date(b.dataColeta || 0) - new Date(a.dataColeta || 0));
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    hemoculturas: cultures,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return cultures;
+}
+
+/**
+ * Exclui uma hemocultura do histórico do paciente no Firestore
+ */
+export async function deletePatientBloodCulture(patientId, cultureId) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient || !Array.isArray(patient.hemoculturas)) return;
+
+  const cultures = patient.hemoculturas.filter(c => c.id !== cultureId);
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    hemoculturas: cultures,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return cultures;
+}
+

@@ -18,7 +18,20 @@ export const DEMO_PATIENTS_DATA = [
     turno: "1º Turno",
     dataNascimento: "1962-04-18",
     idade: 64,
-    status: "Ativo",
+    status: "Ativo em Lista de Espera",
+    statusTransplante: "Ativo em Lista de Espera",
+    etiologiaDRC: "Nefropatia Diabética",
+    pesoSeco: 68.5,
+    dataInicioDialise: "2023-01-15",
+    alergias: ["Dipirona"],
+    historicoPesos: [
+      { id: "w-1-1", data: "2026-08-10", peso: 70.2, pesoSeco: 68.5, variacaoKg: 1.7, percentualGanho: 2.48, momento: "Pré-diálise", conduta: "Ultrafiltração programada 1700ml sem intercorrências." },
+      { id: "w-1-2", data: "2026-08-08", peso: 69.8, pesoSeco: 68.5, variacaoKg: 1.3, percentualGanho: 1.90, momento: "Pré-diálise", conduta: "Peso pós atingiu peso seco 68.5 kg." },
+      { id: "w-1-3", data: "2026-08-05", peso: 70.5, pesoSeco: 68.5, variacaoKg: 2.0, percentualGanho: 2.92, momento: "Pré-diálise", conduta: "UF 2000ml bem tolerada." }
+    ],
+    hemoculturas: [
+      { id: "hc-1-1", dataColeta: "2026-07-15", sitio: "Sangue Periférico", status: "Negativa", patogeno: "Nenhum crescimento bacteriano após 5 dias", antibiograma: "Sem crescimento" }
+    ],
     acessoVascular: {
       tipo: "FAV Braquiocefálica",
       ladoMembro: "MSE (Membro Superior Esquerdo)",
@@ -138,8 +151,17 @@ export const DEMO_PATIENTS_DATA = [
     hospital: "Hospital Estadual de Nefrologia",
     turno: "2º Turno",
     dataNascimento: "1968-11-23",
-    idade: 58,
-    status: "Ativo",
+    status: "Encaminhado / Em Avaliação",
+    statusTransplante: "Encaminhado / Em Avaliação",
+    etiologiaDRC: "Hipertensão Arterial Sistêmica (HAS)",
+    pesoSeco: 62.0,
+    dataInicioDialise: "2024-02-10",
+    alergias: ["Penicilina / Amoxicilina", "Contraste Iodado"],
+    historicoPesos: [
+      { id: "w-2-1", data: "2026-08-10", peso: 63.5, pesoSeco: 62.0, variacaoKg: 1.5, percentualGanho: 2.42, momento: "Pré-diálise", conduta: "UF de 1500ml." },
+      { id: "w-2-2", data: "2026-08-08", peso: 64.0, pesoSeco: 62.0, variacaoKg: 2.0, percentualGanho: 3.23, momento: "Pré-diálise", conduta: "Orientada restrição hídrica interdialítica." }
+    ],
+    hemoculturas: [],
     acessoVascular: {
       tipo: "FAV Radiocefálica",
       ladoMembro: "MSD (Membro Superior Direito)",
@@ -233,8 +255,16 @@ export const DEMO_PATIENTS_DATA = [
     hospital: "Hospital Estadual de Nefrologia",
     turno: "3º Turno",
     dataNascimento: "1974-09-05",
-    idade: 52,
-    status: "Em Tratamento",
+    status: "Doador Vivo em Investigação",
+    statusTransplante: "Doador Vivo em Investigação",
+    etiologiaDRC: "Glomerulonefrite Crônica (GNC)",
+    pesoSeco: 76.0,
+    dataInicioDialise: "2022-10-05",
+    alergias: ["Sulfa / Sulfametoxazol"],
+    historicoPesos: [
+      { id: "w-3-1", data: "2026-08-10", peso: 79.8, pesoSeco: 76.0, variacaoKg: 3.8, percentualGanho: 5.00, momento: "Pré-diálise", conduta: "Ganho interdialítico excessivo (>4.5%). Programada UF 3500ml escalonada com perfil sódico." }
+    ],
+    hemoculturas: [],
     acessoVascular: {
       tipo: "FAV Braquiocefálica",
       ladoMembro: "MSE (Membro Superior Esquerdo)",
@@ -328,8 +358,29 @@ export const DEMO_PATIENTS_DATA = [
     hospital: "Hospital Estadual de Nefrologia",
     turno: "1º Turno",
     dataNascimento: "1955-03-12",
-    idade: 71,
-    status: "Em Tratamento",
+    status: "Suspenso / Inativo em Lista",
+    statusTransplante: "Suspenso / Inativo em Lista",
+    etiologiaDRC: "Doença Renal Policística Autossômica Dominante (DRPAD)",
+    pesoSeco: 54.0,
+    dataInicioDialise: "2025-09-01",
+    alergias: ["Vancomicina"],
+    historicoPesos: [
+      { id: "w-4-1", data: "2026-08-09", peso: 55.4, pesoSeco: 54.0, variacaoKg: 1.4, percentualGanho: 2.59, momento: "Pré-diálise", conduta: "Estável clinicamente." }
+    ],
+    hemoculturas: [
+      { 
+        id: "hc-4-1", 
+        dataColeta: "2026-08-02", 
+        sitio: "Permcath (Lúmen Arterial/Venoso)", 
+        status: "Positiva", 
+        patogeno: "Staphylococcus aureus (MRSA)", 
+        tempoPositividade: "8.5", 
+        dtpHours: "2.8", 
+        antibiograma: "Sensível: Vancomicina, Daptomicina, Linezolida. Resistente: Oxacilina, Cefazolina.", 
+        lockTherapy: "Vancomicina 5mg/mL + Heparina 5000UI/mL instalada pós-HD", 
+        conduta: "Permcath mantido sob Lock Terapia rigorosa. Hemocultura de controle em 7 dias." 
+      }
+    ],
     acessoVascular: {
       tipo: "CDL Permcath Longa Permanência",
       ladoMembro: "VJI Direita (Veia Jugular Interna D)",
@@ -409,8 +460,16 @@ export const DEMO_PATIENTS_DATA = [
     hospital: "Hospital Estadual de Nefrologia",
     turno: "2º Turno",
     dataNascimento: "1958-07-30",
-    idade: 68,
-    status: "Ativo",
+    status: "Contraindicado Clínico",
+    statusTransplante: "Contraindicado Clínico",
+    etiologiaDRC: "Nefroesclerose Hipertensiva",
+    pesoSeco: 72.0,
+    dataInicioDialise: "2023-07-20",
+    alergias: [],
+    historicoPesos: [
+      { id: "w-5-1", data: "2026-08-09", peso: 74.2, pesoSeco: 72.0, variacaoKg: 2.2, percentualGanho: 3.05, momento: "Pré-diálise", conduta: "Controle hidroeletrolítico." }
+    ],
+    hemoculturas: [],
     acessoVascular: {
       tipo: "FAV Radiocefálica",
       ladoMembro: "MSE (Membro Superior Esquerdo)",
@@ -505,8 +564,16 @@ export const DEMO_PATIENTS_DATA = [
     hospital: "Hospital Estadual de Nefrologia",
     turno: "Diálise Peritoneal",
     dataNascimento: "1965-01-14",
-    idade: 61,
-    status: "Em Tratamento",
+    status: "Encaminhar / Em Triagem",
+    statusTransplante: "Encaminhar / Em Triagem",
+    etiologiaDRC: "Nefropatia Diabética",
+    pesoSeco: 59.5,
+    dataInicioDialise: "2024-04-01",
+    alergias: ["AINEs (Anti-inflamatórios)"],
+    historicoPesos: [
+      { id: "w-6-1", data: "2026-08-10", peso: 59.8, pesoSeco: 59.5, variacaoKg: 0.3, percentualGanho: 0.50, momento: "Pré-diálise", conduta: "Adequada volemia em Diálise Peritoneal." }
+    ],
+    hemoculturas: [],
     acessoVascular: {
       tipo: "Cateter Tenckhoff Abdominal",
       ladoMembro: "Fossa Ilíaca Esquerda",

@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, User, Activity, Building, Calendar, Loader2 } from 'lucide-react';
-import { savePatient, calculateAge } from '../services/patientService';
+import { X, Save, User, Activity, Building, Calendar, Loader2, HeartHandshake, Scale } from 'lucide-react';
+import { 
+  savePatient, 
+  calculateAge, 
+  STATUS_TRANSPLANTE_OPTIONS
+} from '../services/patientService';
 import { useAuth } from '../context/AuthContext';
+import AllergySelector from './AllergySelector';
 
 const TIPOS_ACESSO_PADRAO = [
   { value: 'FAV', label: 'FAV (Fístula Arteriovenosa)' },
@@ -54,7 +59,12 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
     etiologiaDRC: 'Diabetes Mellitus / Nefropatia Diabética',
     dataNascimento: '',
     idade: '',
-    status: 'Ativo',
+    statusTransplante: 'Não Avaliado',
+    status: 'Não Avaliado',
+    etiologiaDRC: 'Nefropatia Diabética',
+    pesoSeco: '',
+    dataInicioDialise: '',
+    alergias: [],
     acessoVascular: {
       tipo: 'FAV',
       fluxoSangue: '',
@@ -64,7 +74,9 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       ladoMembro: 'MSE'
     },
     exames: {},
-    medicamentos: {}
+    medicamentos: {},
+    historicoPesos: [],
+    hemoculturas: []
   });
 
   const [saving, setSaving] = useState(false);
@@ -86,9 +98,11 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       const isKnownLado = LOCALIZACOES_ACESSO_PADRAO.some(l => l.value === currentLado);
       setCustomLadoMembro(!isKnownLado && !!patientToEdit.acessoVascular?.ladoMembro);
 
-      const currentEtiologia = patientToEdit.etiologiaDRC || '';
-      const isKnownEtiologia = ETIOLOGIAS_DRC_PADRAO.some(e => e.value === currentEtiologia);
-      setCustomEtiologia(!isKnownEtiologia && !!currentEtiologia);
+      const currentEtiologia = patientToEdit.etiologiaDRC || 'Diabetes Mellitus / Nefropatia Diabética';
+      const isKnownEtiologia = ETIOLOGIAS_DRC_PADRAO.some(e => (typeof e === 'object' ? e.value === currentEtiologia : e === currentEtiologia));
+      setCustomEtiologia(!isKnownEtiologia && !!patientToEdit.etiologiaDRC);
+
+      const initialTransplante = patientToEdit.statusTransplante || patientToEdit.status || 'Não Avaliado';
 
       setFormData({
         id: patientToEdit.id,
@@ -100,7 +114,12 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         etiologiaDRC: currentEtiologia || 'Diabetes Mellitus / Nefropatia Diabética',
         dataNascimento: patientToEdit.dataNascimento || '',
         idade: patientToEdit.idade !== undefined && patientToEdit.idade !== null ? patientToEdit.idade : (calculateAge(patientToEdit.dataNascimento) || ''),
-        status: patientToEdit.status || 'Ativo',
+        statusTransplante: initialTransplante,
+        status: initialTransplante,
+        etiologiaDRC: currentEtiologia,
+        pesoSeco: patientToEdit.pesoSeco !== undefined && patientToEdit.pesoSeco !== null ? patientToEdit.pesoSeco : '',
+        dataInicioDialise: patientToEdit.dataInicioDialise || '',
+        alergias: Array.isArray(patientToEdit.alergias) ? patientToEdit.alergias : [],
         acessoVascular: {
           tipo: currentTipo,
           fluxoSangue: patientToEdit.acessoVascular?.fluxoSangue || '',
@@ -111,7 +130,9 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         },
         exames: patientToEdit.exames || {},
         medicamentos: patientToEdit.medicamentos || {},
-        historicoExames: patientToEdit.historicoExames || []
+        historicoExames: patientToEdit.historicoExames || [],
+        historicoPesos: patientToEdit.historicoPesos || [],
+        hemoculturas: patientToEdit.hemoculturas || []
       });
     } else {
       setCustomClinic(false);
@@ -127,7 +148,12 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         etiologiaDRC: 'Diabetes Mellitus / Nefropatia Diabética',
         dataNascimento: '',
         idade: '',
-        status: 'Ativo',
+        statusTransplante: 'Não Avaliado',
+        status: 'Não Avaliado',
+        etiologiaDRC: 'Nefropatia Diabética',
+        pesoSeco: '',
+        dataInicioDialise: '',
+        alergias: [],
         acessoVascular: {
           tipo: 'FAV',
           fluxoSangue: '300',
@@ -138,7 +164,9 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         },
         exames: {},
         medicamentos: {},
-        historicoExames: []
+        historicoExames: [],
+        historicoPesos: [],
+        hemoculturas: []
       });
     }
     setError('');
@@ -171,6 +199,13 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         doctorId: patientToEdit?.doctorId || formData.doctorId || effectiveDoctorId || null,
         nome: formData.nome.trim().toUpperCase(),
         idade: formData.idade ? Number(formData.idade) : (calculateAge(formData.dataNascimento) || null),
+        status: formData.statusTransplante,
+        statusTransplante: formData.statusTransplante,
+        pesoSeco: formData.pesoSeco !== '' && formData.pesoSeco !== null ? parseFloat(String(formData.pesoSeco).replace(',', '.')) : null,
+        etiologiaDRC: formData.etiologiaDRC ? formData.etiologiaDRC.trim() : 'Indeterminada / Causa Desconhecida',
+        dataInicioDialise: formData.dataInicioDialise || null,
+        alergias: Array.isArray(formData.alergias) ? formData.alergias : [],
+        hospital: formData.hospital ? formData.hospital.trim() : 'Hospital de Nefrologia',
         acessoVascular: {
           ...formData.acessoVascular,
           fluxoSangue: formData.acessoVascular.fluxoSangue ? Number(formData.acessoVascular.fluxoSangue) : null,
@@ -337,22 +372,6 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block">Status</label>
-                <select 
-                  className="input-field" 
-                  value={formData.status}
-                  onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value }))}
-                >
-                  <option value="Ativo">Ativo</option>
-                  <option value="Em Tratamento">Em Tratamento</option>
-                  <option value="Internado">Internado</option>
-                  <option value="Transferido">Transferido</option>
-                  <option value="Transplante">Transplante</option>
-                  <option value="Inativo">Inativo</option>
-                </select>
-              </div>
-
-              <div>
                 <label className="text-sm font-semibold mb-1 block">Data de Nascimento</label>
                 <input 
                   type="date" 
@@ -418,6 +437,120 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                     </button>
                   </div>
                 )}
+              </div>
+            </div>
+          </div>
+
+          {/* Dados Clínicos Nefrológicos & Status de Transplante */}
+          <div className="border-t pt-4" style={{ borderColor: 'var(--border)' }}>
+            <h3 className="font-bold text-sm text-muted uppercase tracking-wider mb-3 flex items-center gap-2">
+              <HeartHandshake size={16} color="var(--primary)" /> Dados Clínicos & Status de Transplante
+            </h3>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label className="text-sm font-semibold mb-1 block flex items-center gap-1.5 text-slate-800">
+                  <HeartHandshake size={15} color="#2563eb" />
+                  <span>Status de Transplante Renal *</span>
+                </label>
+                <select 
+                  className="input-field font-semibold" 
+                  value={formData.statusTransplante}
+                  onChange={(e) => setFormData(prev => ({ ...prev, statusTransplante: e.target.value, status: e.target.value }))}
+                  style={{ borderColor: '#93c5fd', background: '#f8fafc', color: '#1e3a8a' }}
+                >
+                  {STATUS_TRANSPLANTE_OPTIONS.map(opt => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold mb-1 block">Etiologia DRC</label>
+                {!customEtiologia ? (
+                  <select
+                    className="input-field"
+                    value={formData.etiologiaDRC}
+                    onChange={(e) => {
+                      if (e.target.value === '__custom__') {
+                        setCustomEtiologia(true);
+                        setFormData(prev => ({ ...prev, etiologiaDRC: '' }));
+                      } else {
+                        setFormData(prev => ({ ...prev, etiologiaDRC: e.target.value }));
+                      }
+                    }}
+                  >
+                    {ETIOLOGIAS_DRC_PADRAO.map(et => (
+                      <option key={et} value={et}>{et}</option>
+                    ))}
+                    <option value="__custom__">➕ Outra etiologia (digitar)...</option>
+                  </select>
+                ) : (
+                  <div>
+                    <input
+                      type="text"
+                      className="input-field"
+                      placeholder="Ex: Amiloidose, Nefrite Intersticial..."
+                      value={formData.etiologiaDRC}
+                      onChange={(e) => setFormData(prev => ({ ...prev, etiologiaDRC: e.target.value }))}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCustomEtiologia(false);
+                        setFormData(prev => ({ ...prev, etiologiaDRC: ETIOLOGIAS_DRC_PADRAO[0] }));
+                      }}
+                      className="text-xs text-blue-600 hover:underline mt-1 block"
+                    >
+                      ← Selecionar da lista de etiologias
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold mb-1 block flex items-center gap-1.5 text-slate-800">
+                  <Scale size={15} color="#059669" />
+                  <span>Peso Seco Alvo (kg)</span>
+                </label>
+                <input 
+                  type="number" 
+                  step="0.1" 
+                  className="input-field" 
+                  placeholder="Ex: 68.5" 
+                  value={formData.pesoSeco}
+                  onChange={(e) => setFormData(prev => ({ ...prev, pesoSeco: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold mb-1 block">Início da Diálise</label>
+                <input 
+                  type="date" 
+                  className="input-field" 
+                  value={formData.dataInicioDialise}
+                  onChange={(e) => setFormData(prev => ({ ...prev, dataInicioDialise: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold mb-1 block">Hospital de Retaguarda</label>
+                <input 
+                  type="text" 
+                  className="input-field" 
+                  value={formData.hospital}
+                  placeholder="Ex: Hospital do Rim"
+                  onChange={(e) => setFormData(prev => ({ ...prev, hospital: e.target.value }))}
+                />
+              </div>
+
+              <div style={{ gridColumn: '1 / -1' }} className="pt-2">
+                <AllergySelector 
+                  selectedAllergies={formData.alergias} 
+                  onChange={(alergias) => setFormData(prev => ({ ...prev, alergias }))} 
+                />
               </div>
             </div>
           </div>

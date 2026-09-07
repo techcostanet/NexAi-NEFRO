@@ -26,7 +26,7 @@ import {
   ArrowDown,
   UploadCloud
 } from 'lucide-react';
-import { subscribeToPatients } from '../services/patientService';
+import { subscribeToPatients, STATUS_TRANSPLANTE_OPTIONS } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
 import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
 import PatientFormModal from '../components/PatientFormModal';
@@ -133,7 +133,10 @@ export default function DoctorDashboard() {
                          (p.clinica && p.clinica.toLowerCase().includes(filterLocal.toLowerCase()));
 
     const matchesTurno = filterTurno === 'Todos' || p.turno === filterTurno;
-    const matchesStatus = filterStatus === 'Todos' || (p.status || 'Ativo') === filterStatus;
+    const patientStatus = p.statusTransplante || p.status || 'Não Avaliado';
+    const matchesStatus = filterStatus === 'Todos' || 
+                         patientStatus === filterStatus || 
+                         (p.status && p.status === filterStatus);
     
     if (filterMedAlert) {
       const medAlerts = getPatientMedicationAlerts(p);
@@ -163,8 +166,11 @@ export default function DoctorDashboard() {
         return factor * (a.clinica || 'Dialize Betim').localeCompare(b.clinica || 'Dialize Betim', 'pt-BR');
       case 'turno':
         return factor * (a.turno || '3º Turno').localeCompare(b.turno || '3º Turno', 'pt-BR');
-      case 'status':
-        return factor * (a.status || 'Ativo').localeCompare(b.status || 'Ativo', 'pt-BR');
+      case 'status': {
+        const aSt = a.statusTransplante || a.status || 'Não Avaliado';
+        const bSt = b.statusTransplante || b.status || 'Não Avaliado';
+        return factor * aSt.localeCompare(bSt, 'pt-BR');
+      }
       case 'acesso': {
         const aTipo = a.acessoVascular?.tipo || 'FAV';
         const bTipo = b.acessoVascular?.tipo || 'FAV';
@@ -180,18 +186,22 @@ export default function DoctorDashboard() {
     }
   });
 
-  const getStatusStyle = (status = 'Ativo') => {
+  const getStatusStyle = (status = 'Não Avaliado') => {
+    const found = STATUS_TRANSPLANTE_OPTIONS.find(opt => opt.value === status);
+    if (found) {
+      return { background: found.badgeBg, color: found.color, borderColor: found.border };
+    }
     switch (status) {
       case 'Ativo':
-        return { background: '#e0f2fe', color: '#0369a1', borderColor: '#bae6fd' };
+        return { background: '#dcfce7', color: '#15803d', borderColor: '#bbf7d0' };
       case 'Em Tratamento':
-        return { background: '#fef3c7', color: '#b45309', borderColor: '#fde68a' };
+        return { background: '#e0f2fe', color: '#0369a1', borderColor: '#bae6fd' };
       case 'Internado':
         return { background: '#fee2e2', color: '#b91c1c', borderColor: '#fecaca' };
       case 'Transferido':
         return { background: '#f1f5f9', color: '#475569', borderColor: '#e2e8f0' };
       case 'Transplante':
-        return { background: '#dcfce7', color: '#15803d', borderColor: '#bbf7d0' };
+        return { background: '#f3e8ff', color: '#7e22ce', borderColor: '#e9d5ff' };
       case 'Inativo':
         return { background: '#f8fafc', color: '#64748b', borderColor: '#cbd5e1' };
       default:
@@ -550,13 +560,12 @@ export default function DoctorDashboard() {
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
-            <option value="Todos">Todos os Status</option>
-            <option value="Ativo">Ativos</option>
-            <option value="Em Tratamento">Em Tratamento</option>
-            <option value="Internado">Internados</option>
-            <option value="Transferido">Transferidos</option>
-            <option value="Transplante">Transplante</option>
-            <option value="Inativo">Inativos</option>
+            <option value="Todos">Status Tx: Todos</option>
+            {STATUS_TRANSPLANTE_OPTIONS.map(opt => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
           </select>
 
           <button 
@@ -624,9 +633,13 @@ export default function DoctorDashboard() {
             </div>
           ) : (
             filteredPatients.map(patient => {
-              const statusStyle = getStatusStyle(patient.status);
+              const currentStatus = patient.statusTransplante || patient.status || 'Não Avaliado';
+              const statusStyle = getStatusStyle(currentStatus);
               const turnoStyle = getTurnoStyle(patient.turno);
               const medInfo = getPatientMedicationAlerts(patient);
+              const ultimoPeso = patient.historicoPesos && patient.historicoPesos.length > 0
+                ? patient.historicoPesos[0].peso
+                : null;
 
               return (
                 <div 
@@ -674,9 +687,27 @@ export default function DoctorDashboard() {
                           fontWeight: '600',
                           ...statusStyle
                         }}
+                        title={`Status de Transplante: ${currentStatus}`}
                       >
-                        {patient.status || 'Ativo'}
+                        🌱 {currentStatus}
                       </span>
+
+                      {patient.pesoSeco && (
+                        <span 
+                          style={{ 
+                            fontSize: '0.72rem', 
+                            padding: '2px 8px', 
+                            borderRadius: '10px', 
+                            border: '1px solid #cbd5e1',
+                            background: '#f8fafc',
+                            color: '#334155',
+                            fontWeight: '500'
+                          }}
+                          title={`Peso Seco: ${patient.pesoSeco} kg${ultimoPeso ? ` | Último: ${ultimoPeso} kg` : ''}`}
+                        >
+                          ⚖️ {patient.pesoSeco} kg
+                        </span>
+                      )}
 
                       <span 
                         style={{ 
@@ -773,7 +804,8 @@ export default function DoctorDashboard() {
             </div>
           ) : (
             filteredPatients.map(patient => {
-              const statusStyle = getStatusStyle(patient.status);
+              const currentStatus = patient.statusTransplante || patient.status || 'Não Avaliado';
+              const statusStyle = getStatusStyle(currentStatus);
               const turnoStyle = getTurnoStyle(patient.turno);
               const medInfo = getPatientMedicationAlerts(patient);
 
@@ -822,9 +854,27 @@ export default function DoctorDashboard() {
                         fontWeight: '600',
                         ...statusStyle
                       }}
+                      title={`Status Tx: ${currentStatus}`}
                     >
-                      {patient.status || 'Ativo'}
+                      🌱 {currentStatus}
                     </span>
+
+                    {patient.pesoSeco && (
+                      <span 
+                        style={{ 
+                          fontSize: '0.68rem', 
+                          background: '#f8fafc', 
+                          border: '1px solid #cbd5e1', 
+                          color: '#334155', 
+                          padding: '1px 6px', 
+                          borderRadius: '6px', 
+                          fontWeight: '500' 
+                        }} 
+                        title={`Peso Seco: ${patient.pesoSeco} kg`}
+                      >
+                        ⚖️ {patient.pesoSeco} kg
+                      </span>
+                    )}
 
                     <span 
                       style={{ 
@@ -979,7 +1029,8 @@ export default function DoctorDashboard() {
                 </thead>
                 <tbody>
                   {sortedPatients.map((patient, idx) => {
-                    const statusStyle = getStatusStyle(patient.status);
+                    const currentStatus = patient.statusTransplante || patient.status || 'Não Avaliado';
+                    const statusStyle = getStatusStyle(currentStatus);
                     const turnoStyle = getTurnoStyle(patient.turno);
                     const medInfo = getPatientMedicationAlerts(patient);
 
@@ -1038,8 +1089,9 @@ export default function DoctorDashboard() {
                               fontWeight: '600',
                               ...statusStyle
                             }}
+                            title={`Status de Transplante: ${currentStatus}`}
                           >
-                            {patient.status || 'Ativo'}
+                            🌱 {currentStatus}
                           </span>
                         </td>
 

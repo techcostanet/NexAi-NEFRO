@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.30] - 2026-09-07
+### Alterações
+- Adiciona status de transplante com badges clínicos, histórico e controle evolutivo de peso (% PIDG), catálogo dinâmico de alergias no Firestore, edição integral de dados clínicos, evolução com internação e módulo de hemoculturas e lock terapia
+
 ## [1.1.29] - 2026-09-02
 ### Alterações
 - Etiologia da DRC com selecao nefrologica padrao, ordenacao cronologica decrescente de exames e importador inteligente multi-formato (XLS, PDF, DOCX, Fotos)

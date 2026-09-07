@@ -10,9 +10,11 @@ import {
   HeartPulse, 
   Zap, 
   FileText,
-  ShieldAlert
+  ShieldAlert,
+  Bug,
+  TestTube
 } from 'lucide-react';
-import { savePatientExam } from '../services/patientService';
+import { savePatientExam, savePatientBloodCulture } from '../services/patientService';
 
 export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, examIndex, onSaved }) {
   const [formData, setFormData] = useState({
@@ -48,6 +50,15 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
     glicemia: '',
     hba1c: '',
     
+    // Hemocultura & Microbiologia
+    hemoculturaStatus: 'nenhuma', // 'nenhuma' | 'Aguardando Resultado' | 'Negativa' | 'Positiva' | 'Contaminação Provável'
+    hemoculturaSitio: 'Cateter - Lúmen Venoso',
+    hemoculturaGerme: '',
+    hemoculturaSensivel: '',
+    hemoculturaResistente: '',
+    hemoculturaDtp: '',
+    hemoculturaConduta: '',
+
     observacoes: ''
   });
 
@@ -81,11 +92,19 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
         ureiaPos: examToEdit.ureiaPos !== undefined && examToEdit.ureiaPos !== null ? examToEdit.ureiaPos : '',
         creatinina: examToEdit.creatinina !== undefined && examToEdit.creatinina !== null ? examToEdit.creatinina : '',
         albumina: examToEdit.albumina !== undefined && examToEdit.albumina !== null ? examToEdit.albumina : '',
-        
         pcr: examToEdit.pcr !== undefined && examToEdit.pcr !== null ? examToEdit.pcr : '',
         glicemia: examToEdit.glicemia !== undefined && examToEdit.glicemia !== null ? examToEdit.glicemia : '',
         hba1c: examToEdit.hba1c !== undefined && examToEdit.hba1c !== null ? examToEdit.hba1c : '',
         
+        // Hemocultura
+        hemoculturaStatus: examToEdit.hemocultura?.resultado || 'nenhuma',
+        hemoculturaSitio: examToEdit.hemocultura?.sitioColeta || 'Cateter - Lúmen Venoso',
+        hemoculturaGerme: examToEdit.hemocultura?.microrganismo || '',
+        hemoculturaSensivel: examToEdit.hemocultura?.sensibilidade || '',
+        hemoculturaResistente: examToEdit.hemocultura?.resistencia || '',
+        hemoculturaDtp: examToEdit.hemocultura?.dtpHoras !== undefined && examToEdit.hemocultura?.dtpHoras !== null ? examToEdit.hemocultura.dtpHoras : '',
+        hemoculturaConduta: examToEdit.hemocultura?.conduta || '',
+
         observacoes: examToEdit.observacoes || ''
       });
     } else {
@@ -111,6 +130,13 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
         pcr: '',
         glicemia: '',
         hba1c: '',
+        hemoculturaStatus: 'nenhuma',
+        hemoculturaSitio: 'Cateter - Lúmen Venoso',
+        hemoculturaGerme: '',
+        hemoculturaSensivel: '',
+        hemoculturaResistente: '',
+        hemoculturaDtp: '',
+        hemoculturaConduta: '',
         observacoes: ''
       });
     }
@@ -171,6 +197,26 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
         
         observacoes: formData.observacoes
       };
+
+      if (formData.hemoculturaStatus && formData.hemoculturaStatus !== 'nenhuma') {
+        const cultureRecord = {
+          dataColeta: formData.dataExame,
+          sitioColeta: formData.hemoculturaSitio,
+          resultado: formData.hemoculturaStatus,
+          microrganismo: formData.hemoculturaGerme,
+          sensibilidade: formData.hemoculturaSensivel,
+          resistencia: formData.hemoculturaResistente,
+          dtpHoras: formData.hemoculturaDtp ? parseFloat(String(formData.hemoculturaDtp).replace(',', '.')) : null,
+          conduta: formData.hemoculturaConduta
+        };
+        examPayload.hemocultura = cultureRecord;
+
+        try {
+          await savePatientBloodCulture(patientId, cultureRecord);
+        } catch (cErr) {
+          console.warn("Falha ao sincronizar hemocultura no Firestore:", cErr);
+        }
+      }
 
       const updatedPatient = await savePatientExam(patientId, examPayload, examIndex);
       if (onSaved) onSaved(updatedPatient);
@@ -580,6 +626,144 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
                 />
                 <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta DM: &lt; 7 - 8%</span>
               </div>
+            </div>
+          </div>
+
+          {/* 6. Microbiologia, Hemoculturas & Acesso Vascular */}
+          <div style={{ padding: '1.25rem', borderRadius: '14px', background: '#fffbeb', border: '1px solid #fde68a' }}>
+            <h3 className="font-bold text-sm mb-3 flex items-center justify-between" style={{ color: '#b45309' }}>
+              <div className="flex items-center gap-2">
+                <Bug size={16} /> 
+                <span>Microbiologia & Hemoculturas do Acesso Vascular</span>
+              </div>
+              <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '10px', background: '#fef3c7', color: '#92400e', fontWeight: 'bold' }}>
+                Hemodiálise & Vigilância Infecciosa
+              </span>
+            </h3>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem' }}>
+              <div>
+                <label className="text-xs font-semibold mb-1 block" style={{ color: '#92400e' }}>
+                  Resultado da Hemocultura
+                </label>
+                <select 
+                  className="input-field text-xs font-semibold"
+                  value={formData.hemoculturaStatus}
+                  onChange={(e) => setFormData(prev => ({ ...prev, hemoculturaStatus: e.target.value }))}
+                >
+                  <option value="nenhuma">⚪ Sem hemocultura nesta rotina</option>
+                  <option value="Aguardando Resultado">⏳ Aguardando Resultado / Em Análise</option>
+                  <option value="Negativa">🟢 Negativa (Sem crescimento bacteriano em 5 dias)</option>
+                  <option value="Positiva">🔴 Positiva (Patógeno isolado)</option>
+                  <option value="Contaminação Provável">⚠️ Contaminação Provável (Coagulase negativo)</option>
+                </select>
+              </div>
+
+              {formData.hemoculturaStatus !== 'nenhuma' && (
+                <>
+                  <div>
+                    <label className="text-xs font-semibold mb-1 block" style={{ color: '#92400e' }}>
+                      Sítio / Origem da Amostra
+                    </label>
+                    <select 
+                      className="input-field text-xs"
+                      value={formData.hemoculturaSitio}
+                      onChange={(e) => setFormData(prev => ({ ...prev, hemoculturaSitio: e.target.value }))}
+                    >
+                      <option value="Cateter - Lúmen Venoso">Cateter Central - Lúmen Venoso</option>
+                      <option value="Cateter - Lúmen Arterial">Cateter Central - Lúmen Arterial</option>
+                      <option value="Cateter - Ambos Lúmens">Cateter Central - Ambos Lúmens</option>
+                      <option value="Punção de FAV / Prótese">Punção de FAV (Fístula) / Prótese</option>
+                      <option value="Veia Periférica">Veia Periférica (Braço sem FAV)</option>
+                      <option value="Coleta Pareada (Cateter + Periférica)">Coleta Pareada (Cateter + Periférica)</option>
+                    </select>
+                  </div>
+
+                  {formData.hemoculturaStatus === 'Positiva' && (
+                    <>
+                      <div>
+                        <label className="text-xs font-semibold mb-1 block" style={{ color: '#92400e' }}>
+                          Microrganismo Isolado *
+                        </label>
+                        <input 
+                          type="text" 
+                          list="patogenos-list"
+                          className="input-field text-xs" 
+                          placeholder="Ex: Staphylococcus aureus (MRSA)"
+                          value={formData.hemoculturaGerme}
+                          onChange={(e) => setFormData(prev => ({ ...prev, hemoculturaGerme: e.target.value }))}
+                        />
+                        <datalist id="patogenos-list">
+                          <option value="Staphylococcus aureus sensível a oxacilina (MSSA)" />
+                          <option value="Staphylococcus aureus resistente a oxacilina (MRSA)" />
+                          <option value="Staphylococcus epidermidis (Coagulase Negativo)" />
+                          <option value="Enterococcus faecalis" />
+                          <option value="Pseudomonas aeruginosa" />
+                          <option value="Klebsiella pneumoniae (KPC / ESBL)" />
+                          <option value="Escherichia coli" />
+                          <option value="Acinetobacter baumannii" />
+                          <option value="Candida albicans" />
+                          <option value="Candida parapsilosis" />
+                        </datalist>
+                      </div>
+
+                      <div>
+                        <label className="text-xs font-semibold mb-1 block" style={{ color: '#92400e' }}>
+                          DTP (Tempo Diferencial - horas)
+                        </label>
+                        <input 
+                          type="number" 
+                          step="0.5" 
+                          className="input-field text-xs" 
+                          placeholder="Ex: 3.0 (>2h: infecção por cateter)"
+                          value={formData.hemoculturaDtp}
+                          onChange={(e) => setFormData(prev => ({ ...prev, hemoculturaDtp: e.target.value }))}
+                        />
+                        <span className="text-[10px] text-muted">Positividade Cateter vs Periférico</span>
+                      </div>
+
+                      <div style={{ gridColumn: '1 / -1' }}>
+                        <label className="text-xs font-semibold mb-1 block text-emerald-800">
+                          Antibiograma - Sensibilidade Antimicrobiana
+                        </label>
+                        <input 
+                          type="text" 
+                          className="input-field text-xs" 
+                          placeholder="Ex: Vancomicina, Daptomicina, Gentamicina, Meropenem..."
+                          value={formData.hemoculturaSensivel}
+                          onChange={(e) => setFormData(prev => ({ ...prev, hemoculturaSensivel: e.target.value }))}
+                        />
+                      </div>
+
+                      <div style={{ gridColumn: '1 / -1' }}>
+                        <label className="text-xs font-semibold mb-1 block text-rose-800">
+                          Antibiograma - Perfil de Resistência
+                        </label>
+                        <input 
+                          type="text" 
+                          className="input-field text-xs" 
+                          placeholder="Ex: Oxacilina, Cefazolina, Ciprofloxacino..."
+                          value={formData.hemoculturaResistente}
+                          onChange={(e) => setFormData(prev => ({ ...prev, hemoculturaResistente: e.target.value }))}
+                        />
+                      </div>
+
+                      <div style={{ gridColumn: '1 / -1' }}>
+                        <label className="text-xs font-semibold mb-1 block text-slate-700">
+                          Conduta Terapêutica / Selo de Cateter (Lock Therapy)
+                        </label>
+                        <input 
+                          type="text" 
+                          className="input-field text-xs" 
+                          placeholder="Ex: Vancomicina 1g pós-HD + Selo de Heparina/Vancomicina no cateter por 14 dias..."
+                          value={formData.hemoculturaConduta}
+                          onChange={(e) => setFormData(prev => ({ ...prev, hemoculturaConduta: e.target.value }))}
+                        />
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
             </div>
           </div>
 
