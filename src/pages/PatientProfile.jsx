@@ -813,24 +813,49 @@ export default function PatientProfile() {
               </div>
 
               {/* Destaque Atual: Último Peso vs Peso Seco */}
-              <div className="p-2.5 rounded-xl mb-3 flex items-center justify-between" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                <div>
-                  <span className="text-[11px] text-muted block">Último Peso Aferido</span>
-                  <strong className="text-base text-slate-800">{ultimoPeso ? `${ultimoPeso} kg` : 'Não registrado'}</strong>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <div 
+                  className="p-2.5 rounded-xl text-center flex flex-col justify-center items-center"
+                  style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}
+                >
+                  <span className="text-[11px] text-muted block mb-0.5 font-medium">Último Peso</span>
+                  <strong className="text-sm font-bold text-slate-800">
+                    {ultimoPeso ? `${ultimoPeso} kg` : '-'}
+                  </strong>
+                  <span className="text-[10px] text-slate-400 mt-0.5">
+                    {ultimoPeso ? 'Aferido' : 'Sem registro'}
+                  </span>
                 </div>
-                <div className="text-center">
-                  <span className="text-[11px] text-muted block">Meta Peso Seco</span>
-                  <strong className="text-base text-slate-600">{patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}</strong>
+
+                <div 
+                  className="p-2.5 rounded-xl text-center flex flex-col justify-center items-center"
+                  style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}
+                >
+                  <span className="text-[11px] text-muted block mb-0.5 font-medium">Meta Peso Seco</span>
+                  <strong className="text-sm font-bold text-slate-700">
+                    {patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}
+                  </strong>
+                  <span className="text-[10px] text-slate-400 mt-0.5">Alvo nefrológico</span>
                 </div>
-                <div className="text-right">
-                  <span className="text-[11px] text-muted block">Ganho Interdialítico</span>
+
+                <div 
+                  className="p-2.5 rounded-xl text-center flex flex-col justify-center items-center"
+                  style={{ 
+                    background: ganhoKg !== null && isHipervolemia ? '#fef2f2' : (ganhoKg !== null && isHipotensaoRisco ? '#eff6ff' : '#f8fafc'), 
+                    border: `1px solid ${ganhoKg !== null && isHipervolemia ? '#fecaca' : (ganhoKg !== null && isHipotensaoRisco ? '#bfdbfe' : '#e2e8f0')}` 
+                  }}
+                >
+                  <span className="text-[11px] text-muted block mb-0.5 font-medium">Ganho (PIDG)</span>
                   {ganhoKg !== null ? (
-                    <strong style={{ color: isHipervolemia ? '#dc2626' : (isHipotensaoRisco ? '#2563eb' : '#059669') }}>
-                      {ganhoKg > 0 ? `+${ganhoKg}` : ganhoKg} kg ({pidgPct}%)
+                    <strong className="text-sm font-bold" style={{ color: isHipervolemia ? '#dc2626' : (isHipotensaoRisco ? '#2563eb' : '#059669') }}>
+                      {ganhoKg > 0 ? `+${ganhoKg}` : ganhoKg} kg
                     </strong>
                   ) : (
-                    <span className="text-muted">-</span>
+                    <strong className="text-sm font-bold text-slate-400">-</strong>
                   )}
+                  <span className="text-[10px] mt-0.5" style={{ color: ganhoKg !== null ? (isHipervolemia ? '#dc2626' : '#64748b') : '#94a3b8' }}>
+                    {ganhoKg !== null ? `${pidgPct}%` : 'Pendente'}
+                  </span>
                 </div>
               </div>
 

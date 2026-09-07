@@ -86,7 +86,7 @@ export default function AllergySelector({ selectedAllergies = [], onChange, labe
   return (
     <div className="flex flex-col gap-1.5" ref={dropdownRef} style={{ position: 'relative' }}>
       <div className="flex justify-between items-center">
-        <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+        <label className="text-sm font-semibold mb-1 flex items-center gap-1.5 text-slate-800">
           <ShieldAlert size={14} color="#dc2626" />
           <span>{label}</span>
         </label>
@@ -94,7 +94,7 @@ export default function AllergySelector({ selectedAllergies = [], onChange, labe
           <button
             type="button"
             onClick={() => onChange([])}
-            className="text-xs text-red-500 hover:text-red-700"
+            className="text-xs text-red-500 hover:text-red-700 font-medium"
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
           >
             Limpar todas
@@ -111,8 +111,8 @@ export default function AllergySelector({ selectedAllergies = [], onChange, labe
         }}
       >
         {safeSelected.length === 0 ? (
-          <span className="text-xs text-muted italic flex items-center gap-1">
-            <span>🟢 Nenhuma alergia relatada (Clique abaixo para selecionar ou cadastrar)</span>
+          <span className="text-xs text-muted italic px-1">
+            Nenhuma alergia relatada (Clique abaixo para selecionar ou cadastrar)
           </span>
         ) : (
           safeSelected.map((item, idx) => (
@@ -255,10 +255,6 @@ export default function AllergySelector({ selectedAllergies = [], onChange, labe
           </div>
         )}
       </div>
-
-      <span className="text-[10px] text-muted">
-        💡 Cada nova alergia digitada e adicionada é salva no Cloud Firestore e fica automaticamente disponível como opção para todos os próximos pacientes.
-      </span>
     </div>
   );
 }

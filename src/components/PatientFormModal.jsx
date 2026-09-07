@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, User, Activity, Building, Calendar, Loader2, HeartHandshake, Scale } from 'lucide-react';
+import { X, Save, User, Loader2 } from 'lucide-react';
 import { 
   savePatient, 
   calculateAge, 
@@ -443,15 +443,14 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
 
           {/* Dados Clínicos Nefrológicos & Status de Transplante */}
           <div className="border-t pt-4" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="font-bold text-sm text-muted uppercase tracking-wider mb-3 flex items-center gap-2">
-              <HeartHandshake size={16} color="var(--primary)" /> Dados Clínicos & Status de Transplante
+            <h3 className="font-bold text-sm text-muted uppercase tracking-wider mb-3">
+              Dados Clínicos & Status de Transplante
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
               <div style={{ gridColumn: '1 / -1' }}>
-                <label className="text-sm font-semibold mb-1 block flex items-center gap-1.5 text-slate-800">
-                  <HeartHandshake size={15} color="#2563eb" />
-                  <span>Status de Transplante Renal *</span>
+                <label className="text-sm font-semibold mb-1 block">
+                  Status de Transplante Renal *
                 </label>
                 <select 
                   className="input-field font-semibold" 
@@ -468,9 +467,8 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block flex items-center gap-1.5 text-slate-800">
-                  <Scale size={15} color="#059669" />
-                  <span>Peso Seco Alvo (kg)</span>
+                <label className="text-sm font-semibold mb-1 block">
+                  Peso Seco Alvo (kg)
                 </label>
                 <input 
                   type="number" 
@@ -503,8 +501,8 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
 
           {/* Acesso Vascular */}
           <div className="border-t pt-4" style={{ borderColor: 'var(--border)' }}>
-            <h3 className="font-bold text-sm text-muted uppercase tracking-wider mb-3 flex items-center gap-2">
-              <Activity size={16} color="var(--primary)" /> Acesso Vascular
+            <h3 className="font-bold text-sm text-muted uppercase tracking-wider mb-3">
+              Acesso Vascular
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
               <div>
