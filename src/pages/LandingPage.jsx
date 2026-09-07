@@ -23,11 +23,13 @@ import {
   Check,
   Star,
   Layers,
-  HeartPulse
+  HeartPulse,
+  FileUp
 } from 'lucide-react';
 import KidneyIcon from '../components/KidneyIcon';
 import { subscribeSystemPlans } from '../services/financialService';
 import CheckoutModal from '../components/CheckoutModal';
+import ChangelogModal from '../components/ChangelogModal';
 import { APP_VERSION } from '../version';
 
 export default function LandingPage() {
@@ -40,6 +42,8 @@ export default function LandingPage() {
   // Checkout Modal
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [selectedPlanForCheckout, setSelectedPlanForCheckout] = useState(null);
+
+  const [isChangelogOpen, setIsChangelogOpen] = useState(false);
 
   useEffect(() => {
     const unsub = subscribeSystemPlans((data) => {
@@ -383,6 +387,17 @@ export default function LandingPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
             
+            {/* Card Importador */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-md transition">
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#dcfce7', color: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                <FileUp size={22} />
+              </div>
+              <h3 className="font-bold text-base text-slate-900 mb-1.5">Importador Inteligente de Exames</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Facilite sua rotina importando resultados de exames laboratoriais a partir de arquivos PDF, planilhas Excel (XLSX) e DOCX. Os resultados são extraídos e processados automaticamente!
+              </p>
+            </div>
+
             {/* Card 1 */}
             <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-md transition">
               <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#dbeafe', color: '#1d4ed8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
@@ -819,11 +834,15 @@ export default function LandingPage() {
 
                 <div className="mb-6">
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-extrabold text-blue-600">R$ 990,00</span>
+                    <span className="text-3xl font-extrabold text-blue-600">
+                      R$ {plans.find(p => p.intervalo === 'anual') ? plans.find(p => p.intervalo === 'anual').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00'}
+                    </span>
                     <span className="text-xs text-muted">/ano</span>
                   </div>
                   <span className="text-xs text-emerald-600 font-bold block mt-0.5">
-                    Equivalente a R$ 82,50/mês (Pague 10, use 12)
+                    {plans.find(p => p.intervalo === 'anual') 
+                      ? `Equivalente a R$ ${(plans.find(p => p.intervalo === 'anual').valor / 12).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês` 
+                      : 'Pague 10, use 12'}
                   </span>
                 </div>
 
@@ -839,7 +858,7 @@ export default function LandingPage() {
 
               <button 
                 type="button" 
-                onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'anual') || { id: 'plano-anual', nome: 'Plano Anual com Desconto', valor: 990.00, intervalo: 'anual' })}
+                onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'anual') || { id: 'plano-anual', nome: 'Plano Anual com Desconto', valor: 0.00, intervalo: 'anual' })}
                 className="btn btn-primary w-full py-3 text-xs font-bold"
                 style={{ background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', boxShadow: '0 8px 16px rgba(37, 99, 235, 0.3)' }}
               >
@@ -856,7 +875,9 @@ export default function LandingPage() {
 
                 <div className="mb-6">
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-extrabold text-slate-900">R$ 99,90</span>
+                    <span className="text-3xl font-extrabold text-slate-900">
+                      R$ {plans.find(p => p.intervalo === 'mensal') ? plans.find(p => p.intervalo === 'mensal').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00'}
+                    </span>
                     <span className="text-xs text-muted">/mês</span>
                   </div>
                   <span className="text-xs text-muted block mt-0.5">Cobrança recorrente mensal</span>
@@ -873,7 +894,7 @@ export default function LandingPage() {
 
               <button 
                 type="button" 
-                onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'mensal') || { id: 'plano-mensal', nome: 'Plano Mensal Nefrologia', valor: 99.90, intervalo: 'mensal' })}
+                onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'mensal') || { id: 'plano-mensal', nome: 'Plano Mensal Nefrologia', valor: 0.00, intervalo: 'mensal' })}
                 className="btn btn-outline w-full py-2.5 text-xs font-bold"
               >
                 Assinar Plano Mensal
@@ -961,14 +982,30 @@ export default function LandingPage() {
             <span>•</span>
             <span className="text-slate-400">Conforme LGPD & CFM</span>
             <span>•</span>
-            <span className="text-slate-400">v{APP_VERSION}</span>
+            <button 
+              onClick={() => setIsChangelogOpen(true)}
+              style={{ 
+                background: 'transparent', 
+                border: 'none', 
+                color: '#38bdf8', 
+                fontWeight: '600', 
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '0.75rem'
+              }}
+            >
+              <Sparkles size={12} />
+              <span>v{APP_VERSION} • Notas de Versão</span>
+            </button>
           </div>
         </div>
       </footer>
 
       {/* ================= BOTÃO FLUTUANTE DE WHATSAPP ================= */}
       <a 
-        href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20d%C3%BAvidas%20sobre%20o%20software%20NexAi-NEFRO" 
+        href="https://wa.me/5531987624789?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20d%C3%BAvidas%20sobre%20o%20software%20NexAi-NEFRO" 
         target="_blank" 
         rel="noopener noreferrer"
         style={{
@@ -1002,6 +1039,12 @@ export default function LandingPage() {
         onClose={() => setIsCheckoutOpen(false)}
         selectedPlan={selectedPlanForCheckout}
         allPlans={plans}
+      />
+
+      {/* Modal de Notas de Versão */}
+      <ChangelogModal 
+        isOpen={isChangelogOpen}
+        onClose={() => setIsChangelogOpen(false)}
       />
 
     </div>
