@@ -81,7 +81,7 @@ export default function LandingPage() {
     },
     {
       q: "Meus dados e os prontuários dos pacientes ficam seguros?",
-      a: "Totalmente. O sistema roda 100% no Google Cloud Firestore com criptografia em trânsito e repouso, atendendo rigorosamente à Lei Geral de Proteção de Dados (LGPD) e às resoluções do CFM (Conselho Federal de Medicina nº 1.821/2007 e 2.299/2021)."
+      a: "Totalmente. O sistema foi desenvolvido e é hospedado com Tecnologia Google em nuvem de alta segurança, com criptografia em trânsito e repouso, atendendo rigorosamente à Lei Geral de Proteção de Dados (LGPD) e às resoluções do CFM (Conselho Federal de Medicina nº 1.821/2007 e 2.299/2021)."
     },
     {
       q: "Posso acessar pelo celular, tablet ou computador do hospital?",

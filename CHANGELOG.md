@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.38] - 2026-09-07
+### Alterações
+- Ajuste de texto no FAQ de segurança para Tecnologia Google e validação visual de preços
+
 ## [1.1.37] - 2026-09-07
 ### Alterações
 - Correção visual definitiva dos cards de preços, espaçamento e FAQ na Landing Page
