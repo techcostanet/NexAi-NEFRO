@@ -1,5 +1,17 @@
 export const SYSTEM_CHANGELOG = [
   {
+    version: "1.1.40",
+    date: "07/09/2026",
+    title: "Emissão de Receituário Médico, Controle Especial (2 Vias) e Impressão A4",
+    highlights: [
+      "📋 Nova aba e botão 'Receituário' na navegação clínica ao lado de Evoluções com contador dinâmico de receitas emitidas.",
+      "⚡ Função 'Puxar Medicamentos Ativos' em 1 clique que importa prescrições em uso no paciente direto para o receituário sem redigitação.",
+      "⚖️ Suporte integral aos modelos normativos CFM/ANVISA: Receita Simples (1 via), Controle Especial (2 vias - Portaria 344/98 com campos de Comprador/Farmácia), Antimicrobianos (2 vias - RDC 20/2011) e Alto Custo (LME/SUS).",
+      "🖨️ Pré-visualização ao vivo em folha timbrada oficial A4 com regras avançadas de @media print e geração instantânea de PDF limpo.",
+      "☁️ Persistência 100% Cloud Firestore com histórico de receitas emitidas, duplicação rápida para renovação e ações de exclusão segura."
+    ]
+  },
+  {
     version: "1.1.34",
     date: "07/09/2026",
     title: "Gestão Financeira Dinâmica, Descontos Comerciais e Notas de Versão",

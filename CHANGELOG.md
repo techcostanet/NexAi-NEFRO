@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.40] - 2026-09-07
+### Alterações
+- Adiciona modulo de emissao de receituario medico ao lado de Evolucoes com suporte a controle especial 2 vias e impressao A4
+
 ## [1.1.39] - 2026-09-07
 ### Alterações
 - Correção do botão do plano anual e implementação do benefício de migração inicial VIP (PDF/XLS)

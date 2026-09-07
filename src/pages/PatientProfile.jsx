@@ -28,13 +28,16 @@ import {
   UploadCloud,
   HeartHandshake,
   Bug,
-  Printer,
-  FileDown,
-  TrendingUp,
-  CheckSquare,
-  Sparkles,
-  Save,
-  X
+  Printer, 
+  FileDown, 
+  TrendingUp, 
+  CheckSquare, 
+  Sparkles, 
+  Save, 
+  X,
+  FileCheck,
+  Eye,
+  Copy
 } from 'lucide-react';
 import { 
   subscribeToPatientById, 
@@ -42,6 +45,7 @@ import {
   deletePatientMedication,
   toggleMedicationStatus,
   deletePatientEvolution,
+  deletePatientPrescription,
   addPatientWeightRecord,
   deletePatientWeightRecord,
   deletePatientBloodCulture,
@@ -55,6 +59,7 @@ import ExamFormModal from '../components/ExamFormModal';
 import MedicationModal from '../components/MedicationModal';
 import EvolutionModal from '../components/EvolutionModal';
 import ExamImportModal from '../components/ExamImportModal';
+import PrescriptionModal from '../components/PrescriptionModal';
 
 export default function PatientProfile() {
   const { id } = useParams();
@@ -79,6 +84,12 @@ export default function PatientProfile() {
 
   const [isEvolutionModalOpen, setIsEvolutionModalOpen] = useState(false);
   const [evolutionToEdit, setEvolutionToEdit] = useState(null);
+
+  // Modais de Receituário / Emissão de Receitas
+  const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
+  const [prescriptionToEdit, setPrescriptionToEdit] = useState(null);
+  const [prescriptionInitialTipo, setPrescriptionInitialTipo] = useState('simples');
+  const [prescriptionInitialView, setPrescriptionInitialView] = useState('edit');
 
   // Novos Modais para Peso, Transplante e Lock Therapy
   const [isWeightModalOpen, setIsWeightModalOpen] = useState(false);
@@ -218,6 +229,51 @@ export default function PatientProfile() {
     }
   };
 
+  // Handlers de Receituário Médico
+  const handleOpenNewPrescription = (tipo = 'simples') => {
+    setPrescriptionToEdit(null);
+    setPrescriptionInitialTipo(tipo);
+    setPrescriptionInitialView('edit');
+    setIsPrescriptionModalOpen(true);
+  };
+
+  const handleEditPrescription = (rec) => {
+    setPrescriptionToEdit(rec);
+    setPrescriptionInitialTipo(rec.tipoReceita || 'simples');
+    setPrescriptionInitialView('edit');
+    setIsPrescriptionModalOpen(true);
+  };
+
+  const handleViewPrescription = (rec) => {
+    setPrescriptionToEdit(rec);
+    setPrescriptionInitialTipo(rec.tipoReceita || 'simples');
+    setPrescriptionInitialView('preview');
+    setIsPrescriptionModalOpen(true);
+  };
+
+  const handleDuplicatePrescription = (rec) => {
+    setPrescriptionToEdit({
+      ...rec,
+      id: null,
+      numeroReceita: null,
+      dataEmissao: new Date().toISOString().split('T')[0]
+    });
+    setPrescriptionInitialTipo(rec.tipoReceita || 'simples');
+    setPrescriptionInitialView('edit');
+    setIsPrescriptionModalOpen(true);
+  };
+
+  const handleDeletePrescription = async (prescriptionId) => {
+    if (window.confirm("Deseja realmente excluir esta receita médica do histórico do paciente?")) {
+      try {
+        await deletePatientPrescription(patient.id, prescriptionId);
+      } catch (err) {
+        console.error("Erro ao excluir receita:", err);
+        alert("Erro ao excluir receita médica.");
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="container flex items-center justify-center h-screen flex-col gap-4">
@@ -247,6 +303,7 @@ export default function PatientProfile() {
     .sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
 
   const evolucoes = Array.isArray(patient.evolucoes) ? patient.evolucoes : [];
+  const receitas = Array.isArray(patient.receitas) ? patient.receitas : [];
   const historicoPesos = Array.isArray(patient.historicoPesos) ? patient.historicoPesos : [];
   const hemoculturas = Array.isArray(patient.hemoculturas) ? patient.hemoculturas : [];
 
@@ -686,6 +743,21 @@ export default function PatientProfile() {
           {evolucoes.length > 0 && (
             <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '10px', background: activeTab === 'evolucoes' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'evolucoes' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
               {evolucoes.length}
+            </span>
+          )}
+        </button>
+
+        <button
+          className={`btn ${activeTab === 'receitas' ? 'btn-primary' : 'btn-outline'}`}
+          onClick={() => setActiveTab('receitas')}
+          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+          title="Emissão e Histórico de Receituários Médicos (Simples, Controle Especial, Antimicrobianos)"
+        >
+          <FileCheck size={16} />
+          <span>Receituário</span>
+          {receitas.length > 0 && (
+            <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '10px', background: activeTab === 'receitas' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'receitas' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
+              {receitas.length}
             </span>
           )}
         </button>
@@ -1824,7 +1896,263 @@ export default function PatientProfile() {
         </div>
       )}
 
+      {/* ================= ABA 5: RECEITUÁRIO MÉDICO ================= */}
+      {activeTab === 'receitas' && (
+        <div className="flex flex-col gap-5 animate-in">
+          {/* Cabeçalho da Aba */}
+          <div className="flex justify-between items-center flex-wrap gap-3">
+            <div>
+              <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
+                <FileCheck size={20} color="var(--primary)" />
+                <span>Receituário & Prescrições Médicas</span>
+              </h2>
+              <p className="text-xs text-muted">
+                Emissão de receitas simples, controle especial em 2 vias (Portaria 344/98), antimicrobianos e alto custo (LME) com diagramação A4 para impressão e PDF
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button 
+                className="btn btn-primary" 
+                onClick={() => handleOpenNewPrescription('simples')}
+                style={{ padding: '0.5rem 1.1rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+              >
+                <Plus size={15} />
+                <span>Nova Receita Médica</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Cards de Início Rápido / Modelos */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div 
+              onClick={() => handleOpenNewPrescription('simples')}
+              className="glass-panel p-3.5 rounded-xl border border-blue-200/80 bg-blue-50/40 hover:bg-blue-50 cursor-pointer transition-all flex items-start gap-3 group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <FileText size={18} />
+              </div>
+              <div className="flex-1">
+                <strong className="text-xs text-slate-800 font-bold block mb-0.5">Receita Simples</strong>
+                <p className="text-[11px] text-slate-500 leading-tight">Uso contínuo, anti-hipertensivos, quelantes e rotina nefrológica</p>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => handleOpenNewPrescription('controle_especial')}
+              className="glass-panel p-3.5 rounded-xl border border-purple-200/80 bg-purple-50/40 hover:bg-purple-50 cursor-pointer transition-all flex items-start gap-3 group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <FileCheck size={18} />
+              </div>
+              <div className="flex-1">
+                <strong className="text-xs text-slate-800 font-bold block mb-0.5">Controle Especial</strong>
+                <p className="text-[11px] text-slate-500 leading-tight">Portaria 344/98 em 2 vias: opioides, analgésicos e psicotrópicos</p>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => handleOpenNewPrescription('antimicrobiano')}
+              className="glass-panel p-3.5 rounded-xl border border-amber-200/80 bg-amber-50/40 hover:bg-amber-50 cursor-pointer transition-all flex items-start gap-3 group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Pill size={18} />
+              </div>
+              <div className="flex-1">
+                <strong className="text-xs text-slate-800 font-bold block mb-0.5">Antimicrobianos</strong>
+                <p className="text-[11px] text-slate-500 leading-tight">2 vias (RDC 20/2011): infecções de cateter/FAV com validade de 10 dias</p>
+              </div>
+            </div>
+
+            <div 
+              onClick={() => handleOpenNewPrescription('simples')}
+              className="glass-panel p-3.5 rounded-xl border border-emerald-200/80 bg-emerald-50/40 hover:bg-emerald-50 cursor-pointer transition-all flex items-start gap-3 group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <Sparkles size={18} />
+              </div>
+              <div className="flex-1">
+                <strong className="text-xs text-slate-800 font-bold block mb-0.5">Puxar Ativas (1 Clique)</strong>
+                <p className="text-[11px] text-slate-500 leading-tight">Importa medicamentos em uso para receita imediata no modal</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Histórico de Receitas Emitidas */}
+          {receitas.length === 0 ? (
+            <div className="glass-panel text-center py-12 px-4 rounded-2xl border border-slate-200 text-slate-500">
+              <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center mx-auto mb-3">
+                <FileCheck size={32} className="opacity-80" />
+              </div>
+              <h3 className="text-sm font-bold text-slate-800 mb-1">Nenhum receituário emitido para este paciente</h3>
+              <p className="text-xs text-slate-500 max-w-md mx-auto mb-4">
+                Crie receitas médicas timbradas com facilidade, puxando as prescrições ativas ou utilizando o catálogo nefrológico com modelos simples e de controle especial.
+              </p>
+              <button 
+                className="btn btn-primary" 
+                onClick={() => handleOpenNewPrescription('simples')}
+                style={{ fontSize: '0.82rem', padding: '0.45rem 1.2rem' }}
+              >
+                + Emitir Primeira Receita
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              <div className="text-xs font-bold text-slate-600 uppercase tracking-wider flex justify-between items-center px-1">
+                <span>Histórico de Receituários Emitidos ({receitas.length})</span>
+                <span className="text-[11px] font-normal text-slate-400">Gravado no Cloud Firestore</span>
+              </div>
+
+              {receitas.map((rec) => {
+                const itensCount = Array.isArray(rec.itens) ? rec.itens.length : 0;
+                const isEspecial = rec.tipoReceita === 'controle_especial';
+                const isAnti = rec.tipoReceita === 'antimicrobiano';
+                const isAltoCusto = rec.tipoReceita === 'alto_custo';
+
+                return (
+                  <div 
+                    key={rec.id} 
+                    className="glass-panel p-4 rounded-2xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all bg-white flex flex-col md:flex-row md:items-center justify-between gap-4"
+                  >
+                    {/* Informações da Receita */}
+                    <div className="flex items-start gap-3.5">
+                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
+                        isEspecial 
+                          ? 'bg-purple-100 text-purple-700 border border-purple-200' 
+                          : isAnti 
+                            ? 'bg-amber-100 text-amber-700 border border-amber-200'
+                            : isAltoCusto
+                              ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                              : 'bg-blue-100 text-blue-700 border border-blue-200'
+                      }`}>
+                        <FileCheck size={22} />
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <strong className="text-sm font-bold text-slate-900">
+                            {rec.tipoReceita === 'controle_especial' 
+                              ? 'Receita de Controle Especial (2 Vias)' 
+                              : rec.tipoReceita === 'antimicrobiano'
+                                ? 'Receita de Antimicrobianos (2 Vias)'
+                                : rec.tipoReceita === 'alto_custo'
+                                  ? 'Receituário de Alto Custo (LME)'
+                                  : 'Receituário Médico Simples'}
+                          </strong>
+
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                            isEspecial
+                              ? 'bg-purple-50 text-purple-800 border border-purple-200'
+                              : isAnti
+                                ? 'bg-amber-50 text-amber-800 border border-amber-200'
+                                : isAltoCusto
+                                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                  : 'bg-blue-50 text-blue-800 border border-blue-200'
+                          }`}>
+                            {isEspecial ? 'Portaria 344/98' : (isAnti ? 'RDC 20/2011' : (isAltoCusto ? 'SUS / LME' : 'Uso Geral'))}
+                          </span>
+
+                          <span className="text-[11px] text-slate-500 font-medium">
+                            • Emissão: <strong>{new Date(rec.dataEmissao + 'T12:00:00').toLocaleDateString('pt-BR')}</strong>
+                          </span>
+                        </div>
+
+                        {/* Resumo dos medicamentos prescritos */}
+                        <div className="text-xs text-slate-600 flex items-center gap-1.5 flex-wrap mt-0.5">
+                          <span className="font-semibold text-slate-700">{itensCount} {itensCount === 1 ? 'medicamento' : 'medicamentos'}:</span>
+                          {Array.isArray(rec.itens) && rec.itens.slice(0, 3).map((item, idx) => (
+                            <span key={idx} className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200">
+                              {item.medicamento || item.nome}
+                            </span>
+                          ))}
+                          {itensCount > 3 && (
+                            <span className="text-[11px] text-slate-400 font-semibold">
+                              +{itensCount - 3} outros
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-2">
+                          <span>Médico: <strong>{rec.medico?.nome || doctorInfo?.nome || 'Dr. Marcelo Ramos'}</strong> (CRM {rec.medico?.crm || doctorInfo?.crm || '654321'}/{rec.medico?.ufCrm || doctorInfo?.ufCrm || 'SP'})</span>
+                          {rec.validadeDias && (
+                            <span>• Validade: {rec.validadeDias} dias</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Barra de Ações Rápidas da Receita */}
+                    <div className="flex items-center gap-1.5 self-end md:self-center shrink-0">
+                      <button 
+                        type="button"
+                        onClick={() => handleViewPrescription(rec)}
+                        className="btn btn-primary"
+                        style={{ padding: '0.4rem 0.85rem', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '5px' }}
+                        title="Imprimir ou salvar em PDF"
+                      >
+                        <Printer size={14} />
+                        <span>Imprimir / PDF</span>
+                      </button>
+
+                      <button 
+                        type="button"
+                        onClick={() => handleViewPrescription(rec)}
+                        className="btn btn-outline"
+                        style={{ padding: '0.4rem 0.65rem', fontSize: '0.78rem' }}
+                        title="Visualizar documento em folha A4"
+                      >
+                        <Eye size={14} color="var(--primary)" />
+                      </button>
+
+                      <button 
+                        type="button"
+                        onClick={() => handleDuplicatePrescription(rec)}
+                        className="btn btn-outline"
+                        style={{ padding: '0.4rem 0.65rem', fontSize: '0.78rem' }}
+                        title="Duplicar / Renovar receita"
+                      >
+                        <Copy size={14} color="var(--primary)" />
+                      </button>
+
+                      <button 
+                        type="button"
+                        onClick={() => handleEditPrescription(rec)}
+                        className="btn btn-outline"
+                        style={{ padding: '0.4rem 0.65rem', fontSize: '0.78rem' }}
+                        title="Editar receita"
+                      >
+                        <Edit size={14} color="var(--primary)" />
+                      </button>
+
+                      <button 
+                        type="button"
+                        onClick={() => handleDeletePrescription(rec.id)}
+                        className="btn btn-outline"
+                        style={{ padding: '0.4rem 0.65rem', fontSize: '0.78rem' }}
+                        title="Excluir receita do histórico"
+                      >
+                        <Trash2 size={14} color="var(--danger)" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ================= MODAIS ================= */}
+      <PrescriptionModal 
+        isOpen={isPrescriptionModalOpen}
+        onClose={() => setIsPrescriptionModalOpen(false)}
+        patient={patient}
+        doctorInfo={doctorInfo}
+        prescriptionToEdit={prescriptionToEdit}
+        initialTipo={prescriptionInitialTipo}
+        initialView={prescriptionInitialView}
+      />
+
       <PatientFormModal 
         isOpen={isPatientModalOpen}
         onClose={() => setIsPatientModalOpen(false)}

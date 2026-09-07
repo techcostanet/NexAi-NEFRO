@@ -637,3 +637,59 @@ export async function deletePatientBloodCulture(patientId, cultureId) {
   return cultures;
 }
 
+/**
+ * Adiciona ou edita uma receita médica no prontuário do paciente no Cloud Firestore
+ */
+export async function savePatientPrescription(patientId, prescriptionData, prescriptionId = null) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado no Firestore");
+
+  const receitas = Array.isArray(patient.receitas) ? [...patient.receitas] : [];
+  const targetId = prescriptionId || prescriptionData.id || `rec-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+
+  const prescriptionRecord = {
+    ...prescriptionData,
+    id: targetId,
+    dataEmissao: prescriptionData.dataEmissao || new Date().toISOString().split('T')[0],
+    registradoEm: prescriptionData.registradoEm || new Date().toISOString(),
+    atualizadoEm: new Date().toISOString()
+  };
+
+  const existingIdx = receitas.findIndex(r => r.id === targetId);
+  if (existingIdx !== -1) {
+    receitas[existingIdx] = prescriptionRecord;
+  } else {
+    receitas.unshift(prescriptionRecord);
+  }
+
+  receitas.sort((a, b) => new Date(b.dataEmissao || b.registradoEm || 0) - new Date(a.dataEmissao || a.registradoEm || 0));
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    receitas,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return receitas;
+}
+
+/**
+ * Exclui uma receita médica do histórico do paciente no Cloud Firestore
+ */
+export async function deletePatientPrescription(patientId, prescriptionId) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient || !Array.isArray(patient.receitas)) return [];
+
+  const receitas = patient.receitas.filter(r => r.id !== prescriptionId);
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    receitas,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  return receitas;
+}
+
+
