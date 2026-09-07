@@ -1,54 +1,152 @@
 export const SYSTEM_CHANGELOG = [
   {
-    version: "1.1.5",
-    date: "13/08/2026",
-    title: "Notas de Versão Centralizadas & Refinamento Terminológico",
+    version: "1.1.34",
+    date: "07/09/2026",
+    title: "Gestão Financeira Dinâmica, Descontos Comerciais e Notas de Versão",
     highlights: [
-      "🏷️ Adequação terminológica técnica de 'Evoluções' para 'Notas de Versão (Release Notes)' para evitar conflito com o termo médico de evolução clínica.",
-      "📍 Centralização em destaque do botão de Notas de Versão no cabeçalho principal.",
-      "🎨 Consolidação dos tons pastéis e harmonia da interface clínica."
+      "💰 Sincronização em tempo real dos planos cadastrados na aba Financeiro com os formulários de cadastro e edição de médicos.",
+      "🏷️ Novo campo de desconto comercial flexível (em R$ ou %) aplicável a cada cliente com cálculo automático do valor final cobrado.",
+      "🔄 Modal de renovação atualizado com precificação dinâmica baseada nos planos ativos e suporte a desconto promocional.",
+      "📜 Revisão e atualização completa do histórico de Notas de Versão (Release Notes) com todos os marcos evolutivos do sistema."
     ]
   },
   {
-    version: "1.1.4",
-    date: "13/08/2026",
-    title: "Ergonomia Visual, Tons Pastéis e Central de Versões",
+    version: "1.1.33",
+    date: "07/09/2026",
+    title: "Segurança de Licenças, Exclusão Administrativa e Base 100% Fictícia",
     highlights: [
-      "🎨 Implementação de paleta em tons pastéis clínicos para diferenciar visualmente cada quadro (Acesso Vascular em Azul, Medicações em Âmbar, Exames em Menta e Histórico em Lavanda).",
-      "📐 Correção e ampliação do espaçamento da navegação (botão Voltar e títulos com respiro adequado).",
-      "✨ Linha do tempo interativa para acompanhar todas as melhorias versão a versão."
+      "🗑️ Ação de exclusão segura e definitiva de licenças médicas no Cloud Firestore com limpeza de vínculos e auditoria imutável.",
+      "🚫 Remoção do botão de restauração da base no painel administrativo para proteger a integridade dos dados clínicos.",
+      "🩺 Padronização rigorosa dos pacientes de demonstração do Dr. Marcelo Ramos para dados 100% indiscutivelmente fictícios e simulados."
     ]
   },
   {
-    version: "1.1.3",
-    date: "13/08/2026",
-    title: "Gestão Cadastral Completa & Lançamento de Exames",
+    version: "1.1.32",
+    date: "07/09/2026",
+    title: "Harmonização Visual e Refinamento de Rótulos Clínicos",
     highlights: [
-      "🩺 Painel de Dados Cadastrais do Médico (CRM, RQE, Vínculos Hospitalares e Unidades de Diálise).",
-      "👤 Cadastro e Edição Completa de Pacientes com cálculo automático de idade e status clínico.",
-      "🧪 Lançamento e Edição de Exames Laboratoriais com registro de data da coleta, resultados numéricos e prescrições associadas.",
-      "📊 Tabela histórica cronológica com ações de edição e exclusão de coletas."
+      "🎨 Harmonização visual: alinhamento ergonômico de seções no modal clínico e balanceamento estético do card de peso.",
+      "✨ Limpeza de avisos redundantes e melhoria na densidade visual para acompanhamento ágil de pacientes."
     ]
   },
   {
-    version: "1.1.2",
-    date: "13/08/2026",
-    title: "Nova Identidade Visual & Símbolo Renal",
+    version: "1.1.31",
+    date: "07/09/2026",
+    title: "Estabilidade de Formulários e Resolução de Ícones",
     highlights: [
-      "💎 Atualização da marca para NexAi-NEFRO - Gestão Nefrológica.",
-      "🫘 Novo ícone anatômico estilizado de nefrologia (rins) em vetor com acabamento premium.",
-      "🔒 Remoção de credenciais de teste na tela de login para padrão limpo e profissional.",
-      "🏷️ Exibição de versão nos rodapés e telas principais."
+      "🔧 Correção e estabilização do modal de edição cadastral de pacientes e do formulário de pesagem pré/pós diálise.",
+      "🛡️ Resolução de ícones e prevenção contra opções duplicadas em campos de seleção clínica."
+    ]
+  },
+  {
+    version: "1.1.30",
+    date: "07/09/2026",
+    title: "Transplante Renal, Controle de Peso (% PIDG) e Hemoculturas",
+    highlights: [
+      "🎗️ Módulo de transplante renal com badges clínicos coloridos, triagem e status em lista de espera.",
+      "⚖️ Histórico e controle evolutivo de peso com percentual de ganho interdialítico (% PIDG) e alertas para > 4,5%.",
+      "🧪 Catálogo dinâmico de alergias sincronizado em tempo real no Cloud Firestore.",
+      "🩸 Módulo de hemoculturas e protocolo de Lock Terapia para vigilância de acessos vasculares e prevenção de bacteremia."
+    ]
+  },
+  {
+    version: "1.1.29",
+    date: "02/09/2026",
+    title: "Importador Inteligente Multi-formato (XLS, PDF, DOCX, Fotos)",
+    highlights: [
+      "📄 Importação inteligente de exames a partir de laudos laboratoriais em PDF, planilhas Excel (XLS), documentos e fotografias (OCR).",
+      "🩺 Padronização de etiologias da DRC com seleção nefrológica padrão.",
+      "📅 Ordenação cronológica decrescente automática no histórico laboratorial."
+    ]
+  },
+  {
+    version: "1.1.28",
+    date: "02/09/2026",
+    title: "Padronização de Acessos Vasculares e Ergonomia do Prontuário",
+    highlights: [
+      "💉 Conversão de campos de acesso vascular para seleção clínica rápida (FAV Braquiocefálica, Radiocefálica, CDL Permcath).",
+      "📐 Harmonização dos layouts dos cards de diálise e parâmetros operacionais de fluxo sanguíneo e dialisato."
+    ]
+  },
+  {
+    version: "1.1.27",
+    date: "01/09/2026",
+    title: "Multi-Tenancy Rigoroso e Isolamento de Dados por Médico",
+    highlights: [
+      "🔒 Isolamento estrito de prontuários por doctorId no Cloud Firestore, garantindo privacidade e sigilo médico total.",
+      "🚫 Bloqueio de acessos cruzados e listagem isolada para cada médico assinante ou residente."
+    ]
+  },
+  {
+    version: "1.1.26",
+    date: "17/08/2026",
+    title: "Landing Page de Alta Conversão & Checkout Self-Service",
+    highlights: [
+      "🌐 Lançamento da Landing Page institucional com apresentação moderna dos diferenciais da plataforma.",
+      "💳 Checkout automatizado com integração de cobrança (Asaas / PIX), ativação imediata de 7 dias de Trial e onboarding instantâneo."
+    ]
+  },
+  {
+    version: "1.1.25",
+    date: "16/08/2026",
+    title: "Conformidade LGPD e Módulo Financeiro Interativo",
+    highlights: [
+      "🛡️ Adequação rigorosa às diretrizes da LGPD com auditoria imutável de acessos e impersonação no Cloud Firestore.",
+      "💵 Módulo financeiro interativo para administração de planos, precificação e conectores de pagamento."
+    ]
+  },
+  {
+    version: "1.1.20",
+    date: "15/08/2026",
+    title: "Modernização do Prontuário Clínico com Abas Especializadas",
+    highlights: [
+      "📂 Reformulação completa do prontuário com abas dedicadas: Dados Clínicos, Histórico Laboratorial, Prescrições e Evoluções.",
+      "🩺 Painel de adequação dialítica com cálculo de Kt/V e monitoramento de distúrbio mineral ósseo (PTH, Ca, P)."
+    ]
+  },
+  {
+    version: "1.1.14",
+    date: "15/08/2026",
+    title: "Gestão de Unidades e Multi-locais de Atuação Médica",
+    highlights: [
+      "🏢 Cadastro e gestão de múltiplas unidades de hemodiálise, hospitais de retaguarda e consultórios vinculados ao médico.",
+      "👩‍⚕️ Indicação de Responsável Técnico (RT), turnos de diálise e telefones diretos da enfermagem."
+    ]
+  },
+  {
+    version: "1.1.12",
+    date: "15/08/2026",
+    title: "Painel Super Administrador SaaS & Gestão de Licenças",
+    highlights: [
+      "📊 Dashboard administrativo com métricas operacionais e financeiras SaaS: MRR, ARR, Churn Rate e contagem de assinantes.",
+      "🔍 Trilha de auditoria em tempo real para rastreabilidade de todas as ações sensíveis no sistema."
+    ]
+  },
+  {
+    version: "1.1.10",
+    date: "15/08/2026",
+    title: "Arquitetura 100% Cloud (Firebase & Cloud Firestore)",
+    highlights: [
+      "☁️ Migração e conformidade plena com Cloud Firestore como fonte única da verdade (sem persistência local estática).",
+      "⚡ Sincronização em tempo real via listeners nativos do Firestore para suporte multi-usuário."
+    ]
+  },
+  {
+    version: "1.1.6",
+    date: "14/08/2026",
+    title: "Catálogo de Medicamentos de Diálise & Alertas de Ciclos",
+    highlights: [
+      "💊 Catálogo especializado de medicamentos dialíticos (EPO, Noripurum, Sevelâmer, Paricalcitol, Sorcal).",
+      "⏰ Alertas inteligentes de proximidade de término de ciclos de antimicrobianos e reposição férrica."
     ]
   },
   {
     version: "1.1.0",
     date: "13/08/2026",
-    title: "Integração Cloud Firestore & Publicação Web",
+    title: "Lançamento em Nuvem e Deploy Contínuo no Firebase Hosting",
     highlights: [
-      "☁️ Banco de dados Cloud Firestore integrado com sincronização em tempo real (zero armazenamento estático).",
-      "🚀 Deploy contínuo no Firebase Hosting (https://nexai-nefro.web.app).",
-      "🔄 Pipeline automatizado de releases com versionamento SemVer e Git Sync."
+      "🚀 Entrada em produção oficial do NexAi-NEFRO no Firebase Hosting (https://nexai-nefro.web.app).",
+      "🔄 Pipeline automatizado de releases com versionamento SemVer e sincronização remota com o GitHub."
     ]
   }
 ];

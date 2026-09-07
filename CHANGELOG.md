@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.34] - 2026-09-07
+### Alterações
+- Sincronizacao dinamica de planos da aba financeiro, modulo de desconto comercial e atualizacao completa das notas de versao v1.1.34
+
 ## [1.1.33] - 2026-09-07
 ### Alterações
 - Remocao do medico de teste Dr. Rodrigo Castro, adicao de exclusao de licencas no Admin, remocao do botao Restaurar Base e padronizacao dos 6 pacientes de demonstracao para dados 100% ficticios no Firestore

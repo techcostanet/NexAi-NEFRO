@@ -101,8 +101,11 @@ export default function AdminDashboard() {
     telefone: '',
     clinicaPrincipal: '',
     statusLicenca: 'Ativo',
-    plano: 'Mensal',
-    valorMensalidade: 490.00,
+    plano: 'Plano Mensal Nefrologia',
+    valorBase: 99.90,
+    descontoTipo: 'nenhum', // 'nenhum' | 'fixo' | 'porcentagem'
+    descontoValor: 0,
+    valorMensalidade: 99.90,
     vigenciaMeses: 1
   });
 
@@ -140,7 +143,9 @@ export default function AdminDashboard() {
   const cancelledDoctors = doctors.filter(d => d.statusLicenca === 'Cancelado');
 
   const mrr = activeDoctors.reduce((acc, doc) => {
-    const val = Number(doc.valorMensalidade) || (doc.plano === 'Mensal' ? 490 : doc.plano === 'Anual' ? 408.33 : 0);
+    const val = Number(doc.valorMensalidade) !== undefined && !isNaN(Number(doc.valorMensalidade))
+      ? Number(doc.valorMensalidade) 
+      : (doc.plano?.toLowerCase().includes('anual') ? 82.50 : 99.90);
     return acc + val;
   }, 0);
 
@@ -212,9 +217,26 @@ export default function AdminDashboard() {
     }
   };
 
+  // Helper para cálculo automático do valor com desconto
+  const calculateFinalPrice = (base, tipo, desc) => {
+    const numBase = Math.max(0, Number(base) || 0);
+    const numDesc = Math.max(0, Number(desc) || 0);
+    if (tipo === 'fixo') {
+      return Math.max(0, Number((numBase - numDesc).toFixed(2)));
+    } else if (tipo === 'porcentagem') {
+      const discountAmount = (numBase * Math.min(100, numDesc)) / 100;
+      return Math.max(0, Number((numBase - discountAmount).toFixed(2)));
+    }
+    return numBase;
+  };
+
   // Abrir Modal de Nova Licença
   const handleOpenCreateModal = () => {
     setModalMode('create');
+    const defaultPlan = systemPlans.find(p => p.status === 'Ativo' && p.intervalo === 'mensal') || systemPlans[0];
+    const initialPrice = defaultPlan ? Number(defaultPlan.valor) : 99.90;
+    const initialPlanName = defaultPlan ? defaultPlan.nome : 'Plano Mensal Nefrologia';
+
     setDoctorForm({
       id: '',
       nome: '',
@@ -227,9 +249,12 @@ export default function AdminDashboard() {
       telefone: '',
       clinicaPrincipal: '',
       statusLicenca: 'Ativo',
-      plano: 'Mensal',
-      valorMensalidade: 490.00,
-      vigenciaMeses: 1
+      plano: initialPlanName,
+      valorBase: initialPrice,
+      descontoTipo: 'nenhum',
+      descontoValor: 0,
+      valorMensalidade: initialPrice,
+      vigenciaMeses: defaultPlan?.intervalo === 'anual' ? 12 : 1
     });
     setIsModalOpen(true);
   };
@@ -238,6 +263,33 @@ export default function AdminDashboard() {
   const handleOpenEditModal = (doctor) => {
     setModalMode('edit');
     setSelectedDoctor(doctor);
+
+    const matchedPlan = systemPlans.find(p => 
+      p.nome === doctor.plano || 
+      p.id === doctor.plano ||
+      (doctor.plano?.toLowerCase().includes('mensal') && (p.id === 'plano-mensal' || p.intervalo === 'mensal')) ||
+      (doctor.plano?.toLowerCase().includes('anual') && (p.id === 'plano-anual' || p.intervalo === 'anual')) ||
+      ((doctor.plano?.toLowerCase().includes('trial') || doctor.plano?.toLowerCase().includes('demo')) && (p.id === 'plano-trial' || p.intervalo === 'trial'))
+    );
+
+    const resolvedPlanName = matchedPlan ? matchedPlan.nome : (doctor.plano || 'Plano Mensal Nefrologia');
+
+    const valorBase = (doctor.valorBase !== undefined && doctor.valorBase !== null)
+      ? Number(doctor.valorBase) 
+      : (matchedPlan ? Number(matchedPlan.valor) : (Number(doctor.valorMensalidade) || 99.90));
+    
+    let valorAtual = Number(doctor.valorMensalidade);
+    if (!doctor.descontoTipo && (valorAtual === 490 || isNaN(valorAtual) || valorAtual === undefined)) {
+      valorAtual = valorBase;
+    }
+
+    let descontoTipo = doctor.descontoTipo || 'nenhum';
+    let descontoValor = Number(doctor.descontoValor) || 0;
+    if (descontoTipo === 'nenhum' && valorBase > valorAtual && valorAtual > 0 && valorAtual !== 490) {
+      descontoTipo = 'fixo';
+      descontoValor = Number((valorBase - valorAtual).toFixed(2));
+    }
+
     setDoctorForm({
       id: doctor.id,
       nome: doctor.nome || '',
@@ -250,11 +302,63 @@ export default function AdminDashboard() {
       telefone: doctor.telefone || '',
       clinicaPrincipal: doctor.clinicaPrincipal || '',
       statusLicenca: doctor.statusLicenca || 'Ativo',
-      plano: doctor.plano || 'Mensal',
-      valorMensalidade: doctor.valorMensalidade !== undefined ? doctor.valorMensalidade : 490.00,
+      plano: resolvedPlanName,
+      valorBase: valorBase,
+      descontoTipo: descontoTipo,
+      descontoValor: descontoValor,
+      valorMensalidade: valorAtual,
       vigenciaMeses: 1
     });
     setIsModalOpen(true);
+  };
+
+  // Mudança de Plano no Modal do Médico
+  const handlePlanChange = (newPlanName) => {
+    const matched = systemPlans.find(p => p.nome === newPlanName || p.id === newPlanName);
+    let newBase = 0;
+    let newVigencia = doctorForm.vigenciaMeses;
+
+    if (matched) {
+      newBase = Number(matched.valor) || 0;
+      if (modalMode === 'create') {
+        newVigencia = matched.intervalo === 'anual' ? 12 : 1;
+      }
+    } else if (newPlanName === 'Demonstração') {
+      newBase = 0;
+    } else {
+      newBase = Number(doctorForm.valorBase) || 99.90;
+    }
+
+    const finalVal = calculateFinalPrice(newBase, doctorForm.descontoTipo, doctorForm.descontoValor);
+
+    setDoctorForm(prev => ({
+      ...prev,
+      plano: newPlanName,
+      valorBase: newBase,
+      valorMensalidade: finalVal,
+      vigenciaMeses: newVigencia
+    }));
+  };
+
+  // Mudança do Tipo de Desconto
+  const handleDiscountTypeChange = (newTipo) => {
+    const finalVal = calculateFinalPrice(doctorForm.valorBase, newTipo, doctorForm.descontoValor);
+    setDoctorForm(prev => ({
+      ...prev,
+      descontoTipo: newTipo,
+      valorMensalidade: finalVal
+    }));
+  };
+
+  // Mudança do Valor do Desconto
+  const handleDiscountValueChange = (valStr) => {
+    const num = Math.max(0, parseFloat(valStr) || 0);
+    const finalVal = calculateFinalPrice(doctorForm.valorBase, doctorForm.descontoTipo, num);
+    setDoctorForm(prev => ({
+      ...prev,
+      descontoValor: num,
+      valorMensalidade: finalVal
+    }));
   };
 
   // Salvar Criação ou Edição
@@ -280,6 +384,9 @@ export default function AdminDashboard() {
         ...doctorForm,
         id: doctorId,
         titulo: 'Médico(a) Nefrologista',
+        valorBase: Number(doctorForm.valorBase) || 0,
+        descontoTipo: doctorForm.descontoTipo || 'nenhum',
+        descontoValor: Number(doctorForm.descontoValor) || 0,
         valorMensalidade: Number(doctorForm.valorMensalidade) || 0,
         dataInicioAssinatura: dataInicio,
         dataFimAssinatura: dataFim,
@@ -331,7 +438,13 @@ export default function AdminDashboard() {
     setRenewDoctor(doctor);
     setRenewMonths(1);
     setRenewPaymentMethod('PIX');
-    setRenewValue(490.00);
+
+    const monthlyPlan = systemPlans.find(p => p.status === 'Ativo' && p.intervalo === 'mensal');
+    const baseRate = Number(doctor.valorMensalidade) > 0 
+      ? Number(doctor.valorMensalidade)
+      : (monthlyPlan ? Number(monthlyPlan.valor) : 99.90);
+
+    setRenewValue(baseRate);
     setIsRenewModalOpen(true);
   };
 
@@ -694,10 +807,19 @@ export default function AdminDashboard() {
                             <div style={{ fontWeight: '600', color: '#0f172a' }}>
                               {docItem.plano || 'Mensal'}
                             </div>
-                            <div className="text-xs text-muted">
-                              {Number(docItem.valorMensalidade) > 0 
-                                ? `R$ ${Number(docItem.valorMensalidade).toFixed(2)}/mês` 
-                                : 'Gratuito (Trial)'}
+                            <div className="text-xs text-muted flex items-center gap-1.5 flex-wrap">
+                              <span>
+                                {Number(docItem.valorMensalidade) > 0 
+                                  ? `R$ ${Number(docItem.valorMensalidade).toFixed(2)}/mês` 
+                                  : 'Gratuito (Trial)'}
+                              </span>
+                              {docItem.descontoTipo && docItem.descontoTipo !== 'nenhum' && Number(docItem.descontoValor) > 0 && (
+                                <span style={{ fontSize: '0.68rem', background: '#dcfce7', color: '#15803d', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                                  {docItem.descontoTipo === 'porcentagem' 
+                                    ? `-${docItem.descontoValor}% desc.` 
+                                    : `-R$ ${Number(docItem.descontoValor).toFixed(2)} desc.`}
+                                </span>
+                              )}
                             </div>
                           </td>
 
@@ -1239,50 +1361,111 @@ export default function AdminDashboard() {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '0.6rem' }}>
-                <div>
-                  <label className="text-xs font-semibold mb-1 block">Plano Contratado</label>
-                  <select 
-                    className="input-field"
-                    value={doctorForm.plano}
-                    onChange={(e) => {
-                      const p = e.target.value;
-                      setDoctorForm(prev => ({ 
-                        ...prev, 
-                        plano: p,
-                        valorMensalidade: p === 'Mensal' ? 490 : p === 'Anual' ? 4900 : 0
-                      }));
-                    }}
-                  >
-                    <option value="Mensal">Mensal (R$ 490/mês)</option>
-                    <option value="Anual">Anual (R$ 4.900/ano)</option>
-                    <option value="Demonstração">Demonstração</option>
-                  </select>
+              {/* Seleção Dinâmica do Plano e Desconto */}
+              <div className="p-3.5 rounded-xl border border-blue-100 bg-blue-50/30 flex flex-col gap-3">
+                <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '0.6rem' }}>
+                  <div>
+                    <label className="text-xs font-semibold mb-1 block">Plano Contratado (Aba Financeiro)</label>
+                    <select 
+                      className="input-field"
+                      value={doctorForm.plano}
+                      onChange={(e) => handlePlanChange(e.target.value)}
+                    >
+                      {systemPlans.map(plan => (
+                        <option key={plan.id} value={plan.nome}>
+                          {plan.nome} — R$ {Number(plan.valor).toFixed(2)} ({plan.intervalo || 'mensal'})
+                        </option>
+                      ))}
+                      <option value="Personalizado">Plano Personalizado / Avulso</option>
+                      <option value="Demonstração">Plano Demonstração (Gratuito)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold mb-1 block">Valor de Tabela (R$)</label>
+                    <input 
+                      type="number" 
+                      className="input-field" 
+                      value={doctorForm.valorBase}
+                      disabled
+                      style={{ background: '#f8fafc', color: '#64748b' }}
+                      title="Valor original definido no plano da aba Financeiro"
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="text-xs font-semibold mb-1 block">Valor (R$)</label>
-                  <input 
-                    type="number" 
-                    className="input-field" 
-                    value={doctorForm.valorMensalidade}
-                    onChange={(e) => setDoctorForm(prev => ({ ...prev, valorMensalidade: e.target.value }))}
-                  />
+                {/* Módulo de Desconto Comercial */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '0.6rem' }}>
+                  <div>
+                    <label className="text-xs font-semibold mb-1 block">Aplicar Desconto?</label>
+                    <select 
+                      className="input-field"
+                      value={doctorForm.descontoTipo}
+                      onChange={(e) => handleDiscountTypeChange(e.target.value)}
+                    >
+                      <option value="nenhum">Sem Desconto</option>
+                      <option value="fixo">Desconto em R$ (Fixo)</option>
+                      <option value="porcentagem">Desconto em % (Percentual)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold mb-1 block">
+                      {doctorForm.descontoTipo === 'porcentagem' ? 'Desconto (%)' : 'Desconto (R$)'}
+                    </label>
+                    <input 
+                      type="number" 
+                      step="0.01"
+                      min="0"
+                      className="input-field" 
+                      disabled={doctorForm.descontoTipo === 'nenhum'}
+                      placeholder={doctorForm.descontoTipo === 'porcentagem' ? 'Ex: 10%' : 'Ex: 15.00'}
+                      value={doctorForm.descontoValor}
+                      onChange={(e) => handleDiscountValueChange(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold mb-1 block" style={{ color: '#1e40af' }}>
+                      Valor Final Cobrado (R$) *
+                    </label>
+                    <input 
+                      type="number" 
+                      step="0.01"
+                      className="input-field" 
+                      style={{ fontWeight: 'bold', color: '#1e40af', borderColor: '#93c5fd', background: '#eff6ff' }}
+                      value={doctorForm.valorMensalidade}
+                      onChange={(e) => setDoctorForm(prev => ({ ...prev, valorMensalidade: e.target.value }))}
+                      required
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="text-xs font-semibold mb-1 block">Status</label>
-                  <select 
-                    className="input-field"
-                    value={doctorForm.statusLicenca}
-                    onChange={(e) => setDoctorForm(prev => ({ ...prev, statusLicenca: e.target.value }))}
-                  >
-                    <option value="Ativo">Ativo</option>
-                    <option value="Trial">Trial</option>
-                    <option value="Suspenso">Suspenso</option>
-                    <option value="Cancelado">Cancelado</option>
-                  </select>
-                </div>
+                {/* Resumo do Desconto */}
+                {doctorForm.descontoTipo !== 'nenhum' && Number(doctorForm.descontoValor) > 0 && (
+                  <div className="flex items-center gap-2 p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium">
+                    <span>🏷️</span>
+                    <span>
+                      {doctorForm.descontoTipo === 'porcentagem'
+                        ? `Desconto de ${doctorForm.descontoValor}% aplicado (Economia de R$ ${((Number(doctorForm.valorBase) * Number(doctorForm.descontoValor)) / 100).toFixed(2)}) → Cobrança mensal: R$ ${Number(doctorForm.valorMensalidade).toFixed(2)}`
+                        : `Desconto de R$ ${Number(doctorForm.descontoValor).toFixed(2)} aplicado sobre o valor de tabela → Cobrança mensal: R$ ${Number(doctorForm.valorMensalidade).toFixed(2)}`}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold mb-1 block">Status da Licença</label>
+                <select 
+                  className="input-field"
+                  value={doctorForm.statusLicenca}
+                  onChange={(e) => setDoctorForm(prev => ({ ...prev, statusLicenca: e.target.value }))}
+                >
+                  <option value="Ativo">Ativo</option>
+                  <option value="Trial">Trial</option>
+                  <option value="Suspenso">Suspenso</option>
+                  <option value="Cancelado">Cancelado</option>
+                </select>
               </div>
 
               {modalMode === 'create' && (
@@ -1349,22 +1532,32 @@ export default function AdminDashboard() {
             </p>
 
             <form onSubmit={handleConfirmRenew} className="flex flex-col gap-3.5">
+              {/* Seleção do Período com valores dinâmicos dos planos */}
               <div>
                 <label className="text-xs font-semibold mb-1 block">Período de Renovação</label>
-                <select 
-                  className="input-field"
-                  value={renewMonths}
-                  onChange={(e) => {
-                    const m = Number(e.target.value);
-                    setRenewMonths(m);
-                    setRenewValue(m === 12 ? 4900 : m * 490);
-                  }}
-                >
-                  <option value="1">+1 Mês (R$ 490,00)</option>
-                  <option value="3">+3 Meses (R$ 1.470,00)</option>
-                  <option value="6">+6 Meses (R$ 2.940,00)</option>
-                  <option value="12">+12 Meses / Anual (R$ 4.900,00)</option>
-                </select>
+                {(() => {
+                  const monthlyRate = Number(renewDoctor.valorMensalidade) > 0
+                    ? Number(renewDoctor.valorMensalidade)
+                    : (systemPlans.find(p => p.status === 'Ativo' && p.intervalo === 'mensal')?.valor || 99.90);
+                  const annualRate = systemPlans.find(p => p.status === 'Ativo' && p.intervalo === 'anual')?.valor || (monthlyRate * 10);
+                  
+                  return (
+                    <select 
+                      className="input-field"
+                      value={renewMonths}
+                      onChange={(e) => {
+                        const m = Number(e.target.value);
+                        setRenewMonths(m);
+                        setRenewValue(m === 12 ? annualRate : Number((m * monthlyRate).toFixed(2)));
+                      }}
+                    >
+                      <option value="1">+1 Mês (R$ {monthlyRate.toFixed(2)})</option>
+                      <option value="3">+3 Meses (R$ {(monthlyRate * 3).toFixed(2)})</option>
+                      <option value="6">+6 Meses (R$ {(monthlyRate * 6).toFixed(2)})</option>
+                      <option value="12">+12 Meses / Anual com Bônus (R$ {annualRate.toFixed(2)})</option>
+                    </select>
+                  );
+                })()}
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '0.6rem' }}>
@@ -1383,9 +1576,10 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold mb-1 block">Valor Cobrado (R$)</label>
+                  <label className="text-xs font-semibold mb-1 block">Valor Cobrado com Desconto (R$)</label>
                   <input 
                     type="number" 
+                    step="0.01"
                     className="input-field" 
                     value={renewValue}
                     onChange={(e) => setRenewValue(e.target.value)}
