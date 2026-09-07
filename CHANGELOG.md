@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.31] - 2026-09-07
+### Alterações
+- Correção do modal de edição e do modal de pesagem: resolução de ícone não importado e remoção de opções duplicadas com crash no formulário
+
 ## [1.1.30] - 2026-09-07
 ### Alterações
 - Adiciona status de transplante com badges clínicos, histórico e controle evolutivo de peso (% PIDG), catálogo dinâmico de alergias no Firestore, edição integral de dados clínicos, evolução com internação e módulo de hemoculturas e lock terapia

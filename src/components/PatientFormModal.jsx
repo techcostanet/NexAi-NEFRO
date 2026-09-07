@@ -468,49 +468,6 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block">Etiologia DRC</label>
-                {!customEtiologia ? (
-                  <select
-                    className="input-field"
-                    value={formData.etiologiaDRC}
-                    onChange={(e) => {
-                      if (e.target.value === '__custom__') {
-                        setCustomEtiologia(true);
-                        setFormData(prev => ({ ...prev, etiologiaDRC: '' }));
-                      } else {
-                        setFormData(prev => ({ ...prev, etiologiaDRC: e.target.value }));
-                      }
-                    }}
-                  >
-                    {ETIOLOGIAS_DRC_PADRAO.map(et => (
-                      <option key={et} value={et}>{et}</option>
-                    ))}
-                    <option value="__custom__">➕ Outra etiologia (digitar)...</option>
-                  </select>
-                ) : (
-                  <div>
-                    <input
-                      type="text"
-                      className="input-field"
-                      placeholder="Ex: Amiloidose, Nefrite Intersticial..."
-                      value={formData.etiologiaDRC}
-                      onChange={(e) => setFormData(prev => ({ ...prev, etiologiaDRC: e.target.value }))}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCustomEtiologia(false);
-                        setFormData(prev => ({ ...prev, etiologiaDRC: ETIOLOGIAS_DRC_PADRAO[0] }));
-                      }}
-                      className="text-xs text-blue-600 hover:underline mt-1 block"
-                    >
-                      ← Selecionar da lista de etiologias
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div>
                 <label className="text-sm font-semibold mb-1 block flex items-center gap-1.5 text-slate-800">
                   <Scale size={15} color="#059669" />
                   <span>Peso Seco Alvo (kg)</span>
@@ -532,17 +489,6 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                   className="input-field" 
                   value={formData.dataInicioDialise}
                   onChange={(e) => setFormData(prev => ({ ...prev, dataInicioDialise: e.target.value }))}
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold mb-1 block">Hospital de Retaguarda</label>
-                <input 
-                  type="text" 
-                  className="input-field" 
-                  value={formData.hospital}
-                  placeholder="Ex: Hospital do Rim"
-                  onChange={(e) => setFormData(prev => ({ ...prev, hospital: e.target.value }))}
                 />
               </div>
 

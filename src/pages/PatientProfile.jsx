@@ -33,6 +33,7 @@ import {
   TrendingUp,
   CheckSquare,
   Sparkles,
+  Save,
   X
 } from 'lucide-react';
 import { 
