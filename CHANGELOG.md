@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.41] - 2026-09-07
+### Alterações
+- Padroniza modal de receita com o layout do sistema e calibra impressao estritamente para 1 folha A4
+
 ## [1.1.40] - 2026-09-07
 ### Alterações
 - Adiciona modulo de emissao de receituario medico ao lado de Evolucoes com suporte a controle especial 2 vias e impressao A4

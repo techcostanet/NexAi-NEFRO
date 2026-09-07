@@ -339,18 +339,22 @@ svg {
 .shrink-0 { flex-shrink: 0; }
 .self-end { align-self: flex-end; }
 
-/* ================= REGRAS DE IMPRESSÃO PROFISSIONAL (A4 & PDF) ================= */
+/* ================= REGRAS DE IMPRESSÃO PROFISSIONAL (A4 & PDF - 1 FOLHA) ================= */
 @media print {
   @page {
     size: A4 portrait;
-    margin: 8mm 12mm;
+    margin: 5mm 8mm !important;
   }
 
-  body {
+  html, body {
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
     background: #ffffff !important;
     background-image: none !important;
     color: #000000 !important;
-    font-size: 12pt;
+    font-size: 11pt;
+    overflow: hidden !important;
   }
 
   .no-print,
@@ -362,9 +366,10 @@ svg {
     display: none !important;
   }
 
-  /* Reset layout modal para viewport de impressão */
+  /* Reset de modais e overlays na impressão */
   .fixed,
-  div[style*="position: fixed"] {
+  div[style*="position: fixed"],
+  div[style*="position:fixed"] {
     position: static !important;
     background: transparent !important;
     backdrop-filter: none !important;
@@ -372,10 +377,10 @@ svg {
     padding: 0 !important;
     margin: 0 !important;
     width: 100% !important;
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
+    height: 100% !important;
+    max-height: 100% !important;
     box-shadow: none !important;
+    overflow: visible !important;
   }
 
   .glass-panel {
@@ -383,25 +388,36 @@ svg {
     box-shadow: none !important;
     background: transparent !important;
     padding: 0 !important;
+    margin: 0 !important;
     max-width: 100% !important;
   }
 
-  /* Estilização da folha de receituário impressa */
+  /* Estilização da folha de receituário impressa - 1 PÁGINA RIGOROSA */
   .prescription-a4-sheet {
     border: none !important;
     box-shadow: none !important;
     margin: 0 auto !important;
-    padding: 0 !important;
+    padding: 4mm 6mm !important;
     width: 100% !important;
     max-width: 100% !important;
-    page-break-after: avoid;
+    height: 278mm !important;
+    max-height: 278mm !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    page-break-after: avoid !important;
+    page-break-before: avoid !important;
+    page-break-inside: avoid !important;
+    overflow: hidden !important;
     background: #ffffff !important;
     color: #000000 !important;
+    box-sizing: border-box !important;
   }
 
   .prescription-a4-sheet section,
   .prescription-a4-sheet header,
   .prescription-a4-sheet footer {
-    page-break-inside: avoid;
+    page-break-inside: avoid !important;
   }
 }
+

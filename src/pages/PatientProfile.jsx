@@ -60,6 +60,7 @@ import MedicationModal from '../components/MedicationModal';
 import EvolutionModal from '../components/EvolutionModal';
 import ExamImportModal from '../components/ExamImportModal';
 import PrescriptionModal from '../components/PrescriptionModal';
+import PrescriptionPrintModal from '../components/PrescriptionPrintModal';
 
 export default function PatientProfile() {
   const { id } = useParams();
@@ -89,7 +90,8 @@ export default function PatientProfile() {
   const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
   const [prescriptionToEdit, setPrescriptionToEdit] = useState(null);
   const [prescriptionInitialTipo, setPrescriptionInitialTipo] = useState('simples');
-  const [prescriptionInitialView, setPrescriptionInitialView] = useState('edit');
+  const [isPrescriptionPrintModalOpen, setIsPrescriptionPrintModalOpen] = useState(false);
+  const [prescriptionToPrint, setPrescriptionToPrint] = useState(null);
 
   // Novos Modais para Peso, Transplante e Lock Therapy
   const [isWeightModalOpen, setIsWeightModalOpen] = useState(false);
@@ -233,22 +235,18 @@ export default function PatientProfile() {
   const handleOpenNewPrescription = (tipo = 'simples') => {
     setPrescriptionToEdit(null);
     setPrescriptionInitialTipo(tipo);
-    setPrescriptionInitialView('edit');
     setIsPrescriptionModalOpen(true);
   };
 
   const handleEditPrescription = (rec) => {
     setPrescriptionToEdit(rec);
     setPrescriptionInitialTipo(rec.tipoReceita || 'simples');
-    setPrescriptionInitialView('edit');
     setIsPrescriptionModalOpen(true);
   };
 
   const handleViewPrescription = (rec) => {
-    setPrescriptionToEdit(rec);
-    setPrescriptionInitialTipo(rec.tipoReceita || 'simples');
-    setPrescriptionInitialView('preview');
-    setIsPrescriptionModalOpen(true);
+    setPrescriptionToPrint(rec);
+    setIsPrescriptionPrintModalOpen(true);
   };
 
   const handleDuplicatePrescription = (rec) => {
@@ -259,8 +257,14 @@ export default function PatientProfile() {
       dataEmissao: new Date().toISOString().split('T')[0]
     });
     setPrescriptionInitialTipo(rec.tipoReceita || 'simples');
-    setPrescriptionInitialView('edit');
     setIsPrescriptionModalOpen(true);
+  };
+
+  const handleSavedPrescription = (savedDoc, openPrint = false) => {
+    if (openPrint && savedDoc) {
+      setPrescriptionToPrint(savedDoc);
+      setIsPrescriptionPrintModalOpen(true);
+    }
   };
 
   const handleDeletePrescription = async (prescriptionId) => {
@@ -2150,7 +2154,15 @@ export default function PatientProfile() {
         doctorInfo={doctorInfo}
         prescriptionToEdit={prescriptionToEdit}
         initialTipo={prescriptionInitialTipo}
-        initialView={prescriptionInitialView}
+        onSaved={handleSavedPrescription}
+      />
+
+      <PrescriptionPrintModal
+        isOpen={isPrescriptionPrintModalOpen}
+        onClose={() => setIsPrescriptionPrintModalOpen(false)}
+        prescription={prescriptionToPrint}
+        patient={patient}
+        doctorInfo={doctorInfo}
       />
 
       <PatientFormModal 
