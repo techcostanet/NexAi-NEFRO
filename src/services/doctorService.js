@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, getDocs, collection, onSnapshot, updateDoc, deleteDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, getDocs, collection, onSnapshot, updateDoc, deleteDoc, writeBatch } from "firebase/firestore";
 import { db } from "../config/firebase.js";
 import { logAuditEvent } from "./auditService.js";
 
@@ -8,25 +8,25 @@ export const DEFAULT_DOCTOR_ID = "dr-marcelo";
 export const DEFAULT_DOCTORS = [
   {
     id: "dr-marcelo",
-    nome: "Dr. Marcelo Ramos",
+    nome: "Dr. Marcelo Ramos (Demonstração)",
     titulo: "Médico Nefrologista & Intensivista",
-    cpf: "123.456.789-00",
+    cpf: "000.123.456-00 (Fictício)",
     crm: "654321",
     ufCrm: "SP",
     rqe: "45890",
     especialidade: "Nefrologia Clínica, Hemodiálise e Transplante Renal",
     email: "dr.marcelo@nefroapp.com",
     telefone: "(11) 97123-4567",
-    clinicaPrincipal: "Centro Nefrológico NexAi & Hospital do Rim",
-    hospitalVinculo: "Hospital Estadual de Nefrologia",
-    unidadeDialise: "Unidade de Hemodiálise e Diálise Peritoneal",
-    bio: "Coordenador Clínico de Terapia Renal com foco em adequação dialítica (Kt/V), vigilância de acessos vasculares (FAV/Permcath) e controle de distúrbio mineral ósseo e anemia.",
+    clinicaPrincipal: "Clínica Nefrológica Virtual Modelo (Demonstração)",
+    hospitalVinculo: "Hospital Escola Simulado NexAi (Demonstração)",
+    unidadeDialise: "Unidade de Hemodiálise e Diálise Peritoneal Simulada",
+    bio: "Perfil demonstrativo para apresentação e testes clínicos do NexAi-NEFRO. Contém pacientes fictícios de simulação de adequação dialítica, acessos vasculares e condutas nefrológicas.",
     statusLicenca: "Trial",
     tipoConta: "Medico / Demonstração",
     plano: "Demonstração",
     valorMensalidade: 0,
     dataInicioAssinatura: "2026-08-01T00:00:00.000Z",
-    dataFimAssinatura: "2026-12-31T23:59:59.000Z",
+    dataFimAssinatura: "2027-12-31T23:59:59.000Z",
     historicoPagamentos: [
       {
         id: "pag-demo-01",
@@ -41,118 +41,46 @@ export const DEFAULT_DOCTORS = [
     locaisAtuacao: [
       { 
         id: "loc-01", 
-        nome: "Centro Nefrológico NexAi & Hospital do Rim", 
+        nome: "Clínica Nefrológica Virtual Modelo (Demonstração)", 
         tipo: "Clínica de Hemodiálise", 
         cidade: "São Paulo/SP", 
         turnos: "1º, 2º e 3º Turnos",
         diasSemana: "Seg/Qua/Sex",
-        rtNome: "Dr. Marcelo Ramos",
+        rtNome: "Dr. Marcelo Ramos (Demonstração)",
         rtCrm: "654321/SP",
-        telefoneEnfermagem: "(11) 97123-4567",
+        telefoneEnfermagem: "(11) 90000-0000",
         status: "Ativo",
         criadoEm: "2026-08-01T00:00:00.000Z"
       },
       { 
         id: "loc-02", 
-        nome: "Hospital Estadual de Nefrologia", 
+        nome: "Hospital Escola Simulado NexAi (Demonstração)", 
         tipo: "Hospital Geral", 
         cidade: "São Paulo/SP", 
         turnos: "Interconsultas e UTI",
         diasSemana: "Diário",
-        rtNome: "Dr. Roberto Silveira",
+        rtNome: "Dr. Roberto Silveira (Simulado)",
         rtCrm: "112233/SP",
-        telefoneEnfermagem: "(11) 98888-1111",
+        telefoneEnfermagem: "(11) 90000-1111",
         status: "Ativo",
         criadoEm: "2026-08-01T00:00:00.000Z"
       },
       { 
         id: "loc-03", 
-        nome: "Consultório Privado Dr. Marcelo", 
+        nome: "Consultório Ambulatorial Simulado (Demonstração)", 
         tipo: "Ambulatório", 
         cidade: "São Paulo/SP", 
         turnos: "Manhã e Tarde",
         diasSemana: "Ter/Qui",
-        rtNome: "Dr. Marcelo Ramos",
+        rtNome: "Dr. Marcelo Ramos (Demonstração)",
         rtCrm: "654321/SP",
-        telefoneEnfermagem: "(11) 97123-4567",
+        telefoneEnfermagem: "(11) 90000-2222",
         status: "Ativo",
         criadoEm: "2026-08-01T00:00:00.000Z"
       }
     ],
     pacientesCount: 6,
     criadoEm: "2026-08-01T00:00:00.000Z"
-  },
-  {
-    id: "dra-gisele",
-    nome: "Dra. Gisele",
-    titulo: "Médica Nefrologista",
-    cpf: "987.654.321-11",
-    crm: "123456",
-    ufCrm: "SP",
-    rqe: "98765",
-    especialidade: "Nefrologia Clínica e Hemodiálise",
-    email: "dra.gisele@nefroapp.com",
-    telefone: "(11) 98765-4321",
-    clinicaPrincipal: "Dialize Betim",
-    hospitalVinculo: "Hospital Geral de Nefrologia",
-    unidadeDialise: "Unidade de Diálise 1 e 2",
-    bio: "Especialista em Terapia Renal Substitutiva (TRS), acompanhamento de fístulas arteriovenosas e controle do distúrbio mineral e ósseo da DRC.",
-    statusLicenca: "Ativo",
-    tipoConta: "Médico Assinante",
-    plano: "Mensal",
-    valorMensalidade: 490.00,
-    dataInicioAssinatura: "2026-07-15T00:00:00.000Z",
-    dataFimAssinatura: "2026-09-15T23:59:59.000Z",
-    historicoPagamentos: [
-      {
-        id: "pag-gis-01",
-        data: "2026-07-15T14:30:00.000Z",
-        valor: 490.00,
-        plano: "Plano Mensal Nefrologia",
-        status: "Pago",
-        metodo: "PIX",
-        referencia: "Mensalidade Jul/Ago 2026"
-      },
-      {
-        id: "pag-gis-02",
-        data: "2026-08-15T11:00:00.000Z",
-        valor: 490.00,
-        plano: "Plano Mensal Nefrologia",
-        status: "Pago",
-        metodo: "Cartão de Crédito",
-        referencia: "Mensalidade Ago/Set 2026"
-      }
-    ],
-    locaisAtuacao: [
-      { 
-        id: "loc-04", 
-        nome: "Dialize Betim", 
-        tipo: "Clínica de Hemodiálise", 
-        cidade: "Betim/MG", 
-        turnos: "1º, 2º e 3º Turnos",
-        diasSemana: "Seg/Qua/Sex",
-        rtNome: "Dra. Gisele",
-        rtCrm: "123456/SP",
-        telefoneEnfermagem: "(11) 98765-4321",
-        status: "Ativo",
-        criadoEm: "2026-07-15T00:00:00.000Z"
-      },
-      { 
-        id: "loc-05", 
-        nome: "Hospital Geral de Nefrologia", 
-        tipo: "Hospital Geral", 
-        cidade: "São Paulo/SP", 
-        turnos: "Plantão e Interconsulta",
-        diasSemana: "Ter/Qui/Sáb",
-        rtNome: "Dr. Fernando Duarte",
-        rtCrm: "78910/SP",
-        telefoneEnfermagem: "(11) 97777-3333",
-        status: "Ativo",
-        criadoEm: "2026-07-15T00:00:00.000Z"
-      }
-    ],
-    pacientesCount: 15,
-    criadoEm: "2026-07-15T00:00:00.000Z"
   }
 ];
 
@@ -462,4 +390,68 @@ export async function removeDoctorLocation(doctorId, locationId) {
   return locais;
 }
 
+/**
+ * Exclui permanentemente uma licença médica e seus registros vinculados no Cloud Firestore
+ * @param {string} doctorId - ID do médico a ser removido
+ * @param {string} [adminEmail='admin@nefroapp.com'] - E-mail do administrador executor
+ */
+export async function deleteDoctor(doctorId, adminEmail = "admin@nefroapp.com") {
+  if (!db) throw new Error("Firestore não inicializado");
+  
+  const docRef = doc(db, DOCTORS_COLLECTION, doctorId);
+  const snap = await getDoc(docRef);
+  const docData = snap.exists() ? snap.data() : { nome: doctorId };
 
+  // 1. Excluir da coleção doctors
+  await deleteDoc(docRef);
+
+  // 2. Excluir usuários associados na coleção users
+  try {
+    const usersSnap = await getDocs(collection(db, "users"));
+    const batch = writeBatch(db);
+    let countUsers = 0;
+    usersSnap.forEach(uDoc => {
+      const uData = uDoc.data();
+      if (uData.doctorId === doctorId || uData.activeTenantId === doctorId) {
+        batch.delete(doc(db, "users", uDoc.id));
+        countUsers++;
+      }
+    });
+    if (countUsers > 0) {
+      await batch.commit();
+    }
+  } catch (err) {
+    console.warn("Aviso ao remover usuários vinculados:", err);
+  }
+
+  // 3. Excluir pacientes associados na coleção patients
+  try {
+    const patientsSnap = await getDocs(collection(db, "patients"));
+    const pBatch = writeBatch(db);
+    let countPatients = 0;
+    patientsSnap.forEach(pDoc => {
+      const pData = pDoc.data();
+      if (pData.doctorId === doctorId) {
+        pBatch.delete(doc(db, "patients", pDoc.id));
+        countPatients++;
+      }
+    });
+    if (countPatients > 0) {
+      await pBatch.commit();
+    }
+  } catch (err) {
+    console.warn("Aviso ao remover pacientes vinculados:", err);
+  }
+
+  // 4. Registrar evento de auditoria imutável
+  await logAuditEvent({
+    tipoAcao: 'LICENSE_DELETED',
+    descricao: `Licença de ${docData.nome || doctorId} excluída permanentemente pelo administrador`,
+    targetDoctorId: doctorId,
+    targetDoctorName: docData.nome || doctorId,
+    adminEmail,
+    detalhes: { doctorId, deletedDoctor: docData }
+  });
+
+  return true;
+}

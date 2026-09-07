@@ -38,7 +38,8 @@ import {
   subscribeDoctorsList, 
   saveDoctorProfile, 
   toggleDoctorLicenseStatus, 
-  renewDoctorLicense 
+  renewDoctorLicense,
+  deleteDoctor 
 } from '../services/doctorService';
 import { 
   subscribeSystemPlans, 
@@ -46,7 +47,6 @@ import {
   toggleSystemPlanStatus, 
   subscribeGatewayConfig 
 } from '../services/financialService';
-import { seedDemoPatientsToFirestore } from '../services/patientService';
 import { logAuditEvent, subscribeAuditLogs } from '../services/auditService';
 import { useAuth } from '../context/AuthContext';
 import PlanModal from '../components/PlanModal';
@@ -63,7 +63,6 @@ export default function AdminDashboard() {
   const [gatewayConfig, setGatewayConfig] = useState({});
   const [loading, setLoading] = useState(true);
   const [auditLoading, setAuditLoading] = useState(true);
-  const [seeding, setSeeding] = useState(false);
   const [feedback, setFeedback] = useState(null);
   
   // Filtros
@@ -163,23 +162,24 @@ export default function AdminDashboard() {
     navigate('/login');
   };
 
-  const handleResetDemoData = async () => {
-    if (window.confirm("Deseja restaurar a base de dados de demonstração no Cloud Firestore? Isso recriará os 6 pacientes clínicos com todos os exames, alertas e ciclos de medicação.")) {
+  // Excluir Licença Médica com Confirmação e Auditoria
+  const handleDeleteDoctor = async (doctor) => {
+    const isMainDemo = doctor.id === 'dr-marcelo';
+    const confirmMsg = isMainDemo
+      ? `ATENÇÃO: '${doctor.nome}' é o usuário de demonstração. Deseja realmente excluí-lo do sistema?`
+      : `ATENÇÃO: Tem certeza de que deseja excluir permanentemente a licença e dados do médico ${doctor.nome} (CRM ${doctor.crm}/${doctor.ufCrm})? Esta ação removerá o acesso e os dados no Firestore.`;
+
+    if (window.confirm(confirmMsg)) {
       try {
-        setSeeding(true);
-        await seedDemoPatientsToFirestore('dr-marcelo');
-        await logAuditEvent({
-          tipoAcao: 'DEMO_RESET',
-          descricao: 'Restauração da base completa de demonstração clínica no Firestore',
-          adminEmail: currentUser?.email || 'admin@nefroapp.com'
+        await deleteDoctor(doctor.id, currentUser?.email || 'admin@nefroapp.com');
+        setFeedback({ 
+          type: 'success', 
+          text: `Licença de ${doctor.nome} excluída com sucesso do Cloud Firestore!` 
         });
-        setFeedback({ type: 'success', text: 'Base de demonstração restaurada com sucesso no Firestore!' });
-        setTimeout(() => setFeedback(null), 5000);
+        setTimeout(() => setFeedback(null), 4000);
       } catch (err) {
-        console.error(err);
-        setFeedback({ type: 'error', text: 'Falha ao restaurar dados no Firestore.' });
-      } finally {
-        setSeeding(false);
+        console.error("Erro ao excluir médico:", err);
+        setFeedback({ type: 'error', text: 'Falha ao excluir licença médica no Firestore.' });
       }
     }
   };
@@ -439,17 +439,6 @@ export default function AdminDashboard() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button 
-            className="btn btn-outline" 
-            onClick={handleResetDemoData}
-            disabled={seeding}
-            style={{ padding: '0.55rem 0.95rem', fontSize: '0.82rem', borderColor: '#bfdbfe', background: '#eff6ff', color: '#1d4ed8', fontWeight: '600' }}
-            title="Restaura os 6 pacientes de teste com exames e prescrições completas"
-          >
-            {seeding ? <Loader2 className="animate-spin" size={15} /> : <RotateCcw size={15} />}
-            <span>{seeding ? 'Restaurando...' : 'Restaurar Base'}</span>
-          </button>
-
           <button 
             className="btn btn-outline" 
             onClick={handleLogout} 
@@ -806,6 +795,22 @@ export default function AdminDashboard() {
                                 title="Editar dados cadastrais e licença"
                               >
                                 <Edit size={13} />
+                              </button>
+
+                              {/* Botão Excluir Licença */}
+                              <button 
+                                className="btn btn-outline" 
+                                onClick={() => handleDeleteDoctor(docItem)}
+                                style={{ 
+                                  padding: '0.35rem 0.5rem', 
+                                  fontSize: '0.75rem', 
+                                  color: '#dc2626', 
+                                  borderColor: '#fecaca', 
+                                  background: '#fef2f2' 
+                                }}
+                                title="Excluir licença médica permanentemente"
+                              >
+                                <Trash2 size={13} />
                               </button>
                             </div>
                           </td>

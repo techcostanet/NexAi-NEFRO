@@ -1,5 +1,6 @@
 /**
  * Base de Pacientes de Demonstração Completa e Realística para Apresentação
+ * DADOS 100% FICTÍCIOS E SIMULADOS PARA TESTES E DEMONSTRAÇÃO DO SISTEMA
  * Cobre 100% dos recursos clínicos, turnos, acessos vasculares, exames e alertas de medicamentos.
  */
 
@@ -12,18 +13,29 @@ const getTodayOffset = (days) => {
 export const DEMO_PATIENTS_DATA = [
   {
     id: "paciente-demo-1",
-    nome: "SEBASTIÃO PEREIRA DA SILVA",
-    clinica: "Centro Nefrológico NexAi & Hospital do Rim",
-    hospital: "Hospital Estadual de Nefrologia",
+    nome: "[DEMO] PACIENTE MODELO 01 - ADEQUAÇÃO DIALÍTICA (DADO FICTÍCIO)",
+    cpf: "000.111.222-01 (Fictício)",
+    telefone: "(11) 90000-0001 (Teste)",
+    clinica: "Clínica Nefrológica Virtual Modelo (Demonstração)",
+    hospital: "Hospital Escola Simulado NexAi (Demonstração)",
     turno: "1º Turno",
+    diaSemana: "Seg/Qua/Sex",
     dataNascimento: "1962-04-18",
     idade: 64,
+    sexo: "M",
     status: "Ativo em Lista de Espera",
     statusTransplante: "Ativo em Lista de Espera",
     etiologiaDRC: "Nefropatia Diabética",
     pesoSeco: 68.5,
+    altura: 172,
     dataInicioDialise: "2023-01-15",
     alergias: ["Dipirona"],
+    contatoEmergencia: {
+      nome: "Contato Simulado Alfa (Teste)",
+      telefone: "(11) 90000-9991",
+      parentesco: "Fictício"
+    },
+    observacoesClinicas: "DADOS 100% FICTÍCIOS PARA SIMULAÇÃO DO SISTEMA. Paciente modelo para adequação dialítica com Kt/V alvo atingido e FAV braquiocefálica pérvia.",
     historicoPesos: [
       { id: "w-1-1", data: "2026-08-10", peso: 70.2, pesoSeco: 68.5, variacaoKg: 1.7, percentualGanho: 2.48, momento: "Pré-diálise", conduta: "Ultrafiltração programada 1700ml sem intercorrências." },
       { id: "w-1-2", data: "2026-08-08", peso: 69.8, pesoSeco: 68.5, variacaoKg: 1.3, percentualGanho: 1.90, momento: "Pré-diálise", conduta: "Peso pós atingiu peso seco 68.5 kg." },
@@ -146,17 +158,29 @@ export const DEMO_PATIENTS_DATA = [
   },
   {
     id: "paciente-demo-2",
-    nome: "MARIA DE LOURDES SOUZA",
-    clinica: "Centro Nefrológico NexAi & Hospital do Rim",
-    hospital: "Hospital Estadual de Nefrologia",
+    nome: "[DEMO] PACIENTE MODELO 02 - PROTOCOLO DE ANEMIA (DADO FICTÍCIO)",
+    cpf: "000.222.333-02 (Fictício)",
+    telefone: "(11) 90000-0002 (Teste)",
+    clinica: "Clínica Nefrológica Virtual Modelo (Demonstração)",
+    hospital: "Hospital Escola Simulado NexAi (Demonstração)",
     turno: "2º Turno",
+    diaSemana: "Seg/Qua/Sex",
     dataNascimento: "1968-11-23",
+    idade: 57,
+    sexo: "F",
     status: "Encaminhado / Em Avaliação",
     statusTransplante: "Encaminhado / Em Avaliação",
     etiologiaDRC: "Hipertensão Arterial Sistêmica (HAS)",
     pesoSeco: 62.0,
+    altura: 160,
     dataInicioDialise: "2024-02-10",
     alergias: ["Penicilina / Amoxicilina", "Contraste Iodado"],
+    contatoEmergencia: {
+      nome: "Contato Simulado Beta (Teste)",
+      telefone: "(11) 90000-9992",
+      parentesco: "Fictício"
+    },
+    observacoesClinicas: "DADOS 100% FICTÍCIOS PARA SIMULAÇÃO DO SISTEMA. Paciente modelo para vigilância de anemia ferropriva com ciclo de Noripurum.",
     historicoPesos: [
       { id: "w-2-1", data: "2026-08-10", peso: 63.5, pesoSeco: 62.0, variacaoKg: 1.5, percentualGanho: 2.42, momento: "Pré-diálise", conduta: "UF de 1500ml." },
       { id: "w-2-2", data: "2026-08-08", peso: 64.0, pesoSeco: 62.0, variacaoKg: 2.0, percentualGanho: 3.23, momento: "Pré-diálise", conduta: "Orientada restrição hídrica interdialítica." }
@@ -250,17 +274,29 @@ export const DEMO_PATIENTS_DATA = [
   },
   {
     id: "paciente-demo-3",
-    nome: "ANTONIO CARLOS OLIVEIRA",
-    clinica: "Centro Nefrológico NexAi & Hospital do Rim",
-    hospital: "Hospital Estadual de Nefrologia",
+    nome: "[DEMO] PACIENTE MODELO 03 - HIPERPARATIREOIDISMO DMO (DADO FICTÍCIO)",
+    cpf: "000.333.444-03 (Fictício)",
+    telefone: "(11) 90000-0003 (Teste)",
+    clinica: "Clínica Nefrológica Virtual Modelo (Demonstração)",
+    hospital: "Hospital Escola Simulado NexAi (Demonstração)",
     turno: "3º Turno",
+    diaSemana: "Ter/Qui/Sáb",
     dataNascimento: "1974-09-05",
+    idade: 51,
+    sexo: "M",
     status: "Doador Vivo em Investigação",
     statusTransplante: "Doador Vivo em Investigação",
     etiologiaDRC: "Glomerulonefrite Crônica (GNC)",
     pesoSeco: 76.0,
+    altura: 178,
     dataInicioDialise: "2022-10-05",
     alergias: ["Sulfa / Sulfametoxazol"],
+    contatoEmergencia: {
+      nome: "Contato Simulado Gama (Teste)",
+      telefone: "(11) 90000-9993",
+      parentesco: "Fictício"
+    },
+    observacoesClinicas: "DADOS 100% FICTÍCIOS PARA SIMULAÇÃO DO SISTEMA. Paciente modelo para controle de DMO-DRC com hiperparatireoidismo severo.",
     historicoPesos: [
       { id: "w-3-1", data: "2026-08-10", peso: 79.8, pesoSeco: 76.0, variacaoKg: 3.8, percentualGanho: 5.00, momento: "Pré-diálise", conduta: "Ganho interdialítico excessivo (>4.5%). Programada UF 3500ml escalonada com perfil sódico." }
     ],
@@ -353,17 +389,29 @@ export const DEMO_PATIENTS_DATA = [
   },
   {
     id: "paciente-demo-4",
-    nome: "FRANCISCA HELENA DOS SANTOS",
-    clinica: "Centro Nefrológico NexAi & Hospital do Rim",
-    hospital: "Hospital Estadual de Nefrologia",
+    nome: "[DEMO] PACIENTE MODELO 04 - CATETER PERMCATH & LOCK (DADO FICTÍCIO)",
+    cpf: "000.444.555-04 (Fictício)",
+    telefone: "(11) 90000-0004 (Teste)",
+    clinica: "Clínica Nefrológica Virtual Modelo (Demonstração)",
+    hospital: "Hospital Escola Simulado NexAi (Demonstração)",
     turno: "1º Turno",
+    diaSemana: "Seg/Qua/Sex",
     dataNascimento: "1955-03-12",
+    idade: 71,
+    sexo: "F",
     status: "Suspenso / Inativo em Lista",
     statusTransplante: "Suspenso / Inativo em Lista",
     etiologiaDRC: "Doença Renal Policística Autossômica Dominante (DRPAD)",
     pesoSeco: 54.0,
+    altura: 155,
     dataInicioDialise: "2025-09-01",
     alergias: ["Vancomicina"],
+    contatoEmergencia: {
+      nome: "Contato Simulado Delta (Teste)",
+      telefone: "(11) 90000-9994",
+      parentesco: "Fictício"
+    },
+    observacoesClinicas: "DADOS 100% FICTÍCIOS PARA SIMULAÇÃO DO SISTEMA. Paciente modelo para vigilância de acesso venoso central tunelizado e lock terapia.",
     historicoPesos: [
       { id: "w-4-1", data: "2026-08-09", peso: 55.4, pesoSeco: 54.0, variacaoKg: 1.4, percentualGanho: 2.59, momento: "Pré-diálise", conduta: "Estável clinicamente." }
     ],
@@ -455,17 +503,29 @@ export const DEMO_PATIENTS_DATA = [
   },
   {
     id: "paciente-demo-5",
-    nome: "JOÃO BATISTA DE ALMEIDA",
-    clinica: "Centro Nefrológico NexAi & Hospital do Rim",
-    hospital: "Hospital Estadual de Nefrologia",
+    nome: "[DEMO] PACIENTE MODELO 05 - HIPERCALEMIA CRÍTICA (DADO FICTÍCIO)",
+    cpf: "000.555.666-05 (Fictício)",
+    telefone: "(11) 90000-0005 (Teste)",
+    clinica: "Clínica Nefrológica Virtual Modelo (Demonstração)",
+    hospital: "Hospital Escola Simulado NexAi (Demonstração)",
     turno: "2º Turno",
+    diaSemana: "Ter/Qui/Sáb",
     dataNascimento: "1958-07-30",
+    idade: 68,
+    sexo: "M",
     status: "Contraindicado Clínico",
     statusTransplante: "Contraindicado Clínico",
     etiologiaDRC: "Nefroesclerose Hipertensiva",
     pesoSeco: 72.0,
+    altura: 174,
     dataInicioDialise: "2023-07-20",
     alergias: [],
+    contatoEmergencia: {
+      nome: "Contato Simulado Epsilon (Teste)",
+      telefone: "(11) 90000-9995",
+      parentesco: "Fictício"
+    },
+    observacoesClinicas: "DADOS 100% FICTÍCIOS PARA SIMULAÇÃO DO SISTEMA. Paciente modelo para alerta de hipercalemia e conduta de resina de troca.",
     historicoPesos: [
       { id: "w-5-1", data: "2026-08-09", peso: 74.2, pesoSeco: 72.0, variacaoKg: 2.2, percentualGanho: 3.05, momento: "Pré-diálise", conduta: "Controle hidroeletrolítico." }
     ],
@@ -559,17 +619,29 @@ export const DEMO_PATIENTS_DATA = [
   },
   {
     id: "paciente-demo-6",
-    nome: "TEREZA CRISTINA FAGUNDES",
-    clinica: "Centro Nefrológico NexAi & Hospital do Rim",
-    hospital: "Hospital Estadual de Nefrologia",
+    nome: "[DEMO] PACIENTE MODELO 06 - DIÁLISE PERITONEAL APD (DADO FICTÍCIO)",
+    cpf: "000.666.777-06 (Fictício)",
+    telefone: "(11) 90000-0006 (Teste)",
+    clinica: "Clínica Nefrológica Virtual Modelo (Demonstração)",
+    hospital: "Hospital Escola Simulado NexAi (Demonstração)",
     turno: "Diálise Peritoneal",
+    diaSemana: "Diário",
     dataNascimento: "1965-01-14",
+    idade: 61,
+    sexo: "F",
     status: "Encaminhar / Em Triagem",
     statusTransplante: "Encaminhar / Em Triagem",
     etiologiaDRC: "Nefropatia Diabética",
     pesoSeco: 59.5,
+    altura: 162,
     dataInicioDialise: "2024-04-01",
     alergias: ["AINEs (Anti-inflamatórios)"],
+    contatoEmergencia: {
+      nome: "Contato Simulado Zeta (Teste)",
+      telefone: "(11) 90000-9996",
+      parentesco: "Fictício"
+    },
+    observacoesClinicas: "DADOS 100% FICTÍCIOS PARA SIMULAÇÃO DO SISTEMA. Paciente modelo para seguimento de Diálise Peritoneal Ambulatorial Contínua (DPAC/APD).",
     historicoPesos: [
       { id: "w-6-1", data: "2026-08-10", peso: 59.8, pesoSeco: 59.5, variacaoKg: 0.3, percentualGanho: 0.50, momento: "Pré-diálise", conduta: "Adequada volemia em Diálise Peritoneal." }
     ],

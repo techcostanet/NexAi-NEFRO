@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.33] - 2026-09-07
+### Alterações
+- Remocao do medico de teste Dr. Rodrigo Castro, adicao de exclusao de licencas no Admin, remocao do botao Restaurar Base e padronizacao dos 6 pacientes de demonstracao para dados 100% ficticios no Firestore
+
 ## [1.1.32] - 2026-09-07
 ### Alterações
 - Harmonizacao visual: alinhamento de rotulos e secoes no modal, remocao de aviso tecnico de alergia e balanceamento do card de peso
