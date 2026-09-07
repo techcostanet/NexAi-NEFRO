@@ -88,6 +88,10 @@ export default function LandingPage() {
       a: "Sim. A plataforma é 100% responsiva e funciona em qualquer navegador web (computador, iPad, tablet ou smartphone) sem necessidade de instalação."
     },
     {
+      q: "Como funciona a Migração e Importação Inicial no Plano Anual?",
+      a: "Quem assina o Plano Anual recebe Implantação VIP gratuita: nossa equipe técnica cadastra todos os seus pacientes e o histórico de exames laboratoriais a partir dos seus arquivos em PDF ou planilhas em Excel (XLS). Você não perde horas digitando tudo do zero e já começa a atender com prontuários completos desde o primeiro dia!"
+    },
+    {
       q: "Como funciona o cancelamento ou renovação?",
       a: "Você tem total liberdade. No plano mensal, não há fidelidade. No plano anual, você aproveita 2 meses de bônus gratuito (pague 10 meses e use 12)."
     }
@@ -923,7 +927,35 @@ export default function LandingPage() {
                   </div>
                 </div>
 
+                {/* Bônus Exclusivo de Migração VIP */}
+                <div 
+                  style={{ 
+                    background: 'linear-gradient(135deg, #eff6ff 0%, #ecfdf5 100%)', 
+                    border: '1.5px dashed #2563eb', 
+                    borderRadius: '14px', 
+                    padding: '0.85rem 1rem', 
+                    marginBottom: '1.5rem',
+                    textAlign: 'left'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '1rem' }}>🎁</span>
+                    <strong style={{ fontSize: '0.78rem', color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      BÔNUS VIP: Migração Inicial Gratuita
+                    </strong>
+                  </div>
+                  <p style={{ fontSize: '0.8rem', color: '#1e293b', lineHeight: '1.45', margin: 0 }}>
+                    <strong>Cadastramos tudo por você!</strong> Envie seus relatórios em <strong>PDF ou planilhas (XLS)</strong> e nossa equipe técnica importa todos os seus pacientes e históricos de exames. Você já começa atendendo no 1º dia sem perder tempo digitando!
+                  </p>
+                </div>
+
                 <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 2rem 0', display: 'flex', flexDirection: 'column', gap: '0.85rem', fontSize: '0.9rem', color: '#1e293b' }}>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', background: '#eff6ff', padding: '7px 10px', borderRadius: '10px', border: '1px solid #bfdbfe' }}>
+                    <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <span style={{ color: '#1d4ed8', fontWeight: '700', fontSize: '0.84rem' }}>
+                      Carga Inicial VIP: Importamos seus pacientes e exames via PDF/XLS
+                    </span>
+                  </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
                     <strong>Prontuários e Pacientes Ilimitados</strong>
@@ -954,21 +986,31 @@ export default function LandingPage() {
               <button 
                 type="button" 
                 onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'anual') || { id: 'plano-anual', nome: 'Plano Anual com Desconto', valor: 0.00, intervalo: 'anual' })}
-                className="btn"
                 style={{ 
                   width: '100%', 
-                  padding: '0.95rem 1.5rem', 
-                  fontSize: '0.95rem', 
-                  fontWeight: '700', 
-                  borderRadius: '12px',
+                  padding: '0.95rem 1rem', 
+                  fontSize: '0.98rem', 
+                  fontWeight: '800', 
+                  borderRadius: '14px',
                   background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
                   color: '#ffffff',
-                  boxShadow: '0 8px 18px rgba(37, 99, 235, 0.35)',
+                  boxShadow: '0 8px 20px rgba(37, 99, 235, 0.35)',
                   border: 'none',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '3px',
+                  whiteSpace: 'normal',
+                  textAlign: 'center',
+                  lineHeight: '1.25'
                 }}
               >
-                Assinar Plano Anual com 2 Meses Grátis
+                <span>Assinar Plano Anual</span>
+                <span style={{ fontSize: '0.78rem', fontWeight: '600', color: '#dbeafe' }}>
+                  2 Meses Grátis + Migração VIP Inclusa 🎁
+                </span>
               </button>
             </div>
 
@@ -1040,16 +1082,72 @@ export default function LandingPage() {
                 className="btn btn-outline"
                 style={{ 
                   width: '100%', 
-                  padding: '0.85rem 1.5rem', 
+                  padding: '1rem 1.5rem', 
                   fontSize: '0.95rem', 
                   fontWeight: '700', 
-                  borderRadius: '12px' 
+                  borderRadius: '14px',
+                  whiteSpace: 'normal',
+                  textAlign: 'center'
                 }}
               >
                 Assinar Plano Mensal
               </button>
             </div>
 
+          </div>
+
+          {/* Banner de Destaque: Transição e Migração sem Esforço */}
+          <div 
+            style={{ 
+              marginTop: '3.5rem',
+              background: '#ffffff',
+              borderRadius: '24px',
+              border: '2px solid #bfdbfe',
+              boxShadow: '0 12px 32px rgba(37, 99, 235, 0.08)',
+              padding: '2.25rem 2.5rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '1.5rem',
+              textAlign: 'left'
+            }}
+          >
+            <div style={{ flex: '1 1 500px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#dbeafe', color: '#1e40af', padding: '5px 14px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: '800', marginBottom: '0.75rem' }}>
+                <span>🚀 ZERO TRABALHO DE DIGITAÇÃO</span>
+              </div>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#0f172a', margin: '0 0 0.5rem 0', letterSpacing: '-0.02em' }}>
+                Preocupado com o tempo para cadastrar todos os seus pacientes?
+              </h3>
+              <p style={{ fontSize: '0.94rem', color: '#475569', lineHeight: '1.6', margin: 0 }}>
+                No <strong>Plano Anual</strong>, você não precisa cadastrar nada do zero! Basta nos enviar suas listas ou relatórios em <strong>PDF ou planilhas em Excel (XLS)</strong>. Nossa equipe técnica realiza toda a importação inicial dos seus pacientes e o histórico completo de exames laboratoriais. Você já começa a usar o NexAi-NEFRO com seus prontuários 100% prontos desde o primeiro dia!
+              </p>
+            </div>
+
+            <div style={{ flexShrink: 0 }}>
+              <button
+                type="button"
+                onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'anual') || { id: 'plano-anual', nome: 'Plano Anual com Desconto', valor: 0.00, intervalo: 'anual' })}
+                style={{
+                  padding: '1rem 1.75rem',
+                  fontSize: '0.95rem',
+                  fontWeight: '800',
+                  borderRadius: '14px',
+                  background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                  color: '#ffffff',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+              >
+                <span>Garantir Plano Anual com Migração Inclusa</span>
+                <ArrowRight size={18} />
+              </button>
+            </div>
           </div>
 
         </div>

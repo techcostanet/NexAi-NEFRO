@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.39] - 2026-09-07
+### Alterações
+- Correção do botão do plano anual e implementação do benefício de migração inicial VIP (PDF/XLS)
+
 ## [1.1.38] - 2026-09-07
 ### Alterações
 - Ajuste de texto no FAQ de segurança para Tecnologia Google e validação visual de preços

@@ -228,7 +228,7 @@ export default function CheckoutModal({ isOpen, onClose, selectedPlan, allPlans 
             </div>
 
             {/* Resumo do Plano Selecionado */}
-            <div className="p-3 mb-4 rounded-xl border border-blue-100 bg-blue-50/50 flex justify-between items-center">
+            <div className="p-3 mb-3 rounded-xl border border-blue-100 bg-blue-50/50 flex justify-between items-center">
               <div className="flex items-center gap-2.5">
                 <div style={{ padding: '6px', background: '#dbeafe', borderRadius: '8px', color: '#1d4ed8' }}>
                   <Zap size={16} />
@@ -245,6 +245,15 @@ export default function CheckoutModal({ isOpen, onClose, selectedPlan, allPlans 
                 <span className="text-xs text-muted">/{currentPlan?.intervalo || 'mês'}</span>
               </div>
             </div>
+
+            {currentPlan?.intervalo === 'anual' && (
+              <div style={{ background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '12px', padding: '10px 14px', marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Sparkles size={18} color="#059669" style={{ flexShrink: 0 }} />
+                <span style={{ fontSize: '0.78rem', color: '#065f46', lineHeight: '1.35' }}>
+                  <strong>Bônus VIP Ativo:</strong> Carga inicial gratuita de pacientes e exames via PDF/XLS inclusa na sua assinatura anual!
+                </span>
+              </div>
+            )}
 
             <form onSubmit={handleNextToPayment} className="flex flex-col gap-3">
               <div>
