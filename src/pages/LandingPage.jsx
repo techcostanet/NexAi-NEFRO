@@ -460,7 +460,7 @@ export default function LandingPage() {
               </div>
               <h3 className="font-bold text-base text-slate-900 mb-1.5">Conformidade Legal & LGPD</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Garantia de sigilo médico absoluto: nenhum dado clínico é compartilhado e todos os registros são criptografados no Cloud Firestore com backup contínuo.
+                Garantia de sigilo médico absoluto: nenhum dado clínico é compartilhado e todos os registros são criptografados com Tecnologia Google e backup contínuo.
               </p>
             </div>
 
@@ -701,7 +701,7 @@ export default function LandingPage() {
             <div className="p-4 rounded-xl border border-slate-200 bg-slate-50">
               <div className="flex items-center gap-2 mb-1.5">
                 <Database size={18} color="#7c3aed" />
-                <strong className="text-sm text-slate-900">Google Cloud Firestore</strong>
+                <strong className="text-sm text-slate-900">Tecnologia Google Cloud</strong>
               </div>
               <p className="text-xs text-slate-600">
                 Infraestrutura em nuvem de alta disponibilidade com criptografia AES-256 e redundância geográfica automática.
@@ -725,8 +725,8 @@ export default function LandingPage() {
           </p>
 
           {/* Toggle Mensal / Anual */}
-          <div className="flex justify-center items-center gap-3 mb-10">
-            <span className={`text-xs font-bold ${billingCycle === 'mensal' ? 'text-slate-900' : 'text-slate-500'}`}>
+          <div className="flex justify-center items-center gap-3 mb-16 mt-4">
+            <span className={`text-sm font-bold ${billingCycle === 'mensal' ? 'text-slate-900' : 'text-slate-500'}`}>
               Mensal
             </span>
 
@@ -758,20 +758,20 @@ export default function LandingPage() {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <span className={`text-xs font-bold ${billingCycle === 'anual' ? 'text-slate-900' : 'text-slate-500'}`}>
+              <span className={`text-sm font-bold ${billingCycle === 'anual' ? 'text-slate-900' : 'text-slate-500'}`}>
                 Anual
               </span>
-              <span style={{ fontSize: '0.68rem', background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
+              <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '3px 10px', borderRadius: '8px', fontWeight: 'bold' }}>
                 2 MESES GRÁTIS 🔥
               </span>
             </div>
           </div>
 
           {/* Grid de Cards de Planos */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.75rem', alignItems: 'stretch' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem', alignItems: 'stretch' }}>
             
             {/* Card 1: Trial 7 Dias */}
-            <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between text-left">
+            <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between text-left">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-purple-600 block mb-1">Sem Compromisso</span>
                 <h3 className="text-xl font-bold text-slate-900">Avaliação Gratuita</h3>
@@ -782,18 +782,18 @@ export default function LandingPage() {
                   <span className="text-xs text-muted block mt-0.5">por 7 dias completos</span>
                 </div>
 
-                <ul className="text-xs text-slate-600 flex flex-col gap-2.5 mb-6">
-                  <li className="flex items-center gap-2"><Check size={14} color="#16a34a" /> Acesso total a prontuários e diálise</li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#16a34a" /> 6 pacientes demonstrativos inclusos</li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#16a34a" /> Sem necessidade de cartão de crédito</li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#16a34a" /> Ativação imediata no Cloud Firestore</li>
+                <ul className="text-sm text-slate-600 flex flex-col gap-3 mb-8">
+                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Acesso total a prontuários e diálise</span></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>6 pacientes demonstrativos inclusos</span></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Sem necessidade de cartão de crédito</span></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Hospedado com Tecnologia Google</span></li>
                 </ul>
               </div>
 
               <button 
                 type="button" 
                 onClick={handleStartTrial}
-                className="btn btn-outline w-full py-2.5 text-xs font-bold"
+                className="btn btn-outline w-full py-3 text-sm font-bold"
               >
                 Iniciar Teste Grátis
               </button>
@@ -801,11 +801,12 @@ export default function LandingPage() {
 
             {/* Card 2: Plano Anual (DESTAQUE) */}
             <div 
-              className="p-6 rounded-3xl bg-white flex flex-col justify-between text-left relative"
+              className="p-8 rounded-3xl bg-white flex flex-col justify-between text-left relative"
               style={{ 
                 border: '2px solid #2563eb', 
-                boxShadow: '0 20px 40px rgba(37, 99, 235, 0.15)',
-                transform: 'scale(1.02)'
+                boxShadow: '0 20px 40px rgba(37, 99, 235, 0.12)',
+                transform: 'scale(1.03)',
+                zIndex: 10
               }}
             >
               {/* Badge Topo */}
@@ -833,33 +834,34 @@ export default function LandingPage() {
                 <p className="text-xs text-muted mt-1 mb-4">Economize 2 meses de mensalidade com contratação anual</p>
 
                 <div className="mb-6">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-extrabold text-blue-600">
-                      R$ {plans.find(p => p.intervalo === 'anual') ? plans.find(p => p.intervalo === 'anual').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00'}
+                  <div className="flex items-start gap-1">
+                    <span className="text-lg font-bold text-blue-600 mt-1">R$</span>
+                    <span className="text-4xl font-extrabold text-blue-600 tracking-tight">
+                      {plans.find(p => p.intervalo === 'anual') ? plans.find(p => p.intervalo === 'anual').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00'}
                     </span>
-                    <span className="text-xs text-muted">/ano</span>
+                    <span className="text-sm text-muted self-end mb-1">/ano</span>
                   </div>
-                  <span className="text-xs text-emerald-600 font-bold block mt-0.5">
+                  <span className="text-xs text-emerald-600 font-bold block mt-1 bg-emerald-50 inline-block px-2 py-1 rounded-md">
                     {plans.find(p => p.intervalo === 'anual') 
                       ? `Equivalente a R$ ${(plans.find(p => p.intervalo === 'anual').valor / 12).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês` 
                       : 'Pague 10, use 12'}
                   </span>
                 </div>
 
-                <ul className="text-xs text-slate-600 flex flex-col gap-2.5 mb-6">
-                  <li className="flex items-center gap-2"><Check size={14} color="#2563eb" /> <strong>Prontuários e Pacientes Ilimitados</strong></li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#2563eb" /> <strong>Evoluções de Hemodiálise Ilimitadas</strong></li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#2563eb" /> <strong>Gráficos de PTH, Fósforo, Hb e Kt/V</strong></li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#2563eb" /> <strong>Prescrições com Alertas de Ciclos</strong></li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#2563eb" /> <strong>Suporte VIP prioritário via WhatsApp</strong></li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#2563eb" /> <strong>Backup dedicado na nuvem</strong></li>
+                <ul className="text-sm text-slate-700 flex flex-col gap-3 mb-8">
+                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Prontuários e Pacientes Ilimitados</strong></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Evoluções de Hemodiálise Ilimitadas</strong></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Gráficos de PTH, Fósforo, Hb e Kt/V</strong></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Prescrições com Alertas de Ciclos</strong></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Suporte VIP prioritário via WhatsApp</strong></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#2563eb" className="shrink-0" /> <strong>Backup dedicado na nuvem</strong></li>
                 </ul>
               </div>
 
               <button 
                 type="button" 
                 onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'anual') || { id: 'plano-anual', nome: 'Plano Anual com Desconto', valor: 0.00, intervalo: 'anual' })}
-                className="btn btn-primary w-full py-3 text-xs font-bold"
+                className="btn btn-primary w-full py-3.5 text-sm font-bold"
                 style={{ background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', boxShadow: '0 8px 16px rgba(37, 99, 235, 0.3)' }}
               >
                 Assinar Plano Anual com 2 Meses Grátis
@@ -867,35 +869,36 @@ export default function LandingPage() {
             </div>
 
             {/* Card 3: Plano Mensal */}
-            <div className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between text-left">
+            <div className="p-8 rounded-3xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between text-left z-0">
               <div>
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-1">Flexibilidade Total</span>
                 <h3 className="text-xl font-bold text-slate-900">Plano Mensal</h3>
                 <p className="text-xs text-muted mt-1 mb-4">Acesso completo sem fidelidade ou carência</p>
 
                 <div className="mb-6">
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-extrabold text-slate-900">
-                      R$ {plans.find(p => p.intervalo === 'mensal') ? plans.find(p => p.intervalo === 'mensal').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00'}
+                  <div className="flex items-start gap-1">
+                    <span className="text-lg font-bold text-slate-900 mt-1">R$</span>
+                    <span className="text-4xl font-extrabold text-slate-900 tracking-tight">
+                      {plans.find(p => p.intervalo === 'mensal') ? plans.find(p => p.intervalo === 'mensal').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0,00'}
                     </span>
-                    <span className="text-xs text-muted">/mês</span>
+                    <span className="text-sm text-muted self-end mb-1">/mês</span>
                   </div>
-                  <span className="text-xs text-muted block mt-0.5">Cobrança recorrente mensal</span>
+                  <span className="text-xs text-muted block mt-1">Cobrança recorrente mensal</span>
                 </div>
 
-                <ul className="text-xs text-slate-600 flex flex-col gap-2.5 mb-6">
-                  <li className="flex items-center gap-2"><Check size={14} color="#16a34a" /> Prontuários e Pacientes Ilimitados</li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#16a34a" /> Evoluções de Hemodiálise Ilimitadas</li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#16a34a" /> Painel de Exames e Gráficos</li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#16a34a" /> Prescrições com Alertas de Ciclos</li>
-                  <li className="flex items-center gap-2"><Check size={14} color="#16a34a" /> Cancele quando quiser</li>
+                <ul className="text-sm text-slate-600 flex flex-col gap-3 mb-8">
+                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Prontuários e Pacientes Ilimitados</span></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Evoluções de Hemodiálise Ilimitadas</span></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Painel de Exames e Gráficos</span></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Prescrições com Alertas de Ciclos</span></li>
+                  <li className="flex items-center gap-3"><Check size={16} color="#16a34a" className="shrink-0" /> <span>Cancele quando quiser</span></li>
                 </ul>
               </div>
 
               <button 
                 type="button" 
                 onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'mensal') || { id: 'plano-mensal', nome: 'Plano Mensal Nefrologia', valor: 0.00, intervalo: 'mensal' })}
-                className="btn btn-outline w-full py-2.5 text-xs font-bold"
+                className="btn btn-outline w-full py-3 text-sm font-bold"
               >
                 Assinar Plano Mensal
               </button>
@@ -907,35 +910,37 @@ export default function LandingPage() {
       </section>
 
       {/* ================= FAQ ACCORDION ================= */}
-      <section id="faq" style={{ padding: '4.5rem 1.5rem', background: '#ffffff', borderTop: '1px solid #e2e8f0' }}>
+      <section id="faq" style={{ padding: '5rem 1.5rem', background: '#f8fafc', borderTop: '1px solid #e2e8f0' }}>
         <div className="container" style={{ maxWidth: '850px' }}>
           
-          <div className="text-center mb-10">
+          <div className="text-center mb-12">
             <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Tire Suas Dúvidas</span>
-            <h2 className="text-3xl font-black text-slate-900 mt-1" style={{ letterSpacing: '-0.02em' }}>
+            <h2 className="text-3xl font-black text-slate-900 mt-2" style={{ letterSpacing: '-0.02em' }}>
               Perguntas Frequentes de Médicos
             </h2>
           </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             {faqs.map((faq, idx) => {
               const isOpen = openFaq === idx;
               return (
                 <div 
                   key={idx} 
-                  className="rounded-2xl border border-slate-200 bg-slate-50/60 overflow-hidden transition"
+                  className={`rounded-2xl border transition-all duration-300 ${isOpen ? 'border-blue-200 bg-white shadow-md' : 'border-slate-200 bg-white hover:border-blue-300 hover:shadow-sm'}`}
                 >
                   <button
                     type="button"
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="w-full p-4 text-left font-bold text-sm text-slate-900 flex justify-between items-center bg-transparent border-none cursor-pointer"
+                    className="w-full p-6 text-left font-bold text-[1.05rem] text-slate-800 flex justify-between items-center bg-transparent border-none cursor-pointer"
                   >
-                    <span>{faq.q}</span>
-                    {isOpen ? <ChevronUp size={18} color="#2563eb" /> : <ChevronDown size={18} color="#64748b" />}
+                    <span className="pr-4">{faq.q}</span>
+                    <div className={`shrink-0 p-1.5 rounded-full transition-colors ${isOpen ? 'bg-blue-100' : 'bg-slate-100'}`}>
+                      {isOpen ? <ChevronUp size={20} color="#2563eb" /> : <ChevronDown size={20} color="#64748b" />}
+                    </div>
                   </button>
 
                   {isOpen && (
-                    <div className="px-4 pb-4 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
+                    <div className="px-6 pb-6 text-[0.95rem] text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
                       {faq.a}
                     </div>
                   )}
@@ -978,7 +983,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-slate-400">100% Cloud Firestore</span>
+            <span className="text-slate-400">Hospedado com Tecnologia Google</span>
             <span>•</span>
             <span className="text-slate-400">Conforme LGPD & CFM</span>
             <span>•</span>
