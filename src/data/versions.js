@@ -1,5 +1,16 @@
 export const SYSTEM_CHANGELOG = [
   {
+    version: "1.1.44",
+    date: "07/09/2026",
+    title: "Central de Relatórios com 20 Relatórios Especializados (XLS/PDF) e Correção de Capitalização",
+    highlights: [
+      "📊 Nova Central de Relatórios: 20 relatórios clínicos e gerenciais categorizados em 5 áreas essenciais (Censo & Demografia, Acessos Vasculares, Metas Laboratoriais, Farmacoterapia e Transplante/SBN).",
+      "📥 Exportação Dual em Alta Fidelidade: download instantâneo de planilhas Excel estruturadas (.xlsx) e geração de documentos timbrados em PDF/A4 para impressão oficial.",
+      "🔍 Painel de Filtros Avançados: filtros por Unidade/Clínica, Turno, Escala Semanal, Tipo de Acesso, Transplante, Apenas c/ Alertas Críticos e Busca Livre por nome/CPF.",
+      "🔠 Preservação da Capitalização do Paciente: correção definitiva que impedia a gravação do nome do paciente em caixa normal/mista após salvar edições."
+    ]
+  },
+  {
     version: "1.1.43",
     date: "07/09/2026",
     title: "Receituário em 1 Única Folha A4 e Padronização Tipográfica ao Padrão do Sistema",

@@ -197,7 +197,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       const payload = {
         ...formData,
         doctorId: patientToEdit?.doctorId || formData.doctorId || effectiveDoctorId || null,
-        nome: formData.nome.trim().toUpperCase(),
+        nome: formData.nome.trim(),
         idade: formData.idade ? Number(formData.idade) : (calculateAge(formData.dataNascimento) || null),
         status: formData.statusTransplante,
         statusTransplante: formData.statusTransplante,

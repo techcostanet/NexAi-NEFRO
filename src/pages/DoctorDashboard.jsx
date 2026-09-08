@@ -24,7 +24,8 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  UploadCloud
+  UploadCloud,
+  BarChart3
 } from 'lucide-react';
 import { subscribeToPatients, STATUS_TRANSPLANTE_OPTIONS } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
@@ -32,6 +33,7 @@ import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysis
 import PatientFormModal from '../components/PatientFormModal';
 import ChangelogModal from '../components/ChangelogModal';
 import ExamImportModal from '../components/ExamImportModal';
+import ReportsCenterModal from '../components/reports/ReportsCenterModal';
 import { useAuth } from '../context/AuthContext';
 
 export default function DoctorDashboard() {
@@ -57,6 +59,7 @@ export default function DoctorDashboard() {
   const [patientToEdit, setPatientToEdit] = useState(null);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
 
   const currentDoctorId = activeDoctorId;
 
@@ -276,6 +279,27 @@ export default function DoctorDashboard() {
         </div>
 
         <div className="flex items-center gap-2">
+          <button 
+            className="btn btn-outline" 
+            onClick={() => setIsReportsModalOpen(true)}
+            disabled={doctor.statusLicenca === 'Suspenso' || doctor.statusLicenca === 'Cancelado'}
+            style={{ 
+              padding: '0.55rem 0.95rem', 
+              fontSize: '0.85rem', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '6px',
+              borderColor: '#c7d2fe', 
+              background: '#f5f3ff', 
+              color: '#4f46e5',
+              fontWeight: '600'
+            }}
+            title="Central de Relatórios Clínicos & Gerenciais (20 Relatórios - XLS / PDF)"
+          >
+            <BarChart3 size={16} color="#4f46e5" />
+            <span>Relatórios</span>
+          </button>
+
           <button 
             className="btn btn-outline" 
             onClick={() => navigate('/doctor/profile')}
@@ -1173,6 +1197,14 @@ export default function DoctorDashboard() {
         onClose={() => setIsImportModalOpen(false)}
         patients={patients}
         doctorId={currentDoctorId}
+      />
+
+      <ReportsCenterModal
+        isOpen={isReportsModalOpen}
+        onClose={() => setIsReportsModalOpen(false)}
+        patients={patients}
+        doctor={doctor}
+        locaisList={doctor.locaisAtuacao || []}
       />
     </div>
   );

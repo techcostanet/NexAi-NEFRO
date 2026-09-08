@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.44] - 2026-09-08
+### Alterações
+- Central de 20 relatórios clínicos e gerenciais com filtros avançados e exportação XLS/PDF e correção da capitalização do paciente
+
 ## [1.1.43] - 2026-09-08
 ### Alterações
 - Garante impressão em 1 única folha A4 e padroniza tipografia e layout do histórico ao padrão de Evoluções Clínicas
