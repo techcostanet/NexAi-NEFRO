@@ -343,65 +343,93 @@ svg {
 @media print {
   @page {
     size: A4 portrait;
-    margin: 5mm 8mm !important;
+    margin: 8mm 12mm !important;
   }
 
   html, body {
-    height: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
     background-image: none !important;
     color: #000000 !important;
     font-size: 11pt;
-    overflow: hidden !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
+  /* Oculta tudo na página por padrão */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Oculta permanentemente controles de tela, navegações e botões */
   .no-print,
   nav,
   aside,
-  header.no-print,
+  header,
+  footer,
   button,
   .btn {
     display: none !important;
+    visibility: hidden !important;
   }
 
-  /* Reset de modais e overlays na impressão */
-  .fixed,
-  div[style*="position: fixed"],
-  div[style*="position:fixed"] {
+  /* Remove barras de rolagem */
+  ::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  /* Reset dos containers modais para não ocuparem espaço nem gerarem scroll */
+  .prescription-print-modal-overlay,
+  .prescription-print-modal-container {
     position: static !important;
     background: transparent !important;
     backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
     padding: 0 !important;
     margin: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    max-height: 100% !important;
-    box-shadow: none !important;
+    max-height: none !important;
     overflow: visible !important;
+    width: 100% !important;
   }
 
-  .glass-panel {
+  /* Torna estritamente visível a área do receituário médico */
+  .printable-prescription-area,
+  .printable-prescription-area * {
+    visibility: visible !important;
+  }
+
+  .printable-prescription-area {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
     border: none !important;
     box-shadow: none !important;
-    background: transparent !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: 100% !important;
+    z-index: 99999999 !important;
+    display: block !important;
   }
 
-  /* Estilização da folha de receituário impressa - 1 PÁGINA RIGOROSA */
+  /* Folha A4 do receituário - calibrada rigorosamente para 1 página */
   .prescription-a4-sheet {
     border: none !important;
     box-shadow: none !important;
     margin: 0 auto !important;
-    padding: 4mm 6mm !important;
+    padding: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
-    height: 278mm !important;
-    max-height: 278mm !important;
+    height: 270mm !important;
+    max-height: 275mm !important;
+    min-height: 260mm !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
@@ -416,7 +444,8 @@ svg {
 
   .prescription-a4-sheet section,
   .prescription-a4-sheet header,
-  .prescription-a4-sheet footer {
+  .prescription-a4-sheet footer,
+  .prescription-a4-sheet div {
     page-break-inside: avoid !important;
   }
 }

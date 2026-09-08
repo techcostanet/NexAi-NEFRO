@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.42] - 2026-09-08
+### Alterações
+- Isolamento estrito de impressão A4 em folha única, padrão CFM limpo sem scrollbars, alinhamento do botão Nova Receita à direita e remoção dos cards de opções
+
 ## [1.1.41] - 2026-09-07
 ### Alterações
 - Padroniza modal de receita com o layout do sistema e calibra impressao estritamente para 1 folha A4

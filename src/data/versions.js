@@ -1,5 +1,16 @@
 export const SYSTEM_CHANGELOG = [
   {
+    version: "1.1.42",
+    date: "07/09/2026",
+    title: "Isolamento Estrito de Impressão A4, Layout Padrão CFM e Aba Simplificada",
+    highlights: [
+      "🖨️ Isolamento total da impressão de receituário: eliminação de todos os elementos de fundo do site, banners e barras de rolagem no PDF/A4.",
+      "📄 Layout médico padrão CFM: receituário limpo, simples e objetivo, estritamente calibrado para 1 única folha sem excessos visuais.",
+      "🎯 Alinhamento padrão da aba de receitas: botão '+ Nova Receita' reposicionado à direita no mesmo formato de 'Evoluções', além de atalho rápido '+ Receita' no topo do prontuário.",
+      "✨ Interface limpa: remoção dos cards promocionais de opções, mantendo a tela do paciente despoluída e pronta para o histórico de receitas."
+    ]
+  },
+  {
     version: "1.1.40",
     date: "07/09/2026",
     title: "Emissão de Receituário Médico, Controle Especial (2 Vias) e Impressão A4",

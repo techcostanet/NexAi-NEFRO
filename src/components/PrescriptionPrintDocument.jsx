@@ -1,10 +1,9 @@
 import React from 'react';
-import { ShieldCheck, AlertTriangle } from 'lucide-react';
-import KidneyIcon from './KidneyIcon';
+import { AlertTriangle } from 'lucide-react';
 
 /**
- * Componente que renderiza a folha de receituário médico timbrada
- * ESTRITAMENTE CALIBRADA PARA 1 ÚNICA FOLHA A4 (SEM SEGUNDA PÁGINA)
+ * Modelo de Receituário Médico Padrão Brasileiro
+ * Simples, limpo, elegante e estritamente calibrado para 1 única folha A4.
  */
 export default function PrescriptionPrintDocument({
   prescription,
@@ -14,13 +13,13 @@ export default function PrescriptionPrintDocument({
 }) {
   if (!prescription || !patient) return null;
 
-  const doctorName = prescription.medico?.nome || doctorInfo?.nome || 'Dr. Marcelo Ramos';
-  const doctorCrm = prescription.medico?.crm || doctorInfo?.crm || '654321';
+  const doctorName = prescription.medico?.nome || doctorInfo?.nome || 'Dr(a). Médico(a) Responsável';
+  const doctorCrm = prescription.medico?.crm || doctorInfo?.crm || '------';
   const doctorUf = prescription.medico?.ufCrm || doctorInfo?.ufCrm || 'SP';
-  const doctorRqe = prescription.medico?.rqe || doctorInfo?.rqe || '45890';
+  const doctorRqe = prescription.medico?.rqe || doctorInfo?.rqe || '';
   const doctorEspecialidade = prescription.medico?.especialidade || doctorInfo?.especialidade || 'Nefrologia Clínica & Hemodiálise';
-  const doctorClinica = prescription.medico?.clinica || doctorInfo?.clinicaPrincipal || patient.clinica || 'Clínica Nefrológica NexAi';
-  const doctorEndereco = prescription.medico?.endereco || doctorInfo?.endereco || 'São Paulo - SP';
+  const doctorClinica = prescription.medico?.clinica || doctorInfo?.clinicaPrincipal || patient.clinica || 'Clínica Nefrológica';
+  const doctorEndereco = prescription.medico?.endereco || doctorInfo?.endereco || '';
   const doctorTelefone = prescription.medico?.telefone || doctorInfo?.telefone || '';
 
   const tipoReceita = prescription.tipoReceita || 'simples';
@@ -42,7 +41,7 @@ export default function PrescriptionPrintDocument({
       case 'antimicrobiano':
         return 'RECEITUÁRIO DE ANTIMICROBIANOS';
       case 'alto_custo':
-        return 'RECEITA MÉDICA - COMPONENTE ESPECIALIZADO (ALTO CUSTO)';
+        return 'RECEITA MÉDICA - COMPONENTE ESPECIALIZADO (LME)';
       default:
         return 'RECEITUÁRIO MÉDICO';
     }
@@ -52,225 +51,180 @@ export default function PrescriptionPrintDocument({
     if (isControleEspecial || isAntimicrobiano) {
       return currentVia === 1 ? '1ª VIA - RETENÇÃO DA FARMÁCIA' : '2ª VIA - ORIENTAÇÃO DO PACIENTE';
     }
-    return 'VIA ÚNICA - USO DO PACIENTE';
+    return null;
   };
 
+  // Determina cidade para rodapé
+  const cidadeEmissao = doctorClinica.includes('Betim') || doctorEndereco.includes('Betim') 
+    ? 'Betim - MG' 
+    : (doctorClinica.includes('São Paulo') || !doctorEndereco ? 'São Paulo - SP' : doctorEndereco.split('-')[0].trim());
+
   return (
-    <div className="prescription-a4-sheet bg-white text-slate-900 border border-slate-300 shadow-md rounded-xl p-6 max-w-[780px] w-full mx-auto text-xs font-sans relative flex flex-col justify-between" style={{ minHeight: '260mm', maxHeight: '272mm', boxSizing: 'border-box' }}>
-      
-      {/* Topo do Documento */}
+    <div 
+      className="prescription-a4-sheet" 
+      style={{
+        width: '100%',
+        maxWidth: '720px',
+        margin: '0 auto',
+        padding: '24px 32px',
+        backgroundColor: '#ffffff',
+        color: '#0f172a',
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        fontSize: '13px',
+        lineHeight: 1.5,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        boxSizing: 'border-box'
+      }}
+    >
+      {/* ================= TOPO DO RECEITUÁRIO ================= */}
       <div>
-        {/* Faixa da Via (quando 2 vias) */}
-        {(isControleEspecial || isAntimicrobiano) && (
-          <div className="mb-2 pb-1 border-b border-slate-800 flex justify-between items-center text-[9px] font-bold uppercase tracking-wider text-slate-700">
-            <span>{getTituloDocumento()}</span>
-            <span className="bg-slate-100 px-2 py-0.5 rounded border border-slate-300">
-              {getSubtituloVia()}
-            </span>
+        {/* Cabeçalho do Médico (Timbrado Limpo Padrão CFM) */}
+        <header className="text-center pb-3 mb-3 border-b-2" style={{ borderColor: '#334155' }}>
+          <h1 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.02em', textTransform: 'uppercase', margin: 0 }}>
+            {doctorName}
+          </h1>
+          <p style={{ fontSize: '0.85rem', fontWeight: 600, color: '#2563eb', margin: '3px 0 0 0' }}>
+            {doctorEspecialidade}
+          </p>
+          <p style={{ fontSize: '0.82rem', color: '#475569', margin: '2px 0 0 0', fontWeight: 500 }}>
+            CRM-{doctorUf} {doctorCrm} {doctorRqe && `• RQE ${doctorRqe}`}
+          </p>
+          <p style={{ fontSize: '0.78rem', color: '#64748b', margin: '2px 0 0 0' }}>
+            {doctorClinica} {doctorEndereco && `• ${doctorEndereco}`} {doctorTelefone && `• Tel: ${doctorTelefone}`}
+          </p>
+        </header>
+
+        {/* Linha de Identificação do Paciente */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', paddingBottom: '6px', borderBottom: '1px solid #cbd5e1', marginBottom: '12px', fontSize: '0.9rem' }}>
+          <div>
+            <span style={{ color: '#64748b' }}>Paciente: </span>
+            <strong style={{ color: '#0f172a', fontSize: '0.98rem' }}>{patient.nome}</strong>
+            {patient.idade && <span style={{ color: '#64748b', fontSize: '0.82rem' }}> ({patient.idade} anos)</span>}
+          </div>
+          <div style={{ color: '#64748b', fontSize: '0.84rem' }}>
+            Data: <strong style={{ color: '#0f172a' }}>{dataEmissaoObj.toLocaleDateString('pt-BR')}</strong>
+          </div>
+        </div>
+
+        {/* Alerta Discreto de Alergias */}
+        {prescription.incluirAlergias !== false && Array.isArray(patient.alergias) && patient.alergias.length > 0 && (
+          <div style={{ padding: '3px 0', marginBottom: '8px', fontSize: '0.78rem', color: '#b91c1c', fontStyle: 'italic' }}>
+            * Alergias relatadas: <strong>{patient.alergias.join(', ')}</strong>
           </div>
         )}
 
-        {/* Cabeçalho Timbrado Compacto */}
-        <header className="border-b-2 border-slate-900 pb-2 mb-3 flex justify-between items-start">
-          <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shrink-0">
-              <KidneyIcon size={22} />
-            </div>
-            <div>
-              <h1 className="text-sm font-black text-slate-900 uppercase tracking-tight leading-tight">
-                {doctorName}
-              </h1>
-              <p className="text-[10px] font-bold text-blue-800 leading-tight">
-                {doctorEspecialidade}
-              </p>
-              <p className="text-[9px] text-slate-600 font-medium">
-                CRM-{doctorUf} {doctorCrm} {doctorRqe && `• RQE ${doctorRqe}`}
-              </p>
-              <p className="text-[8px] text-slate-500">
-                {doctorClinica} {doctorEndereco && `• ${doctorEndereco}`} {doctorTelefone && `• Tel: ${doctorTelefone}`}
-              </p>
-            </div>
-          </div>
-
-          <div className="text-right flex flex-col items-end">
-            <span className="text-[10px] font-black tracking-wider text-blue-900 uppercase">NexAi-NEFRO</span>
-            <span className="text-[8px] text-slate-400">Prontuário Dialítico</span>
-            <span className="text-[9px] text-slate-600 mt-0.5">
-              Receita: <strong className="text-slate-800">{prescription.numeroReceita || prescription.id?.slice(-8).toUpperCase()}</strong>
-            </span>
-            <span className="text-[8px] text-slate-500">
-              Data: <strong>{dataEmissaoObj.toLocaleDateString('pt-BR')}</strong>
-            </span>
-          </div>
-        </header>
-
-        {/* Título Central */}
-        <div className="text-center my-2">
-          <h2 className="text-xs font-black uppercase tracking-widest text-slate-900">
+        {/* Título do Tipo de Receita */}
+        <div style={{ textAlign: 'center', margin: '10px 0 16px 0' }}>
+          <h2 style={{ fontSize: '0.95rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#0f172a', margin: 0 }}>
             {getTituloDocumento()}
           </h2>
-          {prescription.subtitulo && (
-            <p className="text-[9px] text-slate-500 italic mt-0.5">{prescription.subtitulo}</p>
+          {getSubtituloVia() && (
+            <span style={{ display: 'inline-block', fontSize: '0.72rem', fontWeight: 700, background: '#f1f5f9', color: '#334155', padding: '2px 8px', borderRadius: '4px', marginTop: '4px', border: '1px solid #cbd5e1' }}>
+              {getSubtituloVia()}
+            </span>
           )}
         </div>
 
-        {/* Identificação do Paciente Compacta */}
-        <section className="bg-slate-50/80 border border-slate-200 rounded-lg p-2.5 mb-3">
-          <div className="grid grid-cols-12 gap-1.5 text-[10px]">
-            <div className="col-span-8">
-              <span className="text-slate-500 text-[9px] block">Paciente:</span>
-              <strong className="text-slate-900 text-xs">{patient.nome}</strong>
-            </div>
-            <div className="col-span-4">
-              <span className="text-slate-500 text-[9px] block">CPF:</span>
-              <strong className="text-slate-900">{patient.cpf || 'Não informado'}</strong>
-            </div>
-            <div className="col-span-3">
-              <span className="text-slate-500 text-[9px] block">Idade:</span>
-              <span>{patient.idade ? `${patient.idade} anos` : '-'}</span>
-            </div>
-            <div className="col-span-9">
-              <span className="text-slate-500 text-[9px] block">Endereço Residencial:</span>
-              <span className="text-slate-800 truncate block">{patient.endereco || 'Cadastrado no prontuário eletrônico'}</span>
-            </div>
-          </div>
-
-          {prescription.incluirAlergias !== false && Array.isArray(patient.alergias) && patient.alergias.length > 0 && (
-            <div className="mt-1.5 pt-1.5 border-t border-slate-200 flex items-center gap-1 text-[9px] text-red-700 font-semibold">
-              <AlertTriangle size={11} className="shrink-0 text-red-600" />
-              <span>Alergias: <strong>{patient.alergias.join(', ')}</strong></span>
-            </div>
-          )}
-        </section>
-
-        {/* Lista de Medicamentos (Layout Otimizado para 1 Página) */}
-        <section className="flex flex-col gap-2 mb-3">
-          <div className="text-[9px] uppercase font-bold text-slate-500 tracking-wider border-b pb-0.5">
-            Prescrição Farmacológica:
-          </div>
-
+        {/* ================= CORPO: MEDICAMENTOS PRESCRITOS ================= */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', margin: '14px 0' }}>
           {itens.length === 0 ? (
-            <div className="text-center py-6 text-slate-400 italic text-[10px]">
-              Nenhum medicamento adicionado a esta receita.
+            <div style={{ textAlign: 'center', padding: '30px 0', color: '#94a3b8', fontStyle: 'italic' }}>
+              Nenhum medicamento prescrito.
             </div>
           ) : (
-            <div className="flex flex-col gap-2.5">
-              {itens.map((item, idx) => (
-                <div key={item.id || idx} className="border-b border-slate-100 pb-1.5 pl-1">
-                  <div className="flex justify-between items-baseline">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-extrabold text-[11px] text-blue-900">
-                        {idx + 1}.
-                      </span>
-                      <strong className="text-[11px] text-slate-900">
-                        {item.medicamento || item.nome}
-                      </strong>
-                      {item.formaFarmaceutica && (
-                        <span className="text-[9px] text-slate-500 bg-slate-100 px-1 py-0.2 rounded">
-                          {item.formaFarmaceutica}
-                        </span>
-                      )}
-                    </div>
-                    {item.quantidade && (
-                      <span className="text-[10px] font-bold text-slate-800 ml-2 shrink-0">
-                        {item.quantidade}
-                      </span>
-                    )}
+            itens.map((item, idx) => (
+              <div key={item.id || idx} style={{ paddingLeft: '4px' }}>
+                {/* Linha 1: Nome do Medicamento e Quantidade */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <div style={{ fontSize: '0.95rem', color: '#0f172a', fontWeight: 700 }}>
+                    <span>{idx + 1}. </span>
+                    <span>{item.medicamento || item.nome}</span>
                   </div>
-
-                  <div className="pl-4 text-[10px] text-slate-800 leading-snug mt-0.5">
-                    {item.via && (
-                      <span className="font-bold text-blue-800 mr-1.5">
-                        [{item.via}]
-                      </span>
-                    )}
-                    <span>{item.posologia}</span>
-                  </div>
-
-                  {item.instrucoesAdicionais && (
-                    <div className="pl-4 text-[9px] text-slate-500 italic mt-0.5">
-                      Obs: {item.instrucoesAdicionais}
+                  {item.quantidade && (
+                    <div style={{ fontSize: '0.88rem', color: '#0f172a', fontWeight: 600, flexShrink: 0, marginLeft: '12px' }}>
+                      -------------------- {item.quantidade}
                     </div>
                   )}
                 </div>
-              ))}
-            </div>
+
+                {/* Linha 2: Posologia e Modo de Usar */}
+                <div style={{ paddingLeft: '18px', fontSize: '0.88rem', color: '#1e293b', marginTop: '2px', lineHeight: 1.4 }}>
+                  {item.via && <strong style={{ color: '#2563eb' }}>[{item.via}] </strong>}
+                  <span>{item.posologia}</span>
+                </div>
+
+                {/* Linha 3: Instrução adicional (se houver) */}
+                {item.instrucoesAdicionais && (
+                  <div style={{ paddingLeft: '18px', fontSize: '0.78rem', color: '#475569', fontStyle: 'italic', marginTop: '1px' }}>
+                    Obs: {item.instrucoesAdicionais}
+                  </div>
+                )}
+              </div>
+            ))
           )}
-        </section>
-
-        {/* Orientações Gerais / Observações Clínicas */}
-        {prescription.observacoesGerais && (
-          <section className="border border-slate-200 rounded-lg p-2 mb-2 bg-slate-50/60 text-[9px]">
-            <strong className="block text-slate-700 font-bold mb-0.5 uppercase tracking-wider text-[8px]">
-              Orientações Médicas & Recomendações:
-            </strong>
-            <p className="text-slate-700 whitespace-pre-wrap leading-tight">
-              {prescription.observacoesGerais}
-            </p>
-          </section>
-        )}
-      </div>
-
-      {/* Base do Documento (Campos Legais, Assinatura e Validade) */}
-      <div>
-        {/* Validade */}
-        <div className="text-[9px] text-slate-500 mb-2 flex justify-between items-center border-t pt-1">
-          <span>
-            {isControleEspecial 
-              ? '⚠️ Válido por 30 (trinta) dias a contar da data de emissão em todo o território nacional.' 
-              : isAntimicrobiano 
-                ? '⚠️ Válido por 10 (dez) dias a contar da data de emissão.' 
-                : `Receita com validade sugerida de ${prescription.validadeDias || 180} dias para uso contínuo.`}
-          </span>
-          <span className="text-slate-400 text-[8px]">Uso Humano</span>
         </div>
 
-        {/* Bloco Exclusivo Controle Especial (1ª Via) */}
+        {/* Orientações e Recomendações Gerais */}
+        {prescription.observacoesGerais && (
+          <div style={{ marginTop: '16px', padding: '8px 0', borderTop: '1px dashed #cbd5e1', fontSize: '0.82rem', color: '#334155' }}>
+            <strong style={{ display: 'block', color: '#0f172a', fontSize: '0.78rem', textTransform: 'uppercase', marginBottom: '3px' }}>
+              Orientações Médicas:
+            </strong>
+            <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.4 }}>{prescription.observacoesGerais}</p>
+          </div>
+        )}
+      </div>
+
+      {/* ================= RODAPÉ DO RECEITUÁRIO ================= */}
+      <div>
+        {/* Bloco Exclusivo Controle Especial (1ª Via - Farmácia) */}
         {isControleEspecial && currentVia === 1 && (
-          <section className="border border-slate-300 rounded p-2 mb-2 text-[8px] bg-slate-50 leading-tight">
-            <div className="grid grid-cols-2 gap-3">
-              <div className="border-r border-slate-300 pr-2">
-                <strong className="block font-bold text-slate-800 uppercase mb-1">Identificação do Comprador</strong>
-                <div>Nome: _____________________________________________</div>
-                <div>RG: ________________ Órgão: ____ CPF: _____________</div>
-                <div>End: ________________________________ Tel: _________</div>
-                <div className="pt-1 text-center">Assinatura: ___________________________</div>
+          <div style={{ border: '1px solid #cbd5e1', borderRadius: '6px', padding: '8px 12px', marginBottom: '16px', fontSize: '0.72rem', background: '#f8fafc', color: '#334155', lineHeight: 1.3 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div style={{ borderRight: '1px solid #e2e8f0', paddingRight: '12px' }}>
+                <strong style={{ display: 'block', textTransform: 'uppercase', marginBottom: '4px', color: '#0f172a' }}>Identificação do Comprador</strong>
+                <div>Nome: ____________________________________________________</div>
+                <div style={{ marginTop: '2px' }}>RG: ________________ Órgão: _______ CPF: ____________________</div>
+                <div style={{ marginTop: '2px' }}>End: _____________________________________ Tel: _____________</div>
+                <div style={{ marginTop: '6px', textAlign: 'center' }}>Assinatura: ___________________________________</div>
               </div>
-              <div className="pl-1">
-                <strong className="block font-bold text-slate-800 uppercase mb-1">Identificação do Fornecedor</strong>
-                <div>Farmácia / Razão Social: ____________________________</div>
-                <div>Farmacêutico: ________________ CRF: _______________</div>
-                <div>Data: __/__/____ Lote: _______ Qtd Disp: ___________</div>
-                <div className="pt-1 text-center">Visto Farmacêutico: ____________________</div>
+              <div>
+                <strong style={{ display: 'block', textTransform: 'uppercase', marginBottom: '4px', color: '#0f172a' }}>Identificação do Fornecedor</strong>
+                <div>Farmácia / Razão Social: _________________________________</div>
+                <div style={{ marginTop: '2px' }}>Farmacêutico: _________________________ CRF: _______________</div>
+                <div style={{ marginTop: '2px' }}>Data: ____/____/________ Lote: __________ Qtd Disp: __________</div>
+                <div style={{ marginTop: '6px', textAlign: 'center' }}>Visto do Farmacêutico: __________________________</div>
               </div>
             </div>
-          </section>
+          </div>
         )}
 
-        {/* Rodapé: Data e Assinatura Médica */}
-        <footer className="pt-2 border-t border-slate-300 flex justify-between items-end">
-          <div className="text-[9px] text-slate-500 max-w-[280px]">
-            <div className="font-semibold text-slate-700">
-              {doctorClinica.includes('São Paulo') || !doctorEndereco ? 'São Paulo - SP' : 'Local de Atendimento'}, {dataFormatada}
-            </div>
-            <div className="flex items-center gap-1 text-[8px] text-emerald-700 mt-0.5">
-              <ShieldCheck size={11} />
-              <span>NexAi-NEFRO • Prontuário em Nuvem</span>
-            </div>
-            <p className="text-[7px] text-slate-400">
-              Cód. Autenticador: {prescription.id || 'NEXAI-REC-VALID'}
+        {/* Local, Data e Assinatura Médica */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', paddingTop: '16px', borderTop: '1px solid #e2e8f0' }}>
+          <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+            <p style={{ margin: 0, fontWeight: 500 }}>
+              {cidadeEmissao}, {dataFormatada}
+            </p>
+            <p style={{ margin: '3px 0 0 0', fontSize: '0.72rem', color: '#94a3b8' }}>
+              Receita Nº {prescription.numeroReceita || prescription.id?.slice(-8).toUpperCase()}
             </p>
           </div>
 
-          <div className="text-center min-w-[220px]">
-            <div className="border-b border-slate-800 w-full mb-1"></div>
-            <strong className="block text-[11px] text-slate-900 font-bold">{doctorName}</strong>
-            <span className="block text-[9px] text-slate-700">{doctorEspecialidade}</span>
-            <span className="block text-[9px] text-slate-600 font-medium">CRM-{doctorUf} {doctorCrm}</span>
+          <div style={{ textAlign: 'center', minWidth: '220px' }}>
+            <div style={{ borderBottom: '1px solid #0f172a', width: '100%', marginBottom: '6px' }}></div>
+            <strong style={{ display: 'block', fontSize: '0.85rem', color: '#0f172a' }}>{doctorName}</strong>
+            <span style={{ display: 'block', fontSize: '0.75rem', color: '#475569' }}>{doctorEspecialidade}</span>
+            <span style={{ display: 'block', fontSize: '0.75rem', color: '#64748b' }}>CRM-{doctorUf} {doctorCrm}</span>
           </div>
-        </footer>
-      </div>
+        </div>
 
+        {/* Rodapé Institucional Discreto */}
+        <div style={{ textAlign: 'center', marginTop: '12px', fontSize: '0.68rem', color: '#94a3b8', borderTop: '1px dotted #e2e8f0', paddingTop: '4px' }}>
+          {doctorClinica} {doctorTelefone && `• Tel: ${doctorTelefone}`} • NexAi-NEFRO Prontuário em Nuvem
+        </div>
+      </div>
     </div>
   );
 }

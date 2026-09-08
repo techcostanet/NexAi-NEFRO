@@ -531,6 +531,16 @@ export default function PatientProfile() {
             </button>
 
             <button 
+              className="btn btn-outline" 
+              onClick={() => handleOpenNewPrescription('simples')}
+              style={{ padding: '0.5rem 0.85rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px' }}
+              title="Emitir nova receita médica"
+            >
+              <FileCheck size={14} color="var(--primary)" />
+              <span>+ Receita</span>
+            </button>
+
+            <button 
               className="btn btn-primary" 
               onClick={handleOpenNewEvolution}
               style={{ padding: '0.5rem 0.95rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px' }}
@@ -1902,102 +1912,38 @@ export default function PatientProfile() {
 
       {/* ================= ABA 5: RECEITUÁRIO MÉDICO ================= */}
       {activeTab === 'receitas' && (
-        <div className="flex flex-col gap-5 animate-in">
-          {/* Cabeçalho da Aba */}
-          <div className="flex justify-between items-center flex-wrap gap-3">
+        <div className="flex flex-col gap-4 animate-in">
+          {/* Cabeçalho da Aba - Padrão alinhado à direita idêntico às outras abas */}
+          <div className="flex justify-between items-center gap-2">
             <div>
               <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
-                <FileCheck size={20} color="var(--primary)" />
+                <FileCheck size={18} color="var(--primary)" />
                 <span>Receituário & Prescrições Médicas</span>
               </h2>
-              <p className="text-xs text-muted">
-                Emissão de receitas simples, controle especial em 2 vias (Portaria 344/98), antimicrobianos e alto custo (LME) com diagramação A4 para impressão e PDF
-              </p>
+              <p className="text-xs text-muted">Histórico de receitas médicas emitidas para impressão e PDF</p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button 
-                className="btn btn-primary" 
-                onClick={() => handleOpenNewPrescription('simples')}
-                style={{ padding: '0.5rem 1.1rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
-              >
-                <Plus size={15} />
-                <span>Nova Receita Médica</span>
-              </button>
-            </div>
+            <button 
+              className="btn btn-primary shrink-0" 
+              onClick={() => handleOpenNewPrescription('simples')}
+              style={{ padding: '0.5rem 1rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '5px' }}
+            >
+              <Plus size={14} />
+              <span>Nova Receita</span>
+            </button>
           </div>
 
-          {/* Cards de Início Rápido / Modelos */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div 
-              onClick={() => handleOpenNewPrescription('simples')}
-              className="glass-panel p-3.5 rounded-xl border border-blue-200/80 bg-blue-50/40 hover:bg-blue-50 cursor-pointer transition-all flex items-start gap-3 group"
-            >
-              <div className="w-9 h-9 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <FileText size={18} />
-              </div>
-              <div className="flex-1">
-                <strong className="text-xs text-slate-800 font-bold block mb-0.5">Receita Simples</strong>
-                <p className="text-[11px] text-slate-500 leading-tight">Uso contínuo, anti-hipertensivos, quelantes e rotina nefrológica</p>
-              </div>
-            </div>
-
-            <div 
-              onClick={() => handleOpenNewPrescription('controle_especial')}
-              className="glass-panel p-3.5 rounded-xl border border-purple-200/80 bg-purple-50/40 hover:bg-purple-50 cursor-pointer transition-all flex items-start gap-3 group"
-            >
-              <div className="w-9 h-9 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <FileCheck size={18} />
-              </div>
-              <div className="flex-1">
-                <strong className="text-xs text-slate-800 font-bold block mb-0.5">Controle Especial</strong>
-                <p className="text-[11px] text-slate-500 leading-tight">Portaria 344/98 em 2 vias: opioides, analgésicos e psicotrópicos</p>
-              </div>
-            </div>
-
-            <div 
-              onClick={() => handleOpenNewPrescription('antimicrobiano')}
-              className="glass-panel p-3.5 rounded-xl border border-amber-200/80 bg-amber-50/40 hover:bg-amber-50 cursor-pointer transition-all flex items-start gap-3 group"
-            >
-              <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <Pill size={18} />
-              </div>
-              <div className="flex-1">
-                <strong className="text-xs text-slate-800 font-bold block mb-0.5">Antimicrobianos</strong>
-                <p className="text-[11px] text-slate-500 leading-tight">2 vias (RDC 20/2011): infecções de cateter/FAV com validade de 10 dias</p>
-              </div>
-            </div>
-
-            <div 
-              onClick={() => handleOpenNewPrescription('simples')}
-              className="glass-panel p-3.5 rounded-xl border border-emerald-200/80 bg-emerald-50/40 hover:bg-emerald-50 cursor-pointer transition-all flex items-start gap-3 group"
-            >
-              <div className="w-9 h-9 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                <Sparkles size={18} />
-              </div>
-              <div className="flex-1">
-                <strong className="text-xs text-slate-800 font-bold block mb-0.5">Puxar Ativas (1 Clique)</strong>
-                <p className="text-[11px] text-slate-500 leading-tight">Importa medicamentos em uso para receita imediata no modal</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Histórico de Receitas Emitidas */}
+          {/* Histórico de Receitas Emitidas (Tela limpa para visualização de receitas futuras) */}
           {receitas.length === 0 ? (
             <div className="glass-panel text-center py-12 px-4 rounded-2xl border border-slate-200 text-slate-500">
-              <div className="w-16 h-16 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center mx-auto mb-3">
-                <FileCheck size={32} className="opacity-80" />
-              </div>
-              <h3 className="text-sm font-bold text-slate-800 mb-1">Nenhum receituário emitido para este paciente</h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto mb-4">
-                Crie receitas médicas timbradas com facilidade, puxando as prescrições ativas ou utilizando o catálogo nefrológico com modelos simples e de controle especial.
-              </p>
+              <FileCheck size={32} className="opacity-40 mx-auto mb-2" />
+              <p className="text-sm text-muted mb-3">Nenhum receituário registrado para este paciente.</p>
               <button 
-                className="btn btn-primary" 
+                className="btn btn-outline" 
                 onClick={() => handleOpenNewPrescription('simples')}
-                style={{ fontSize: '0.82rem', padding: '0.45rem 1.2rem' }}
+                style={{ fontSize: '0.8rem', padding: '0.4rem 1rem' }}
               >
-                + Emitir Primeira Receita
+                Emitir Primeira Receita
               </button>
             </div>
           ) : (

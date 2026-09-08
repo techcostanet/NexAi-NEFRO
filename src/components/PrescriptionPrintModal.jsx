@@ -17,6 +17,7 @@ export default function PrescriptionPrintModal({
 
   return (
     <div 
+      className="prescription-print-modal-overlay"
       style={{ 
         position: 'fixed', 
         top: 0, 
@@ -34,32 +35,32 @@ export default function PrescriptionPrintModal({
       onClick={onClose}
     >
       <div 
-        className="glass-panel animate-in" 
+        className="glass-panel animate-in prescription-print-modal-container" 
         style={{ 
-          background: 'var(--surface-solid)', 
+          background: '#f8fafc', 
           width: '100%', 
-          maxWidth: '840px', 
+          maxWidth: '820px', 
           maxHeight: '94vh', 
           overflowY: 'auto', 
-          padding: '1.5rem',
+          padding: '1.25rem',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
-          borderRadius: '20px'
+          borderRadius: '16px'
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Barra superior de ações */}
+        {/* Barra superior de ações (oculta na impressão) */}
         <div className="flex justify-between items-center mb-4 pb-3 border-b no-print" style={{ borderColor: 'var(--border)' }}>
           <div className="flex items-center gap-2">
             <FileCheck size={20} color="var(--primary)" />
             <div>
-              <strong className="text-sm text-slate-800 block">Receituário Médico Pronto para Impressão</strong>
-              <span className="text-[11px] text-muted">Diagramação calibrada para 1 folha A4 oficial</span>
+              <strong className="text-sm text-slate-800 block">Receituário Médico</strong>
+              <span className="text-[11px] text-muted">Pronto para impressão em 1 folha A4</span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             {isTwoVias && (
-              <div className="flex bg-slate-100 p-0.5 rounded-lg text-xs font-semibold">
+              <div className="flex bg-slate-200 p-0.5 rounded-lg text-xs font-semibold">
                 <button
                   type="button"
                   className={`px-3 py-1 rounded-md transition-all ${
@@ -85,7 +86,7 @@ export default function PrescriptionPrintModal({
               type="button"
               onClick={() => window.print()}
               className="btn btn-primary"
-              style={{ padding: '0.45rem 1rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+              style={{ padding: '0.45rem 1.1rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
             >
               <Printer size={15} />
               <span>Imprimir / Salvar PDF</span>
@@ -103,8 +104,8 @@ export default function PrescriptionPrintModal({
           </div>
         </div>
 
-        {/* Folha A4 Única */}
-        <div className="flex justify-center overflow-x-auto">
+        {/* Folha A4 Única Isolada para Impressão */}
+        <div className="printable-prescription-area flex justify-center">
           <PrescriptionPrintDocument
             prescription={prescription}
             patient={patient}
