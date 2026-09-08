@@ -1959,130 +1959,128 @@ export default function PatientProfile() {
                 const isAnti = rec.tipoReceita === 'antimicrobiano';
                 const isAltoCusto = rec.tipoReceita === 'alto_custo';
 
+                const borderLeftColor = isEspecial ? '#9333ea' : (isAnti ? '#d97706' : (isAltoCusto ? '#059669' : 'var(--primary)'));
+                const badgeBg = isEspecial ? '#f3e8ff' : (isAnti ? '#fffbeb' : (isAltoCusto ? '#ecfdf5' : '#eff6ff'));
+                const badgeColor = isEspecial ? '#7e22ce' : (isAnti ? '#b45309' : (isAltoCusto ? '#047857' : '#1e40af'));
+                const badgeBorder = isEspecial ? '1px solid #e9d5ff' : (isAnti ? '1px solid #fde68a' : (isAltoCusto ? '1px solid #a7f3d0' : 'none'));
+
+                const tipoLabel = isEspecial 
+                  ? 'Controle Especial (2 Vias)' 
+                  : (isAnti 
+                      ? 'Antimicrobianos (2 Vias)' 
+                      : (isAltoCusto 
+                          ? 'Alto Custo (LME)' 
+                          : 'Receituário Simples'));
+
                 return (
                   <div 
                     key={rec.id} 
-                    className="glass-panel p-4 rounded-2xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all bg-white flex flex-col md:flex-row md:items-center justify-between gap-4"
+                    className="glass-panel" 
+                    style={{ padding: '1.25rem', borderRadius: '16px', borderLeft: `4px solid ${borderLeftColor}` }}
                   >
-                    {/* Informações da Receita */}
-                    <div className="flex items-start gap-3.5">
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-                        isEspecial 
-                          ? 'bg-purple-100 text-purple-700 border border-purple-200' 
-                          : isAnti 
-                            ? 'bg-amber-100 text-amber-700 border border-amber-200'
-                            : isAltoCusto
-                              ? 'bg-emerald-100 text-emerald-700 border border-emerald-200'
-                              : 'bg-blue-100 text-blue-700 border border-blue-200'
-                      }`}>
-                        <FileCheck size={22} />
+                    {/* Linha Superior: Data, Badge e Botões de Ação Padronizados */}
+                    <div className="flex justify-between items-start flex-wrap gap-2 mb-2">
+                      <div className="flex items-center gap-2">
+                        <FileCheck size={15} color="var(--primary)" />
+                        <strong className="text-sm text-slate-800">
+                          {new Date(rec.dataEmissao + 'T12:00:00').toLocaleDateString('pt-BR')}
+                        </strong>
+                        <span 
+                          style={{ 
+                            fontSize: '0.72rem', 
+                            padding: '2px 8px', 
+                            borderRadius: '8px', 
+                            background: badgeBg, 
+                            color: badgeColor, 
+                            border: badgeBorder,
+                            fontWeight: '600' 
+                          }}
+                        >
+                          {tipoLabel}
+                        </span>
                       </div>
 
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <strong className="text-sm font-bold text-slate-900">
-                            {rec.tipoReceita === 'controle_especial' 
-                              ? 'Receita de Controle Especial (2 Vias)' 
-                              : rec.tipoReceita === 'antimicrobiano'
-                                ? 'Receita de Antimicrobianos (2 Vias)'
-                                : rec.tipoReceita === 'alto_custo'
-                                  ? 'Receituário de Alto Custo (LME)'
-                                  : 'Receituário Médico Simples'}
-                          </strong>
+                      {/* Botões de Ação Padronizados ao estilo Evoluções */}
+                      <div className="flex items-center gap-1.5">
+                        <button 
+                          type="button"
+                          onClick={() => handleViewPrescription(rec)}
+                          className="btn btn-primary"
+                          style={{ padding: '0.25rem 0.65rem', fontSize: '0.72rem', display: 'flex', alignItems: 'center', gap: '4px' }}
+                          title="Imprimir ou salvar em PDF"
+                        >
+                          <Printer size={12} />
+                          <span>Imprimir / PDF</span>
+                        </button>
 
-                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
-                            isEspecial
-                              ? 'bg-purple-50 text-purple-800 border border-purple-200'
-                              : isAnti
-                                ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                                : isAltoCusto
-                                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                                  : 'bg-blue-50 text-blue-800 border border-blue-200'
-                          }`}>
-                            {isEspecial ? 'Portaria 344/98' : (isAnti ? 'RDC 20/2011' : (isAltoCusto ? 'SUS / LME' : 'Uso Geral'))}
-                          </span>
+                        <button 
+                          type="button"
+                          onClick={() => handleViewPrescription(rec)}
+                          className="btn btn-outline"
+                          style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                          title="Visualizar documento em folha A4"
+                        >
+                          <Eye size={12} color="var(--primary)" />
+                        </button>
 
-                          <span className="text-[11px] text-slate-500 font-medium">
-                            • Emissão: <strong>{new Date(rec.dataEmissao + 'T12:00:00').toLocaleDateString('pt-BR')}</strong>
-                          </span>
-                        </div>
+                        <button 
+                          type="button"
+                          onClick={() => handleDuplicatePrescription(rec)}
+                          className="btn btn-outline"
+                          style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                          title="Duplicar / Renovar receita"
+                        >
+                          <Copy size={12} color="var(--primary)" />
+                        </button>
 
-                        {/* Resumo dos medicamentos prescritos */}
-                        <div className="text-xs text-slate-600 flex items-center gap-1.5 flex-wrap mt-0.5">
-                          <span className="font-semibold text-slate-700">{itensCount} {itensCount === 1 ? 'medicamento' : 'medicamentos'}:</span>
-                          {Array.isArray(rec.itens) && rec.itens.slice(0, 3).map((item, idx) => (
-                            <span key={idx} className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200">
-                              {item.medicamento || item.nome}
-                            </span>
-                          ))}
-                          {itensCount > 3 && (
-                            <span className="text-[11px] text-slate-400 font-semibold">
-                              +{itensCount - 3} outros
-                            </span>
-                          )}
-                        </div>
+                        <button 
+                          type="button"
+                          onClick={() => handleEditPrescription(rec)}
+                          className="btn btn-outline"
+                          style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                          title="Editar receita"
+                        >
+                          <Edit size={12} color="var(--primary)" />
+                        </button>
 
-                        <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-2">
-                          <span>Médico: <strong>{rec.medico?.nome || doctorInfo?.nome || 'Dr. Marcelo Ramos'}</strong> (CRM {rec.medico?.crm || doctorInfo?.crm || '654321'}/{rec.medico?.ufCrm || doctorInfo?.ufCrm || 'SP'})</span>
-                          {rec.validadeDias && (
-                            <span>• Validade: {rec.validadeDias} dias</span>
-                          )}
-                        </div>
+                        <button 
+                          type="button"
+                          onClick={() => handleDeletePrescription(rec.id)}
+                          className="btn btn-outline"
+                          style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                          title="Excluir receita do histórico"
+                        >
+                          <Trash2 size={12} color="var(--danger)" />
+                        </button>
                       </div>
                     </div>
 
-                    {/* Barra de Ações Rápidas da Receita */}
-                    <div className="flex items-center gap-1.5 self-end md:self-center shrink-0">
-                      <button 
-                        type="button"
-                        onClick={() => handleViewPrescription(rec)}
-                        className="btn btn-primary"
-                        style={{ padding: '0.4rem 0.85rem', fontSize: '0.78rem', display: 'flex', alignItems: 'center', gap: '5px' }}
-                        title="Imprimir ou salvar em PDF"
-                      >
-                        <Printer size={14} />
-                        <span>Imprimir / PDF</span>
-                      </button>
+                    {/* Resumo dos medicamentos prescritos - Padrão idêntico aos parâmetros de Evoluções */}
+                    <div className="flex items-center gap-2 text-xs text-muted mb-2 flex-wrap font-medium p-2 bg-slate-50 rounded-xl">
+                      <span>{itensCount} {itensCount === 1 ? 'medicamento prescrito' : 'medicamentos prescritos'}:</span>
+                      {Array.isArray(rec.itens) && rec.itens.map((item, idx) => {
+                        const rawName = item.medicamento || item.nome || '';
+                        const parts = rawName.trim().split(/\s+/);
+                        const cleanName = (parts.length === 2 && parts[0].toLowerCase() === parts[1].toLowerCase()) ? parts[0] : rawName;
+                        return (
+                          <span key={idx} className="bg-white text-slate-700 px-2 py-0.5 rounded-lg border border-slate-200 text-[11px] font-semibold">
+                            {cleanName}{item.quantidade ? ` • ${item.quantidade}` : ''}
+                          </span>
+                        );
+                      })}
+                    </div>
 
-                      <button 
-                        type="button"
-                        onClick={() => handleViewPrescription(rec)}
-                        className="btn btn-outline"
-                        style={{ padding: '0.4rem 0.65rem', fontSize: '0.78rem' }}
-                        title="Visualizar documento em folha A4"
-                      >
-                        <Eye size={14} color="var(--primary)" />
-                      </button>
+                    {/* Orientações (se houver) */}
+                    {rec.observacoesGerais && (
+                      <p className="text-xs text-slate-600 whitespace-pre-wrap leading-relaxed mb-2 px-1 italic">
+                        {rec.observacoesGerais}
+                      </p>
+                    )}
 
-                      <button 
-                        type="button"
-                        onClick={() => handleDuplicatePrescription(rec)}
-                        className="btn btn-outline"
-                        style={{ padding: '0.4rem 0.65rem', fontSize: '0.78rem' }}
-                        title="Duplicar / Renovar receita"
-                      >
-                        <Copy size={14} color="var(--primary)" />
-                      </button>
-
-                      <button 
-                        type="button"
-                        onClick={() => handleEditPrescription(rec)}
-                        className="btn btn-outline"
-                        style={{ padding: '0.4rem 0.65rem', fontSize: '0.78rem' }}
-                        title="Editar receita"
-                      >
-                        <Edit size={14} color="var(--primary)" />
-                      </button>
-
-                      <button 
-                        type="button"
-                        onClick={() => handleDeletePrescription(rec.id)}
-                        className="btn btn-outline"
-                        style={{ padding: '0.4rem 0.65rem', fontSize: '0.78rem' }}
-                        title="Excluir receita do histórico"
-                      >
-                        <Trash2 size={14} color="var(--danger)" />
-                      </button>
+                    {/* Rodapé Padronizado idêntico a Evoluções */}
+                    <div className="text-xs text-muted mt-3 pt-2 border-t flex justify-between items-center" style={{ borderColor: 'var(--border)' }}>
+                      <span>Responsável: <strong>{rec.medico?.nome || doctorInfo?.nome || 'Dr(a). Médico(a) Responsável'}</strong> (CRM-{rec.medico?.ufCrm || doctorInfo?.ufCrm || 'MG'} {rec.medico?.crm || doctorInfo?.crm || '------'}) • Validade: {rec.validadeDias || 180} dias</span>
+                      <span style={{ fontSize: '0.68rem' }}>Gravado no Cloud Firestore</span>
                     </div>
                   </div>
                 );

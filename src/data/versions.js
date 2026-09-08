@@ -1,5 +1,16 @@
 export const SYSTEM_CHANGELOG = [
   {
+    version: "1.1.43",
+    date: "07/09/2026",
+    title: "Receituário em 1 Única Folha A4 e Padronização Tipográfica ao Padrão do Sistema",
+    highlights: [
+      "📄 Garantia de impressão em 1 única folha A4: ajuste dimensional rigoroso com eliminação definitiva da quebra de página que empurrava a assinatura para a folha 2.",
+      "🩺 Cabeçalho médico sempre visível: remoção de regras genéricas de ocultação no CSS de impressão que suprimiam o timbrado do médico.",
+      "🎨 Padronização tipográfica e visual: histórico de receituários reformatado exatamente na mesma escala tipográfica, densidade, badges e botões da aba 'Evoluções Clínicas'.",
+      "💊 Saneamento de fármacos: prevenção automática de duplicação de nomes de medicamentos (ex: 'Zolpidem Zolpidem') na importação e na exibição."
+    ]
+  },
+  {
     version: "1.1.42",
     date: "07/09/2026",
     title: "Isolamento Estrito de Impressão A4, Layout Padrão CFM e Aba Simplificada",

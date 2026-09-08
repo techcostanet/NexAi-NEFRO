@@ -108,13 +108,20 @@ export default function PrescriptionModal({
       return;
     }
 
-    const novos = ativas.map((m, idx) => ({
-      id: `item-${Date.now()}-${idx}`,
-      medicamento: `${m.nome}${m.dosagem ? ` ${m.dosagem}` : ''}`,
-      quantidade: m.tipo === 'continuo' ? 'Uso Contínuo (3 caixas)' : '1 caixa',
-      posologia: m.frequencia ? `Tomar/aplicar ${m.frequencia}.` : 'Conforme orientação médica.',
-      via: m.via || 'VO'
-    }));
+    const novos = ativas.map((m, idx) => {
+      const nomeLimpo = (m.nome || '').trim();
+      const dosagemLimpa = (m.dosagem || '').trim();
+      const alreadyHasDosage = dosagemLimpa && nomeLimpo.toLowerCase().includes(dosagemLimpa.toLowerCase());
+      const medFinal = dosagemLimpa && !alreadyHasDosage ? `${nomeLimpo} ${dosagemLimpa}` : nomeLimpo;
+
+      return {
+        id: `item-${Date.now()}-${idx}`,
+        medicamento: medFinal,
+        quantidade: m.tipo === 'continuo' ? 'Uso Contínuo (3 caixas)' : '1 caixa',
+        posologia: m.frequencia ? `Tomar/aplicar ${m.frequencia}.` : 'Conforme orientação médica.',
+        via: m.via || 'VO'
+      };
+    });
 
     setFormData(prev => ({
       ...prev,

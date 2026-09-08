@@ -369,8 +369,6 @@ svg {
   .no-print,
   nav,
   aside,
-  header,
-  footer,
   button,
   .btn {
     display: none !important;
@@ -410,6 +408,7 @@ svg {
     left: 0 !important;
     top: 0 !important;
     width: 100% !important;
+    height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
@@ -417,9 +416,13 @@ svg {
     box-shadow: none !important;
     z-index: 99999999 !important;
     display: block !important;
+    page-break-after: avoid !important;
+    page-break-before: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 
-  /* Folha A4 do receituário - calibrada rigorosamente para 1 página */
+  /* Folha A4 do receituário - rigorosamente 1 ÚNICA PÁGINA */
   .prescription-a4-sheet {
     border: none !important;
     box-shadow: none !important;
@@ -427,26 +430,26 @@ svg {
     padding: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
-    height: 270mm !important;
-    max-height: 275mm !important;
-    min-height: 260mm !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
+    height: auto !important;
+    max-height: 250mm !important;
+    min-height: 0 !important;
+    display: block !important;
     page-break-after: avoid !important;
     page-break-before: avoid !important;
     page-break-inside: avoid !important;
-    overflow: hidden !important;
+    break-inside: avoid !important;
+    overflow: visible !important;
     background: #ffffff !important;
     color: #000000 !important;
     box-sizing: border-box !important;
   }
 
+  .prescription-a4-sheet div,
   .prescription-a4-sheet section,
-  .prescription-a4-sheet header,
-  .prescription-a4-sheet footer,
-  .prescription-a4-sheet div {
+  .prescription-a4-sheet p,
+  .prescription-a4-sheet span {
     page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }
 
