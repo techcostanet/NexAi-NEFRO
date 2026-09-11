@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.47] - 2026-09-11
+### Alterações
+- Padronizacao visual dos botoes de acao no perfil do paciente e ajuste na tipografia do card de controle ponderal
+
 ## [1.1.46] - 2026-09-11
 ### Alterações
 - Boletim Educativo e Conquistas do Paciente com impressao A4 colorida, frases de incentivo e dicas praticas para todas as idades

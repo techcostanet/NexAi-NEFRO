@@ -208,10 +208,12 @@ svg {
 
 .text-center { text-align: center; }
 .text-muted { color: var(--text-muted); }
-.text-2xs { font-size: 0.65rem; }
-.text-xs { font-size: 0.75rem; }
-.text-sm { font-size: 0.875rem; }
-.text-base { font-size: 1rem; }
+.text-3xs, .text-\[8px\], .text-\[9px\] { font-size: 0.58rem; }
+.text-2xs, .text-\[10px\] { font-size: 0.65rem; }
+.text-xxs, .text-\[11px\] { font-size: 0.70rem; }
+.text-xs, .text-\[12px\] { font-size: 0.75rem; }
+.text-sm, .text-\[13px\], .text-\[14px\] { font-size: 0.875rem; }
+.text-base, .text-\[15px\], .text-\[16px\] { font-size: 1rem; }
 .text-lg { font-size: 1.125rem; }
 .text-xl { font-size: 1.25rem; font-weight: 600; }
 .text-2xl { font-size: 1.5rem; font-weight: 700; }
