@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.48] - 2026-09-11
+### Alterações
+- Otimizacao e reducao de textos explicativos em todo o sistema para design medico limpo e objetivo
+
 ## [1.1.47] - 2026-09-11
 ### Alterações
 - Padronizacao visual dos botoes de acao no perfil do paciente e ajuste na tipografia do card de controle ponderal

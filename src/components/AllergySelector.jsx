@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ShieldAlert, Plus, X, Check, Search, AlertCircle } from 'lucide-react';
 import { subscribeToAllergiesCatalog, addGlobalAllergy, ALLERGIES_PADRAO } from '../services/patientService';
 
-export default function AllergySelector({ selectedAllergies = [], onChange, label = "Alergias Medicamentosas & Gerais" }) {
+export default function AllergySelector({ selectedAllergies = [], onChange, label = "Alergias" }) {
   const [catalog, setCatalog] = useState(ALLERGIES_PADRAO);
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -112,7 +112,7 @@ export default function AllergySelector({ selectedAllergies = [], onChange, labe
       >
         {safeSelected.length === 0 ? (
           <span className="text-xs text-muted italic px-1">
-            Nenhuma alergia relatada (Clique abaixo para selecionar ou cadastrar)
+            Nenhuma alergia registrada
           </span>
         ) : (
           safeSelected.map((item, idx) => (
@@ -148,7 +148,7 @@ export default function AllergySelector({ selectedAllergies = [], onChange, labe
             <input
               type="text"
               className="input-field"
-              placeholder="Pesquisar ou digitar nova alergia (Ex: Cefazolina, Vancomicina...)"
+              placeholder="Buscar ou cadastrar alergia..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -174,10 +174,10 @@ export default function AllergySelector({ selectedAllergies = [], onChange, labe
                 gap: '4px',
                 whiteSpace: 'nowrap'
               }}
-              title="Salvar esta nova alergia no Firestore para todos os pacientes"
+              title="Adicionar alergia"
             >
               <Plus size={14} />
-              <span>{addingNew ? 'Salvando...' : 'Adicionar ao Catálogo'}</span>
+              <span>{addingNew ? 'Salvando...' : 'Adicionar'}</span>
             </button>
           )}
         </div>

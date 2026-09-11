@@ -65,7 +65,7 @@ export default function PrescriptionModal({
         tipoReceita: initialTipo || 'simples',
         validadeDias: initialTipo === 'antimicrobiano' ? 10 : (initialTipo === 'controle_especial' ? 30 : 180),
         subtitulo: '',
-        observacoesGerais: 'Manter rigor no controle da ingestão hídrica e adesão às orientações nutricionais da nefrologia.',
+        observacoesGerais: 'Manter controle hídrico e adesão nutricional.',
         incluirAlergias: true,
         medicoNome: doctorInfo?.nome || 'Dr. Marcelo Ramos',
         medicoCrm: doctorInfo?.crm ? `${doctorInfo.crm}/${doctorInfo.ufCrm || 'SP'}` : '654321/SP',
@@ -276,9 +276,8 @@ export default function PrescriptionModal({
             <FileCheck size={22} color="var(--primary)" />
             <div>
               <h2 className="text-lg font-bold">
-                {prescriptionToEdit ? 'Editar Receituário Médico' : 'Nova Receita Médica'}
+                {prescriptionToEdit ? 'Editar Receituário' : 'Nova Receita'}
               </h2>
-              <span className="text-xs text-muted">Registro clínico oficial no Cloud Firestore</span>
             </div>
           </div>
           <button 
@@ -337,7 +336,7 @@ export default function PrescriptionModal({
           {ativasCount > 0 && (
             <div className="flex justify-between items-center bg-blue-50/70 border border-blue-200 px-3 py-2 rounded-xl">
               <span className="text-xs text-blue-900 font-medium">
-                O paciente possui <strong>{ativasCount}</strong> medicações ativas cadastradas.
+                <strong>{ativasCount}</strong> medicações ativas no prontuário.
               </span>
               <button
                 type="button"

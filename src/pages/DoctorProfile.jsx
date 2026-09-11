@@ -221,7 +221,7 @@ export default function DoctorProfile() {
         </button>
         <div>
           <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>Perfil e Locais de Atuação</h1>
-          <p className="text-muted text-sm mt-0.5">Gestão de credenciais médicas, RTs e unidades de atendimento na nuvem</p>
+          <p className="text-muted text-sm mt-0.5">Credenciais médicas e unidades de atendimento</p>
         </div>
       </header>
 
@@ -253,7 +253,7 @@ export default function DoctorProfile() {
             background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
             display: 'flex', 
             alignItems: 'center', 
-            justifyContent: 'center',
+            justifyContent: 'center', 
             color: 'white',
             boxShadow: '0 8px 16px rgba(37, 99, 235, 0.25)',
             fontSize: '1.5rem',
@@ -288,10 +288,10 @@ export default function DoctorProfile() {
         <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
           <div>
             <h3 className="font-bold text-base flex items-center gap-2" style={{ color: 'var(--primary)' }}>
-              <Building2 size={18} /> Meus Locais de Atuação & Clínicas
+              <Building2 size={18} /> Locais de Atuação
             </h3>
             <p className="text-muted text-xs mt-0.5">
-              Cadastre onde você atende, configure o Responsável Técnico (RT), contato da enfermagem e turnos de atendimento
+              Unidades de diálise, hospitais e ambulatórios
             </p>
           </div>
 
@@ -308,7 +308,7 @@ export default function DoctorProfile() {
         {/* Lista de Locais Cadastrados */}
         {locaisList.length === 0 ? (
           <div className="text-center py-6 border border-dashed rounded-xl text-muted text-sm">
-            Nenhum local de atuação cadastrado. Clique no botão acima para adicionar sua primeira clínica ou hospital.
+            Nenhum local cadastrado.
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
@@ -469,7 +469,7 @@ export default function DoctorProfile() {
               />
             </div>
             <div>
-              <label className="text-sm font-semibold mb-1 block">RQE (Registro de Especialista)</label>
+              <label className="text-sm font-semibold mb-1 block">RQE</label>
               <input 
                 type="text" 
                 className="input-field" 
@@ -479,7 +479,7 @@ export default function DoctorProfile() {
               />
             </div>
             <div>
-              <label className="text-sm font-semibold mb-1 block">Especialidade Principal</label>
+              <label className="text-sm font-semibold mb-1 block">Especialidade</label>
               <input 
                 type="text" 
                 className="input-field" 
@@ -498,7 +498,7 @@ export default function DoctorProfile() {
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
             <div>
-              <label className="text-sm font-semibold mb-1 block">Email Profissional</label>
+              <label className="text-sm font-semibold mb-1 block">Email</label>
               <input 
                 type="email" 
                 className="input-field" 
@@ -578,7 +578,7 @@ export default function DoctorProfile() {
               <div className="flex items-center gap-2">
                 <Building2 size={22} color="var(--primary)" />
                 <h3 className="font-bold text-lg text-slate-800">
-                  {editingLocationId ? 'Editar Local de Atendimento' : 'Novo Local de Atendimento'}
+                  {editingLocationId ? 'Editar Local' : 'Novo Local'}
                 </h3>
               </div>
               <button 
@@ -597,7 +597,7 @@ export default function DoctorProfile() {
                 <input 
                   type="text" 
                   className="input-field" 
-                  placeholder="Ex: Centro de Diálise Fresenius Zona Sul ou Hospital Santa Clara" 
+                  placeholder="Ex: Centro de Diálise ou Hospital Central" 
                   value={locationFormData.nome}
                   onChange={(e) => setLocationFormData(prev => ({ ...prev, nome: e.target.value }))}
                   required 
@@ -636,12 +636,12 @@ export default function DoctorProfile() {
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl flex flex-col gap-2.5">
                 <div className="flex items-center gap-1.5 text-blue-900 font-bold text-xs">
                   <ShieldCheck size={16} color="#2563eb" />
-                  <span>Responsável Técnico (RT) & Contato de Apoio</span>
+                  <span>Responsável Técnico (RT) & Enfermagem</span>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.6rem' }}>
                   <div>
-                    <label className="text-xs font-semibold text-slate-700 mb-1 block">Nome do RT da Unidade</label>
+                    <label className="text-xs font-semibold text-slate-700 mb-1 block">Nome do RT</label>
                     <input 
                       type="text" 
                       className="input-field" 
@@ -667,7 +667,7 @@ export default function DoctorProfile() {
                     <input 
                       type="text" 
                       className="input-field" 
-                      placeholder="Ex: (11) 98888-2222 (Posto de Diálise)" 
+                      placeholder="Ex: (11) 98888-2222 (Posto)" 
                       value={locationFormData.telefoneEnfermagem}
                       onChange={(e) => setLocationFormData(prev => ({ ...prev, telefoneEnfermagem: e.target.value }))}
                     />
@@ -689,7 +689,7 @@ export default function DoctorProfile() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-bold text-slate-700 mb-1 block">Turnos de Atendimento</label>
+                  <label className="text-xs font-bold text-slate-700 mb-1 block">Turnos</label>
                   <input 
                     type="text" 
                     className="input-field" 

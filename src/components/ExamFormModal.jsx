@@ -283,10 +283,10 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
             </div>
             <div>
               <h2 className="text-xl font-bold">
-                {examToEdit ? 'Editar Resultados Laboratoriais' : 'Lançar Exames Laboratoriais Nefrológicos'}
+                {examToEdit ? 'Editar Exames' : 'Lançar Exames'}
               </h2>
               <p className="text-xs text-muted">
-                Registro clínico especializado com parâmetros de meta para diálise
+                Metas KDIGO/SBN
               </p>
             </div>
           </div>
@@ -325,7 +325,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
           {/* 1. Anemia e Perfil Férrico */}
           <div className="card-pastel-rose" style={{ padding: '1.25rem', borderRadius: '14px' }}>
             <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#b91c1c' }}>
-              <HeartPulse size={16} /> Anemia & Perfil Férrico
+              <HeartPulse size={16} /> Anemia & Ferro
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem' }}>
               <div>
@@ -389,7 +389,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
           {/* 2. Metabolismo Ósseo & DMO-DRC */}
           <div className="card-pastel-amber" style={{ padding: '1.25rem', borderRadius: '14px' }}>
             <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#b45309' }}>
-              <Activity size={16} /> Metabolismo Mineral & Ósseo (DMO-DRC)
+              <Activity size={16} /> Metabolismo Ósseo (DMO)
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.85rem' }}>
               <div>
@@ -467,7 +467,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
           {/* 3. Eletrólitos & Equilíbrio Ácido-Básico */}
           <div className="card-pastel-blue" style={{ padding: '1.25rem', borderRadius: '14px' }}>
             <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#1d4ed8' }}>
-              <Zap size={16} /> Eletrólitos & Equilíbrio Ácido-Básico
+              <Zap size={16} /> Eletrólitos & Ácido-Básico
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem' }}>
               <div>
@@ -517,7 +517,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
           {/* 4. Adequação da Diálise, Cinética de Ureia & Nutrição */}
           <div className="card-pastel-emerald" style={{ padding: '1.25rem', borderRadius: '14px' }}>
             <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#047857' }}>
-              <Droplet size={16} /> Adequação Dialítica, Cinética & Nutrição
+              <Droplet size={16} /> Cinética da Ureia & Nutrição
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.85rem' }}>
               <div>
@@ -595,7 +595,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
           {/* 5. Inflamação & Controle Glicêmico */}
           <div className="card-pastel-purple" style={{ padding: '1.25rem', borderRadius: '14px' }}>
             <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#6d28d9' }}>
-              <ShieldAlert size={16} /> Inflamação & Controle Metabólico
+              <ShieldAlert size={16} /> Inflamação & Glicemia
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem' }}>
               <div>
@@ -647,7 +647,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
             <h3 className="font-bold text-sm mb-3 flex items-center justify-between" style={{ color: '#0f766e' }}>
               <div className="flex items-center gap-2">
                 <Activity size={16} /> 
-                <span>Função Hepática & Transaminases (TGP / TGO)</span>
+                <span>Função Hepática (TGP/TGO)</span>
               </div>
               <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '10px', background: '#ccfbf1', color: '#115e59', fontWeight: 'bold' }}>
                 Rastreio Hepático & Diálise
@@ -657,7 +657,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.85rem' }}>
               <div>
                 <label className="text-xs font-semibold mb-1 block" style={{ color: '#134e4a' }}>
-                  TGP (ALT) - Transaminase Pirúvica
+                  TGP (ALT)
                 </label>
                 <input 
                   type="text" 
@@ -671,7 +671,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
 
               <div>
                 <label className="text-xs font-semibold mb-1 block" style={{ color: '#134e4a' }}>
-                  TGO (AST) - Transaminase Oxalacética
+                  TGO (AST)
                 </label>
                 <input 
                   type="text" 
@@ -690,7 +690,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
             <h3 className="font-bold text-sm mb-3 flex items-center justify-between" style={{ color: '#b45309' }}>
               <div className="flex items-center gap-2">
                 <Bug size={16} /> 
-                <span>Microbiologia & Hemoculturas do Acesso Vascular</span>
+                <span>Hemocultura / Microbiologia</span>
               </div>
               <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '10px', background: '#fef3c7', color: '#92400e', fontWeight: 'bold' }}>
                 Hemodiálise & Vigilância Infecciosa

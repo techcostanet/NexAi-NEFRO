@@ -271,7 +271,7 @@ export default function DoctorDashboard() {
               gap: '6px',
               boxShadow: '0 2px 10px rgba(37, 99, 235, 0.08)'
             }}
-            title="Ver Notas de Versão e atualizações do sistema"
+            title="Notas de versão"
           >
             <Sparkles size={14} color="#2563eb" />
             <span>Notas de Versão</span>
@@ -294,7 +294,7 @@ export default function DoctorDashboard() {
               color: '#4f46e5',
               fontWeight: '600'
             }}
-            title="Central de Relatórios Clínicos & Gerenciais (20 Relatórios - XLS / PDF)"
+            title="Central de Relatórios Clínicos"
           >
             <BarChart3 size={16} color="#4f46e5" />
             <span>Relatórios</span>
@@ -304,7 +304,7 @@ export default function DoctorDashboard() {
             className="btn btn-outline" 
             onClick={() => navigate('/doctor/profile')}
             style={{ padding: '0.55rem 0.95rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
-            title="Ver e editar dados cadastrais e locais de atendimento"
+            title="Dados e locais de atendimento"
           >
             <UserCog size={16} color="var(--primary)" />
             <span>Dados & Locais</span>
@@ -325,7 +325,7 @@ export default function DoctorDashboard() {
               color: '#1d4ed8',
               fontWeight: '600'
             }}
-            title="Importar exames laboratoriais em lote via Excel, PDF, Word ou Foto"
+            title="Importar exames (PDF, Excel, Word ou Imagem)"
           >
             <UploadCloud size={16} color="#2563eb" />
             <span>Importar</span>
@@ -345,7 +345,7 @@ export default function DoctorDashboard() {
             className="btn btn-outline" 
             onClick={handleLogout} 
             style={{ padding: '0.55rem', borderRadius: '12px' }}
-            title="Sair do sistema"
+            title="Sair"
           >
             <LogOut size={18} />
           </button>
@@ -368,7 +368,7 @@ export default function DoctorDashboard() {
         >
           <AlertTriangle size={22} color="#dc2626" />
           <div className="text-sm">
-            <strong>Sua assinatura está atualmente suspensa ou pendente.</strong> O acesso à edição e cadastro de pacientes está restrito. Entre em contato com o suporte ou regularize seu plano.
+            <strong>Assinatura suspensa ou pendente.</strong> Edição e cadastro restritos. Regularize seu plano ou contate o suporte.
           </div>
         </div>
       )}
@@ -480,7 +480,7 @@ export default function DoctorDashboard() {
             <input 
               type="text" 
               className="input-field" 
-              placeholder="Buscar por nome do paciente..." 
+              placeholder="Buscar paciente..." 
               style={{ paddingLeft: '2.5rem' }}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -490,7 +490,7 @@ export default function DoctorDashboard() {
           {/* Seletor de Modo de Visualização (Cards / Compacto / Tabela) */}
           <div style={{ display: 'inline-flex', background: '#f1f5f9', padding: '3px', borderRadius: '12px', border: '1px solid #cbd5e1' }}>
             <button 
-              type="button"
+              type="button" 
               onClick={() => setViewMode('cards')}
               style={{
                 padding: '6px 11px',
@@ -507,14 +507,14 @@ export default function DoctorDashboard() {
                 boxShadow: viewMode === 'cards' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
                 transition: 'all 0.15s'
               }}
-              title="Visualização em Cards Detalhados"
+              title="Cards"
             >
               <LayoutGrid size={14} />
               <span>Cards</span>
             </button>
 
             <button 
-              type="button"
+              type="button" 
               onClick={() => setViewMode('compact')}
               style={{
                 padding: '6px 11px',
@@ -531,14 +531,14 @@ export default function DoctorDashboard() {
                 boxShadow: viewMode === 'compact' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
                 transition: 'all 0.15s'
               }}
-              title="Visualização Compacta para Leitura Rápida"
+              title="Compacto"
             >
               <Rows3 size={14} />
               <span>Compacto</span>
             </button>
 
             <button 
-              type="button"
+              type="button" 
               onClick={() => setViewMode('table')}
               style={{
                 padding: '6px 11px',
@@ -555,7 +555,7 @@ export default function DoctorDashboard() {
                 boxShadow: viewMode === 'table' ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
                 transition: 'all 0.15s'
               }}
-              title="Visualização em Tabela de Pacientes"
+              title="Tabela"
             >
               <Table size={14} />
               <span>Tabela</span>
@@ -635,12 +635,12 @@ export default function DoctorDashboard() {
               </div>
               <div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--text-main)', marginBottom: '4px' }}>
-                  {patients.length === 0 ? 'Nenhum paciente cadastrado ainda' : 'Nenhum paciente encontrado'}
+                  {patients.length === 0 ? 'Nenhum paciente cadastrado' : 'Nenhum paciente encontrado'}
                 </h3>
                 <p style={{ fontSize: '0.85rem', maxWidth: '440px', margin: '0 auto', color: 'var(--text-muted)' }}>
                   {patients.length === 0 
-                    ? 'Seu consultório está pronto! Cadastre seu primeiro paciente no botão abaixo para iniciar o acompanhamento dialítico e prontuário.' 
-                    : 'Nenhum paciente corresponde aos filtros ou busca selecionada.'}
+                    ? 'Cadastre um paciente para iniciar o prontuário e acompanhamento.' 
+                    : 'Nenhum paciente corresponde aos filtros.'}
                 </p>
               </div>
               {patients.length === 0 && (
@@ -651,7 +651,7 @@ export default function DoctorDashboard() {
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '0.6rem 1.25rem', borderRadius: '12px' }}
                 >
                   <UserPlus size={16} />
-                  <span>Cadastrar Primeiro Paciente</span>
+                  <span>Novo Paciente</span>
                 </button>
               )}
             </div>
@@ -812,7 +812,7 @@ export default function DoctorDashboard() {
             <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '3rem 1.5rem', textAlign: 'center', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.85rem' }}>
               <UserPlus size={24} color="var(--primary)" />
               <p style={{ fontWeight: '600', color: 'var(--text-main)', margin: 0 }}>
-                {patients.length === 0 ? 'Nenhum paciente cadastrado ainda' : 'Nenhum paciente encontrado'}
+                {patients.length === 0 ? 'Nenhum paciente cadastrado' : 'Nenhum paciente encontrado'}
               </p>
               {patients.length === 0 && (
                 <button 
@@ -822,7 +822,7 @@ export default function DoctorDashboard() {
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.8rem' }}
                 >
                   <UserPlus size={14} />
-                  <span>Cadastrar Primeiro Paciente</span>
+                  <span>Novo Paciente</span>
                 </button>
               )}
             </div>
@@ -937,7 +937,7 @@ export default function DoctorDashboard() {
             <div style={{ padding: '3.5rem 1.5rem', textAlign: 'center', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.85rem' }}>
               <UserPlus size={24} color="var(--primary)" />
               <p style={{ fontWeight: '600', color: 'var(--text-main)', margin: 0 }}>
-                {patients.length === 0 ? 'Nenhum paciente cadastrado ainda' : 'Nenhum paciente encontrado com os filtros selecionados.'}
+                {patients.length === 0 ? 'Nenhum paciente cadastrado' : 'Nenhum paciente encontrado.'}
               </p>
               {patients.length === 0 && (
                 <button 
@@ -947,7 +947,7 @@ export default function DoctorDashboard() {
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.8rem' }}
                 >
                   <UserPlus size={14} />
-                  <span>Cadastrar Primeiro Paciente</span>
+                  <span>Novo Paciente</span>
                 </button>
               )}
             </div>

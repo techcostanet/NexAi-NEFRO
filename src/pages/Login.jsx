@@ -68,7 +68,7 @@ export default function Login() {
 
         <form onSubmit={handleLogin} className="flex flex-col gap-3.5">
           <div>
-            <label className="text-xs font-semibold mb-1 block" style={{ color: 'var(--text-main)' }}>Email de Acesso</label>
+            <label className="text-xs font-semibold mb-1 block" style={{ color: 'var(--text-main)' }}>Email</label>
             <input 
               type="text" 
               className="input-field" 
@@ -102,29 +102,29 @@ export default function Login() {
             {isSubmitting ? (
               <>
                 <Loader2 className="animate-spin" size={18} />
-                <span>Autenticando na Nuvem...</span>
+                <span>Entrando...</span>
               </>
             ) : (
-              <span>Acessar Sistema</span>
+              <span>Entrar</span>
             )}
           </button>
         </form>
 
         {/* Link para Landing Page / Novos Clientes */}
         <div className="mt-5 pt-4 border-t border-slate-100 text-center">
-          <p className="text-xs text-slate-600 mb-2 font-medium">Ainda não possui uma licença médica?</p>
+          <p className="text-xs text-slate-600 mb-2 font-medium">Não possui licença?</p>
           <button 
             type="button" 
             onClick={() => navigate('/')}
             className="btn btn-outline w-full text-xs font-bold py-2 text-blue-600 border-blue-200 bg-blue-50/50 hover:bg-blue-100 transition"
           >
-            Conhecer Planos & Testar 7 Dias Grátis ➡️
+            Planos & Teste Grátis ➡️
           </button>
         </div>
 
         <div className="mt-5 text-center">
           <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-            Versão {APP_VERSION} • Produção Cloud Firestore
+            Versão {APP_VERSION} • Cloud Firestore
           </span>
         </div>
       </div>

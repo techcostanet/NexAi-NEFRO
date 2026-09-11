@@ -252,10 +252,10 @@ export default function ExamImportModal({
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-800 tracking-tight">
-                Importador Inteligente de Exames
+                Importador de Exames
               </h2>
               <p className="text-xs text-muted">
-                Processamento automatizado de laudos e planilhas com correspondência fonética de pacientes
+                Laudos em PDF, Excel, Word ou imagem com vínculo automático
               </p>
             </div>
           </div>
@@ -299,7 +299,7 @@ export default function ExamImportModal({
                 border: '2px dashed',
                 borderColor: dragActive ? 'var(--primary)' : '#cbd5e1',
                 borderRadius: '16px',
-                padding: '3rem 2rem',
+                padding: '2.5rem 1.5rem',
                 textAlign: 'center',
                 cursor: 'pointer',
                 background: dragActive ? 'rgba(37, 99, 235, 0.05)' : '#f8fafc',
@@ -308,7 +308,7 @@ export default function ExamImportModal({
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '1rem'
+                gap: '0.75rem'
               }}
             >
               <input 
@@ -319,44 +319,35 @@ export default function ExamImportModal({
                 onChange={handleFileInputChange}
               />
 
-              <div style={{ background: '#eff6ff', padding: '16px', borderRadius: '50%', color: '#2563eb' }}>
-                <UploadCloud size={42} />
+              <div style={{ background: '#eff6ff', padding: '14px', borderRadius: '50%', color: '#2563eb' }}>
+                <UploadCloud size={36} />
               </div>
 
               <div>
-                <h3 className="text-base font-bold text-slate-800">
-                  Arraste e solte o arquivo aqui, ou <span className="text-blue-600 underline">clique para selecionar</span>
+                <h3 className="text-sm font-bold text-slate-800">
+                  Arraste o arquivo ou <span className="text-blue-600 underline">clique para selecionar</span>
                 </h3>
-                <p className="text-xs text-muted mt-1">
-                  Formatos suportados: <strong>Excel (.xlsx, .xls)</strong>, <strong>PDF (.pdf)</strong>, <strong>Word (.docx)</strong> e <strong>Fotos/Imagens (.jpg, .png)</strong>
-                </p>
               </div>
 
-              <div className="flex items-center gap-3 mt-2 flex-wrap justify-center">
-                <span className="badge badge-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem' }}>
-                  <FileSpreadsheet size={13} color="#059669" /> Excel / CSV
+              <div className="flex items-center gap-2 mt-1 flex-wrap justify-center">
+                <span className="badge badge-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.72rem', padding: '2px 8px' }}>
+                  <FileSpreadsheet size={12} color="#059669" /> Excel / CSV
                 </span>
-                <span className="badge badge-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem' }}>
-                  <FileText size={13} color="#dc2626" /> Laudos em PDF
+                <span className="badge badge-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.72rem', padding: '2px 8px' }}>
+                  <FileText size={12} color="#dc2626" /> Laudos em PDF
                 </span>
-                <span className="badge badge-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem' }}>
-                  <FileText size={13} color="#2563eb" /> Word (.docx)
+                <span className="badge badge-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.72rem', padding: '2px 8px' }}>
+                  <FileText size={12} color="#2563eb" /> Word (.docx)
                 </span>
-                <span className="badge badge-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem' }}>
-                  <ImageIcon size={13} color="#d97706" /> Fotos / OCR
+                <span className="badge badge-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.72rem', padding: '2px 8px' }}>
+                  <ImageIcon size={12} color="#d97706" /> Fotos / OCR
                 </span>
               </div>
             </div>
 
-            <div className="bg-slate-50 p-4 rounded-xl border text-xs text-slate-600 flex flex-col gap-1.5" style={{ borderColor: 'var(--border)' }}>
-              <div className="font-bold text-slate-800 flex items-center gap-1.5">
-                <Sparkles size={14} color="#2563eb" />
-                <span>Como funciona o reconhecimento inteligente?</span>
-              </div>
-              <p>• O sistema lê os nomes dos pacientes no arquivo e localiza os registros correspondentes na sua lista, tolerando abreviações (ex: <em>ALAN A. TEIXEIRA</em> vincula a <em>ALAN ALVES TEIXEIRA</em>).</p>
-              <p>• Reconhece siglas laboratoriais padronizadas: <strong>Hb, Ht, Ferritina, IST, PTH, P, Ca, K, Kt/V, Albumina, Creatinina, PCR, etc.</strong></p>
-              <p>• Antes de gravar qualquer dado no banco, você poderá conferir e ajustar as informações na tela de reconciliação.</p>
-            </div>
+            <p className="text-center text-xs text-muted">
+              Vínculo automático por nome e CPF com conferência antes de salvar.
+            </p>
           </div>
         )}
 

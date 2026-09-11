@@ -145,9 +145,8 @@ export default function EvolutionModal({
             <FileText size={22} color="var(--primary)" />
             <div>
               <h2 className="text-lg font-bold">
-                {evolutionToEdit ? 'Editar Evolução Clínica' : 'Nova Evolução Clínica'}
+                {evolutionToEdit ? 'Editar Evolução' : 'Nova Evolução'}
               </h2>
-              <span className="text-xs text-muted">Registro clínico oficial no Cloud Firestore</span>
             </div>
           </div>
           <button 
@@ -169,7 +168,7 @@ export default function EvolutionModal({
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.75rem' }}>
             <div>
-              <label className="text-xs font-semibold mb-1 block text-slate-700">Data e Hora da Evolução *</label>
+              <label className="text-xs font-semibold mb-1 block text-slate-700">Data e Hora *</label>
               <input 
                 type="datetime-local" 
                 className="input-field" 
@@ -215,7 +214,7 @@ export default function EvolutionModal({
           {/* Parâmetros Dialíticos da Sessão */}
           <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
             <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">
-              Parâmetros e Sinais Vitais da Sessão
+              Parâmetros & Sinais Vitais
             </span>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.5rem' }}>
               <div>
@@ -278,11 +277,11 @@ export default function EvolutionModal({
 
           {/* Texto da Evolução e Conduta */}
           <div>
-            <label className="text-xs font-semibold mb-1 block text-slate-700">Evolução Clínica & Conduta Médica *</label>
+            <label className="text-xs font-semibold mb-1 block text-slate-700">Conduta & Evolução Clínica *</label>
             <textarea 
               className="input-field" 
               rows={4}
-              placeholder="Descreva o estado clínico do paciente durante a sessão de hemodiálise, estabilidade hemodinâmica, intercorrências e conduta médica..."
+              placeholder="Evolução clínica, estabilidade hemodinâmica e conduta..."
               value={formData.condutaClinica}
               onChange={(e) => setFormData(prev => ({ ...prev, condutaClinica: e.target.value }))}
               required

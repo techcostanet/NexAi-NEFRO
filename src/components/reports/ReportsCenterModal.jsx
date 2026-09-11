@@ -250,8 +250,8 @@ export default function ReportsCenterModal({
                   20 Relatórios Especializados
                 </span>
               </div>
-              <p style={{ margin: '2px 0 0 0', fontSize: '0.82rem', color: '#64748b' }}>
-                Auditoria, metas KDIGO/SBN, vigilância dialítica, prontidão para transplante e exportação em alta fidelidade.
+              <p style={{ margin: '2px 0 0 0', fontSize: '0.80rem', color: '#64748b' }}>
+                Metas KDIGO/SBN, vigilância dialítica e transplante.
               </p>
             </div>
           </div>
@@ -347,7 +347,7 @@ export default function ReportsCenterModal({
                 <Search size={14} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '10px' }} />
                 <input
                   type="text"
-                  placeholder="Buscar entre os 20 relatórios..."
+                  placeholder="Buscar relatório..."
                   value={reportSearchQuery}
                   onChange={e => setReportSearchQuery(e.target.value)}
                   style={{

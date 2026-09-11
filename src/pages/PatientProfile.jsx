@@ -587,7 +587,7 @@ export default function PatientProfile() {
                 <div className="flex items-center gap-2.5">
                   <Bug size={18} color="#dc2626" style={{ flexShrink: 0 }} />
                   <span style={{ lineHeight: '1.4' }}>
-                    <strong style={{ color: '#b91c1c' }}>🚨 Alerta de Infecção de Acesso:</strong> Hemocultura positiva identificada ({hemoculturas.find(h => h.resultado === 'Positiva')?.microrganismo || 'Patógeno isolado'}). Checar protocolo de selo de cateter e antibioticoterapia guiada.
+                    <strong style={{ color: '#b91c1c' }}>🚨 Infecção de Acesso:</strong> Hemocultura positiva ({hemoculturas.find(h => h.resultado === 'Positiva')?.microrganismo || 'Patógeno isolado'}). Checar lock therapy e antibioticoterapia.
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -624,7 +624,7 @@ export default function PatientProfile() {
               >
                 <AlertTriangle size={18} color="#ea580c" style={{ flexShrink: 0 }} />
                 <span>
-                  <strong>Atenção Volêmica:</strong> Ganho ponderal interdialítico de <strong>+{ganhoKg} kg ({pidgPct}% do peso seco)</strong>. Monitorar risco de hipertensão refratária e edema pulmonar.
+                  <strong>Atenção Volêmica:</strong> Ganho interdialítico de <strong>+{ganhoKg} kg ({pidgPct}%)</strong>. Risco de hipertensão e congestão.
                 </span>
               </div>
             )}
@@ -999,7 +999,7 @@ export default function PatientProfile() {
               {/* Histórico Cronológico de Pesagens */}
               {historicoPesos.length === 0 ? (
                 <div className="text-center py-4 text-xs text-muted">
-                  Nenhuma pesagem registrada ainda. Clique em "+ Registrar Peso" para iniciar o acompanhamento.
+                  Nenhuma pesagem registrada.
                 </div>
               ) : (
                 <div className="flex flex-col gap-1.5 max-h-48 overflow-y-auto pr-1">
@@ -1279,7 +1279,7 @@ export default function PatientProfile() {
                 <FlaskConical size={18} color="var(--primary)" />
                 <span>Painel Laboratorial & Metas Nefrológicas</span>
               </h2>
-              <p className="text-xs text-muted">Resultados mais recentes agrupados por perfil clínico funcional</p>
+              <p className="text-xs text-muted">Metas KDIGO/SBN</p>
             </div>
             
             <div className="flex items-center gap-2">
@@ -1702,7 +1702,7 @@ export default function PatientProfile() {
                 <Pill size={18} color="#d97706" />
                 <span>Gestão Farmacológica & Prescrições</span>
               </h2>
-              <p className="text-xs text-muted">Controle de medicações de uso contínuo e ciclos com prazo determinado</p>
+              <p className="text-xs text-muted">Uso contínuo e ciclos temporários</p>
             </div>
             
             <button className="btn btn-primary" onClick={handleOpenNewMedication} style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -1879,7 +1879,7 @@ export default function PatientProfile() {
                 <FileText size={18} color="var(--primary)" />
                 <span>Evoluções Clínicas</span>
               </h2>
-              <p className="text-xs text-muted">Histórico de anotações médicas, intercorrências e condutas na sessão</p>
+              <p className="text-xs text-muted">Evoluções e intercorrências</p>
             </div>
 
             <button className="btn btn-primary" onClick={handleOpenNewEvolution} style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -1987,7 +1987,7 @@ export default function PatientProfile() {
                 <FileCheck size={18} color="var(--primary)" />
                 <span>Receituário & Prescrições Médicas</span>
               </h2>
-              <p className="text-xs text-muted">Histórico de receitas médicas emitidas para impressão e PDF</p>
+              <p className="text-xs text-muted">Receituários emitidos</p>
             </div>
 
             <button 
@@ -2446,7 +2446,7 @@ export default function PatientProfile() {
               {/* 2. Parâmetros do Acesso Vascular */}
               <div>
                 <h3 className="font-bold text-xs uppercase text-slate-700 tracking-wider mb-2 border-b pb-1">
-                  2. Acesso Vascular Atual & Parâmetros Dialíticos
+                  2. Acesso Vascular & Parâmetros
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', fontSize: '0.8rem' }}>
                   <div>Tipo de Acesso: <strong>{acessoVascular.tipo || 'FAV'}</strong></div>
@@ -2461,7 +2461,7 @@ export default function PatientProfile() {
               {/* 3. Perfil Laboratorial e Microbiologia Recente */}
               <div>
                 <h3 className="font-bold text-xs uppercase text-slate-700 tracking-wider mb-2 border-b pb-1">
-                  3. Perfil Laboratorial & Vigilância Microbiológica
+                  3. Laboratório & Microbiologia
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.78rem' }} className="mb-2">
                   <div>Hb: <strong>{exames.hb ? `${exames.hb} g/dL` : '-'}</strong></div>
@@ -2481,7 +2481,7 @@ export default function PatientProfile() {
                 <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-xs">
                   <strong>Histórico de Hemoculturas:</strong>{' '}
                   {hemoculturas.length === 0 ? (
-                    'Sem registro de hemoculturas positivas recentes.'
+                    'Sem hemoculturas positivas recentes.'
                   ) : (
                     hemoculturas.map(h => `${new Date(h.dataColeta).toLocaleDateString('pt-BR')}: ${h.resultado} (${h.microrganismo || h.sitioColeta})`).join(' • ')
                   )}
@@ -2491,11 +2491,11 @@ export default function PatientProfile() {
               {/* 4. Prescrições em Uso */}
               <div>
                 <h3 className="font-bold text-xs uppercase text-slate-700 tracking-wider mb-2 border-b pb-1">
-                  4. Prescrições Ativas no Tratamento Dialítico
+                  4. Prescrições Ativas
                 </h3>
                 <div className="flex flex-col gap-1 text-xs">
                   {medicamentosList.filter(m => m.ativo !== false).length === 0 ? (
-                    <span className="text-muted">Nenhuma medicação ativa no momento.</span>
+                    <span className="text-muted">Nenhuma medicação ativa.</span>
                   ) : (
                     medicamentosList.filter(m => m.ativo !== false).map((med, i) => (
                       <div key={i} className="flex justify-between border-b pb-1">
@@ -2658,8 +2658,8 @@ export default function PatientProfile() {
               <div className="flex items-center gap-2">
                 <Bug size={20} color="#b45309" />
                 <div>
-                  <h2 className="text-base font-bold">Calculadora de Selo de Cateter (Lock Therapy)</h2>
-                  <span className="text-xs text-muted">Esterilização intraluminal de cateter em bacteremias</span>
+                  <h2 className="text-base font-bold">Selo de Cateter (Lock Therapy)</h2>
+                  <span className="text-xs text-muted">Protocolos intraluminais</span>
                 </div>
               </div>
               <button 
@@ -2674,7 +2674,7 @@ export default function PatientProfile() {
 
             <div className="flex flex-col gap-3 text-xs">
               <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900">
-                <strong>Protocolo Recomendado:</strong> Infundir exatamente o volume de priming gravado na ponta do cateter (geralmente entre 1.3 ml e 1.8 ml por via) ao final da diálise, e <strong>aspirar e descartar</strong> antes da sessão seguinte.
+                <strong>Protocolo:</strong> Infundir o volume de priming do cateter ao final da sessão. <strong>Aspirar e descartar</strong> antes da próxima diálise.
               </div>
 
               <div className="flex flex-col gap-2">

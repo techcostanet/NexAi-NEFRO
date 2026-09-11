@@ -118,8 +118,8 @@ export default function PatientBulletinModal({
               <h2 className="text-sm font-bold text-slate-800 leading-tight">
                 Boletim de Saúde & Conquistas do Paciente
               </h2>
-              <span className="text-[11px] text-muted">
-                Relatório humanizado, colorido e motivacional calibrado para 1 folha A4
+              <span className="text-xxs text-muted">
+                Impressão A4 / WhatsApp
               </span>
             </div>
           </div>

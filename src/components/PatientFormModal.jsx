@@ -260,7 +260,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
           <div className="flex items-center gap-2">
             <User size={22} color="var(--primary)" />
             <h2 className="text-xl font-bold">
-              {patientToEdit ? 'Editar Dados do Paciente' : 'Novo Paciente'}
+              {patientToEdit ? 'Editar Paciente' : 'Novo Paciente'}
             </h2>
           </div>
           <button 
@@ -394,7 +394,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
 
               <div style={{ gridColumn: '1 / -1' }}>
                 <label className="text-sm font-semibold mb-1 block flex items-center justify-between">
-                  <span>Etiologia da DRC (Causa Básica / Nefropatia)</span>
+                  <span>Etiologia da DRC</span>
                   <span className="text-xs text-muted font-normal">Padrão SBN</span>
                 </label>
                 {!customEtiologia ? (
@@ -414,7 +414,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                     {ETIOLOGIAS_DRC_PADRAO.map(et => (
                       <option key={et.value} value={et.value}>{et.label}</option>
                     ))}
-                    <option value="__custom__">➕ Outra etiologia (digitar livremente)...</option>
+                    <option value="__custom__">➕ Outra etiologia (digitar)...</option>
                   </select>
                 ) : (
                   <div>
@@ -444,13 +444,13 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
           {/* Dados Clínicos Nefrológicos & Status de Transplante */}
           <div className="border-t pt-4" style={{ borderColor: 'var(--border)' }}>
             <h3 className="font-bold text-sm text-muted uppercase tracking-wider mb-3">
-              Dados Clínicos & Status de Transplante
+              Dados Clínicos & Transplante
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
               <div style={{ gridColumn: '1 / -1' }}>
                 <label className="text-sm font-semibold mb-1 block">
-                  Status de Transplante Renal *
+                  Status de Transplante *
                 </label>
                 <select 
                   className="input-field font-semibold" 
@@ -468,7 +468,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
 
               <div>
                 <label className="text-sm font-semibold mb-1 block">
-                  Peso Seco Alvo (kg)
+                  Peso Seco (kg)
                 </label>
                 <input 
                   type="number" 

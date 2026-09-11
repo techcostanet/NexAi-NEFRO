@@ -229,10 +229,10 @@ export default function MedicationModal({
             </div>
             <div>
               <h2 className="text-xl font-bold">
-                {medicationToEdit ? 'Editar Prescrição' : 'Nova Prescrição / Medicamento'}
+                {medicationToEdit ? 'Editar Prescrição' : 'Nova Prescrição'}
               </h2>
               <p className="text-xs text-muted">
-                Catálogo especializado de diálise e prescrição flexível
+                Catálogo Dialítico
               </p>
             </div>
           </div>
@@ -258,9 +258,9 @@ export default function MedicationModal({
           {/* Campo de Medicamento com Autocomplete */}
           <div ref={dropdownRef} style={{ position: 'relative' }}>
             <label className="text-sm font-semibold mb-1 block flex items-center justify-between">
-              <span>Medicamento / Princípio Ativo <span style={{ color: 'red' }}>*</span></span>
+              <span>Medicamento <span style={{ color: 'red' }}>*</span></span>
               <span className="text-xs text-muted" style={{ fontWeight: 'normal' }}>
-                Selecione do catálogo ou digite livremente
+                Catálogo ou digitação livre
               </span>
             </label>
             
@@ -268,7 +268,7 @@ export default function MedicationModal({
               <input 
                 type="text" 
                 className="input-field" 
-                placeholder="Ex: Noripurum, Alfaepoetina, Sevelamer..." 
+                placeholder="Nome do medicamento..." 
                 value={nome}
                 onChange={(e) => {
                   setNome(e.target.value);
