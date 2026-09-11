@@ -278,7 +278,9 @@ export async function savePatientExam(patientId, examData, examIndex = null) {
       albumina: latestExam.albumina !== undefined ? latestExam.albumina : (patient.exames?.albumina || null),
       pcr: latestExam.pcr !== undefined ? latestExam.pcr : (patient.exames?.pcr || null),
       glicemia: latestExam.glicemia !== undefined ? latestExam.glicemia : (patient.exames?.glicemia || null),
-      hba1c: latestExam.hba1c !== undefined ? latestExam.hba1c : (patient.exames?.hba1c || null)
+      hba1c: latestExam.hba1c !== undefined ? latestExam.hba1c : (patient.exames?.hba1c || null),
+      tgp: latestExam.tgp !== undefined ? latestExam.tgp : (patient.exames?.tgp || null),
+      tgo: latestExam.tgo !== undefined ? latestExam.tgo : (patient.exames?.tgo || null)
     },
     medicamentos: (patient.medicamentos && (Array.isArray(patient.medicamentos) ? patient.medicamentos.length > 0 : Object.keys(patient.medicamentos).length > 0)) ? patient.medicamentos : (latestExam.medicamentos || []),
     atualizadoEm: new Date().toISOString()

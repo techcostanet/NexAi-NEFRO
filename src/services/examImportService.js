@@ -13,7 +13,7 @@ if (typeof window !== 'undefined' && pdfjsLib) {
 
 // Dicionário de Sinônimos de Exames Laboratoriais Nefrológicos
 export const EXAM_ALIASES = {
-  hb: ['hb', 'hgb', 'hemoglobina', 'hemoglobin'],
+  hb: ['hb', 'hgb', 'hemoglobina', 'hemoglobin', 'dosagem de hemoglobina'],
   ht: ['ht', 'hct', 'hematocrito', 'hematocritos'],
   ferritina: ['ferritina', 'ferr', 'ferrit', 'ferritina serica'],
   ist: ['ist', 'sat transferrina', 'sat. trans', 'sat transf', 'saturacao transferrina', 'indice saturacao transferrina', 'sat de transferrina'],
@@ -26,13 +26,15 @@ export const EXAM_ALIASES = {
   na: ['sodio', 'na', 'na+', 'sodio serico'],
   hco3: ['hco3', 'bicarbonato', 'reserva alcalina', 'gaso hco3', 'bicarbonato serico'],
   ktv: ['kt/v', 'ktv', 'kt_v', 'kt v', 'kt', 'adequacao dialitica', 'kt/v dialise', 'ktv sp'],
-  ureiaPre: ['ureia pre', 'ureia pre-hd', 'ureia pre hd', 'ureia inicial', 'ur pre', 'ureia 1'],
-  ureiaPos: ['ureia pos', 'ureia pos-hd', 'ureia pos hd', 'ureia final', 'ur pos', 'ureia 2'],
+  ureiaPos: ['ureia pos', 'ureia pos-hd', 'ureia pos hd', 'ureia final', 'ur pos', 'ureia 2', 'ureia pos dialise', 'ureia pos-dialise'],
+  ureiaPre: ['ureia pre', 'ureia pre-hd', 'ureia pre hd', 'ureia inicial', 'ur pre', 'ureia 1', 'ureia'],
   creatinina: ['creatinina', 'cr', 'creat', 'creatina'],
   albumina: ['albumina', 'alb', 'albumina serica'],
   pcr: ['pcr', 'proteina c reativa', 'pcr ultrassensivel', 'pcr us'],
-  glicemia: ['glicemia', 'glicose', 'dextro', 'gli'],
-  hba1c: ['hba1c', 'hemoglobina glicada', 'a1c', 'hb a1c']
+  glicemia: ['glicemia', 'glicose', 'dextro', 'gli', 'glicemia em jejum', 'glicemia de jejum'],
+  hba1c: ['hba1c', 'hemoglobina glicada', 'a1c', 'hb a1c', 'hemoglobina glicada - hba1c', 'hemoglobina glicada a1c', 'hemoglobina glicada a1'],
+  tgp: ['tgp', 'alt', 'transaminase glutamico piruvica', 'transaminase piruvica', 'alanina aminotransferase', 'alt/tgp', 'alt tgp'],
+  tgo: ['tgo', 'ast', 'transaminase glutamico oxalacetica', 'transaminase oxalacetica', 'aspartato aminotransferase', 'ast/tgo', 'ast tgo']
 };
 
 /**
@@ -77,11 +79,32 @@ export function parseExamNumber(val) {
 }
 
 /**
- * Mapeia cabeçalho de coluna para chave de exame
+ * Mapeia cabeçalho de coluna ou título de laudo para chave de exame
  */
 export function matchHeaderToExamKey(headerName) {
   const norm = normalizeString(headerName);
   if (!norm) return null;
+
+  // Prioridade específica para Ureia Pós vs Ureia Pré
+  if (norm.includes('pos') && (norm.includes('ureia') || norm.includes('ur'))) {
+    return 'ureiaPos';
+  }
+  if ((norm.includes('ureia') || norm.includes('ur')) && !norm.includes('pos')) {
+    return 'ureiaPre';
+  }
+
+  // TGP / TGO
+  if (norm.includes('tgp') || norm.includes('transaminase glutamico piruvica') || norm.includes('alanina amino')) {
+    return 'tgp';
+  }
+  if (norm.includes('tgo') || norm.includes('transaminase glutamico oxalacetica') || norm.includes('aspartato amino')) {
+    return 'tgo';
+  }
+
+  // Hemoglobina Glicada
+  if (norm.includes('glicada') || norm.includes('hba1c') || norm.includes('a1c')) {
+    return 'hba1c';
+  }
 
   // 1. Prioridade: Correspondência Exata
   for (const [key, aliases] of Object.entries(EXAM_ALIASES)) {
@@ -153,17 +176,41 @@ export function calculateNameSimilarity(nameA, nameB) {
 
 /**
  * Encontra o paciente mais provável dentro da lista do médico
+ * Suporta busca por CPF e similaridade por nome limpo
  */
 export function matchPatientInList(scannedName, patientsList = []) {
   if (!scannedName || !patientsList || patientsList.length === 0) {
     return { patient: null, score: 0, status: 'NOT_FOUND' };
   }
 
+  // 1. Tenta correspondência exata por CPF se houver dígitos suficientes
+  const cpfDigits = String(scannedName).replace(/\D/g, '');
+  if (cpfDigits.length === 11) {
+    const cpfMatch = patientsList.find(p => p.cpf && String(p.cpf).replace(/\D/g, '') === cpfDigits);
+    if (cpfMatch) {
+      return { patient: cpfMatch, score: 100, status: 'EXACT_OR_HIGH' };
+    }
+  }
+
+  // 2. Limpa rótulos de cabeçalhos de prontuário
+  let cleanName = String(scannedName)
+    .replace(/(?:Nome|Nome Social|Paciente|Cliente)[\s.:_]+/gi, ' ')
+    .replace(/(?:Data Nasc|Data|CPF|RG|Nasc|Sexo|Convenio|Entrada|Idade)[\s.:_].*$/gi, ' ')
+    .trim();
+
   let bestMatch = null;
   let bestScore = 0;
 
   for (const patient of patientsList) {
-    const score = calculateNameSimilarity(scannedName, patient.nome);
+    // Verifica se o CPF do paciente está contido no texto escaneado
+    if (patient.cpf) {
+      const patientCpfDigits = String(patient.cpf).replace(/\D/g, '');
+      if (patientCpfDigits.length === 11 && String(scannedName).includes(patientCpfDigits)) {
+        return { patient, score: 100, status: 'EXACT_OR_HIGH' };
+      }
+    }
+
+    const score = calculateNameSimilarity(cleanName, patient.nome);
     if (score > bestScore) {
       bestScore = score;
       bestMatch = patient;
@@ -402,76 +449,270 @@ export async function parseDocxFile(file, patientsList = []) {
 }
 
 /**
- * 📑 PARSER PDF (.pdf)
+ * 📑 PARSER PDF UNIVERSAL (.pdf)
+ * Suporta Laudos Clínicos Individuais/Multi-páginas (Labicon, Hermes Pardini, DB, Fleury, etc.)
+ * e Mapões/Tabelas Consolidadas de Diálise
  */
 export async function parsePdfFile(file, patientsList = []) {
   const arrayBuffer = await file.arrayBuffer();
   const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
   const pdf = await loadingTask.promise;
 
-  let fullText = '';
-  const detectedDate = detectDateFromText(file.name) || new Date().toISOString().split('T')[0];
-
-  const results = [];
+  // Extrai linhas ordenadas espacialmente para cada página
+  const pagesLines = [];
+  let detectedGlobalDate = detectDateFromText(file.name) || null;
 
   for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
     const page = await pdf.getPage(pageNum);
     const textContent = await page.getTextContent();
-    
-    // Agrupa itens por linha (coordenada Y aproximada)
-    const lineMap = new Map();
+
+    // Agrupa itens por linha com tolerância de Y (+- 3px)
+    const lineBuckets = [];
     textContent.items.forEach(item => {
-      const y = Math.round(item.transform[5]);
-      if (!lineMap.has(y)) lineMap.set(y, []);
-      lineMap.get(y).push(item);
+      const y = item.transform[5];
+      let bucket = lineBuckets.find(b => Math.abs(b.y - y) <= 3.5);
+      if (!bucket) {
+        bucket = { y, items: [] };
+        lineBuckets.push(bucket);
+      }
+      bucket.items.push(item);
     });
 
     // Ordena linhas de cima para baixo
-    const sortedY = Array.from(lineMap.keys()).sort((a, b) => b - a);
+    lineBuckets.sort((a, b) => b.y - a.y);
 
-    sortedY.forEach(y => {
-      const items = lineMap.get(y).sort((a, b) => a.transform[4] - b.transform[4]);
-      const lineStr = items.map(it => it.str).join(' ').trim();
-      fullText += lineStr + '\n';
+    // Ordena itens de cada linha da esquerda para a direita e monta o texto
+    const lines = lineBuckets.map(bucket => {
+      bucket.items.sort((a, b) => a.transform[4] - b.transform[4]);
+      return bucket.items.map(it => it.str).join(' ').trim();
+    }).filter(Boolean);
 
-      // Verifica se a linha começa com nome de paciente conhecido
-      if (lineStr.length >= 3) {
-        const matched = matchPatientInList(lineStr, patientsList);
-        if (matched.status === 'EXACT_OR_HIGH' || (matched.status === 'SUGGESTION' && matched.score >= 70)) {
-          // Extrai números da linha como possíveis exames
-          const exames = {};
-          
-          // Procura por siglas de exames na mesma linha ou no bloco
-          for (const [examKey, aliases] of Object.entries(EXAM_ALIASES)) {
-            for (const alias of aliases) {
-              const regex = new RegExp(`\\b${alias}\\b\\s*[:=-]?\\s*([\\d.,]+)`, 'i');
-              const match = lineStr.match(regex);
-              if (match) {
-                const val = parseExamNumber(match[1]);
-                if (val !== null) exames[examKey] = val;
-              }
+    pagesLines.push({ pageNum, lines });
+  }
+
+  // ================= ESTRATÉGIA 1: LAUDO CLÍNICO LABORATORIAL =================
+  // Identifica se o documento é estruturado como laudo médico (cabeçalho com nome/CPF do paciente e blocos de exames)
+  const allLines = pagesLines.flatMap(p => p.lines);
+  const fullTextUpper = allLines.join(' ').toUpperCase();
+  const isClinicalReport = fullTextUpper.includes('RESULTADO') || 
+                          fullTextUpper.includes('LAUDO') || 
+                          fullTextUpper.includes('LABORAT') || 
+                          fullTextUpper.includes('VALORES DE REFER') ||
+                          fullTextUpper.includes('COLETADO EM');
+
+  if (isClinicalReport) {
+    // Agrupa laudos por paciente (trata páginas 1 a N do mesmo paciente como 1 único registro)
+    const patientReports = [];
+    let currentReport = null;
+
+    for (const { pageNum, lines } of pagesLines) {
+      let pagePatientName = null;
+      let pageCpf = null;
+      let pageDate = null;
+
+      // 1. Extração do Cabeçalho da Página
+      for (const line of lines) {
+        // Detecta Paciente no cabeçalho
+        if (!pagePatientName) {
+          const matchNome = line.match(/(?:Nome|Paciente|Cliente)[\s.:_]+([A-ZÀ-Úa-z\s]+?)(?=\s*(?:Data|CPF|RG|Nasc|Sexo|Convenio|Entrada|Idade|$))/i);
+          if (matchNome && matchNome[1].trim().length >= 3 && !matchNome[1].toLowerCase().includes('social')) {
+            pagePatientName = matchNome[1].trim();
+          }
+        }
+
+        // Detecta CPF
+        if (!pageCpf) {
+          const matchCpf = line.match(/(?:CPF)[\s.:_]+([\d.\/-]+)/i);
+          if (matchCpf) pageCpf = matchCpf[1].trim();
+        }
+
+        // Detecta Data da Coleta
+        if (!pageDate) {
+          const matchColeta = line.match(/(?:Coletado em|Data da Coleta)[\s.:_]+(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4})/i);
+          if (matchColeta) {
+            let [_, d, m, y] = matchColeta[1].match(/(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})/);
+            if (y.length === 2) y = '20' + y;
+            pageDate = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+          }
+        }
+      }
+
+      // Fallback de data para Entrada
+      if (!pageDate) {
+        for (const line of lines) {
+          const matchEntrada = line.match(/(?:Entrada|Data)[\s.:_]+(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4})/i);
+          if (matchEntrada) {
+            let [_, d, m, y] = matchEntrada[1].match(/(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})/);
+            if (y.length === 2) y = '20' + y;
+            pageDate = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+            break;
+          }
+        }
+      }
+
+      if (pageDate && !detectedGlobalDate) {
+        detectedGlobalDate = pageDate;
+      }
+
+      // Se detectou paciente ou se é a primeira página
+      const matched = matchPatientInList(pageCpf ? `${pagePatientName || ''} CPF ${pageCpf}` : (pagePatientName || ''), patientsList);
+
+      // Verifica se é continuação do mesmo paciente da página anterior
+      const isSamePatient = currentReport && (
+        (pageCpf && currentReport.cpf && pageCpf.replace(/\D/g, '') === currentReport.cpf.replace(/\D/g, '')) ||
+        (matched.patient && currentReport.pacienteId === matched.patient.id) ||
+        (pagePatientName && currentReport.nomeArquivo && calculateNameSimilarity(pagePatientName, currentReport.nomeArquivo) >= 0.8)
+      );
+
+      if (!isSamePatient) {
+        currentReport = {
+          id: `import-pdf-report-${pageNum}-${Date.now()}`,
+          nomeArquivo: pagePatientName || (matched.patient ? matched.patient.nome : `Paciente Página ${pageNum}`),
+          cpf: pageCpf,
+          pacienteId: matched.patient?.id || '',
+          pacienteNome: matched.patient?.nome || '',
+          statusMatch: matched.status,
+          confianca: matched.score,
+          dataExame: pageDate || detectedGlobalDate || new Date().toISOString().split('T')[0],
+          exames: {},
+          confirmado: matched.status === 'EXACT_OR_HIGH'
+        };
+        patientReports.push(currentReport);
+      } else {
+        // Se a página anterior não tinha associado mas esta identificou melhor
+        if (!currentReport.pacienteId && matched.patient) {
+          currentReport.pacienteId = matched.patient.id;
+          currentReport.pacienteNome = matched.patient.nome;
+          currentReport.statusMatch = matched.status;
+          currentReport.confianca = matched.score;
+          currentReport.confirmado = matched.status === 'EXACT_OR_HIGH';
+        }
+        if (pageDate && !currentReport.dataExame) {
+          currentReport.dataExame = pageDate;
+        }
+      }
+
+      // 2. Extração de Blocos de Exames na Página
+      let currentExamKey = null;
+      let inPreviousResults = false;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const normLine = normalizeString(line);
+
+        // Se encontrou seção de histórico / resultados anteriores, reseta exame ativo
+        if (normLine.includes('resultados anteriores') || normLine.includes('historico de resultados')) {
+          inPreviousResults = true;
+          currentExamKey = null;
+          continue;
+        }
+
+        // Ignora metadados de cabeçalho
+        const isMetadataLine = normLine.startsWith('material') || 
+                               normLine.startsWith('metodo') || 
+                               normLine.startsWith('liberado') || 
+                               normLine.startsWith('valores de referencia') || 
+                               normLine.startsWith('solicitante') || 
+                               normLine.startsWith('convenio') || 
+                               normLine.startsWith('impresso') || 
+                               normLine.startsWith('este exame');
+
+        if (!isMetadataLine) {
+          const potentialExamKey = matchHeaderToExamKey(line);
+          if (potentialExamKey) {
+            currentExamKey = potentialExamKey;
+            inPreviousResults = false;
+          }
+        }
+
+        // Se temos um exame ativo aguardando resultado
+        if (currentExamKey && !inPreviousResults) {
+          // Formato A/B: Linha contendo "Resultado: X" ou "<NomeExame>: X"
+          const resultMatch = line.match(/(?:Resultado|Hemoglobina|Hemat[oó]crito|Ureia|Pot[aá]ssio|S[oó]dio|Glicemia|TGP|TGO|C[aá]lcio|F[oó]sforo)[^0-9:]*[:.]+\s*([0-9]+[.,]?[0-9]*)/i) ||
+                              line.match(/Hemoglobina\s*Glicada\s*\(?[^:]*[:.]+\s*([0-9]+[.,]?[0-9]*)/i) ||
+                              line.match(/^(?:Resultado|Valor)[\s.:_]*([0-9]+[.,]?[0-9]*)/i);
+
+          if (resultMatch && currentReport.exames[currentExamKey] === undefined) {
+            const val = parseExamNumber(resultMatch[1]);
+            if (val !== null) {
+              currentReport.exames[currentExamKey] = val;
+              currentExamKey = null; // Bloqueia para não capturar linhas de resultados anteriores
+              continue;
             }
           }
 
-          results.push({
-            id: `import-pdf-${pageNum}-${y}-${Date.now()}`,
-            nomeArquivo: lineStr.split(/\d/)[0].trim() || lineStr,
-            pacienteId: matched.patient?.id || '',
-            pacienteNome: matched.patient?.nome || '',
-            statusMatch: matched.status,
-            confianca: matched.score,
-            dataExame: detectedDate,
-            exames,
-            confirmado: matched.status === 'EXACT_OR_HIGH'
-          });
+          // Formato C: Linha com apenas o valor com unidade (ex: "8,7 mg/dL" ou "28,5 %")
+          const unitOnlyMatch = line.match(/^([0-9]+[.,]?[0-9]*)\s*(?:g\/dL|mg\/dL|%|mEq\/L|U\/L|pg\/mL|ng\/mL|mg\/L)\b/i);
+          if (unitOnlyMatch && currentReport.exames[currentExamKey] === undefined) {
+            const val = parseExamNumber(unitOnlyMatch[1]);
+            if (val !== null) {
+              currentReport.exames[currentExamKey] = val;
+              currentExamKey = null;
+              continue;
+            }
+          }
         }
       }
-    });
+    }
+
+    // Se encontrou laudos com exames ou pacientes
+    if (patientReports.length > 0 && patientReports.some(r => Object.keys(r.exames).length > 0)) {
+      return {
+        tipoArquivo: 'PDF',
+        dataSugerida: detectedGlobalDate || new Date().toISOString().split('T')[0],
+        totalIdentificados: patientReports.length,
+        registros: patientReports
+      };
+    }
+  }
+
+  // ================= ESTRATÉGIA 2: MAPÃO OU TABELA CONSOLIDADA EM PDF =================
+  const results = [];
+  const fallbackDate = detectedGlobalDate || new Date().toISOString().split('T')[0];
+
+  for (const { pageNum, lines } of pagesLines) {
+    for (let l = 0; l < lines.length; l++) {
+      const lineStr = lines[l];
+      if (lineStr.length < 3) continue;
+
+      const matched = matchPatientInList(lineStr, patientsList);
+      if (matched.status === 'EXACT_OR_HIGH' || (matched.status === 'SUGGESTION' && matched.score >= 70)) {
+        const exames = {};
+
+        // Busca exames na mesma linha ou nas 2 linhas adjacentes
+        const contextLines = [lineStr, lines[l + 1] || '', lines[l + 2] || ''].join(' ');
+
+        for (const [examKey, aliases] of Object.entries(EXAM_ALIASES)) {
+          for (const alias of aliases) {
+            const regex = new RegExp(`\\b${alias}\\b\\s*[:=-]?\\s*([\\d.,]+)`, 'i');
+            const match = contextLines.match(regex);
+            if (match) {
+              const val = parseExamNumber(match[1]);
+              if (val !== null && exames[examKey] === undefined) {
+                exames[examKey] = val;
+              }
+            }
+          }
+        }
+
+        results.push({
+          id: `import-pdf-table-${pageNum}-${l}-${Date.now()}`,
+          nomeArquivo: lineStr.split(/\d/)[0].trim() || lineStr,
+          pacienteId: matched.patient?.id || '',
+          pacienteNome: matched.patient?.nome || '',
+          statusMatch: matched.status,
+          confianca: matched.score,
+          dataExame: fallbackDate,
+          exames,
+          confirmado: matched.status === 'EXACT_OR_HIGH'
+        });
+      }
+    }
   }
 
   return {
     tipoArquivo: 'PDF',
-    dataSugerida: detectedDate,
+    dataSugerida: fallbackDate,
     totalIdentificados: results.length,
     registros: results
   };

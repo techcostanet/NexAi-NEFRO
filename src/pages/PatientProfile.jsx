@@ -1420,6 +1420,35 @@ export default function PatientProfile() {
                 </div>
               </div>
             </div>
+
+            {/* 5. Glicemia & Função Hepática (TGP / TGO) */}
+            <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
+              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-teal-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Activity size={15} color="#0d9488" style={{ flexShrink: 0 }} />
+                <span>Glicemia & Função Hepática</span>
+              </div>
+              
+              <div className="flex flex-col gap-1.5 text-xs">
+                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                  <span className="text-muted">Glicemia Jejum:</span>
+                  <strong className="text-slate-800">{exames.glicemia ? `${exames.glicemia} mg/dL` : '-'} <span className="text-muted font-normal text-2xs">(70-100)</span></strong>
+                </div>
+                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                  <span className="text-muted">HbA1c (%):</span>
+                  <strong className="text-slate-800">{exames.hba1c ? `${exames.hba1c}%` : '-'} <span className="text-muted font-normal text-2xs">(&lt;7.0%)</span></strong>
+                </div>
+                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                  <span className="text-muted">TGP (ALT):</span>
+                  <strong style={{ color: (exames.tgp && exames.tgp > 45) ? '#dc2626' : '#1e293b', fontWeight: 'bold' }}>
+                    {exames.tgp ? `${exames.tgp} U/L` : '-'} <span className="text-muted font-normal text-2xs">(&lt;45)</span>
+                  </strong>
+                </div>
+                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                  <span className="text-muted">TGO (AST):</span>
+                  <strong className="text-slate-800">{exames.tgo ? `${exames.tgo} U/L` : '-'} <span className="text-muted font-normal text-2xs">(&lt;35)</span></strong>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Histórico Cronológico de Coletas */}
@@ -1448,6 +1477,7 @@ export default function PatientProfile() {
                       <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Potássio</th>
                       <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Kt/V</th>
                       <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Albumina</th>
+                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Glic / TGP</th>
                       <th style={{ padding: '0.65rem 0.8rem', textAlign: 'right', color: '#475569' }}>Ações</th>
                     </tr>
                   </thead>
@@ -1474,6 +1504,9 @@ export default function PatientProfile() {
                         </td>
                         <td style={{ padding: '0.65rem 0.8rem' }}>{item.ktv || '-'}</td>
                         <td style={{ padding: '0.65rem 0.8rem' }}>{item.albumina ? `${item.albumina} g/dL` : '-'}</td>
+                        <td style={{ padding: '0.65rem 0.8rem' }}>
+                          {item.glicemia ? `${item.glicemia}` : '-'} / {item.tgp ? `${item.tgp} U/L` : '-'}
+                        </td>
                         <td style={{ padding: '0.65rem 0.8rem', textAlign: 'right' }}>
                           <div className="flex justify-end gap-1">
                             <button 

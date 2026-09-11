@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.45] - 2026-09-11
+### Alterações
+- Universalizacao do importador de laudos em PDF com maquina de estados de blocos e cadastro dos exames hepaticos TGP e TGO
+
 ## [1.1.44] - 2026-09-08
 ### Alterações
 - Central de 20 relatórios clínicos e gerenciais com filtros avançados e exportação XLS/PDF e correção da capitalização do paciente

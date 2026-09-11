@@ -50,6 +50,10 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
     glicemia: '',
     hba1c: '',
     
+    // Função Hepática & Transaminases
+    tgp: '',
+    tgo: '',
+    
     // Hemocultura & Microbiologia
     hemoculturaStatus: 'nenhuma', // 'nenhuma' | 'Aguardando Resultado' | 'Negativa' | 'Positiva' | 'Contaminação Provável'
     hemoculturaSitio: 'Cateter - Lúmen Venoso',
@@ -96,6 +100,9 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
         glicemia: examToEdit.glicemia !== undefined && examToEdit.glicemia !== null ? examToEdit.glicemia : '',
         hba1c: examToEdit.hba1c !== undefined && examToEdit.hba1c !== null ? examToEdit.hba1c : '',
         
+        tgp: examToEdit.tgp !== undefined && examToEdit.tgp !== null ? examToEdit.tgp : '',
+        tgo: examToEdit.tgo !== undefined && examToEdit.tgo !== null ? examToEdit.tgo : '',
+        
         // Hemocultura
         hemoculturaStatus: examToEdit.hemocultura?.resultado || 'nenhuma',
         hemoculturaSitio: examToEdit.hemocultura?.sitioColeta || 'Cateter - Lúmen Venoso',
@@ -130,6 +137,8 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
         pcr: '',
         glicemia: '',
         hba1c: '',
+        tgp: '',
+        tgo: '',
         hemoculturaStatus: 'nenhuma',
         hemoculturaSitio: 'Cateter - Lúmen Venoso',
         hemoculturaGerme: '',
@@ -194,6 +203,10 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
         pcr: parseNumber(formData.pcr),
         glicemia: parseNumber(formData.glicemia),
         hba1c: parseNumber(formData.hba1c),
+        
+        // Função Hepática & Transaminases
+        tgp: parseNumber(formData.tgp),
+        tgo: parseNumber(formData.tgo),
         
         observacoes: formData.observacoes
       };
@@ -629,7 +642,50 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
             </div>
           </div>
 
-          {/* 6. Microbiologia, Hemoculturas & Acesso Vascular */}
+          {/* 6. Função Hepática & Transaminases (Rastreio de Hepatites na Diálise) */}
+          <div className="card-pastel-amber" style={{ padding: '1.25rem', borderRadius: '14px', background: '#f0fdfa', border: '1px solid #99f6e4' }}>
+            <h3 className="font-bold text-sm mb-3 flex items-center justify-between" style={{ color: '#0f766e' }}>
+              <div className="flex items-center gap-2">
+                <Activity size={16} /> 
+                <span>Função Hepática & Transaminases (TGP / TGO)</span>
+              </div>
+              <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '10px', background: '#ccfbf1', color: '#115e59', fontWeight: 'bold' }}>
+                Rastreio Hepático & Diálise
+              </span>
+            </h3>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.85rem' }}>
+              <div>
+                <label className="text-xs font-semibold mb-1 block" style={{ color: '#134e4a' }}>
+                  TGP (ALT) - Transaminase Pirúvica
+                </label>
+                <input 
+                  type="text" 
+                  className="input-field" 
+                  placeholder="U/L (Ex: 8 ou 24)"
+                  value={formData.tgp}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tgp: e.target.value }))}
+                />
+                <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Ref: Até 45 U/L (Homem) / 34 (Mulher)</span>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold mb-1 block" style={{ color: '#134e4a' }}>
+                  TGO (AST) - Transaminase Oxalacética
+                </label>
+                <input 
+                  type="text" 
+                  className="input-field" 
+                  placeholder="U/L (Ex: 18 ou 28)"
+                  value={formData.tgo}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tgo: e.target.value }))}
+                />
+                <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Ref: Até 35 U/L (Homem) / 31 (Mulher)</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 7. Microbiologia, Hemoculturas & Acesso Vascular */}
           <div style={{ padding: '1.25rem', borderRadius: '14px', background: '#fffbeb', border: '1px solid #fde68a' }}>
             <h3 className="font-bold text-sm mb-3 flex items-center justify-between" style={{ color: '#b45309' }}>
               <div className="flex items-center gap-2">

@@ -478,8 +478,13 @@ export default function ExamImportModal({
                         </td>
 
                         <td style={{ padding: '0.65rem 0.75rem', fontWeight: '600', color: '#1e293b' }}>
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex flex-col">
                             <span>{rec.nomeArquivo}</span>
+                            {rec.cpf && (
+                              <span className="text-2xs text-muted font-normal">
+                                CPF: {rec.cpf}
+                              </span>
+                            )}
                           </div>
                         </td>
 
@@ -520,31 +525,39 @@ export default function ExamImportModal({
                         </td>
 
                         <td style={{ padding: '0.65rem 0.75rem' }}>
-                          <div className="flex items-center gap-1 flex-wrap">
+                          <div className="flex items-center gap-1.5 flex-wrap" style={{ maxWidth: '420px' }}>
                             {examKeys.length === 0 ? (
                               <span className="text-xs text-muted">Nenhum exame numérico extraído</span>
                             ) : (
-                              examKeys.slice(0, 6).map(key => (
-                                <span 
-                                  key={key} 
-                                  style={{ 
-                                    padding: '2px 6px', 
-                                    borderRadius: '6px', 
-                                    background: '#f1f5f9', 
-                                    border: '1px solid #e2e8f0', 
-                                    fontSize: '0.72rem',
-                                    fontWeight: '500',
-                                    color: '#334155'
-                                  }}
-                                >
-                                  <strong>{key.toUpperCase()}:</strong> {rec.exames[key]}
-                                </span>
-                              ))
-                            )}
-                            {examKeys.length > 6 && (
-                              <span className="text-2xs text-muted font-bold">
-                                +{examKeys.length - 6} outros
-                              </span>
+                              examKeys.map(key => {
+                                const labels = {
+                                  hb: 'Hb', ht: 'Ht', ca: 'Cálcio', fosforo: 'Fósforo',
+                                  glicemia: 'Glicemia', tgp: 'TGP', tgo: 'TGO',
+                                  ureiaPre: 'Ureia Pré', ureiaPos: 'Ureia Pós',
+                                  k: 'K⁺', na: 'Na⁺', hba1c: 'HbA1c',
+                                  pth: 'PTH', ferritina: 'Ferritina', ist: 'IST',
+                                  vitD: 'Vit D', fa: 'FA', ktv: 'Kt/V',
+                                  creatinina: 'Creat.', albumina: 'Alb.', pcr: 'PCR'
+                                };
+                                const label = labels[key] || key.toUpperCase();
+                                return (
+                                  <span 
+                                    key={key} 
+                                    style={{ 
+                                      padding: '2px 7px', 
+                                      borderRadius: '6px', 
+                                      background: key === 'tgp' || key === 'tgo' ? '#f0fdfa' : '#f1f5f9', 
+                                      border: `1px solid ${key === 'tgp' || key === 'tgo' ? '#99f6e4' : '#e2e8f0'}`, 
+                                      fontSize: '0.72rem',
+                                      fontWeight: '500',
+                                      color: key === 'tgp' || key === 'tgo' ? '#0f766e' : '#334155',
+                                      whiteSpace: 'nowrap'
+                                    }}
+                                  >
+                                    <strong>{label}:</strong> {rec.exames[key]}
+                                  </span>
+                                );
+                              })
                             )}
                           </div>
                         </td>
