@@ -37,7 +37,8 @@ import {
   X,
   FileCheck,
   Eye,
-  Copy
+  Copy,
+  Trophy
 } from 'lucide-react';
 import { 
   subscribeToPatientById, 
@@ -61,6 +62,7 @@ import EvolutionModal from '../components/EvolutionModal';
 import ExamImportModal from '../components/ExamImportModal';
 import PrescriptionModal from '../components/PrescriptionModal';
 import PrescriptionPrintModal from '../components/PrescriptionPrintModal';
+import PatientBulletinModal from '../components/patientBulletin/PatientBulletinModal';
 
 export default function PatientProfile() {
   const { id } = useParams();
@@ -105,6 +107,7 @@ export default function PatientProfile() {
   const [isTransplantReportOpen, setIsTransplantReportOpen] = useState(false);
   const [isLockTherapyModalOpen, setIsLockTherapyModalOpen] = useState(false);
   const [isChecklistModalOpen, setIsChecklistModalOpen] = useState(false);
+  const [isBulletinModalOpen, setIsBulletinModalOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -498,6 +501,28 @@ export default function PatientProfile() {
             >
               <Printer size={14} color="#2563eb" />
               <span>Laudo Tx</span>
+            </button>
+
+            <button 
+              className="btn btn-outline" 
+              onClick={() => setIsBulletinModalOpen(true)}
+              style={{ 
+                padding: '0.5rem 0.85rem', 
+                fontSize: '0.82rem', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '6px', 
+                whiteSpace: 'nowrap', 
+                borderRadius: '10px', 
+                borderColor: '#fde68a', 
+                background: '#fffbeb', 
+                color: '#b45309', 
+                fontWeight: '600' 
+              }}
+              title="Gerar e imprimir Boletim de Saúde & Conquistas para entregar ao paciente"
+            >
+              <Trophy size={14} color="#d97706" />
+              <span>Boletim do Paciente</span>
             </button>
 
             <button 
@@ -1269,6 +1294,26 @@ export default function PatientProfile() {
             </div>
             
             <div className="flex items-center gap-2">
+              <button 
+                className="btn btn-outline" 
+                onClick={() => setIsBulletinModalOpen(true)}
+                style={{ 
+                  padding: '0.45rem 0.95rem', 
+                  fontSize: '0.8rem', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '6px',
+                  borderColor: '#fde68a',
+                  background: '#fffbeb',
+                  color: '#b45309',
+                  fontWeight: '600'
+                }}
+                title="Emitir e imprimir Boletim de Saúde & Conquistas para o paciente"
+              >
+                <Trophy size={14} color="#d97706" />
+                <span>Boletim do Paciente</span>
+              </button>
+
               <button 
                 className="btn btn-outline" 
                 onClick={() => setIsImportModalOpen(true)}
@@ -2177,6 +2222,13 @@ export default function PatientProfile() {
         patients={[patient]}
         doctorId={patient.doctorId || activeDoctorId}
         preselectedPatientId={patient.id}
+      />
+
+      <PatientBulletinModal 
+        isOpen={isBulletinModalOpen}
+        onClose={() => setIsBulletinModalOpen(false)}
+        patient={patient}
+        doctorInfo={doctorInfo}
       />
       {/* ================= MODAL: REGISTRAR PESO & EVOLUÇÃO PONDERAL (Requisito 2) ================= */}
       {isWeightModalOpen && (

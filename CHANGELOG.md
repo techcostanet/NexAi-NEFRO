@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.46] - 2026-09-11
+### Alterações
+- Boletim Educativo e Conquistas do Paciente com impressao A4 colorida, frases de incentivo e dicas praticas para todas as idades
+
 ## [1.1.45] - 2026-09-11
 ### Alterações
 - Universalizacao do importador de laudos em PDF com maquina de estados de blocos e cadastro dos exames hepaticos TGP e TGO

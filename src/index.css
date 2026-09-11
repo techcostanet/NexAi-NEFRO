@@ -384,7 +384,9 @@ svg {
 
   /* Reset dos containers modais para não ocuparem espaço nem gerarem scroll */
   .prescription-print-modal-overlay,
-  .prescription-print-modal-container {
+  .prescription-print-modal-container,
+  .patient-bulletin-modal-overlay,
+  .patient-bulletin-modal-container {
     position: static !important;
     background: transparent !important;
     backdrop-filter: none !important;
@@ -397,13 +399,16 @@ svg {
     width: 100% !important;
   }
 
-  /* Torna estritamente visível a área do receituário médico */
+  /* Torna estritamente visível a área do receituário médico e do boletim do paciente */
   .printable-prescription-area,
-  .printable-prescription-area * {
+  .printable-prescription-area *,
+  .printable-patient-bulletin-area,
+  .printable-patient-bulletin-area * {
     visibility: visible !important;
   }
 
-  .printable-prescription-area {
+  .printable-prescription-area,
+  .printable-patient-bulletin-area {
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
@@ -422,8 +427,9 @@ svg {
     break-inside: avoid !important;
   }
 
-  /* Folha A4 do receituário - rigorosamente 1 ÚNICA PÁGINA */
-  .prescription-a4-sheet {
+  /* Folha A4 - rigorosamente 1 ÚNICA PÁGINA */
+  .prescription-a4-sheet,
+  .patient-bulletin-a4-sheet {
     border: none !important;
     box-shadow: none !important;
     margin: 0 auto !important;
@@ -431,7 +437,7 @@ svg {
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
-    max-height: 250mm !important;
+    max-height: 260mm !important;
     min-height: 0 !important;
     display: block !important;
     page-break-after: avoid !important;
@@ -447,7 +453,11 @@ svg {
   .prescription-a4-sheet div,
   .prescription-a4-sheet section,
   .prescription-a4-sheet p,
-  .prescription-a4-sheet span {
+  .prescription-a4-sheet span,
+  .patient-bulletin-a4-sheet div,
+  .patient-bulletin-a4-sheet section,
+  .patient-bulletin-a4-sheet p,
+  .patient-bulletin-a4-sheet span {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
