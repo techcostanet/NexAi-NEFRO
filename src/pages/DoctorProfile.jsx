@@ -23,7 +23,10 @@ import {
   PlayCircle,
   X,
   PhoneCall,
-  Calendar
+  Calendar,
+  Palette,
+  KeyRound,
+  Lock
 } from 'lucide-react';
 import { 
   subscribeDoctorProfile, 
@@ -34,10 +37,13 @@ import {
   removeDoctorLocation 
 } from '../services/doctorService';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
+import { changeUserPassword, changeUserEmail } from '../services/authService';
 
 export default function DoctorProfile() {
   const navigate = useNavigate();
-  const { activeDoctorId } = useAuth();
+  const { activeDoctorId, currentUser } = useAuth();
+  const { currentTheme, currentThemeId, changeTheme, themes } = useTheme();
   
   const [profile, setProfile] = useState({
     nome: '',
@@ -58,6 +64,12 @@ export default function DoctorProfile() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
+
+  // Estados para Troca de E-mail e Senha
+  const [emailFormData, setEmailFormData] = useState({ novoEmail: '', senhaAtual: '' });
+  const [isUpdatingEmail, setIsUpdatingEmail] = useState(false);
+  const [passwordFormData, setPasswordFormData] = useState({ senhaAtual: '', novaSenha: '', confirmarSenha: '' });
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
 
   // Estado para Adicionar / Editar Local de Atuação
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
@@ -103,6 +115,53 @@ export default function DoctorProfile() {
       setTimeout(() => setFeedbackMessage(null), 4000);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleUpdateEmail = async (e) => {
+    e.preventDefault();
+    if (!emailFormData.novoEmail || !emailFormData.senhaAtual) {
+      setFeedbackMessage({ type: 'error', text: 'Informe o novo e-mail e a senha atual para confirmar.' });
+      return;
+    }
+    try {
+      setIsUpdatingEmail(true);
+      const res = await changeUserEmail(emailFormData.senhaAtual, emailFormData.novoEmail, currentDoctorId);
+      setProfile(prev => ({ ...prev, email: emailFormData.novoEmail.trim().toLowerCase() }));
+      setEmailFormData({ novoEmail: '', senhaAtual: '' });
+      setFeedbackMessage({ type: 'success', text: res.message || 'E-mail atualizado com sucesso!' });
+      setTimeout(() => setFeedbackMessage(null), 4000);
+    } catch (err) {
+      console.error(err);
+      setFeedbackMessage({ type: 'error', text: err.message || 'Erro ao atualizar e-mail.' });
+      setTimeout(() => setFeedbackMessage(null), 4000);
+    } finally {
+      setIsUpdatingEmail(false);
+    }
+  };
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    if (passwordFormData.novaSenha !== passwordFormData.confirmarSenha) {
+      setFeedbackMessage({ type: 'error', text: 'A confirmação da nova senha não confere.' });
+      return;
+    }
+    if (passwordFormData.novaSenha.length < 6) {
+      setFeedbackMessage({ type: 'error', text: 'A nova senha deve ter no mínimo 6 caracteres.' });
+      return;
+    }
+    try {
+      setIsUpdatingPassword(true);
+      const res = await changeUserPassword(passwordFormData.senhaAtual, passwordFormData.novaSenha);
+      setPasswordFormData({ senhaAtual: '', novaSenha: '', confirmarSenha: '' });
+      setFeedbackMessage({ type: 'success', text: res.message || 'Senha atualizada com sucesso!' });
+      setTimeout(() => setFeedbackMessage(null), 4000);
+    } catch (err) {
+      console.error(err);
+      setFeedbackMessage({ type: 'error', text: err.message || 'Erro ao alterar senha.' });
+      setTimeout(() => setFeedbackMessage(null), 4000);
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -526,6 +585,205 @@ export default function DoctorProfile() {
                 onChange={(e) => handleChange('bio', e.target.value)} 
                 style={{ resize: 'vertical' }}
               />
+            </div>
+          </div>
+        </div>
+
+        {/* Personalização Visual: Cores Pastéis */}
+        <div className="glass-panel" style={{ padding: '1.5rem' }}>
+          <div className="flex justify-between items-center mb-2 flex-wrap gap-2">
+            <h3 className="font-bold text-base flex items-center gap-2" style={{ color: 'var(--primary)' }}>
+              <Palette size={18} /> Tema Visual do Sistema
+            </h3>
+            <span style={{ 
+              fontSize: '0.75rem', 
+              background: 'rgba(37, 99, 235, 0.1)', 
+              color: 'var(--primary)', 
+              padding: '3px 10px', 
+              borderRadius: '12px', 
+              fontWeight: '700' 
+            }}>
+              Ativo: {currentTheme.nome}
+            </span>
+          </div>
+          <p className="text-xs text-muted mb-4">
+            Personalize os tons de botões, destaques, ícones e cartões clínicos em toda a interface do NexAi-NEFRO.
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
+            {themes.map((theme) => {
+              const isSelected = currentThemeId === theme.id;
+              return (
+                <button
+                  key={theme.id}
+                  type="button"
+                  onClick={() => changeTheme(theme.id)}
+                  style={{
+                    background: isSelected ? theme.subtle : '#ffffff',
+                    border: `2px solid ${isSelected ? theme.primary : theme.border}`,
+                    borderRadius: '12px',
+                    padding: '0.75rem 0.85rem',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    transition: 'all 0.2s ease',
+                    boxShadow: isSelected ? `0 4px 12px ${theme.primary}20` : '0 1px 3px rgba(0,0,0,0.03)'
+                  }}
+                >
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: theme.previewGradient,
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
+                    flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white'
+                  }}>
+                    {isSelected && <Check size={16} strokeWidth={3} />}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <strong style={{ fontSize: '0.85rem', color: isSelected ? theme.primary : '#1e293b', display: 'block' }}>
+                      {theme.nome}
+                    </strong>
+                    <span style={{ fontSize: '0.70rem', color: '#64748b' }}>
+                      {theme.subtitulo}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Segurança da Conta: Alterar E-mail e Senha */}
+        <div className="glass-panel" style={{ padding: '1.5rem' }}>
+          <div className="mb-3">
+            <h3 className="font-bold text-base flex items-center gap-2" style={{ color: 'var(--primary)' }}>
+              <KeyRound size={18} /> Segurança da Conta
+            </h3>
+            <p className="text-xs text-muted mt-1">
+              Altere suas credenciais de acesso de forma autônoma e segura. A confirmação da senha atual é obrigatória.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
+            {/* Bloco 1: Alteração de E-mail */}
+            <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+              <div className="flex items-center gap-2 mb-2">
+                <Mail size={16} color="var(--primary)" />
+                <strong className="text-sm text-slate-800">Alterar E-mail de Login</strong>
+              </div>
+              <p className="text-xs text-muted mb-3">
+                E-mail em uso: <strong className="text-slate-800">{profile.email || currentUser?.email || 'Não informado'}</strong>
+              </p>
+
+              <div className="flex flex-col gap-2.5">
+                <div>
+                  <label className="text-xs font-semibold mb-1 block text-slate-700">Novo E-mail</label>
+                  <input
+                    type="email"
+                    className="input-field text-xs"
+                    placeholder="exemplo@medico.com"
+                    value={emailFormData.novoEmail}
+                    onChange={(e) => setEmailFormData(prev => ({ ...prev, novoEmail: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold mb-1 block text-slate-700">Senha Atual para Confirmação</label>
+                  <input
+                    type="password"
+                    className="input-field text-xs"
+                    placeholder="Sua senha atual"
+                    value={emailFormData.senhaAtual}
+                    onChange={(e) => setEmailFormData(prev => ({ ...prev, senhaAtual: e.target.value }))}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleUpdateEmail}
+                  className="btn btn-outline"
+                  disabled={isUpdatingEmail}
+                  style={{ 
+                    padding: '0.45rem 0.9rem', 
+                    fontSize: '0.8rem', 
+                    alignSelf: 'flex-start',
+                    borderColor: '#bfdbfe',
+                    color: 'var(--primary)',
+                    fontWeight: '600',
+                    marginTop: '4px'
+                  }}
+                >
+                  {isUpdatingEmail ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                  <span>{isUpdatingEmail ? 'Salvando...' : 'Salvar Novo E-mail'}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Bloco 2: Alteração de Senha */}
+            <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+              <div className="flex items-center gap-2 mb-2">
+                <Lock size={16} color="var(--primary)" />
+                <strong className="text-sm text-slate-800">Alterar Senha de Acesso</strong>
+              </div>
+              <p className="text-xs text-muted mb-3">
+                Mínimo de 6 caracteres recomendando letras e números.
+              </p>
+
+              <div className="flex flex-col gap-2.5">
+                <div>
+                  <label className="text-xs font-semibold mb-1 block text-slate-700">Senha Atual</label>
+                  <input
+                    type="password"
+                    className="input-field text-xs"
+                    placeholder="Sua senha atual"
+                    value={passwordFormData.senhaAtual}
+                    onChange={(e) => setPasswordFormData(prev => ({ ...prev, senhaAtual: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold mb-1 block text-slate-700">Nova Senha</label>
+                  <input
+                    type="password"
+                    className="input-field text-xs"
+                    placeholder="Mínimo 6 caracteres"
+                    value={passwordFormData.novaSenha}
+                    onChange={(e) => setPasswordFormData(prev => ({ ...prev, novaSenha: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold mb-1 block text-slate-700">Confirmar Nova Senha</label>
+                  <input
+                    type="password"
+                    className="input-field text-xs"
+                    placeholder="Repita a nova senha"
+                    value={passwordFormData.confirmarSenha}
+                    onChange={(e) => setPasswordFormData(prev => ({ ...prev, confirmarSenha: e.target.value }))}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={handleUpdatePassword}
+                  className="btn btn-outline"
+                  disabled={isUpdatingPassword}
+                  style={{ 
+                    padding: '0.45rem 0.9rem', 
+                    fontSize: '0.8rem', 
+                    alignSelf: 'flex-start',
+                    borderColor: '#bfdbfe',
+                    color: 'var(--primary)',
+                    fontWeight: '600',
+                    marginTop: '4px'
+                  }}
+                >
+                  {isUpdatingPassword ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                  <span>{isUpdatingPassword ? 'Salvando...' : 'Salvar Nova Senha'}</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

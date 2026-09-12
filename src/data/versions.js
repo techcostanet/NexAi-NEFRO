@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.51",
+    "date": "12/09/2026",
+    "title": "Auto-gestao de credenciais, temas pasteis e responsividade mobile/tablet",
+    "highlights": [
+      "✨ Auto-gestao de credenciais, temas pasteis e responsividade mobile/tablet"
+    ]
+  },
+  {
     "version": "1.1.50",
     "date": "12/09/2026",
     "title": "Correcao da tela branca em receitas e simplificacao visual de termos duplos",

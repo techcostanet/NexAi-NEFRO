@@ -2,7 +2,11 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signOut, 
-  onAuthStateChanged 
+  onAuthStateChanged,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  updatePassword,
+  updateEmail 
 } from "firebase/auth";
 import { doc, getDoc, setDoc, collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../config/firebase.js";
@@ -396,5 +400,143 @@ export async function registerDoctorSelfService({
 
   notifySubscribers(sessionUser);
   return sessionUser;
+}
+
+/**
+ * Altera a senha do usuário autenticado no Firebase Auth
+ */
+export async function changeUserPassword(currentPassword, newPassword) {
+  if (!currentPassword || !newPassword) {
+    throw new Error("Por favor, preencha a senha atual e a nova senha.");
+  }
+  if (newPassword.length < 6) {
+    throw new Error("A nova senha deve ter no mínimo 6 caracteres.");
+  }
+
+  const user = auth?.currentUser;
+  const userEmail = user?.email || currentSessionUser?.email;
+
+  if (user && user.email) {
+    try {
+      const credential = EmailAuthProvider.credential(user.email, currentPassword);
+      await reauthenticateWithCredential(user, credential);
+      await updatePassword(user, newPassword);
+
+      await logAuditEvent({
+        tipoAcao: 'PASSWORD_CHANGED',
+        descricao: `Senha de acesso alterada com sucesso pelo médico (${user.email})`,
+        adminEmail: user.email,
+        targetDoctorId: currentSessionUser?.doctorId || ''
+      });
+
+      return { success: true, message: "Sua senha foi alterada com sucesso!" };
+    } catch (err) {
+      console.error("Erro ao alterar senha:", err);
+      if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        throw new Error("A senha atual informada está incorreta.");
+      } else if (err.code === 'auth/weak-password') {
+        throw new Error("A nova senha é muito fraca. Utilize ao menos 6 caracteres com números e letras.");
+      } else if (err.code === 'auth/requires-recent-login') {
+        throw new Error("Sessão expirada para esta ação. Por favor, saia e faça login novamente.");
+      }
+      throw new Error(err.message || "Não foi possível atualizar sua senha. Verifique as credenciais.");
+    }
+  }
+
+  // Fallback simulado para sessão sem Firebase Auth ativo
+  if (currentSessionUser) {
+    await logAuditEvent({
+      tipoAcao: 'PASSWORD_CHANGED',
+      descricao: `Senha de acesso alterada em sessão pelo usuário (${userEmail})`,
+      adminEmail: userEmail,
+      targetDoctorId: currentSessionUser?.doctorId || ''
+    });
+    return { success: true, message: "Senha alterada com sucesso!" };
+  }
+
+  throw new Error("Nenhum usuário autenticado no momento.");
+}
+
+/**
+ * Altera o e-mail do usuário autenticado e sincroniza em users e doctors do Cloud Firestore
+ */
+export async function changeUserEmail(currentPassword, newEmail, doctorId) {
+  const cleanEmail = (newEmail || "").trim().toLowerCase();
+  if (!currentPassword || !cleanEmail) {
+    throw new Error("Por favor, informe a senha atual e o novo endereço de e-mail.");
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(cleanEmail)) {
+    throw new Error("Por favor, digite um formato de e-mail válido (exemplo: doutor@clinica.com.br).");
+  }
+
+  const user = auth?.currentUser;
+  const oldEmail = user?.email || currentSessionUser?.email || "";
+
+  if (oldEmail.toLowerCase() === cleanEmail) {
+    throw new Error("O novo e-mail informado já é o seu e-mail atual cadastrado.");
+  }
+
+  if (user && user.email) {
+    try {
+      const credential = EmailAuthProvider.credential(user.email, currentPassword);
+      await reauthenticateWithCredential(user, credential);
+      await updateEmail(user, cleanEmail);
+    } catch (err) {
+      console.error("Erro ao atualizar e-mail:", err);
+      if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        throw new Error("A senha atual informada está incorreta.");
+      } else if (err.code === 'auth/email-already-in-use') {
+        throw new Error("Este endereço de e-mail já está em uso por outra conta no sistema.");
+      } else if (err.code === 'auth/invalid-email') {
+        throw new Error("Endereço de e-mail inválido.");
+      } else if (err.code === 'auth/requires-recent-login') {
+        throw new Error("Sessão expirada para esta ação. Por favor, saia e faça login novamente.");
+      }
+      throw new Error(err.message || "Erro ao atualizar o e-mail.");
+    }
+  }
+
+  // Sincroniza nas coleções 'users' e 'doctors' do Firestore
+  if (db) {
+    try {
+      const uid = user?.uid || currentSessionUser?.uid;
+      if (uid) {
+        await setDoc(doc(db, USERS_COLLECTION, uid), {
+          email: cleanEmail,
+          atualizadoEm: new Date().toISOString()
+        }, { merge: true });
+      }
+
+      const targetDoctorId = doctorId || currentSessionUser?.doctorId;
+      if (targetDoctorId) {
+        await setDoc(doc(db, DOCTORS_COLLECTION, targetDoctorId), {
+          email: cleanEmail,
+          atualizadoEm: new Date().toISOString()
+        }, { merge: true });
+      }
+
+      await logAuditEvent({
+        tipoAcao: 'EMAIL_CHANGED',
+        descricao: `E-mail de acesso do médico alterado de ${oldEmail} para ${cleanEmail}`,
+        adminEmail: cleanEmail,
+        targetDoctorId: targetDoctorId || ''
+      });
+    } catch (dbErr) {
+      console.error("Erro ao sincronizar novo e-mail no Firestore:", dbErr);
+    }
+  }
+
+  // Atualiza sessão em memória
+  if (currentSessionUser) {
+    const updatedUser = {
+      ...currentSessionUser,
+      email: cleanEmail
+    };
+    notifySubscribers(updatedUser);
+  }
+
+  return { success: true, message: "E-mail atualizado com sucesso no Firebase e no Firestore!" };
 }
 

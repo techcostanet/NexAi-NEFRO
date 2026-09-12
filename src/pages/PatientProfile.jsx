@@ -497,7 +497,7 @@ export default function PatientProfile() {
           </div>
 
           {/* Ações Rápidas no Cabeçalho */}
-          <div className="flex items-center gap-1.5 flex-wrap" style={{ gap: '0.35rem' }}>
+          <div className="flex items-center gap-1.5 flex-wrap mobile-scroll-row" style={{ gap: '0.35rem' }}>
             <button 
               className="btn btn-outline" 
               onClick={() => setIsPatientModalOpen(true)}
@@ -757,7 +757,7 @@ export default function PatientProfile() {
       </header>
 
       {/* ================= BARRA DE ABAS CLÍNICAS ================= */}
-      <div className="flex gap-2 mb-4 border-b pb-2 flex-wrap" style={{ borderColor: 'var(--border)' }}>
+      <div className="flex gap-2 mb-4 border-b pb-2 flex-wrap mobile-tabs-scroll" style={{ borderColor: 'var(--border)' }}>
         <button
           className={`btn ${activeTab === 'overview' ? 'btn-primary' : 'btn-outline'}`}
           onClick={() => setActiveTab('overview')}
@@ -827,7 +827,7 @@ export default function PatientProfile() {
 
       {/* ================= ABA 1: VISÃO GERAL ================= */}
       {activeTab === 'overview' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.25rem' }}>
+        <div className="patient-overview-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.25rem' }}>
           
           {/* Coluna Esquerda: Acesso Vascular & Dados Vitais */}
           <div className="flex flex-col gap-4">
@@ -1747,7 +1747,7 @@ export default function PatientProfile() {
           </div>
 
           {/* Filtros da Lista de Medicamentos */}
-          <div className="flex gap-2 flex-wrap text-xs">
+          <div className="flex gap-2 flex-wrap text-xs mobile-scroll-row">
             <button
               onClick={() => setMedFilter('todos')}
               className={`btn ${medFilter === 'todos' ? 'btn-primary' : 'btn-outline'}`}

@@ -278,7 +278,7 @@ export default function DoctorDashboard() {
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap mobile-scroll-row">
           <button 
             className="btn btn-outline" 
             onClick={() => setIsReportsModalOpen(true)}
@@ -394,7 +394,7 @@ export default function DoctorDashboard() {
             <span>Unidade de Trabalho:</span>
           </div>
 
-          <div className="flex gap-1.5 flex-wrap">
+          <div className="flex gap-1.5 flex-wrap mobile-scroll-row">
             <button
               type="button"
               onClick={() => setFilterLocal('Todos')}
@@ -627,7 +627,7 @@ export default function DoctorDashboard() {
 
       {/* ================= MODALIDADE 1: VISUALIZAÇÃO EM CARDS (PADRÃO) ================= */}
       {viewMode === 'cards' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 290px), 1fr))', gap: '1rem' }}>
           {filteredPatients.length === 0 ? (
             <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '3.5rem 1.5rem', textAlign: 'center', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '1rem' }}>
               <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#eff6ff', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)' }}>
@@ -807,7 +807,7 @@ export default function DoctorDashboard() {
 
       {/* ================= MODALIDADE 2: VISUALIZAÇÃO COMPACTA ================= */}
       {viewMode === 'compact' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '0.75rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 250px), 1fr))', gap: '0.75rem' }}>
           {filteredPatients.length === 0 ? (
             <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '3rem 1.5rem', textAlign: 'center', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.85rem' }}>
               <UserPlus size={24} color="var(--primary)" />

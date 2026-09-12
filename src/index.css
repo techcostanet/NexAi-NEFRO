@@ -341,6 +341,95 @@ svg {
 .shrink-0 { flex-shrink: 0; }
 .self-end { align-self: flex-end; }
 
+/* ================= RESPONSIVIDADE MOBILE & TABLET (SEM ALTERAR DESKTOP) ================= */
+
+/* Suporte a Tablets e Telas Médias (<= 1024px) */
+@media (max-width: 1024px) {
+  .container {
+    padding: 1rem 0.85rem;
+  }
+}
+
+/* Suporte Completo a Smartphones (<= 768px) */
+@media (max-width: 768px) {
+  /* Previne zoom involuntário irritante do iOS Safari ao focar inputs */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  select,
+  textarea,
+  .input-field {
+    font-size: 16px !important;
+  }
+
+  .container {
+    padding-left: 0.65rem !important;
+    padding-right: 0.65rem !important;
+    padding-top: 0.65rem !important;
+  }
+
+  /* Toque ergonômico em botões em dispositivos móveis */
+  .btn {
+    min-height: 40px;
+    touch-action: manipulation;
+  }
+
+  /* Barras de abas e botões de filtro com rolagem horizontal suave e sem scrollbar */
+  .mobile-tabs-scroll,
+  .mobile-scroll-row {
+    display: flex !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+    padding-bottom: 6px !important;
+    gap: 0.45rem !important;
+    width: 100% !important;
+  }
+
+  .mobile-tabs-scroll::-webkit-scrollbar,
+  .mobile-scroll-row::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .mobile-tabs-scroll > *,
+  .mobile-scroll-row > * {
+    flex-shrink: 0 !important;
+  }
+
+  /* Modais em formato Bottom-Sheet seguro e ergonômico no celular */
+  div[style*="position: fixed"][style*="zIndex: 9999"],
+  div[style*="position: fixed"][style*="z-index: 9999"],
+  div[style*="position: fixed"][style*="zIndex: 99999"],
+  div[style*="position: fixed"][style*="z-index: 99999"] {
+    padding: 0.5rem 0.25rem 0 !important;
+    align-items: flex-end !important;
+  }
+
+  div[style*="position: fixed"] > div[style*="max-width"],
+  div[style*="position: fixed"] > div[style*="maxWidth"] {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 93vh !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-left-radius: 20px !important;
+    border-top-right-radius: 20px !important;
+    padding: 1.25rem 1rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Ajuste responsivo de grid para telas compactas (< 360px) */
+  .patient-overview-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* ================= REGRAS DE IMPRESSÃO PROFISSIONAL (A4 & PDF UNIVERSAL) ================= */
 @media print {
   @page {
