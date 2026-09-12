@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.52",
+    "date": "12/09/2026",
+    "title": "Indicadores laboratoriais tricolores e badges compactos no historico de coletas",
+    "highlights": [
+      "✨ Indicadores laboratoriais tricolores e badges compactos no historico de coletas"
+    ]
+  },
+  {
     "version": "1.1.51",
     "date": "12/09/2026",
     "title": "Auto-gestao de credenciais, temas pasteis e responsividade mobile/tablet",

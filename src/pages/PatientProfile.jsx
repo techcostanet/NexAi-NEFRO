@@ -67,6 +67,46 @@ import TransplantReportPdf from '../components/pdf/TransplantReportPdf';
 import { downloadPdfDocument } from '../services/pdfService';
 import { printElement } from '../utils/printUtils';
 import { safeFormatDate } from '../utils/dateUtils';
+import { evaluateExam, parseExamNumber } from '../utils/examRanges';
+
+/**
+ * Componente de Badge Clínico em formato de quadradinho compacto
+ * Exibe resultado de exames laboratoriais com cores de meta:
+ * 🟢 Verde (Bom/Meta) | 🟡 Amarelo (Médio/Atenção) | 🔴 Vermelho (Crítico/Alterado)
+ */
+function ExamBadge({ examKey, value, suffix = '', title = '' }) {
+  if (value === null || value === undefined || value === '' || value === '-') {
+    return <span style={{ color: '#94a3b8' }}>-</span>;
+  }
+  const evalResult = evaluateExam(examKey, value);
+  const formattedText = `${value}${suffix}`;
+
+  if (evalResult.status === 'neutro') {
+    return <span style={{ color: '#475569' }}>{formattedText}</span>;
+  }
+
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '2px 6px',
+        borderRadius: '6px',
+        fontSize: '0.80rem',
+        fontWeight: 'bold',
+        background: evalResult.bg,
+        border: `1px solid ${evalResult.border}`,
+        color: evalResult.color,
+        lineHeight: '1.2',
+        whiteSpace: 'nowrap'
+      }}
+      title={title || `${evalResult.label}: ${formattedText}`}
+    >
+      {formattedText}
+    </span>
+  );
+}
 
 export default function PatientProfile() {
   const { id } = useParams();
@@ -1147,157 +1187,174 @@ export default function PatientProfile() {
                 </button>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
-                <div 
-                  style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    padding: '0.85rem 0.6rem', 
-                    borderRadius: '14px', 
-                    background: hbBaixa ? '#fef2f2' : '#f8fafc', 
-                    border: `1px solid ${hbBaixa ? '#fecaca' : '#e2e8f0'}`,
-                    textAlign: 'center',
-                    minHeight: '84px'
-                  }}
-                >
-                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
-                    Hemoglobina
-                  </span>
-                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: hbBaixa ? '#dc2626' : '#0f172a', lineHeight: 1.2 }}>
-                    {exames.hb || '-'}
-                  </span>
-                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
-                    g/dL
-                  </span>
-                </div>
+              {(() => {
+                const hbEval = evaluateExam('hb', exames.hb);
+                const pthEval = evaluateExam('pth', exames.pth);
+                const fosforoEval = evaluateExam('fosforo', exames.fosforo);
+                const kEval = evaluateExam('k', exames.k);
+                const ktvEval = evaluateExam('ktv', exames.ktv);
+                const albEval = evaluateExam('albumina', exames.albumina);
 
-                <div 
-                  style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    padding: '0.85rem 0.6rem', 
-                    borderRadius: '14px', 
-                    background: pthAlto ? '#fef2f2' : '#f8fafc', 
-                    border: `1px solid ${pthAlto ? '#fecaca' : '#e2e8f0'}`,
-                    textAlign: 'center',
-                    minHeight: '84px'
-                  }}
-                >
-                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
-                    PTH Intacto
-                  </span>
-                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: pthAlto ? '#dc2626' : '#0f172a', lineHeight: 1.2 }}>
-                    {exames.pth || '-'}
-                  </span>
-                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
-                    pg/mL
-                  </span>
-                </div>
+                return (
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        padding: '0.85rem 0.6rem', 
+                        borderRadius: '14px', 
+                        background: hbEval.bg, 
+                        border: `1px solid ${hbEval.border}`,
+                        textAlign: 'center',
+                        minHeight: '84px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                        Hemoglobina
+                      </span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: hbEval.color, lineHeight: 1.2 }}>
+                        {exames.hb || '-'}
+                      </span>
+                      <span style={{ fontSize: '0.68rem', color: hbEval.status === 'neutro' ? '#94a3b8' : hbEval.color, marginTop: '3px', fontWeight: hbEval.status === 'neutro' ? '500' : '600' }}>
+                        g/dL {hbEval.status !== 'neutro' ? `• ${hbEval.label}` : ''}
+                      </span>
+                    </div>
 
-                <div 
-                  style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    padding: '0.85rem 0.6rem', 
-                    borderRadius: '14px', 
-                    background: fosforoAlto ? '#fef2f2' : '#f8fafc', 
-                    border: `1px solid ${fosforoAlto ? '#fecaca' : '#e2e8f0'}`,
-                    textAlign: 'center',
-                    minHeight: '84px'
-                  }}
-                >
-                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
-                    Fósforo
-                  </span>
-                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: fosforoAlto ? '#dc2626' : '#0f172a', lineHeight: 1.2 }}>
-                    {exames.fosforo || '-'}
-                  </span>
-                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
-                    mg/dL
-                  </span>
-                </div>
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        padding: '0.85rem 0.6rem', 
+                        borderRadius: '14px', 
+                        background: pthEval.bg, 
+                        border: `1px solid ${pthEval.border}`,
+                        textAlign: 'center',
+                        minHeight: '84px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                        PTH Intacto
+                      </span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: pthEval.color, lineHeight: 1.2 }}>
+                        {exames.pth || '-'}
+                      </span>
+                      <span style={{ fontSize: '0.68rem', color: pthEval.status === 'neutro' ? '#94a3b8' : pthEval.color, marginTop: '3px', fontWeight: pthEval.status === 'neutro' ? '500' : '600' }}>
+                        pg/mL {pthEval.status !== 'neutro' ? `• ${pthEval.label}` : ''}
+                      </span>
+                    </div>
 
-                <div 
-                  style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    padding: '0.85rem 0.6rem', 
-                    borderRadius: '14px', 
-                    background: kAlto ? '#fef2f2' : '#f8fafc', 
-                    border: `1px solid ${kAlto ? '#fecaca' : '#e2e8f0'}`,
-                    textAlign: 'center',
-                    minHeight: '84px'
-                  }}
-                >
-                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
-                    Potássio (K⁺)
-                  </span>
-                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: kAlto ? '#dc2626' : '#0f172a', lineHeight: 1.2 }}>
-                    {exames.k || '-'}
-                  </span>
-                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
-                    mEq/L
-                  </span>
-                </div>
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        padding: '0.85rem 0.6rem', 
+                        borderRadius: '14px', 
+                        background: fosforoEval.bg, 
+                        border: `1px solid ${fosforoEval.border}`,
+                        textAlign: 'center',
+                        minHeight: '84px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                        Fósforo
+                      </span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: fosforoEval.color, lineHeight: 1.2 }}>
+                        {exames.fosforo || '-'}
+                      </span>
+                      <span style={{ fontSize: '0.68rem', color: fosforoEval.status === 'neutro' ? '#94a3b8' : fosforoEval.color, marginTop: '3px', fontWeight: fosforoEval.status === 'neutro' ? '500' : '600' }}>
+                        mg/dL {fosforoEval.status !== 'neutro' ? `• ${fosforoEval.label}` : ''}
+                      </span>
+                    </div>
 
-                <div 
-                  style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    padding: '0.85rem 0.6rem', 
-                    borderRadius: '14px', 
-                    background: '#f8fafc', 
-                    border: '1px solid #e2e8f0',
-                    textAlign: 'center',
-                    minHeight: '84px'
-                  }}
-                >
-                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
-                    Kt/V
-                  </span>
-                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: '#0f172a', lineHeight: 1.2 }}>
-                    {exames.ktv || '-'}
-                  </span>
-                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
-                    Meta ≥ 1.2
-                  </span>
-                </div>
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        padding: '0.85rem 0.6rem', 
+                        borderRadius: '14px', 
+                        background: kEval.bg, 
+                        border: `1px solid ${kEval.border}`,
+                        textAlign: 'center',
+                        minHeight: '84px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                        Potássio (K⁺)
+                      </span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: kEval.color, lineHeight: 1.2 }}>
+                        {exames.k || '-'}
+                      </span>
+                      <span style={{ fontSize: '0.68rem', color: kEval.status === 'neutro' ? '#94a3b8' : kEval.color, marginTop: '3px', fontWeight: kEval.status === 'neutro' ? '500' : '600' }}>
+                        mEq/L {kEval.status !== 'neutro' ? `• ${kEval.label}` : ''}
+                      </span>
+                    </div>
 
-                <div 
-                  style={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center', 
-                    justifyContent: 'center', 
-                    padding: '0.85rem 0.6rem', 
-                    borderRadius: '14px', 
-                    background: albuminaBaixa ? '#fef2f2' : '#f8fafc', 
-                    border: `1px solid ${albuminaBaixa ? '#fecaca' : '#e2e8f0'}`,
-                    textAlign: 'center',
-                    minHeight: '84px'
-                  }}
-                >
-                  <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
-                    Albumina
-                  </span>
-                  <span style={{ fontSize: '1.25rem', fontWeight: '700', color: albuminaBaixa ? '#dc2626' : '#0f172a', lineHeight: 1.2 }}>
-                    {exames.albumina || '-'}
-                  </span>
-                  <span style={{ fontSize: '0.68rem', color: '#94a3b8', marginTop: '3px', fontWeight: '500' }}>
-                    g/dL
-                  </span>
-                </div>
-              </div>
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        padding: '0.85rem 0.6rem', 
+                        borderRadius: '14px', 
+                        background: ktvEval.bg, 
+                        border: `1px solid ${ktvEval.border}`,
+                        textAlign: 'center',
+                        minHeight: '84px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                        Kt/V
+                      </span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: ktvEval.color, lineHeight: 1.2 }}>
+                        {exames.ktv || '-'}
+                      </span>
+                      <span style={{ fontSize: '0.68rem', color: ktvEval.status === 'neutro' ? '#94a3b8' : ktvEval.color, marginTop: '3px', fontWeight: ktvEval.status === 'neutro' ? '500' : '600' }}>
+                        Meta ≥ 1.2 {ktvEval.status !== 'neutro' ? `• ${ktvEval.label}` : ''}
+                      </span>
+                    </div>
+
+                    <div 
+                      style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        alignItems: 'center', 
+                        justifyContent: 'center', 
+                        padding: '0.85rem 0.6rem', 
+                        borderRadius: '14px', 
+                        background: albEval.bg, 
+                        border: `1px solid ${albEval.border}`,
+                        textAlign: 'center',
+                        minHeight: '84px',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                        Albumina
+                      </span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: albEval.color, lineHeight: 1.2 }}>
+                        {exames.albumina || '-'}
+                      </span>
+                      <span style={{ fontSize: '0.68rem', color: albEval.status === 'neutro' ? '#94a3b8' : albEval.color, marginTop: '3px', fontWeight: albEval.status === 'neutro' ? '500' : '600' }}>
+                        g/dL {albEval.status !== 'neutro' ? `• ${albEval.label}` : ''}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })()}
             </section>
           </div>
         </div>
@@ -1378,21 +1435,27 @@ export default function PatientProfile() {
               <div className="flex flex-col gap-1.5 text-xs">
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Hemoglobina:</span>
-                  <strong style={{ color: hbBaixa ? '#dc2626' : '#1e293b', fontWeight: 'bold' }}>
+                  <strong style={{ color: evaluateExam('hb', exames.hb).color, fontWeight: 'bold' }}>
                     {exames.hb ? `${exames.hb} g/dL` : '-'} <span className="text-muted font-normal text-2xs">(10-12)</span>
                   </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Hematócrito:</span>
-                  <strong className="text-slate-800">{exames.ht ? `${exames.ht}%` : '-'} <span className="text-muted font-normal text-2xs">(30-36%)</span></strong>
+                  <strong style={{ color: evaluateExam('ht', exames.ht).color, fontWeight: 'bold' }}>
+                    {exames.ht ? `${exames.ht}%` : '-'} <span className="text-muted font-normal text-2xs">(30-36%)</span>
+                  </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">IST:</span>
-                  <strong className="text-slate-800">{exames.ist ? `${exames.ist}%` : '-'} <span className="text-muted font-normal text-2xs">(&gt;20%)</span></strong>
+                  <strong style={{ color: evaluateExam('ist', exames.ist).color, fontWeight: 'bold' }}>
+                    {exames.ist ? `${exames.ist}%` : '-'} <span className="text-muted font-normal text-2xs">(&gt;20%)</span>
+                  </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Ferritina:</span>
-                  <strong className="text-slate-800">{exames.ferritina ? `${exames.ferritina} ng/mL` : '-'}</strong>
+                  <strong style={{ color: evaluateExam('ferritina', exames.ferritina).color, fontWeight: 'bold' }}>
+                    {exames.ferritina ? `${exames.ferritina} ng/mL` : '-'}
+                  </strong>
                 </div>
               </div>
             </div>
@@ -1407,19 +1470,21 @@ export default function PatientProfile() {
               <div className="flex flex-col gap-1.5 text-xs">
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">PTH Intacto:</span>
-                  <strong style={{ color: pthAlto ? '#dc2626' : '#1e293b', fontWeight: 'bold' }}>
+                  <strong style={{ color: evaluateExam('pth', exames.pth).color, fontWeight: 'bold' }}>
                     {exames.pth ? `${exames.pth} pg/mL` : '-'} <span className="text-muted font-normal text-2xs">(150-600)</span>
                   </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Fósforo:</span>
-                  <strong style={{ color: fosforoAlto ? '#dc2626' : '#1e293b', fontWeight: 'bold' }}>
+                  <strong style={{ color: evaluateExam('fosforo', exames.fosforo).color, fontWeight: 'bold' }}>
                     {exames.fosforo ? `${exames.fosforo} mg/dL` : '-'} <span className="text-muted font-normal text-2xs">(3.5-5.5)</span>
                   </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Cálcio:</span>
-                  <strong className="text-slate-800">{exames.ca ? `${exames.ca} mg/dL` : '-'}</strong>
+                  <strong style={{ color: evaluateExam('ca', exames.ca).color, fontWeight: 'bold' }}>
+                    {exames.ca ? `${exames.ca} mg/dL` : '-'} <span className="text-muted font-normal text-2xs">(8.5-10.2)</span>
+                  </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Vitamina D:</span>
@@ -1438,7 +1503,7 @@ export default function PatientProfile() {
               <div className="flex flex-col gap-1.5 text-xs">
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Potássio (K⁺):</span>
-                  <strong style={{ color: kAlto ? '#dc2626' : '#1e293b', fontWeight: 'bold' }}>
+                  <strong style={{ color: evaluateExam('k', exames.k).color, fontWeight: 'bold' }}>
                     {exames.k ? `${exames.k} mEq/L` : '-'} <span className="text-muted font-normal text-2xs">(3.5-5.5)</span>
                   </strong>
                 </div>
@@ -1448,7 +1513,7 @@ export default function PatientProfile() {
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Bicarbonato:</span>
-                  <strong style={{ color: hco3Baixo ? '#dc2626' : '#1e293b', fontWeight: 'bold' }}>
+                  <strong style={{ color: evaluateExam('hco3', exames.hco3).color, fontWeight: 'bold' }}>
                     {exames.hco3 ? `${exames.hco3} mEq/L` : '-'} <span className="text-muted font-normal text-2xs">(22-26)</span>
                   </strong>
                 </div>
@@ -1469,19 +1534,21 @@ export default function PatientProfile() {
               <div className="flex flex-col gap-1.5 text-xs">
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Kt/V Dialítico:</span>
-                  <strong className="text-slate-800 font-bold">
+                  <strong style={{ color: evaluateExam('ktv', exames.ktv).color, fontWeight: 'bold' }}>
                     {exames.ktv || '-'} <span className="text-muted font-normal text-2xs">(&ge;1.2)</span>
                   </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Albumina:</span>
-                  <strong style={{ color: albuminaBaixa ? '#dc2626' : '#1e293b', fontWeight: 'bold' }}>
+                  <strong style={{ color: evaluateExam('albumina', exames.albumina).color, fontWeight: 'bold' }}>
                     {exames.albumina ? `${exames.albumina} g/dL` : '-'} <span className="text-muted font-normal text-2xs">(&ge;3.8)</span>
                   </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">PCR:</span>
-                  <strong className="text-slate-800">{exames.pcr ? `${exames.pcr} mg/L` : '-'} <span className="text-muted font-normal text-2xs">(&lt;5.0)</span></strong>
+                  <strong style={{ color: evaluateExam('pcr', exames.pcr).color, fontWeight: 'bold' }}>
+                    {exames.pcr ? `${exames.pcr} mg/L` : '-'} <span className="text-muted font-normal text-2xs">(&lt;5.0)</span>
+                  </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Creatinina:</span>
@@ -1500,7 +1567,9 @@ export default function PatientProfile() {
               <div className="flex flex-col gap-1.5 text-xs">
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">Glicemia Jejum:</span>
-                  <strong className="text-slate-800">{exames.glicemia ? `${exames.glicemia} mg/dL` : '-'} <span className="text-muted font-normal text-2xs">(70-100)</span></strong>
+                  <strong style={{ color: evaluateExam('glicemia', exames.glicemia).color, fontWeight: 'bold' }}>
+                    {exames.glicemia ? `${exames.glicemia} mg/dL` : '-'} <span className="text-muted font-normal text-2xs">(70-130)</span>
+                  </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">HbA1c (%):</span>
@@ -1508,7 +1577,7 @@ export default function PatientProfile() {
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">TGP (ALT):</span>
-                  <strong style={{ color: (exames.tgp && exames.tgp > 45) ? '#dc2626' : '#1e293b', fontWeight: 'bold' }}>
+                  <strong style={{ color: evaluateExam('tgp', exames.tgp).color, fontWeight: 'bold' }}>
                     {exames.tgp ? `${exames.tgp} U/L` : '-'} <span className="text-muted font-normal text-2xs">(&lt;45)</span>
                   </strong>
                 </div>
@@ -1522,11 +1591,22 @@ export default function PatientProfile() {
 
           {/* Histórico Cronológico de Coletas */}
           <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
               <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
                 <Calendar size={16} color="var(--primary)" />
                 <span>Histórico Cronológico de Coletas ({historicoExames.length})</span>
               </h3>
+              <div className="flex items-center gap-1.5 flex-wrap" style={{ fontSize: '0.70rem' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#15803d', background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                  🟢 Na Meta
+                </span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#b45309', background: '#fffbeb', border: '1px solid #fde68a', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                  🟡 Atenção
+                </span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
+                  🔴 Crítico
+                </span>
+              </div>
             </div>
 
             {historicoExames.length === 0 ? (
@@ -1553,28 +1633,44 @@ export default function PatientProfile() {
                   <tbody>
                     {sortedHistoricoExames.map((item, idx) => (
                       <tr key={idx} style={{ borderBottom: '1px solid var(--border)' }}>
-                        <td style={{ padding: '0.65rem 0.8rem', fontWeight: 'bold', color: '#1e293b' }}>
+                        <td style={{ padding: '0.65rem 0.8rem', fontWeight: 'bold', color: '#1e293b', whiteSpace: 'nowrap' }}>
                           {item.dataExame ? new Date(item.dataExame + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}
                         </td>
-                        <td style={{ padding: '0.65rem 0.8rem', color: (item.hb && item.hb < 10) ? '#dc2626' : '#1e293b', fontWeight: (item.hb && item.hb < 10) ? 'bold' : 'normal' }}>
-                          {item.hb || '-'}
+                        <td style={{ padding: '0.65rem 0.8rem' }}>
+                          <ExamBadge examKey="hb" value={item.hb} />
+                        </td>
+                        <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <ExamBadge examKey="ist" value={item.ist} suffix="%" />
+                            <span style={{ color: '#cbd5e1' }}>/</span>
+                            <ExamBadge examKey="ferritina" value={item.ferritina} />
+                          </div>
                         </td>
                         <td style={{ padding: '0.65rem 0.8rem' }}>
-                          {item.ist ? `${item.ist}%` : '-'} / {item.ferritina || '-'}
+                          <ExamBadge examKey="pth" value={item.pth} />
                         </td>
-                        <td style={{ padding: '0.65rem 0.8rem', color: (item.pth && item.pth > 600) ? '#dc2626' : '#1e293b', fontWeight: (item.pth && item.pth > 600) ? 'bold' : 'normal' }}>
-                          {item.pth || '-'}
+                        <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <ExamBadge examKey="fosforo" value={item.fosforo} />
+                            <span style={{ color: '#cbd5e1' }}>/</span>
+                            <ExamBadge examKey="ca" value={item.ca} />
+                          </div>
                         </td>
                         <td style={{ padding: '0.65rem 0.8rem' }}>
-                          {item.fosforo || '-'} / {item.ca || '-'}
+                          <ExamBadge examKey="k" value={item.k} />
                         </td>
-                        <td style={{ padding: '0.65rem 0.8rem', color: (item.k && item.k > 5.5) ? '#dc2626' : '#1e293b', fontWeight: (item.k && item.k > 5.5) ? 'bold' : 'normal' }}>
-                          {item.k || '-'}
-                        </td>
-                        <td style={{ padding: '0.65rem 0.8rem' }}>{item.ktv || '-'}</td>
-                        <td style={{ padding: '0.65rem 0.8rem' }}>{item.albumina ? `${item.albumina} g/dL` : '-'}</td>
                         <td style={{ padding: '0.65rem 0.8rem' }}>
-                          {item.glicemia ? `${item.glicemia}` : '-'} / {item.tgp ? `${item.tgp} U/L` : '-'}
+                          <ExamBadge examKey="ktv" value={item.ktv} />
+                        </td>
+                        <td style={{ padding: '0.65rem 0.8rem' }}>
+                          <ExamBadge examKey="albumina" value={item.albumina} suffix=" g/dL" />
+                        </td>
+                        <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                            <ExamBadge examKey="glicemia" value={item.glicemia} />
+                            <span style={{ color: '#cbd5e1' }}>/</span>
+                            <ExamBadge examKey="tgp" value={item.tgp} suffix=" U/L" />
+                          </div>
                         </td>
                         <td style={{ padding: '0.65rem 0.8rem', textAlign: 'right' }}>
                           <div className="flex justify-end gap-1">

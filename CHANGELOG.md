@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.52] - 2026-09-12
+### Alterações
+- Indicadores laboratoriais tricolores e badges compactos no historico de coletas
+
 ## [1.1.51] - 2026-09-12
 ### Alterações
 - Auto-gestao de credenciais, temas pasteis e responsividade mobile/tablet
