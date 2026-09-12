@@ -8,6 +8,7 @@ import DoctorDashboard from './pages/DoctorDashboard';
 import DoctorProfile from './pages/DoctorProfile';
 import PatientProfile from './pages/PatientProfile';
 import ChangelogModal from './components/ChangelogModal';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { APP_VERSION } from './version';
 import { Sparkles, Loader2 } from 'lucide-react';
 
@@ -94,9 +95,11 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

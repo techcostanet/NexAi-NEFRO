@@ -175,7 +175,7 @@ export default function PatientBulletinPdf({
         <View style={styles.header}>
           <View>
             <Text style={styles.clinicName}>{clinica.toUpperCase()}</Text>
-            <Text style={styles.docTitle}>Boletim de Saúde & Conquistas</Text>
+            <Text style={styles.docTitle}>Boletim de Saúde</Text>
             <Text style={styles.patientName}>Paciente: <Text style={{ fontWeight: 'bold', color: '#0f172a' }}>{pacienteNome?.toUpperCase()}</Text></Text>
           </View>
           <View style={{ textAlign: 'right' }}>

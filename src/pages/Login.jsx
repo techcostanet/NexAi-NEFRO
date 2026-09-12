@@ -118,7 +118,7 @@ export default function Login() {
             onClick={() => navigate('/')}
             className="btn btn-outline w-full text-xs font-bold py-2 text-blue-600 border-blue-200 bg-blue-50/50 hover:bg-blue-100 transition"
           >
-            Planos & Teste Grátis ➡️
+            Conhecer Planos ➡️
           </button>
         </div>
 

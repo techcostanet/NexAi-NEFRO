@@ -1,5 +1,6 @@
 import React from 'react';
 import { AlertTriangle } from 'lucide-react';
+import { safeFormatDate, safeFormatDateExtenso } from '../utils/dateUtils';
 
 /**
  * Modelo de Receituário Médico Padrão Brasileiro
@@ -17,7 +18,7 @@ export default function PrescriptionPrintDocument({
   const doctorCrm = prescription.medico?.crm || doctorInfo?.crm || '------';
   const doctorUf = prescription.medico?.ufCrm || doctorInfo?.ufCrm || 'SP';
   const doctorRqe = prescription.medico?.rqe || doctorInfo?.rqe || '';
-  const doctorEspecialidade = prescription.medico?.especialidade || doctorInfo?.especialidade || 'Nefrologia Clínica & Hemodiálise';
+  const doctorEspecialidade = prescription.medico?.especialidade || doctorInfo?.especialidade || 'Nefrologia Clínica';
   const doctorClinica = prescription.medico?.clinica || doctorInfo?.clinicaPrincipal || patient.clinica || 'Clínica Nefrológica';
   const doctorEndereco = prescription.medico?.endereco || doctorInfo?.endereco || '';
   const doctorTelefone = prescription.medico?.telefone || doctorInfo?.telefone || '';
@@ -27,12 +28,8 @@ export default function PrescriptionPrintDocument({
   const isAntimicrobiano = tipoReceita === 'antimicrobiano';
   const itens = Array.isArray(prescription.itens) ? prescription.itens : [];
 
-  const dataEmissaoObj = prescription.dataEmissao ? new Date(prescription.dataEmissao + 'T12:00:00') : new Date();
-  const dataFormatada = dataEmissaoObj.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
-  });
+  const dataFormatada = safeFormatDateExtenso(prescription.dataEmissao);
+  const dataCurta = safeFormatDate(prescription.dataEmissao);
 
   const getTituloDocumento = () => {
     switch (tipoReceita) {
@@ -113,7 +110,7 @@ export default function PrescriptionPrintDocument({
             {patient.idade && <span style={{ color: '#64748b', fontSize: '0.75rem' }}> ({patient.idade} anos)</span>}
           </div>
           <div style={{ color: '#64748b', fontSize: '0.78rem' }}>
-            Data: <strong style={{ color: '#0f172a' }}>{dataEmissaoObj.toLocaleDateString('pt-BR')}</strong>
+            Data: <strong style={{ color: '#0f172a' }}>{dataCurta}</strong>
           </div>
         </div>
 
@@ -201,7 +198,7 @@ export default function PrescriptionPrintDocument({
               </div>
               <div>
                 <strong style={{ display: 'block', textTransform: 'uppercase', marginBottom: '3px', color: '#0f172a' }}>Identificação do Fornecedor</strong>
-                <div>Farmácia / Razão Social: _________________________________</div>
+                <div>Farmácia: _________________________________</div>
                 <div style={{ marginTop: '2px' }}>Farmacêutico: _________________________ CRF: _______________</div>
                 <div style={{ marginTop: '2px' }}>Data: ____/____/________ Lote: __________ Qtd Disp: __________</div>
                 <div style={{ marginTop: '4px', textAlign: 'center' }}>Visto do Farmacêutico: __________________________</div>

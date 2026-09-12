@@ -282,7 +282,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           {/* Dados Pessoais & Clínicos */}
           <div>
-            <h3 className="font-bold text-sm text-muted uppercase tracking-wider mb-3">Identificação & Vínculo</h3>
+            <h3 className="font-bold text-sm text-muted uppercase tracking-wider mb-3">Identificação</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
               <div style={{ gridColumn: '1 / -1' }}>
                 <label className="text-sm font-semibold mb-1 block">Nome Completo *</label>
@@ -444,7 +444,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
           {/* Dados Clínicos Nefrológicos & Status de Transplante */}
           <div className="border-t pt-4" style={{ borderColor: 'var(--border)' }}>
             <h3 className="font-bold text-sm text-muted uppercase tracking-wider mb-3">
-              Dados Clínicos & Transplante
+              Transplante Renal
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>

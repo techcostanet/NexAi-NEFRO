@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.50",
+    "date": "12/09/2026",
+    "title": "Correcao da tela branca em receitas e simplificacao visual de termos duplos",
+    "highlights": [
+      "✨ Correcao da tela branca em receitas e simplificacao visual de termos duplos"
+    ]
+  },
+  {
     "version": "1.1.49",
     "date": "12/09/2026",
     "title": "Motor de Impressao Isolada e Exportacao de PDFs Vetoriais em Alta Resolucao (...",

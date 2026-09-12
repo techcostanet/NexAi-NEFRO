@@ -143,10 +143,10 @@ export default function PatientBulletinModal({
             </div>
             <div>
               <h2 className="text-sm font-bold text-slate-800 m-0">
-                Boletim de Conquistas & Metas de Saúde
+                Boletim de Saúde
               </h2>
               <span className="text-xxs text-muted">
-                Impressão A4 / PDF Oficial / WhatsApp
+                Impressão A4 • WhatsApp
               </span>
             </div>
           </div>
@@ -183,7 +183,7 @@ export default function PatientBulletinModal({
               title="Imprimir folha A4 ou salvar via navegador"
             >
               <Printer size={15} />
-              <span>Imprimir A4 / PDF</span>
+              <span>Imprimir</span>
             </button>
 
             <button 

@@ -24,7 +24,7 @@ export default function ReportPrintDocument({
 
   const doctorName = doctor.nome || 'Dr(a). Médico(a) Nefrologista';
   const doctorCrm = doctor.crm ? `CRM/${doctor.ufCrm || 'SP'} ${doctor.crm}` : 'CRM/SP';
-  const doctorEspecialidade = doctor.especialidade || doctor.titulo || 'Nefrologia Clínica & Hemodiálise';
+  const doctorEspecialidade = doctor.especialidade || doctor.titulo || 'Nefrologia Clínica';
   const clinicaNome = selectedClinica || doctor.clinicaPrincipal || 'Todas as Unidades de Atendimento';
 
   // Monta resumo amigável dos filtros

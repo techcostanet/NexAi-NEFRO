@@ -331,7 +331,7 @@ export default function ExamImportModal({
 
               <div className="flex items-center gap-2 mt-1 flex-wrap justify-center">
                 <span className="badge badge-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.72rem', padding: '2px 8px' }}>
-                  <FileSpreadsheet size={12} color="#059669" /> Excel / CSV
+                  <FileSpreadsheet size={12} color="#059669" /> Planilhas Excel
                 </span>
                 <span className="badge badge-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.72rem', padding: '2px 8px' }}>
                   <FileText size={12} color="#dc2626" /> Laudos em PDF
@@ -340,7 +340,7 @@ export default function ExamImportModal({
                   <FileText size={12} color="#2563eb" /> Word (.docx)
                 </span>
                 <span className="badge badge-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.72rem', padding: '2px 8px' }}>
-                  <ImageIcon size={12} color="#d97706" /> Fotos / OCR
+                  <ImageIcon size={12} color="#d97706" /> Fotos de Laudos
                 </span>
               </div>
             </div>
@@ -423,7 +423,7 @@ export default function ExamImportModal({
                         type="button" 
                         onClick={toggleSelectAll} 
                         style={{ background: 'transparent', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-                        title="Selecionar / Desmarcar todos"
+                        title="Selecionar todos"
                       >
                         {records.every(r => r.confirmado) ? (
                           <CheckSquare size={16} color="var(--primary)" />

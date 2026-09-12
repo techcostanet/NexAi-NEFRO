@@ -133,7 +133,7 @@ export default function PrescriptionPrintModal({
               title="Imprimir folha A4 ou salvar via navegador"
             >
               <Printer size={15} />
-              <span>Imprimir / Salvar PDF</span>
+              <span>Imprimir</span>
             </button>
 
             <button 

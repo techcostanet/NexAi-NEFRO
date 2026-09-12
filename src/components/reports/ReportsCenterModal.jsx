@@ -239,7 +239,7 @@ export default function ReportsCenterModal({
             <div>
               <div className="flex items-center gap-2">
                 <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', margin: 0, letterSpacing: '-0.3px' }}>
-                  Central de Relatórios Clínicos & Gerenciais
+                  Central de Relatórios Clínicos
                 </h2>
                 <span style={{
                   fontSize: '0.75rem',
@@ -568,7 +568,7 @@ export default function ReportsCenterModal({
                   title="Gerar visualização em folha timbrada para imprimir ou salvar como PDF"
                 >
                   <Printer size={16} />
-                  <span>Exportar PDF / Imprimir</span>
+                  <span>Imprimir Relatório</span>
                 </button>
               </div>
             </div>
@@ -583,7 +583,7 @@ export default function ReportsCenterModal({
                 <div className="flex items-center gap-2">
                   <Filter size={15} color="#0284c7" />
                   <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#0f172a' }}>
-                    Filtros Clínicos & Demográficos
+                    Filtros Clínicos
                   </span>
                   {hasActiveFilters && (
                     <span style={{

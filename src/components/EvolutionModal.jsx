@@ -214,7 +214,7 @@ export default function EvolutionModal({
           {/* Parâmetros Dialíticos da Sessão */}
           <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
             <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">
-              Parâmetros & Sinais Vitais
+              Sinais Vitais
             </span>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.5rem' }}>
               <div>
@@ -277,7 +277,7 @@ export default function EvolutionModal({
 
           {/* Texto da Evolução e Conduta */}
           <div>
-            <label className="text-xs font-semibold mb-1 block text-slate-700">Conduta & Evolução Clínica *</label>
+            <label className="text-xs font-semibold mb-1 block text-slate-700">Evolução Clínica *</label>
             <textarea 
               className="input-field" 
               rows={4}
@@ -300,7 +300,7 @@ export default function EvolutionModal({
               />
             </div>
             <div>
-              <label className="text-xs text-muted block mb-0.5">CRM / UF</label>
+              <label className="text-xs text-muted block mb-0.5">CRM</label>
               <input 
                 type="text" 
                 className="input-field" 

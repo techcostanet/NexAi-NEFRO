@@ -389,7 +389,7 @@ export default function MedicationModal({
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
             <div>
               <label className="text-sm font-semibold mb-1 block">
-                Dose / Posologia <span style={{ color: 'red' }}>*</span>
+                Posologia <span style={{ color: 'red' }}>*</span>
               </label>
               <input 
                 type="text" 
@@ -413,7 +413,7 @@ export default function MedicationModal({
             </div>
 
             <div>
-              <label className="text-sm font-semibold mb-1 block">Frequência / Horário</label>
+              <label className="text-sm font-semibold mb-1 block">Frequência</label>
               <input 
                 type="text" 
                 className="input-field" 
@@ -426,7 +426,7 @@ export default function MedicationModal({
 
           {/* Seletor de Tipo de Uso: Contínuo vs Temporário */}
           <div className="border-t pt-3" style={{ borderColor: 'var(--border)' }}>
-            <label className="text-sm font-semibold mb-2 block">Regime de Duração / Término</label>
+            <label className="text-sm font-semibold mb-2 block">Regime de Duração</label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
               <button
                 type="button"
@@ -479,7 +479,7 @@ export default function MedicationModal({
               >
                 <div style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid', borderColor: tipo === 'temporario' ? '#d97706' : '#94a3b8', background: tipo === 'temporario' ? '#d97706' : 'transparent' }} />
                 <div>
-                  <div style={{ fontSize: '0.85rem' }}>Ciclo Temporário / Com Término</div>
+                  <div style={{ fontSize: '0.85rem' }}>Ciclo Temporário</div>
                   <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Gera alertas visuais de prazo</div>
                 </div>
               </button>
@@ -530,7 +530,7 @@ export default function MedicationModal({
 
                 <div>
                   <label className="text-xs font-semibold mb-1 block" style={{ color: '#78350f' }}>
-                    Data de Término / Reavaliação <span style={{ color: 'red' }}>*</span>
+                    Data de Término <span style={{ color: 'red' }}>*</span>
                   </label>
                   <input 
                     type="date" 

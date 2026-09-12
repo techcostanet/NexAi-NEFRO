@@ -307,7 +307,7 @@ export default function DoctorDashboard() {
             title="Dados e locais de atendimento"
           >
             <UserCog size={16} color="var(--primary)" />
-            <span>Dados & Locais</span>
+            <span>Meus Dados</span>
           </button>
 
           <button 

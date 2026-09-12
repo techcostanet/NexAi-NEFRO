@@ -4,11 +4,11 @@ import * as XLSX from 'xlsx';
  * Categorias dos Relatórios Clínicos e Gerenciais
  */
 export const REPORT_CATEGORIES = [
-  { id: 'populacao', name: 'Gestão Populacional & Censo', icon: 'Users', color: '#0284c7' },
-  { id: 'acesso_dialise', name: 'Acessos Vasculares & Parâmetros HD', icon: 'Activity', color: '#0d9488' },
-  { id: 'laboratorio', name: 'Painel Laboratorial & Metas Clínicas', icon: 'FlaskConical', color: '#7c3aed' },
-  { id: 'farmacia_infeccao', name: 'Farmacoterapia & Controle Infeccioso', icon: 'Pill', color: '#e11d48' },
-  { id: 'qualidade_transplante', name: 'Transplante & Indicadores SBN', icon: 'Award', color: '#d97706' }
+  { id: 'populacao', name: 'Censo Populacional', icon: 'Users', color: '#0284c7' },
+  { id: 'acesso_dialise', name: 'Acessos Vasculares', icon: 'Activity', color: '#0d9488' },
+  { id: 'laboratorio', name: 'Painel Laboratorial', icon: 'FlaskConical', color: '#7c3aed' },
+  { id: 'farmacia_infeccao', name: 'Farmacoterapia', icon: 'Pill', color: '#e11d48' },
+  { id: 'qualidade_transplante', name: 'Transplante Renal', icon: 'Award', color: '#d97706' }
 ];
 
 /**
@@ -26,7 +26,7 @@ export const REPORTS_CATALOG = [
       { id: 'cpf', header: 'CPF', width: 16 },
       { id: 'idade', header: 'Idade', width: 10 },
       { id: 'sexo', header: 'Sexo', width: 8 },
-      { id: 'clinica', header: 'Clínica / Unidade', width: 24 },
+      { id: 'clinica', header: 'Clínica', width: 24 },
       { id: 'turno', header: 'Turno', width: 14 },
       { id: 'diaSemana', header: 'Escala Semanal', width: 16 },
       { id: 'tipoAcesso', header: 'Acesso Vascular', width: 20 },
@@ -56,7 +56,7 @@ export const REPORTS_CATALOG = [
     category: 'populacao',
     description: 'Mapeamento operacional de alocação de pacientes por turno e escala (Seg/Qua/Sex ou Ter/Qui/Sáb).',
     columns: [
-      { id: 'clinica', header: 'Clínica / Unidade', width: 24 },
+      { id: 'clinica', header: 'Clínica', width: 24 },
       { id: 'turno', header: 'Turno', width: 14 },
       { id: 'diaSemana', header: 'Dias da Semana', width: 16 },
       { id: 'nome', header: 'Paciente', width: 28 },
@@ -76,8 +76,8 @@ export const REPORTS_CATALOG = [
       { id: 'idade', header: 'Idade', width: 10 },
       { id: 'sexo', header: 'Sexo', width: 8 },
       { id: 'tempoDialise', header: 'Tempo em HD', width: 16 },
-      { id: 'clinica', header: 'Clínica / Unidade', width: 24 },
-      { id: 'comorbidades', header: 'Alergias / Comorbidades', width: 26 }
+      { id: 'clinica', header: 'Clínica', width: 24 },
+      { id: 'comorbidades', header: 'Comorbidades', width: 26 }
     ]
   },
 
@@ -90,7 +90,7 @@ export const REPORTS_CATALOG = [
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
       { id: 'tipoAcesso', header: 'Tipo de Acesso', width: 22 },
-      { id: 'ladoMembro', header: 'Membro / Topografia', width: 20 },
+      { id: 'ladoMembro', header: 'Topografia', width: 20 },
       { id: 'dataConfeccao', header: 'Data Implante/Confecção', width: 18 },
       { id: 'fluxoSangue', header: 'Qb Médio (ml/min)', width: 16 },
       { id: 'agulha', header: 'Calibre Agulha', width: 14 },
@@ -105,7 +105,7 @@ export const REPORTS_CATALOG = [
     description: 'Parâmetros operacionais da hemodiálise: dialisador, fluxos Qb/Qd, heparina e tempo de tratamento.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
-      { id: 'capilar', header: 'Dialisador / Membrana', width: 20 },
+      { id: 'capilar', header: 'Dialisador', width: 20 },
       { id: 'fluxoSangue', header: 'Qb (ml/min)', width: 14 },
       { id: 'fluxoDialisato', header: 'Qd (ml/min)', width: 14 },
       { id: 'pesoSeco', header: 'Peso Seco (kg)', width: 14 },
@@ -195,7 +195,7 @@ export const REPORTS_CATALOG = [
       { id: 'vitD', header: 'Vit D (ng/mL)', width: 12 },
       { id: 'fa', header: 'Fosfatase Alc.', width: 14 },
       { id: 'statusDMO', header: 'Avaliação DMO', width: 22 },
-      { id: 'quelanteEmUso', header: 'Quelante / Calcimimético', width: 22 }
+      { id: 'quelanteEmUso', header: 'Quelante de Fósforo', width: 22 }
     ]
   },
   {
@@ -242,7 +242,7 @@ export const REPORTS_CATALOG = [
       { id: 'medicamento', header: 'Medicamento', width: 26 },
       { id: 'categoria', header: 'Categoria Farmacológica', width: 22 },
       { id: 'dosagem', header: 'Dosagem Prescrita', width: 18 },
-      { id: 'posologia', header: 'Posologia / Frequência', width: 22 },
+      { id: 'posologia', header: 'Posologia', width: 22 },
       { id: 'via', header: 'Via Adm.', width: 12 },
       { id: 'tipo', header: 'Tipo Ciclo', width: 14 }
     ]
@@ -274,7 +274,7 @@ export const REPORTS_CATALOG = [
       { id: 'via', header: 'Via', width: 10 },
       { id: 'dataInicio', header: 'Data Início', width: 14 },
       { id: 'dataFim', header: 'Data Término', width: 14 },
-      { id: 'observacao', header: 'Indicação / Sítio Infeccioso', width: 28 },
+      { id: 'observacao', header: 'Indicação Clínica', width: 28 },
       { id: 'tipoAcesso', header: 'Acesso Atual', width: 18 }
     ]
   },
@@ -289,7 +289,7 @@ export const REPORTS_CATALOG = [
       { id: 'sitio', header: 'Sítio de Coleta', width: 20 },
       { id: 'status', header: 'Resultado Cultura', width: 18 },
       { id: 'patogeno', header: 'Patógeno Isolado', width: 28 },
-      { id: 'antibiograma', header: 'Sensibilidade / Resistência', width: 28 },
+      { id: 'antibiograma', header: 'Sensibilidade', width: 28 },
       { id: 'tipoAcesso', header: 'Acesso Vascular', width: 18 }
     ]
   },
@@ -322,7 +322,7 @@ export const REPORTS_CATALOG = [
       { id: 'tempoDialise', header: 'Tempo em HD', width: 16 },
       { id: 'tipoAcesso', header: 'Acesso Atual', width: 18 },
       { id: 'clinica', header: 'Clínica', width: 20 },
-      { id: 'observacoes', header: 'Anotações / Centro Transplantador', width: 30 }
+      { id: 'observacoes', header: 'Centro Transplantador', width: 30 }
     ]
   },
   {

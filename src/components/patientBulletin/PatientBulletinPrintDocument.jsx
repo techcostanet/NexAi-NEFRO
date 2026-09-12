@@ -39,7 +39,7 @@ export default function PatientBulletinPrintDocument({
 
   const doctorName = doctorInfo?.nome || 'Dr(a). Médico(a) Responsável';
   const doctorCrm = doctorInfo?.crm ? `CRM-${doctorInfo?.ufCrm || 'MG'} ${doctorInfo?.crm}` : 'Nefrologista Responsável';
-  const doctorClinica = doctorInfo?.clinicaPrincipal || 'Clínica de Nefrologia & Hemodiálise';
+  const doctorClinica = doctorInfo?.clinicaPrincipal || 'Clínica de Hemodiálise';
 
   const dataObj = dataReferencia ? new Date(dataReferencia + 'T12:00:00') : new Date();
   const mesAnoExtenso = dataObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
@@ -90,7 +90,7 @@ export default function PatientBulletinPrintDocument({
               </span>
             </div>
             <h1 style={{ margin: '2px 0 0 0', fontSize: '18px', fontWeight: '900', color: '#0f172a', letterSpacing: '-0.3px' }}>
-              Boletim de Saúde & Conquistas
+              Boletim de Saúde
             </h1>
             <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px' }}>
               Paciente: <strong style={{ color: '#0f172a', fontSize: '13px' }}>{pacienteNome}</strong>

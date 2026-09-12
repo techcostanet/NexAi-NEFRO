@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.50] - 2026-09-12
+### Alterações
+- Correcao da tela branca em receitas e simplificacao visual de termos duplos
+
 ## [1.1.49] - 2026-09-12
 ### Alterações
 - Motor de Impressao Isolada e Exportacao de PDFs Vetoriais em Alta Resolucao (@react-pdf/renderer) e Automacao de Notas de Versao

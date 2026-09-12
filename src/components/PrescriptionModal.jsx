@@ -11,7 +11,7 @@ import {
   Pill, 
   Printer 
 } from 'lucide-react';
-import { DIALYSIS_MEDICATIONS_CATALOG } from '../data/dialysisMedications';
+import { DIALYSIS_MEDICATIONS_CATALOG, normalizeMedicamentosList } from '../data/dialysisMedications';
 import { savePatientPrescription } from '../services/patientService';
 
 export default function PrescriptionModal({ 
@@ -102,7 +102,7 @@ export default function PrescriptionModal({
 
   // 1-Clique: Importar Medicamentos Ativos do Paciente
   const handleImportActiveMeds = () => {
-    const ativas = (patient.medicamentos || []).filter(m => m.ativo !== false);
+    const ativas = normalizeMedicamentosList(patient?.medicamentos).filter(m => m.ativo !== false);
     if (ativas.length === 0) {
       setError('O paciente não possui medicamentos ativos cadastrados na aba Prescrições.');
       return;
@@ -207,7 +207,7 @@ export default function PrescriptionModal({
           crm: crmNum,
           ufCrm: crmUf,
           rqe: doctorInfo?.rqe || '45890',
-          especialidade: doctorInfo?.especialidade || 'Nefrologia Clínica & Hemodiálise',
+          especialidade: doctorInfo?.especialidade || 'Nefrologia Clínica',
           clinica: doctorInfo?.clinicaPrincipal || patient.clinica || 'Clínica Nefrológica NexAi',
           endereco: doctorInfo?.endereco || 'São Paulo - SP',
           telefone: doctorInfo?.telefone || ''
@@ -236,7 +236,7 @@ export default function PrescriptionModal({
     }
   };
 
-  const ativasCount = (patient.medicamentos || []).filter(m => m.ativo !== false).length;
+  const ativasCount = normalizeMedicamentosList(patient?.medicamentos).filter(m => m.ativo !== false).length;
 
   return (
     <div 

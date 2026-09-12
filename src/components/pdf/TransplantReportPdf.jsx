@@ -1,5 +1,6 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { safeFormatDate } from '../../utils/dateUtils';
 
 const styles = StyleSheet.create({
   page: {
@@ -151,7 +152,7 @@ export default function TransplantReportPdf({
         <View style={styles.header}>
           <View>
             <Text style={styles.brand}>NexAi-NEFRO</Text>
-            <Text style={styles.subBrand}>Prontuário Eletrônico & Gestão Dialítica em Nuvem</Text>
+            <Text style={styles.subBrand}>Prontuário Eletrônico em Nuvem</Text>
             <Text style={{ fontSize: 7.5, color: '#475569', marginTop: 1 }}>
               Unidade: {patient.clinica || 'Centro Nefrológico'} • Hospital: {patient.hospital || 'Hospital Vinculado'}
             </Text>
@@ -165,7 +166,7 @@ export default function TransplantReportPdf({
         {/* Título */}
         <View style={styles.titleBlock}>
           <Text style={styles.title}>LAUDO MÉDICO DE ENCAMINHAMENTO AO TRANSPLANTE RENAL</Text>
-          <Text style={styles.subtitle}>Relatório Clínico e Dialítico Oficial para Inscrição / Lista de Espera</Text>
+          <Text style={styles.subtitle}>Relatório Clínico Oficial para Inscrição em Lista de Espera</Text>
         </View>
 
         {/* 1. Identificação */}
@@ -176,14 +177,14 @@ export default function TransplantReportPdf({
             <View style={styles.col3}><Text><Text style={styles.label}>CPF: </Text><Text style={styles.val}>{patient.cpf || 'Não informado'}</Text></Text></View>
             <View style={styles.col3}><Text><Text style={styles.label}>Idade / Sexo: </Text><Text style={styles.val}>{patient.idade ? `${patient.idade} anos` : '--'} / {patient.sexo || '--'}</Text></Text></View>
             <View style={styles.col3}><Text><Text style={styles.label}>Etiologia DRC: </Text><Text style={styles.val}>{patient.etiologiaDRC || 'Não informada'}</Text></Text></View>
-            <View style={styles.col3}><Text><Text style={styles.label}>Início Diálise: </Text><Text style={styles.val}>{patient.dataInicioDialise ? new Date(patient.dataInicioDialise + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}</Text></Text></View>
+            <View style={styles.col3}><Text><Text style={styles.label}>Início Diálise: </Text><Text style={styles.val}>{safeFormatDate(patient.dataInicioDialise)}</Text></Text></View>
             <View style={styles.col3}><Text><Text style={styles.label}>Turno: </Text><Text style={styles.val}>{patient.turno || '1º Turno'}</Text></Text></View>
           </View>
         </View>
 
-        {/* 2. Acesso Vascular & Diálise */}
+        {/* 2. Acesso Vascular */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>2. Acesso Vascular & Parâmetros Dialíticos</Text>
+          <Text style={styles.sectionTitle}>2. Acesso Vascular</Text>
           <View style={styles.grid3}>
             <View style={styles.col3}><Text><Text style={styles.label}>Acesso: </Text><Text style={styles.val}>{acessoVascular.tipo || 'FAV'}</Text></Text></View>
             <View style={styles.col3}><Text><Text style={styles.label}>Membro/Local: </Text><Text style={styles.val}>{acessoVascular.ladoMembro || '-'}</Text></Text></View>
@@ -196,7 +197,7 @@ export default function TransplantReportPdf({
 
         {/* 3. Laboratório Recente */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>3. Perfil Laboratorial & Microbiologia Recente</Text>
+          <Text style={styles.sectionTitle}>3. Perfil Laboratorial</Text>
           <View style={styles.grid4}>
             <View style={styles.col4}><Text><Text style={styles.label}>Hb: </Text><Text style={styles.val}>{exames.hb ? `${exames.hb} g/dL` : '-'}</Text></Text></View>
             <View style={styles.col4}><Text><Text style={styles.label}>Ht: </Text><Text style={styles.val}>{exames.ht ? `${exames.ht}%` : '-'}</Text></Text></View>

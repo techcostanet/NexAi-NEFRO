@@ -494,7 +494,7 @@ export default function DoctorProfile() {
         {/* Contato & Biografia */}
         <div className="glass-panel" style={{ padding: '1.5rem' }}>
           <h3 className="font-bold text-base mb-4 flex items-center gap-2" style={{ color: 'var(--primary)' }}>
-            <Building2 size={18} /> Contato & Biografia
+            <Building2 size={18} /> Contato do Médico
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
             <div>
@@ -636,7 +636,7 @@ export default function DoctorProfile() {
               <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl flex flex-col gap-2.5">
                 <div className="flex items-center gap-1.5 text-blue-900 font-bold text-xs">
                   <ShieldCheck size={16} color="#2563eb" />
-                  <span>Responsável Técnico (RT) & Enfermagem</span>
+                  <span>Responsável Técnico (RT)</span>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.6rem' }}>

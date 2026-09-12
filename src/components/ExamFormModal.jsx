@@ -311,7 +311,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
           {/* Data do Exame */}
           <div style={{ maxWidth: '300px' }}>
             <label className="text-sm font-semibold mb-1 flex items-center gap-2">
-              <Calendar size={16} color="var(--primary)" /> Data da Coleta / Exame <span style={{ color: 'red' }}>*</span>
+              <Calendar size={16} color="var(--primary)" /> Data da Coleta <span style={{ color: 'red' }}>*</span>
             </label>
             <input 
               type="date" 
@@ -325,7 +325,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
           {/* 1. Anemia e Perfil Férrico */}
           <div className="card-pastel-rose" style={{ padding: '1.25rem', borderRadius: '14px' }}>
             <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#b91c1c' }}>
-              <HeartPulse size={16} /> Anemia & Ferro
+              <HeartPulse size={16} /> Perfil de Anemia
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem' }}>
               <div>
@@ -467,7 +467,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
           {/* 3. Eletrólitos & Equilíbrio Ácido-Básico */}
           <div className="card-pastel-blue" style={{ padding: '1.25rem', borderRadius: '14px' }}>
             <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#1d4ed8' }}>
-              <Zap size={16} /> Eletrólitos & Ácido-Básico
+              <Zap size={16} /> Eletrólitos
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem' }}>
               <div>
@@ -517,7 +517,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
           {/* 4. Adequação da Diálise, Cinética de Ureia & Nutrição */}
           <div className="card-pastel-emerald" style={{ padding: '1.25rem', borderRadius: '14px' }}>
             <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#047857' }}>
-              <Droplet size={16} /> Cinética da Ureia & Nutrição
+              <Droplet size={16} /> Adequação Dialítica
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.85rem' }}>
               <div>
@@ -573,7 +573,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
                   value={formData.creatinina}
                   onChange={(e) => setFormData(prev => ({ ...prev, creatinina: e.target.value }))}
                 />
-                <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Massa / Residual</span>
+                <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Massa Muscular</span>
               </div>
 
               <div>
@@ -595,7 +595,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
           {/* 5. Inflamação & Controle Glicêmico */}
           <div className="card-pastel-purple" style={{ padding: '1.25rem', borderRadius: '14px' }}>
             <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#6d28d9' }}>
-              <ShieldAlert size={16} /> Inflamação & Glicemia
+              <ShieldAlert size={16} /> Inflamação e Glicemia
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem' }}>
               <div>
@@ -650,7 +650,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
                 <span>Função Hepática (TGP/TGO)</span>
               </div>
               <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '10px', background: '#ccfbf1', color: '#115e59', fontWeight: 'bold' }}>
-                Rastreio Hepático & Diálise
+                Rastreio Hepático
               </span>
             </h3>
 
@@ -690,10 +690,10 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
             <h3 className="font-bold text-sm mb-3 flex items-center justify-between" style={{ color: '#b45309' }}>
               <div className="flex items-center gap-2">
                 <Bug size={16} /> 
-                <span>Hemocultura / Microbiologia</span>
+                <span>Hemoculturas</span>
               </div>
               <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '10px', background: '#fef3c7', color: '#92400e', fontWeight: 'bold' }}>
-                Hemodiálise & Vigilância Infecciosa
+                Vigilância Infecciosa
               </span>
             </h3>
 
@@ -719,7 +719,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
                 <>
                   <div>
                     <label className="text-xs font-semibold mb-1 block" style={{ color: '#92400e' }}>
-                      Sítio / Origem da Amostra
+                      Sítio de Coleta
                     </label>
                     <select 
                       className="input-field text-xs"
@@ -806,7 +806,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
 
                       <div style={{ gridColumn: '1 / -1' }}>
                         <label className="text-xs font-semibold mb-1 block text-slate-700">
-                          Conduta Terapêutica / Selo de Cateter (Lock Therapy)
+                          Conduta Terapêutica (Lock Therapy)
                         </label>
                         <input 
                           type="text" 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { safeFormatDateExtenso } from '../../utils/dateUtils';
 
 const styles = StyleSheet.create({
   page: {
@@ -197,7 +198,7 @@ export default function PrescriptionPdf({
   const doctorName = docInfo.nome || 'Dr(a). Médico(a) Responsável';
   const doctorCrm = docInfo.crm ? `CRM/${docInfo.ufCrm || 'SP'} ${docInfo.crm}` : 'CRM/SP';
   const doctorRqe = docInfo.rqe ? ` • RQE: ${docInfo.rqe}` : '';
-  const doctorEspecialidade = docInfo.especialidade || docInfo.titulo || 'Nefrologia Clínica & Hemodiálise';
+  const doctorEspecialidade = docInfo.especialidade || docInfo.titulo || 'Nefrologia Clínica';
   const clinicaNome = docInfo.clinica || docInfo.clinicaPrincipal || patient.clinica || 'Clínica de Nefrologia';
   const enderecoClinica = docInfo.endereco || 'Atendimento Especializado em Nefrologia';
 
@@ -206,12 +207,7 @@ export default function PrescriptionPdf({
   const isAntimicrobiano = tipoReceita === 'antimicrobiano';
   const itens = Array.isArray(prescription.itens) ? prescription.itens : [];
 
-  const dataEmissaoObj = prescription.dataEmissao ? new Date(prescription.dataEmissao + 'T12:00:00') : new Date();
-  const dataFormatada = dataEmissaoObj.toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
-  });
+  const dataFormatada = safeFormatDateExtenso(prescription.dataEmissao);
 
   const getTitulo = () => {
     switch (tipoReceita) {
@@ -286,7 +282,7 @@ export default function PrescriptionPdf({
         {/* Bloco de Duas Vias (Controle Especial / Antimicrobiano) */}
         {(isControleEspecial || isAntimicrobiano) && currentVia === 1 && (
           <View style={styles.twoViasBox}>
-            <Text style={styles.twoViasTitle}>Identificação do Comprador & Fornecedor (Preenchimento da Farmácia)</Text>
+            <Text style={styles.twoViasTitle}>Identificação do Comprador (Preenchimento da Farmácia)</Text>
             <View style={styles.twoViasGrid}>
               <View style={styles.twoViasCol}>
                 <Text style={{ fontSize: 7, color: '#64748b' }}>Comprador: _____________________________________</Text>
@@ -311,7 +307,7 @@ export default function PrescriptionPdf({
 
         {/* Rodapé */}
         <View style={styles.footer}>
-          <Text>NexAi-NEFRO • Sistema de Gestão & Prontuário Eletrônico em Nuvem</Text>
+          <Text>NexAi-NEFRO • Prontuário Eletrônico em Nuvem</Text>
           <Text>Documento Médico Oficial • Emissão Digital</Text>
         </View>
       </Page>

@@ -66,6 +66,7 @@ import PatientBulletinModal from '../components/patientBulletin/PatientBulletinM
 import TransplantReportPdf from '../components/pdf/TransplantReportPdf';
 import { downloadPdfDocument } from '../services/pdfService';
 import { printElement } from '../utils/printUtils';
+import { safeFormatDate } from '../utils/dateUtils';
 
 export default function PatientProfile() {
   const { id } = useParams();
@@ -836,7 +837,7 @@ export default function PatientProfile() {
               <div className="flex justify-between items-center mb-3">
                 <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
                   <Activity size={16} color="var(--primary)" />
-                  <span>Acesso Vascular & Parâmetros Dialíticos</span>
+                  <span>Acesso Vascular</span>
                 </h2>
                 <span style={{ fontSize: '0.72rem', background: '#eff6ff', color: '#1e40af', padding: '2px 8px', borderRadius: '8px', fontWeight: '600' }}>
                   {acessoVascular.tipo || 'FAV'}
@@ -872,7 +873,7 @@ export default function PatientProfile() {
               <div className="flex justify-between items-center mb-3">
                 <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
                   <User size={16} color="var(--primary)" />
-                  <span>Dados Clínicos & Identificação</span>
+                  <span>Dados Clínicos</span>
                 </h2>
                 <button 
                   type="button"
@@ -931,7 +932,7 @@ export default function PatientProfile() {
               <div className="flex justify-between items-center mb-3">
                 <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
                   <Scale size={16} color="#059669" />
-                  <span>Controle Ponderal & Peso ({historicoPesos.length})</span>
+                  <span>Controle Ponderal ({historicoPesos.length})</span>
                 </h2>
                 <button 
                   type="button"
@@ -1311,7 +1312,7 @@ export default function PatientProfile() {
             <div>
               <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
                 <FlaskConical size={18} color="var(--primary)" />
-                <span>Painel Laboratorial & Metas Nefrológicas</span>
+                <span>Painel Laboratorial</span>
               </h2>
               <p className="text-xs text-muted">Metas KDIGO/SBN</p>
             </div>
@@ -1371,7 +1372,7 @@ export default function PatientProfile() {
             <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
               <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-rose-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <Droplet size={15} color="#e11d48" style={{ flexShrink: 0 }} />
-                <span>Anemia & Perfil de Ferro</span>
+                <span>Perfil de Anemia</span>
               </div>
               
               <div className="flex flex-col gap-1.5 text-xs">
@@ -1431,7 +1432,7 @@ export default function PatientProfile() {
             <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
               <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-blue-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <HeartPulse size={15} color="#2563eb" style={{ flexShrink: 0 }} />
-                <span>Eletrólitos & Gasometria</span>
+                <span>Eletrólitos</span>
               </div>
               
               <div className="flex flex-col gap-1.5 text-xs">
@@ -1462,7 +1463,7 @@ export default function PatientProfile() {
             <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
               <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-emerald-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <ShieldCheck size={15} color="#059669" style={{ flexShrink: 0 }} />
-                <span>Adequação & Nutrição</span>
+                <span>Adequação Dialítica</span>
               </div>
               
               <div className="flex flex-col gap-1.5 text-xs">
@@ -1493,7 +1494,7 @@ export default function PatientProfile() {
             <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
               <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-teal-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <Activity size={15} color="#0d9488" style={{ flexShrink: 0 }} />
-                <span>Glicemia & Função Hepática</span>
+                <span>Glicemia e Fígado</span>
               </div>
               
               <div className="flex flex-col gap-1.5 text-xs">
@@ -1609,7 +1610,7 @@ export default function PatientProfile() {
               <div className="flex items-center gap-2">
                 <Bug size={18} color="#b45309" />
                 <h3 className="font-bold text-sm text-slate-800">
-                  Microbiologia & Hemoculturas do Acesso Vascular ({hemoculturas.length})
+                  Hemoculturas do Acesso ({hemoculturas.length})
                 </h3>
               </div>
 
@@ -1715,7 +1716,7 @@ export default function PatientProfile() {
 
                       {cult.conduta && (
                         <div className="text-slate-700 bg-white/60 p-2 rounded-lg border border-slate-200">
-                          <strong>Conduta Clínica / Selo:</strong> {cult.conduta}
+                          <strong>Conduta Clínica:</strong> {cult.conduta}
                         </div>
                       )}
                     </div>
@@ -1734,7 +1735,7 @@ export default function PatientProfile() {
             <div>
               <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
                 <Pill size={18} color="#d97706" />
-                <span>Gestão Farmacológica & Prescrições</span>
+                <span>Medicamentos</span>
               </h2>
               <p className="text-xs text-muted">Uso contínuo e ciclos temporários</p>
             </div>
@@ -2019,7 +2020,7 @@ export default function PatientProfile() {
             <div>
               <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
                 <FileCheck size={18} color="var(--primary)" />
-                <span>Receituário & Prescrições Médicas</span>
+                <span>Receituário Médico</span>
               </h2>
               <p className="text-xs text-muted">Receituários emitidos</p>
             </div>
@@ -2084,7 +2085,7 @@ export default function PatientProfile() {
                       <div className="flex items-center gap-2">
                         <FileCheck size={15} color="var(--primary)" />
                         <strong className="text-sm text-slate-800">
-                          {new Date(rec.dataEmissao + 'T12:00:00').toLocaleDateString('pt-BR')}
+                          {safeFormatDate(rec.dataEmissao)}
                         </strong>
                         <span 
                           style={{ 
@@ -2111,7 +2112,7 @@ export default function PatientProfile() {
                           title="Imprimir ou salvar em PDF"
                         >
                           <Printer size={12} />
-                          <span>Imprimir / PDF</span>
+                          <span>Imprimir</span>
                         </button>
 
                         <button 
@@ -2129,7 +2130,7 @@ export default function PatientProfile() {
                           onClick={() => handleDuplicatePrescription(rec)}
                           className="btn btn-outline"
                           style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
-                          title="Duplicar / Renovar receita"
+                          title="Duplicar receita"
                         >
                           <Copy size={12} color="var(--primary)" />
                         </button>
@@ -2350,7 +2351,7 @@ export default function PatientProfile() {
                     <strong>{pesoSecoNum} kg</strong>
                   </div>
                   <div className="text-right">
-                    <span className="text-muted block">Variação / Ganho:</span>
+                    <span className="text-muted block">Ganho de Peso:</span>
                     <strong style={{ 
                       color: (parseFloat(weightFormData.peso) - pesoSecoNum) > 3.0 ? '#dc2626' : '#059669' 
                     }}>
@@ -2448,7 +2449,7 @@ export default function PatientProfile() {
                   title="Imprimir folha A4 ou salvar via navegador"
                 >
                   <Printer size={15} />
-                  <span>Imprimir / Salvar PDF</span>
+                  <span>Imprimir</span>
                 </button>
                 <button 
                   type="button"
@@ -2468,7 +2469,7 @@ export default function PatientProfile() {
                 <div>
                   <h1 className="text-xl font-black text-blue-900 tracking-tight">NexAi-NEFRO</h1>
                   <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider block">
-                    Sistema de Prontuário Eletrônico & Gestão Dialítica em Nuvem
+                    Sistema de Prontuário Eletrônico em Nuvem
                   </span>
                   <span className="text-xs text-slate-600">Unidade: {patient.clinica || 'Centro Nefrológico'} • Hospital: {patient.hospital || 'Hospital do Rim'}</span>
                 </div>
@@ -2485,10 +2486,10 @@ export default function PatientProfile() {
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', fontSize: '0.8rem' }}>
                   <div>Nome: <strong className="text-slate-900">{patient.nome}</strong></div>
-                  <div>Nascimento: <strong>{patient.dataNascimento ? new Date(patient.dataNascimento + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}</strong></div>
+                  <div>Nascimento: <strong>{safeFormatDate(patient.dataNascimento)}</strong></div>
                   <div>Idade: <strong>{patient.idade ? `${patient.idade} anos` : '-'}</strong></div>
                   <div>Etiologia DRC: <strong>{patient.etiologiaDRC || 'Não informada'}</strong></div>
-                  <div>Início Diálise: <strong>{patient.dataInicioDialise ? new Date(patient.dataInicioDialise + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}</strong></div>
+                  <div>Início Diálise: <strong>{safeFormatDate(patient.dataInicioDialise)}</strong></div>
                   <div>Turno Atual: <strong>{patient.turno || '3º Turno'}</strong></div>
                 </div>
               </div>
@@ -2496,7 +2497,7 @@ export default function PatientProfile() {
               {/* 2. Parâmetros do Acesso Vascular */}
               <div>
                 <h3 className="font-bold text-xs uppercase text-slate-700 tracking-wider mb-2 border-b pb-1">
-                  2. Acesso Vascular & Parâmetros
+                  2. Acesso Vascular
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', fontSize: '0.8rem' }}>
                   <div>Tipo de Acesso: <strong>{acessoVascular.tipo || 'FAV'}</strong></div>
@@ -2511,7 +2512,7 @@ export default function PatientProfile() {
               {/* 3. Perfil Laboratorial e Microbiologia Recente */}
               <div>
                 <h3 className="font-bold text-xs uppercase text-slate-700 tracking-wider mb-2 border-b pb-1">
-                  3. Laboratório & Microbiologia
+                  3. Perfil Laboratorial
                 </h3>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.5rem', fontSize: '0.78rem' }} className="mb-2">
                   <div>Hb: <strong>{exames.hb ? `${exames.hb} g/dL` : '-'}</strong></div>
