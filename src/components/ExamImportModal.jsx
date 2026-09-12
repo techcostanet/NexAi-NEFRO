@@ -7,16 +7,13 @@ import {
   Image as ImageIcon, 
   CheckCircle2, 
   AlertCircle, 
-  AlertTriangle, 
   Loader2, 
   Save, 
   Calendar, 
   RefreshCw,
-  Search,
   CheckSquare,
   Square,
   Sparkles,
-  ArrowRight,
   Trash2
 } from 'lucide-react';
 import { parseExamFile, commitImportedExams } from '../services/examImportService';
@@ -528,24 +525,46 @@ export default function ExamImportModal({
                                   k: 'K⁺', na: 'Na⁺', hba1c: 'HbA1c',
                                   pth: 'PTH', ferritina: 'Ferritina', ist: 'IST',
                                   vitD: 'Vit D', fa: 'FA', ktv: 'Kt/V',
-                                  creatinina: 'Creat.', albumina: 'Alb.', pcr: 'PCR'
+                                  creatinina: 'Creat.', albumina: 'Alb.', pcr: 'PCR',
+                                  ferro: 'Ferro', transferrina: 'Transf.', aluminio: 'Alumínio',
+                                  leucocitos: 'Leucóc.', plaquetas: 'Plaquetas',
+                                  grupoSanguineo: 'Grupo', fatorRh: 'Rh',
+                                  hiv: 'HIV', hbsag: 'HBsAg', antiHcv: 'Anti-HCV', antiHbc: 'Anti-HBc', antiHbs: 'Anti-HBs'
                                 };
                                 const label = labels[key] || key.toUpperCase();
+
+                                // Cores dinâmicas por categoria de exame
+                                let bg = '#f1f5f9';
+                                let border = '#e2e8f0';
+                                let textCol = '#334155';
+
+                                if (key === 'tgp' || key === 'tgo') {
+                                  bg = '#f0fdfa'; border = '#99f6e4'; textCol = '#0f766e';
+                                } else if (key === 'ist' || key === 'ktv') {
+                                  bg = '#eef2ff'; border = '#c7d2fe'; textCol = '#4338ca';
+                                } else if (key === 'grupoSanguineo' || key === 'fatorRh') {
+                                  bg = '#fdf2f8'; border = '#fbcfe8'; textCol = '#9d174d';
+                                } else if (key === 'hiv' || key === 'hbsag' || key === 'antiHcv' || key === 'antiHbc' || key === 'antiHbs') {
+                                  bg = '#ecfdf5'; border = '#a7f3d0'; textCol = '#065f46';
+                                } else if (key === 'ferro' || key === 'transferrina' || key === 'aluminio') {
+                                  bg = '#fef3c7'; border = '#fde68a'; textCol = '#92400e';
+                                }
+
                                 return (
                                   <span 
                                     key={key} 
                                     style={{ 
                                       padding: '2px 7px', 
                                       borderRadius: '6px', 
-                                      background: key === 'tgp' || key === 'tgo' ? '#f0fdfa' : '#f1f5f9', 
-                                      border: `1px solid ${key === 'tgp' || key === 'tgo' ? '#99f6e4' : '#e2e8f0'}`, 
+                                      background: bg, 
+                                      border: `1px solid ${border}`, 
                                       fontSize: '0.72rem',
                                       fontWeight: '500',
-                                      color: key === 'tgp' || key === 'tgo' ? '#0f766e' : '#334155',
+                                      color: textCol,
                                       whiteSpace: 'nowrap'
                                     }}
                                   >
-                                    <strong>{label}:</strong> {rec.exames[key]}
+                                    <strong>{label}:</strong> {String(rec.exames[key])}
                                   </span>
                                 );
                               })

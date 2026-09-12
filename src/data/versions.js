@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.56",
+    "date": "12/09/2026",
+    "title": "Suporte e aprendizado ao modelo de laudos do Laboratório Paula Castro",
+    "highlights": [
+      "✨ Suporte e aprendizado ao modelo de laudos do Laboratório Paula Castro"
+    ]
+  },
+  {
     "version": "1.1.55",
     "date": "12/09/2026",
     "title": "Correcao da centralizacao do simbolo de nefrologia no cubo 3D e eliminacao do...",

@@ -13,9 +13,11 @@ if (typeof window !== 'undefined' && pdfjsLib) {
 
 // Dicionário de Sinônimos de Exames Laboratoriais Nefrológicos
 export const EXAM_ALIASES = {
-  hb: ['hb', 'hgb', 'hemoglobina', 'hemoglobin', 'dosagem de hemoglobina'],
-  ht: ['ht', 'hct', 'hematocrito', 'hematocritos'],
+  hb: ['hb', 'hgb', 'hemoglobina', 'hemoglobin', 'dosagem de hemoglobina', 'serie vermelha hemoglobina'],
+  ht: ['ht', 'hct', 'hematocrito', 'hematocritos', 'hematocrito ht'],
   ferritina: ['ferritina', 'ferr', 'ferrit', 'ferritina serica'],
+  ferro: ['ferro', 'ferro serico', 'fe', 'ferro total', 'dosagem de ferro'],
+  transferrina: ['transferrina', 'transferrina serica'],
   ist: ['ist', 'sat transferrina', 'sat. trans', 'sat transf', 'saturacao transferrina', 'indice saturacao transferrina', 'sat de transferrina'],
   pth: ['pth', 'paratormonio', 'pth intacto', 'ipth', 'pth-intacto', 'paratormonio intacto'],
   fosforo: ['fosforo', 'fosfato', 'p', 'po4', 'p serico', 'fosforo serico'],
@@ -26,15 +28,18 @@ export const EXAM_ALIASES = {
   na: ['sodio', 'na', 'na+', 'sodio serico'],
   hco3: ['hco3', 'bicarbonato', 'reserva alcalina', 'gaso hco3', 'bicarbonato serico'],
   ktv: ['kt/v', 'ktv', 'kt_v', 'kt v', 'kt', 'adequacao dialitica', 'kt/v dialise', 'ktv sp'],
-  ureiaPos: ['ureia pos', 'ureia pos-hd', 'ureia pos hd', 'ureia final', 'ur pos', 'ureia 2', 'ureia pos dialise', 'ureia pos-dialise'],
-  ureiaPre: ['ureia pre', 'ureia pre-hd', 'ureia pre hd', 'ureia inicial', 'ur pre', 'ureia 1', 'ureia'],
-  creatinina: ['creatinina', 'cr', 'creat', 'creatina'],
+  ureiaPos: ['ureia pos', 'ureia pos-hd', 'ureia pos hd', 'ureia final', 'ur pos', 'ureia 2', 'ureia pos dialise', 'ureia pos-dialise', 'ureia pos dialitica'],
+  ureiaPre: ['ureia pre', 'ureia pre-hd', 'ureia pre hd', 'ureia inicial', 'ur pre', 'ureia 1', 'ureia', 'ureia pre dialise', 'ureia pre dialitica'],
+  creatinina: ['creatinina', 'cr', 'creat', 'creatina', 'creatinina serica'],
   albumina: ['albumina', 'alb', 'albumina serica'],
   pcr: ['pcr', 'proteina c reativa', 'pcr ultrassensivel', 'pcr us'],
   glicemia: ['glicemia', 'glicose', 'dextro', 'gli', 'glicemia em jejum', 'glicemia de jejum'],
-  hba1c: ['hba1c', 'hemoglobina glicada', 'a1c', 'hb a1c', 'hemoglobina glicada - hba1c', 'hemoglobina glicada a1c', 'hemoglobina glicada a1'],
+  hba1c: ['hba1c', 'hemoglobina glicada', 'a1c', 'hb a1c', 'hemoglobina glicada - hba1c', 'hemoglobina glicada a1c', 'hemoglobina glicada a1', 'hemoglobina glicada (hba1c)'],
   tgp: ['tgp', 'alt', 'transaminase glutamico piruvica', 'transaminase piruvica', 'alanina aminotransferase', 'alt/tgp', 'alt tgp'],
-  tgo: ['tgo', 'ast', 'transaminase glutamico oxalacetica', 'transaminase oxalacetica', 'aspartato aminotransferase', 'ast/tgo', 'ast tgo']
+  tgo: ['tgo', 'ast', 'transaminase glutamico oxalacetica', 'transaminase oxalacetica', 'aspartato aminotransferase', 'ast/tgo', 'ast tgo'],
+  aluminio: ['aluminio', 'aluminio serico', 'al'],
+  leucocitos: ['leucocitos', 'serie branca leucocitos', 'leucocitos totais'],
+  plaquetas: ['plaquetas', 'contagem de plaquetas', 'plaquetas totais']
 };
 
 /**
@@ -61,11 +66,14 @@ export function parseExamNumber(val) {
   let str = String(val).trim();
   if (str === '-' || str === '—' || str === '–' || str === '/' || str.toLowerCase() === 'indet' || str.toLowerCase() === 'n/a') return null;
 
-  // Se tiver formato brasileiro com milhar e decimal (ex: 1.035,60 ou 1.373,10)
+  // Se tiver formato brasileiro com milhar e decimal (ex: 1.035,60 ou 1.373,10 ou 208.000)
   if (/\d+\.\d{3},\d+/.test(str)) {
     str = str.replace(/\./g, '').replace(',', '.');
   } else if (/\d+,\d{3}\.\d+/.test(str)) {
     str = str.replace(/,/g, '');
+  } else if (/^\d{1,3}\.\d{3}$/.test(str)) {
+    // Milhar inteiro (ex: "208.000" para plaquetas ou "9.900" para leucócitos)
+    str = str.replace(/\./g, '');
   } else {
     str = str.replace(',', '.');
   }
@@ -85,25 +93,100 @@ export function matchHeaderToExamKey(headerName) {
   const norm = normalizeString(headerName);
   if (!norm) return null;
 
-  // Prioridade específica para Ureia Pós vs Ureia Pré
-  if (norm.includes('pos') && (norm.includes('ureia') || norm.includes('ur'))) {
-    return 'ureiaPos';
-  }
-  if ((norm.includes('ureia') || norm.includes('ur')) && !norm.includes('pos')) {
-    return 'ureiaPre';
+  // Prioridade específica para Ureia Pós vs Ureia Pré (usando delimitador de palavra para evitar colisão com 'turbidimetria')
+  const isUreia = /\b(?:ureia|ur)\b/i.test(norm) || norm.startsWith('ureia') || norm.startsWith('ur ');
+  if (isUreia) {
+    if (norm.includes('pos') || norm.includes('final') || norm.includes('pos-hd')) {
+      return 'ureiaPos';
+    }
+    if (norm.includes('pre') || norm.includes('inicial') || norm.includes('pre-hd') || !norm.includes('pos')) {
+      if (!norm.includes('cinetica') && !norm.includes('reducao')) {
+        return 'ureiaPre';
+      }
+    }
   }
 
   // TGP / TGO
-  if (norm.includes('tgp') || norm.includes('transaminase glutamico piruvica') || norm.includes('alanina amino')) {
+  if (norm.includes('tgp') || norm.includes('transaminase piruvica') || norm.includes('transaminase glutamico piruvica') || norm.includes('alanina amino')) {
     return 'tgp';
   }
-  if (norm.includes('tgo') || norm.includes('transaminase glutamico oxalacetica') || norm.includes('aspartato amino')) {
+  if (norm.includes('tgo') || norm.includes('transaminase oxalacetica') || norm.includes('transaminase glutamico oxalacetica') || norm.includes('aspartato amino')) {
     return 'tgo';
   }
 
   // Hemoglobina Glicada
   if (norm.includes('glicada') || norm.includes('hba1c') || norm.includes('a1c')) {
     return 'hba1c';
+  }
+
+  // Paratormônio
+  if (norm.includes('paratormonio') || norm.includes('pth')) {
+    return 'pth';
+  }
+
+  // Fosfatase Alcalina
+  if (norm.includes('fosfatase alcalina') || norm.includes('fosf alcalina') || norm === 'fa') {
+    return 'fa';
+  }
+
+  // Ferro vs Ferritina
+  if (norm.includes('ferritina')) {
+    return 'ferritina';
+  }
+  if (norm.includes('ferro') || norm.includes('ferro serico')) {
+    return 'ferro';
+  }
+
+  // Transferrina
+  if (norm.includes('transferrina')) {
+    return 'transferrina';
+  }
+
+  // Alumínio
+  if (norm.includes('aluminio')) {
+    return 'aluminio';
+  }
+
+  // Cálcio vs Fósforo
+  if (norm.includes('calcio')) {
+    return 'ca';
+  }
+  if (norm.includes('fosforo') || norm.includes('fosfato')) {
+    return 'fosforo';
+  }
+
+  // Potássio / Sódio
+  if (norm.includes('potassio')) {
+    return 'k';
+  }
+  if (norm.includes('sodio')) {
+    return 'na';
+  }
+
+  // Glicose / Glicemia
+  if (norm.includes('glicose') || norm.includes('glicemia')) {
+    return 'glicemia';
+  }
+
+  // Hematócrito vs Hemoglobina
+  if (norm.includes('hematocrito')) {
+    return 'ht';
+  }
+  if (norm.includes('hemoglobina') && !norm.includes('glicada')) {
+    return 'hb';
+  }
+
+  // Leucócitos & Plaquetas
+  if (norm.includes('leucocitos')) {
+    return 'leucocitos';
+  }
+  if (norm.includes('plaquetas') || norm.includes('plaquet')) {
+    return 'plaquetas';
+  }
+
+  // Proteínas Totais / Albumina
+  if (norm.includes('albumina')) {
+    return 'albumina';
   }
 
   // 1. Prioridade: Correspondência Exata
@@ -276,6 +359,34 @@ export function detectDateFromText(text) {
 }
 
 /**
+ * Aplica cálculos clínicos inteligentes e automáticos (IST e Kt/V estimado)
+ */
+export function applyDerivedCalculations(exames = {}) {
+  if (!exames) return exames;
+
+  // 1. Cálculo automático de IST (%) se Ferro e Transferrina estiverem presentes
+  if (exames.ist === undefined && exames.ferro && exames.transferrina) {
+    const istCalc = (exames.ferro * 70.9) / exames.transferrina;
+    exames.ist = Math.round(istCalc * 10) / 10;
+  }
+
+  // 2. Cálculo automático de Kt/V (Daugirdas sp) a partir de Ureia Pré e Pós
+  if (exames.ktv === undefined && exames.ureiaPre && exames.ureiaPos) {
+    const pre = Number(exames.ureiaPre);
+    const pos = Number(exames.ureiaPos);
+    if (pre > pos && pre > 0) {
+      const r = pos / pre;
+      if (r > 0.032) {
+        const ktvEst = -Math.log(r - 0.032);
+        exames.ktv = Math.round(ktvEst * 100) / 100;
+      }
+    }
+  }
+
+  return exames;
+}
+
+/**
  * 📊 PARSER EXCEL (.xlsx, .xls, .csv)
  */
 export async function parseExcelFile(file, patientsList = []) {
@@ -359,6 +470,7 @@ export async function parseExcelFile(file, patientsList = []) {
 
     // Se a linha tem exames ou nome válido
     if (rawName) {
+      const finalExames = applyDerivedCalculations(exames);
       results.push({
         id: `import-${r}-${Date.now()}`,
         nomeArquivo: rawName,
@@ -367,7 +479,7 @@ export async function parseExcelFile(file, patientsList = []) {
         statusMatch: matched.status,
         confianca: matched.score,
         dataExame: fallbackDate,
-        exames,
+        exames: finalExames,
         confirmado: matched.status === 'EXACT_OR_HIGH'
       });
     }
@@ -424,6 +536,7 @@ export async function parseDocxFile(file, patientsList = []) {
         j++;
       }
 
+      const finalExames = applyDerivedCalculations(exames);
       results.push({
         id: `import-docx-${i}-${Date.now()}`,
         nomeArquivo: line,
@@ -432,7 +545,7 @@ export async function parseDocxFile(file, patientsList = []) {
         statusMatch: matched.status,
         confianca: matched.score,
         dataExame: detectedDate,
-        exames,
+        exames: finalExames,
         confirmado: matched.status === 'EXACT_OR_HIGH'
       });
 
@@ -526,9 +639,9 @@ export async function parsePdfFile(file, patientsList = []) {
           if (matchCpf) pageCpf = matchCpf[1].trim();
         }
 
-        // Detecta Data da Coleta
+        // Detecta Data da Coleta (prioridade máxima para Data Coleta)
         if (!pageDate) {
-          const matchColeta = line.match(/(?:Coletado em|Data da Coleta)[\s.:_]+(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4})/i);
+          const matchColeta = line.match(/(?:Coletado\s+em|Data\s+(?:da\s+)?coleta|Data\s*coleta)[\s.:_]+(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4})/i);
           if (matchColeta) {
             let [_, d, m, y] = matchColeta[1].match(/(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})/);
             if (y.length === 2) y = '20' + y;
@@ -537,9 +650,24 @@ export async function parsePdfFile(file, patientsList = []) {
         }
       }
 
-      // Fallback de data para Entrada
+      // Se ainda não encontrou nome por rótulo, verifica as 10 primeiras linhas contra a lista de pacientes
+      if (!pagePatientName && patientsList && patientsList.length > 0) {
+        for (let i = 0; i < Math.min(lines.length, 10); i++) {
+          const cand = lines[i].trim();
+          if (cand.length >= 4 && !cand.includes(':') && !cand.includes('LABORAT')) {
+            const m = matchPatientInList(cand, patientsList);
+            if (m.status === 'EXACT_OR_HIGH') {
+              pagePatientName = m.patient.nome;
+              break;
+            }
+          }
+        }
+      }
+
+      // Fallback de data para Entrada ou Data do Laudo (ignorando estritamente Data Nasc)
       if (!pageDate) {
         for (const line of lines) {
+          if (/Data\s*Nasc/i.test(line)) continue;
           const matchEntrada = line.match(/(?:Entrada|Data)[\s.:_]+(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4})/i);
           if (matchEntrada) {
             let [_, d, m, y] = matchEntrada[1].match(/(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})/);
@@ -561,7 +689,7 @@ export async function parsePdfFile(file, patientsList = []) {
       const isSamePatient = currentReport && (
         (pageCpf && currentReport.cpf && pageCpf.replace(/\D/g, '') === currentReport.cpf.replace(/\D/g, '')) ||
         (matched.patient && currentReport.pacienteId === matched.patient.id) ||
-        (pagePatientName && currentReport.nomeArquivo && calculateNameSimilarity(pagePatientName, currentReport.nomeArquivo) >= 0.8)
+        (pagePatientName && currentReport.nomeArquivo && calculateNameSimilarity(pagePatientName, currentReport.nomeArquivo) >= 0.75)
       );
 
       if (!isSamePatient) {
@@ -587,14 +715,14 @@ export async function parsePdfFile(file, patientsList = []) {
           currentReport.confianca = matched.score;
           currentReport.confirmado = matched.status === 'EXACT_OR_HIGH';
         }
-        if (pageDate && !currentReport.dataExame) {
+        if (pageDate && (!currentReport.dataExame || currentReport.dataExame === new Date().toISOString().split('T')[0])) {
           currentReport.dataExame = pageDate;
         }
       }
 
       // 2. Extração de Blocos de Exames na Página
       let currentExamKey = null;
-      let inPreviousResults = false;
+      let inReferenceSection = false;
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
@@ -602,58 +730,154 @@ export async function parsePdfFile(file, patientsList = []) {
 
         // Se encontrou seção de histórico / resultados anteriores, reseta exame ativo
         if (normLine.includes('resultados anteriores') || normLine.includes('historico de resultados')) {
-          inPreviousResults = true;
+          inReferenceSection = true;
           currentExamKey = null;
           continue;
         }
 
-        // Ignora metadados de cabeçalho
-        const isMetadataLine = normLine.startsWith('material') || 
-                               normLine.startsWith('metodo') || 
-                               normLine.startsWith('liberado') || 
-                               normLine.startsWith('valores de referencia') || 
-                               normLine.startsWith('solicitante') || 
-                               normLine.startsWith('convenio') || 
-                               normLine.startsWith('impresso') || 
-                               normLine.startsWith('este exame');
+        // Se entrou em seção de valores de referência, notas ou assinaturas
+        if (
+          normLine.startsWith('valor de referencia') || 
+          normLine.startsWith('valores de referencia') ||
+          normLine.startsWith('ref:') ||
+          normLine.includes('filtracao glomerular estimada') ||
+          normLine.startsWith('nota:') ||
+          normLine.startsWith('notas:') ||
+          normLine.startsWith('responsavel:') ||
+          normLine.startsWith('assinado digitalmente')
+        ) {
+          inReferenceSection = true;
+          currentExamKey = null;
+        }
 
-        if (!isMetadataLine) {
-          const potentialExamKey = matchHeaderToExamKey(line);
-          if (potentialExamKey) {
-            currentExamKey = potentialExamKey;
-            inPreviousResults = false;
+        // Detecta Tipagem Sanguínea
+        if (line.includes('GRUPO SANGUÍNEO') || line.includes('GRUPO SANGUINEO')) {
+          const match = line.match(/GRUPO\s+SANGU[IÍ]NEO[\s.:_]+["']?\s*([ABO0][\+-]?)\s*["']?/i);
+          if (match) currentReport.exames.grupoSanguineo = match[1].replace('0', 'O');
+        }
+        if (line.includes('FATOR RH')) {
+          const match = line.match(/FATOR\s+RH[\s.:_]+["']?\s*([A-Za-z]+)\s*["']?/i);
+          if (match) currentReport.exames.fatorRh = match[1];
+        }
+
+        // Detecta Sorologias qualitativas
+        if (/AMOSTRA\s+N[AÃ]O\s+REAGENTE\s+PARA\s+HIV/i.test(line)) currentReport.exames.hiv = 'Não Reagente';
+        if (/AMOSTRA\s+N[AÃ]O\s+REAGENTE\s+PARA\s+HbsAg/i.test(line)) currentReport.exames.hbsag = 'Não Reagente';
+        if (/AMOSTRA\s+N[AÃ]O\s+REAGENTE\s+PARA\s+ANTI-HCV/i.test(line)) currentReport.exames.antiHcv = 'Não Reagente';
+        if (/AMOSTRA\s+N[AÃ]O\s+REAGENTE\s+PARA\s+O\s+ANTI-HBC/i.test(line)) currentReport.exames.antiHbc = 'Não Reagente';
+
+        // Detecta cabeçalho de exame
+        const potentialExamKey = matchHeaderToExamKey(line);
+        if (potentialExamKey) {
+          currentExamKey = potentialExamKey;
+          inReferenceSection = false;
+        }
+
+        // 1. Extração direta de linhas no formato "Exame: Valor" (ex: Hemoglobina, Creatinina Sérica, Albumina)
+        if (!inReferenceSection) {
+          // Albumina (em Proteínas Totais ou isolada)
+          const matchAlb = line.match(/(?:^|\b)Albumina[\s.:_]+([0-9]+[.,]?[0-9]*)/i);
+          if (matchAlb && currentReport.exames.albumina === undefined) {
+            const v = parseExamNumber(matchAlb[1]);
+            if (v !== null) currentReport.exames.albumina = v;
+          }
+
+          // Creatinina Sérica
+          const matchCr = line.match(/(?:^|\b)Creatinina(?:\s*S[eé]rica)?[\s.:_]+([0-9]+[.,]?[0-9]*)/i);
+          if (matchCr && currentReport.exames.creatinina === undefined) {
+            const v = parseExamNumber(matchCr[1]);
+            if (v !== null) currentReport.exames.creatinina = v;
+          }
+
+          // Hemoglobina no hemograma
+          const matchHb = line.match(/(?:^|\b)Hemoglobina[\s.:_]+([0-9]+[.,]?[0-9]*)/i);
+          if (matchHb && currentReport.exames.hb === undefined && !normLine.includes('glicada')) {
+            const v = parseExamNumber(matchHb[1]);
+            if (v !== null) currentReport.exames.hb = v;
+          }
+
+          // Hematócrito no hemograma
+          const matchHt = line.match(/(?:^|\b)Hemat[oó]crito[\s.:_]+([0-9]+[.,]?[0-9]*)/i);
+          if (matchHt && currentReport.exames.ht === undefined) {
+            const v = parseExamNumber(matchHt[1]);
+            if (v !== null) currentReport.exames.ht = v;
+          }
+
+          // Leucócitos
+          const matchLeu = line.match(/(?:^|\b)Leuc[oó]citos[\s.:_]+([0-9.]+)/i);
+          if (matchLeu && currentReport.exames.leucocitos === undefined) {
+            const v = parseExamNumber(matchLeu[1]);
+            if (v !== null) currentReport.exames.leucocitos = v;
+          }
+
+          // Plaquetas
+          const matchPlq = line.match(/(?:^|\b)(?:Plaquetas|Contagem\s*de\s*Plaquetas)[\s.:_]+([0-9.]+)/i);
+          if (matchPlq && currentReport.exames.plaquetas === undefined) {
+            const v = parseExamNumber(matchPlq[1]);
+            if (v !== null) currentReport.exames.plaquetas = v;
+          }
+
+          // Ureia Pré / Ureia Pós inline
+          const matchUreiaPre = line.match(/(?:^|\b)Ur[eé]ia\s*Pr[eé][\s.:_]+([0-9]+[.,]?[0-9]*)/i);
+          if (matchUreiaPre && currentReport.exames.ureiaPre === undefined) {
+            const v = parseExamNumber(matchUreiaPre[1]);
+            if (v !== null) currentReport.exames.ureiaPre = v;
+          }
+          const matchUreiaPos = line.match(/(?:^|\b)Ur[eé]ia\s*P[oó]s[\s.:_]+([0-9]+[.,]?[0-9]*)/i);
+          if (matchUreiaPos && currentReport.exames.ureiaPos === undefined) {
+            const v = parseExamNumber(matchUreiaPos[1]);
+            if (v !== null) currentReport.exames.ureiaPos = v;
           }
         }
 
-        // Se temos um exame ativo aguardando resultado
-        if (currentExamKey && !inPreviousResults) {
-          // Formato A/B: Linha contendo "Resultado: X" ou "<NomeExame>: X"
-          const resultMatch = line.match(/(?:Resultado|Hemoglobina|Hemat[oó]crito|Ureia|Pot[aá]ssio|S[oó]dio|Glicemia|TGP|TGO|C[aá]lcio|F[oó]sforo)[^0-9:]*[:.]+\s*([0-9]+[.,]?[0-9]*)/i) ||
-                              line.match(/Hemoglobina\s*Glicada\s*\(?[^:]*[:.]+\s*([0-9]+[.,]?[0-9]*)/i) ||
-                              line.match(/^(?:Resultado|Valor)[\s.:_]*([0-9]+[.,]?[0-9]*)/i);
+        // 2. Extração de valor sozinho na linha para o exame ativo (ex: "56 mg / dl", "33 U / l", "7,2 %")
+        if (currentExamKey && !inReferenceSection && currentReport.exames[currentExamKey] === undefined) {
+          const isMetadataLine = normLine.startsWith('material') || 
+                                 normLine.startsWith('metodo') || 
+                                 normLine.startsWith('metodologia') ||
+                                 normLine.startsWith('data coleta') ||
+                                 normLine.startsWith('liberado') || 
+                                 normLine.startsWith('solicitante') || 
+                                 normLine.startsWith('convenio');
 
-          if (resultMatch && currentReport.exames[currentExamKey] === undefined) {
-            const val = parseExamNumber(resultMatch[1]);
-            if (val !== null) {
-              currentReport.exames[currentExamKey] = val;
-              currentExamKey = null; // Bloqueia para não capturar linhas de resultados anteriores
-              continue;
-            }
-          }
+          if (!isMetadataLine) {
+            const unitMatch = line.match(/^([0-9]+[.,]?[0-9]*)\s*(?:g\s*\/\s*d[lL]|mg\s*\/\s*d[lL]|mcg\s*\/\s*d[lL]|mcg\s*\/\s*[lL]|ng\s*\/\s*m[lL]|pg\s*\/\s*m[lL]|m[eE]q\s*\/\s*[lL]|U\s*\/\s*[lL]|g%|%)(?:\s|$)/i);
+            const resultMatch = line.match(/^(?:Resultado|Valor)[\s.:_]*([0-9]+[.,]?[0-9]*)/i);
 
-          // Formato C: Linha com apenas o valor com unidade (ex: "8,7 mg/dL" ou "28,5 %")
-          const unitOnlyMatch = line.match(/^([0-9]+[.,]?[0-9]*)\s*(?:g\/dL|mg\/dL|%|mEq\/L|U\/L|pg\/mL|ng\/mL|mg\/L)\b/i);
-          if (unitOnlyMatch && currentReport.exames[currentExamKey] === undefined) {
-            const val = parseExamNumber(unitOnlyMatch[1]);
-            if (val !== null) {
-              currentReport.exames[currentExamKey] = val;
-              currentExamKey = null;
-              continue;
+            const chosenMatch = unitMatch || resultMatch;
+            if (chosenMatch) {
+              const val = parseExamNumber(chosenMatch[1]);
+              if (val !== null) {
+                currentReport.exames[currentExamKey] = val;
+                currentExamKey = null; // Reseta para evitar capturar referências subsequentes
+              }
             }
           }
         }
       }
     }
+
+    // Pós-processamento: cálculos automáticos de nefrologia (IST e Kt/V) para cada laudo
+    patientReports.forEach(report => {
+      // 1. Cálculo automático de IST (%) se Ferro e Transferrina estiverem presentes
+      if (report.exames.ist === undefined && report.exames.ferro && report.exames.transferrina) {
+        const istCalc = (report.exames.ferro * 70.9) / report.exames.transferrina;
+        report.exames.ist = Math.round(istCalc * 10) / 10;
+      }
+
+      // 2. Cálculo automático de Kt/V (Daugirdas sp) a partir de Ureia Pré e Pós
+      if (report.exames.ktv === undefined && report.exames.ureiaPre && report.exames.ureiaPos) {
+        const pre = Number(report.exames.ureiaPre);
+        const pos = Number(report.exames.ureiaPos);
+        if (pre > pos && pre > 0) {
+          const r = pos / pre;
+          if (r > 0.032) {
+            const ktvEst = -Math.log(r - 0.032);
+            report.exames.ktv = Math.round(ktvEst * 100) / 100;
+          }
+        }
+      }
+    });
 
     // Se encontrou laudos com exames ou pacientes
     if (patientReports.length > 0 && patientReports.some(r => Object.keys(r.exames).length > 0)) {
@@ -695,6 +919,7 @@ export async function parsePdfFile(file, patientsList = []) {
           }
         }
 
+        const finalExames = applyDerivedCalculations(exames);
         results.push({
           id: `import-pdf-table-${pageNum}-${l}-${Date.now()}`,
           nomeArquivo: lineStr.split(/\d/)[0].trim() || lineStr,
@@ -703,7 +928,7 @@ export async function parsePdfFile(file, patientsList = []) {
           statusMatch: matched.status,
           confianca: matched.score,
           dataExame: fallbackDate,
-          exames,
+          exames: finalExames,
           confirmado: matched.status === 'EXACT_OR_HIGH'
         });
       }
@@ -763,6 +988,7 @@ export async function parseImageFile(file, patientsList = [], onProgress = () =>
         }
       }
 
+      const finalExames = applyDerivedCalculations(exames);
       results.push({
         id: `import-img-${i}-${Date.now()}`,
         nomeArquivo: line,
@@ -771,7 +997,7 @@ export async function parseImageFile(file, patientsList = [], onProgress = () =>
         statusMatch: matched.status,
         confianca: matched.score,
         dataExame: detectedDate,
-        exames,
+        exames: finalExames,
         confirmado: matched.status === 'EXACT_OR_HIGH'
       });
     }
@@ -792,6 +1018,7 @@ export async function parseImageFile(file, patientsList = [], onProgress = () =>
     }
 
     if (Object.keys(exames).length > 0) {
+      const finalExames = applyDerivedCalculations(exames);
       results.push({
         id: `import-img-single-${Date.now()}`,
         nomeArquivo: 'Laudo Fotográfico (Selecionar Paciente)',
@@ -800,7 +1027,7 @@ export async function parseImageFile(file, patientsList = [], onProgress = () =>
         statusMatch: 'SUGGESTION',
         confianca: 50,
         dataExame: detectedDate,
-        exames,
+        exames: finalExames,
         confirmado: false
       });
     }
