@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.55] - 2026-09-12
+### Alterações
+- Correcao da centralizacao do simbolo de nefrologia no cubo 3D e eliminacao do glitch quadrado no hover do Ai
+
 ## [1.1.54] - 2026-09-12
 ### Alterações
 - Centralizacao do nome no login e inclusao do simbolo de nefrologia no centro da logomarca 3D

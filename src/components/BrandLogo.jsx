@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 /**
  * 🌟 BrandIcon: Ícone 3D Isométrico com Símbolo de Nefrologia (Rins Anatômicos) e Efeito Hover Interativo
- * Integra o Cubo 3D Isométrico facetado em gradiente vibrante com a silhueta médica dos rins no centro.
+ * O símbolo anatômico de nefrologia é posicionado no centro exato do cubo 3D isométrico.
  */
 export function BrandIcon({ size = 36, className = '', isHovered = false }) {
   return (
@@ -55,8 +55,8 @@ export function BrandIcon({ size = 36, className = '', isHovered = false }) {
           </linearGradient>
 
           {/* Sombra suave e contraste do símbolo nefrológico */}
-          <filter id="nefroGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="1.5" stdDeviation="1.8" floodColor="#0f172a" floodOpacity="0.45" />
+          <filter id="nefroGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="1.2" stdDeviation="1.5" floodColor="#0f172a" floodOpacity="0.5" />
           </filter>
         </defs>
 
@@ -99,43 +99,36 @@ export function BrandIcon({ size = 36, className = '', isHovered = false }) {
           />
         </g>
 
-        {/* Símbolo da Nefrologia (Rins Anatômicos) Central */}
-        <g 
-          filter="url(#nefroGlow)"
-          transform="translate(50, 49) scale(2.2) translate(-12, -12.35)"
-          style={{
-            transformOrigin: '50px 49px',
-            transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
-          }}
-        >
-          {/* Rim Esquerdo */}
-          <path 
-            d="M7.2 4.2C4.5 4.5 3 7.2 3 11.2C3 15.5 5.2 18.8 8.2 18.8C10.2 18.8 10.8 16 9.8 13.8C8.8 11.6 9.8 7.5 8.8 5.6C8.4 4.8 7.8 4.3 7.2 4.2Z" 
-            fill="rgba(255, 255, 255, 0.28)"
+        {/* Símbolo da Nefrologia (Rins Anatômicos) no Centro Exato do Cubo */}
+        <svg x="23" y="23" width="54" height="54" viewBox="0 0 24 24" overflow="visible">
+          <g 
             stroke="#ffffff" 
             strokeWidth="2.1" 
             strokeLinecap="round" 
-            strokeLinejoin="round" 
-          />
-          
-          {/* Rim Direito */}
-          <path 
-            d="M16.8 4.2C19.5 4.5 21 7.2 21 11.2C21 15.5 18.8 18.8 15.8 18.8C13.8 18.8 13.2 16 14.2 13.8C15.2 11.6 14.2 7.5 15.2 5.6C15.6 4.8 16.2 4.3 16.8 4.2Z" 
-            fill="rgba(255, 255, 255, 0.28)"
-            stroke="#ffffff" 
-            strokeWidth="2.1" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-          />
-          
-          {/* Artéria / Veia Renal central */}
-          <path d="M9.8 12.5C11 12.5 11.5 13 12 14" stroke="#ffffff" strokeWidth="2.0" strokeLinecap="round" opacity="0.95" />
-          <path d="M14.2 12.5C13 12.5 12.5 13 12 14" stroke="#ffffff" strokeWidth="2.0" strokeLinecap="round" opacity="0.95" />
-          
-          {/* Ureteres */}
-          <path d="M11.5 14.5V20.5" stroke="#ffffff" strokeWidth="2.0" strokeLinecap="round" opacity="0.9" />
-          <path d="M12.5 14.5V20.5" stroke="#ffffff" strokeWidth="2.0" strokeLinecap="round" opacity="0.9" />
-        </g>
+            strokeLinejoin="round"
+            filter="url(#nefroGlow)"
+          >
+            {/* Rim Esquerdo */}
+            <path 
+              d="M7.2 4.2C4.5 4.5 3 7.2 3 11.2C3 15.5 5.2 18.8 8.2 18.8C10.2 18.8 10.8 16 9.8 13.8C8.8 11.6 9.8 7.5 8.8 5.6C8.4 4.8 7.8 4.3 7.2 4.2Z" 
+              fill="rgba(255, 255, 255, 0.3)"
+            />
+            
+            {/* Rim Direito */}
+            <path 
+              d="M16.8 4.2C19.5 4.5 21 7.2 21 11.2C21 15.5 18.8 18.8 15.8 18.8C13.8 18.8 13.2 16 14.2 13.8C15.2 11.6 14.2 7.5 15.2 5.6C15.6 4.8 16.2 4.3 16.8 4.2Z" 
+              fill="rgba(255, 255, 255, 0.3)"
+            />
+            
+            {/* Artéria / Veia Renal central */}
+            <path d="M9.8 12.5C11 12.5 11.5 13 12 14" opacity="0.95" fill="none" strokeWidth="2.0" />
+            <path d="M14.2 12.5C13 12.5 12.5 13 12 14" opacity="0.95" fill="none" strokeWidth="2.0" />
+            
+            {/* Ureteres */}
+            <path d="M11.5 14.5V20.5" opacity="0.9" fill="none" strokeWidth="2.0" />
+            <path d="M12.5 14.5V20.5" opacity="0.9" fill="none" strokeWidth="2.0" />
+          </g>
+        </svg>
       </svg>
     </div>
   );
@@ -186,7 +179,8 @@ export default function BrandLogo({
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: isVertical ? 'center' : 'left',
-        width: isVertical ? '100%' : 'auto'
+        width: isVertical ? '100%' : 'auto',
+        margin: isVertical ? '0 auto' : undefined
       }}
     >
       {/* Ícone 3D com Símbolo de Nefrologia */}
@@ -207,12 +201,12 @@ export default function BrandLogo({
         >
           <div 
             style={{ 
-              display: 'inline-flex', 
+              display: 'flex', 
               alignItems: 'center', 
               justifyContent: isVertical ? 'center' : 'flex-start',
               gap: '6px',
               textAlign: isVertical ? 'center' : 'left',
-              width: isVertical ? '100%' : 'auto'
+              width: '100%'
             }}
           >
             <span
@@ -221,19 +215,20 @@ export default function BrandLogo({
                 color: baseTextColor,
                 letterSpacing: '-0.4px',
                 textAlign: isVertical ? 'center' : 'left',
-                transition: 'color 0.25s ease'
+                display: 'inline-block'
               }}
             >
               Nex-
               <span
                 style={{
-                  background: isHovered
-                    ? 'linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #ec4899 100%)'
-                    : 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #d946ef 100%)',
+                  background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #d946ef 100%)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   fontWeight: 900,
-                  transition: 'all 0.35s ease'
+                  display: 'inline-block',
+                  filter: isHovered ? 'brightness(1.25) drop-shadow(0 0 6px rgba(168, 85, 247, 0.45))' : 'none',
+                  transform: isHovered ? 'translateY(-1px)' : 'none',
+                  transition: 'filter 0.25s ease, transform 0.25s ease'
                 }}
               >
                 Ai
@@ -267,7 +262,7 @@ export default function BrandLogo({
                 fontWeight: 500,
                 textAlign: isVertical ? 'center' : 'left',
                 display: 'block',
-                width: isVertical ? '100%' : 'auto'
+                width: '100%'
               }}
             >
               {subtitle}

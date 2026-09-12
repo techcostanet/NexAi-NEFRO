@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.55",
+    "date": "12/09/2026",
+    "title": "Correcao da centralizacao do simbolo de nefrologia no cubo 3D e eliminacao do...",
+    "highlights": [
+      "✨ Correcao da centralizacao do simbolo de nefrologia no cubo 3D e eliminacao do glitch quadrado no hover do Ai"
+    ]
+  },
+  {
     "version": "1.1.54",
     "date": "12/09/2026",
     "title": "Centralizacao do nome no login e inclusao do simbolo de nefrologia no centro ...",
