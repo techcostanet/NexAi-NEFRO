@@ -63,6 +63,9 @@ import ExamImportModal from '../components/ExamImportModal';
 import PrescriptionModal from '../components/PrescriptionModal';
 import PrescriptionPrintModal from '../components/PrescriptionPrintModal';
 import PatientBulletinModal from '../components/patientBulletin/PatientBulletinModal';
+import TransplantReportPdf from '../components/pdf/TransplantReportPdf';
+import { downloadPdfDocument } from '../services/pdfService';
+import { printElement } from '../utils/printUtils';
 
 export default function PatientProfile() {
   const { id } = useParams();
@@ -108,6 +111,37 @@ export default function PatientProfile() {
   const [isLockTherapyModalOpen, setIsLockTherapyModalOpen] = useState(false);
   const [isChecklistModalOpen, setIsChecklistModalOpen] = useState(false);
   const [isBulletinModalOpen, setIsBulletinModalOpen] = useState(false);
+  const [isDownloadingTransplantPdf, setIsDownloadingTransplantPdf] = useState(false);
+
+  const handleDownloadTransplantPdf = async () => {
+    try {
+      setIsDownloadingTransplantPdf(true);
+      const safeName = (patient?.nome || 'Paciente').replace(/\s+/g, '_');
+      const fileName = `Laudo_Transplante_${safeName}.pdf`;
+      await downloadPdfDocument(
+        <TransplantReportPdf
+          patient={patient}
+          doctorInfo={doctorInfo}
+          statusTransplante={statusTransplante}
+          acessoVascular={acessoVascular}
+          exames={exames}
+          hemoculturas={hemoculturas}
+          medicamentosList={medicamentosList}
+          ultimoPeso={ultimoPeso}
+        />,
+        fileName
+      );
+    } catch (err) {
+      console.error('Falha ao baixar PDF do transplante:', err);
+      printElement('printable-transplant-report-doc');
+    } finally {
+      setIsDownloadingTransplantPdf(false);
+    }
+  };
+
+  const handlePrintTransplant = () => {
+    printElement('printable-transplant-report-doc', `Laudo Transplante - ${patient?.nome || ''}`);
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -2356,6 +2390,7 @@ export default function PatientProfile() {
       {/* ================= MODAL: LAUDO DE ENCAMINHAMENTO PARA TRANSPLANTE EM PDF (Melhoria 3) ================= */}
       {isTransplantReportOpen && (
         <div 
+          className="transplant-modal-overlay"
           style={{ 
             position: 'fixed', 
             top: 0, 
@@ -2373,7 +2408,7 @@ export default function PatientProfile() {
           onClick={() => setIsTransplantReportOpen(false)}
         >
           <div 
-            className="glass-panel animate-in" 
+            className="glass-panel animate-in transplant-modal-container" 
             style={{ 
               background: '#ffffff', 
               color: '#0f172a',
@@ -2395,17 +2430,32 @@ export default function PatientProfile() {
               </div>
               <div className="flex items-center gap-2">
                 <button 
-                  onClick={() => window.print()}
+                  type="button"
+                  onClick={handleDownloadTransplantPdf}
+                  disabled={isDownloadingTransplantPdf}
+                  className="btn btn-outline"
+                  style={{ padding: '0.45rem 0.9rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                  title="Baixar arquivo PDF nativo com alta fidelidade"
+                >
+                  {isDownloadingTransplantPdf ? <Loader2 size={15} className="animate-spin" /> : <FileDown size={15} color="#2563eb" />}
+                  <span>{isDownloadingTransplantPdf ? 'Gerando...' : 'Baixar PDF'}</span>
+                </button>
+                <button 
+                  type="button"
+                  onClick={handlePrintTransplant}
                   className="btn btn-primary"
                   style={{ padding: '0.45rem 1rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                  title="Imprimir folha A4 ou salvar via navegador"
                 >
                   <Printer size={15} />
                   <span>Imprimir / Salvar PDF</span>
                 </button>
                 <button 
+                  type="button"
                   onClick={() => setIsTransplantReportOpen(false)}
                   className="btn btn-outline"
                   style={{ padding: '0.45rem', borderRadius: '50%' }}
+                  title="Fechar"
                 >
                   <X size={16} />
                 </button>
@@ -2413,7 +2463,7 @@ export default function PatientProfile() {
             </div>
 
             {/* Documento Timbrado */}
-            <div className="p-6 bg-white border border-slate-200 rounded-xl flex flex-col gap-5 text-sm" style={{ fontFamily: 'system-ui, sans-serif' }}>
+            <div id="printable-transplant-report-doc" className="printable-transplant-area transplant-a4-sheet p-6 bg-white border border-slate-200 rounded-xl flex flex-col gap-5 text-sm" style={{ fontFamily: 'system-ui, sans-serif' }}>
               <div className="border-b pb-4 flex justify-between items-start">
                 <div>
                   <h1 className="text-xl font-black text-blue-900 tracking-tight">NexAi-NEFRO</h1>

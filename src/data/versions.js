@@ -1,5 +1,50 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.49",
+    "date": "12/09/2026",
+    "title": "Motor de Impressao Isolada e Exportacao de PDFs Vetoriais em Alta Resolucao (...",
+    "highlights": [
+      "✨ Motor de Impressao Isolada e Exportacao de PDFs Vetoriais em Alta Resolucao (@react-pdf/renderer) e Automacao de Notas de Versao"
+    ]
+  },
+  {
+    version: "1.1.48",
+    date: "11/09/2026",
+    title: "Design Médico Limpo, Objetivo e Redução de Textos Explicativos",
+    highlights: [
+      "🧹 Design Médico Limpo: Otimização e redução de textos explicativos em todo o sistema para interface clínica ágil e sem ruídos.",
+      "🩺 Foco no Fluxo de Atendimento: Painéis despoluídos priorizando a visualização rápida dos dados de diálise e evolução do paciente."
+    ]
+  },
+  {
+    version: "1.1.47",
+    date: "11/09/2026",
+    title: "Padronização Visual de Botões no Prontuário e Tipografia Ponderal",
+    highlights: [
+      "🎨 Padronização ergonômica: Harmonização dos botões de ação e abas no prontuário do paciente.",
+      "⚖️ Tipografia de controle de peso: Refinamento visual dos cards de pesagem pré/pós diálise e cálculo de % PIDG."
+    ]
+  },
+  {
+    version: "1.1.46",
+    date: "11/09/2026",
+    title: "Boletim Educativo e Conquistas do Paciente com Impressão A4",
+    highlights: [
+      "🏆 Boletim de Saúde & Conquistas: Avaliação visual das metas laboratoriais e de peso do paciente em linguagem humana e acessível.",
+      "📱 Integração com WhatsApp: Botão de compartilhamento instantâneo com formatação amigável para familiares e pacientes.",
+      "🖨️ Prévia em Folha A4: Layout colorido e motivacional com mensagens personalizadas da equipe de enfermagem e nefrologia."
+    ]
+  },
+  {
+    version: "1.1.45",
+    date: "11/09/2026",
+    title: "Universalização do Importador de Laudos e Cadastro Hepático (TGP/TGO)",
+    highlights: [
+      "📑 Importador Universal: Máquina de estados de blocos para interpretação inteligente de laudos laboratoriais multi-formato.",
+      "🧪 Monitoramento Hepático: Inclusão oficial dos exames TGP (ALT) e TGO (AST) no perfil laboratorial de vigilância dialítica."
+    ]
+  },
+  {
     version: "1.1.44",
     date: "07/09/2026",
     title: "Central de Relatórios com 20 Relatórios Especializados (XLS/PDF) e Correção de Capitalização",

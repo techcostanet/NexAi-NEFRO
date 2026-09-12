@@ -85,6 +85,40 @@ async function main() {
   }
   console.log(`📝 CHANGELOG.md atualizado com sucesso.`);
 
+  // 3.5. Sincronizar src/data/versions.js (Notas de Versão / Release Notes no Modal da Aplicação)
+  const versionsDataPath = path.join(rootDir, 'src', 'data', 'versions.js');
+  if (fs.existsSync(versionsDataPath)) {
+    const today = new Date();
+    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const year = today.getFullYear();
+    const datePt = `${day}/${month}/${year}`;
+
+    // Divide mensagem em tópicos caso contenha separadores ou usa como destaque
+    const rawParts = changeMessage.split(/(?:;|\. )+/).map(p => p.trim()).filter(Boolean);
+    const title = rawParts[0].length > 80 ? rawParts[0].slice(0, 77) + '...' : rawParts[0];
+    const highlights = rawParts.length > 1 
+      ? rawParts.map(r => r.startsWith('•') || r.startsWith('-') ? r.replace(/^[-•]\s*/, '') : `✨ ${r}`)
+      : [`✨ ${changeMessage}`];
+
+    const newVersionObject = {
+      version: newVersion,
+      date: datePt,
+      title: title,
+      highlights: highlights
+    };
+
+    let versionsContent = fs.readFileSync(versionsDataPath, 'utf8');
+    const arrayStart = versionsContent.indexOf('export const SYSTEM_CHANGELOG = [');
+    if (arrayStart !== -1) {
+      const insertionPoint = arrayStart + 'export const SYSTEM_CHANGELOG = ['.length;
+      const formattedEntry = `\n  ${JSON.stringify(newVersionObject, null, 2).replace(/\n/g, '\n  ')},`;
+      versionsContent = versionsContent.slice(0, insertionPoint) + formattedEntry + versionsContent.slice(insertionPoint);
+      fs.writeFileSync(versionsDataPath, versionsContent);
+      console.log(`📜 src/data/versions.js sincronizado com sucesso com a v${newVersion}.`);
+    }
+  }
+
   // 4. Compilar aplicação
   console.log(`\n🔨 Compilando aplicação (Vite Build)...`);
   const npmCmd = process.platform === 'win32' ? 'npm.cmd' : 'npm';

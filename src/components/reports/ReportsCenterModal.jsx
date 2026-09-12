@@ -28,6 +28,7 @@ import {
   exportReportToExcel
 } from '../../services/reportsService.js';
 import ReportPrintDocument from './ReportPrintDocument.jsx';
+import { printElement } from '../../utils/printUtils.js';
 
 export default function ReportsCenterModal({
   isOpen,
@@ -161,7 +162,7 @@ export default function ReportsCenterModal({
   const handlePrintPdf = () => {
     setViewMode('print_preview');
     setTimeout(() => {
-      window.print();
+      printElement('printable-report-center-doc', `Relatorio_${currentReport?.id || 'Clinico'}`);
     }, 300);
   };
 
@@ -178,6 +179,7 @@ export default function ReportsCenterModal({
 
   return (
     <div
+      className="reports-center-modal-overlay"
       style={{
         position: 'fixed',
         top: 0,
@@ -195,7 +197,7 @@ export default function ReportsCenterModal({
       onClick={onClose}
     >
       <div
-        className="glass-panel animate-in"
+        className="glass-panel animate-in reports-center-modal-container"
         style={{
           background: '#ffffff',
           width: '96vw',
@@ -919,14 +921,18 @@ export default function ReportsCenterModal({
                 </table>
               ) : (
                 /* MODO PRÉVIA DE IMPRESSÃO */
-                <div style={{
-                  maxWidth: '1100px',
-                  margin: '0 auto',
-                  background: '#ffffff',
-                  boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
-                  borderRadius: '8px',
-                  overflow: 'hidden'
-                }}>
+                <div 
+                  id="printable-report-center-doc"
+                  className="report-print-container report-a4-sheet"
+                  style={{
+                    maxWidth: '1100px',
+                    margin: '0 auto',
+                    background: '#ffffff',
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                    borderRadius: '8px',
+                    overflow: 'visible'
+                  }}
+                >
                   <ReportPrintDocument
                     report={currentReport}
                     rows={rows}

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { X, Printer, FileCheck } from 'lucide-react';
+import { X, Printer, FileCheck, FileDown, Loader2 } from 'lucide-react';
 import PrescriptionPrintDocument from './PrescriptionPrintDocument';
+import PrescriptionPdf from './pdf/PrescriptionPdf';
+import { downloadPdfDocument } from '../services/pdfService';
+import { printElement } from '../utils/printUtils';
 
 export default function PrescriptionPrintModal({
   isOpen,
@@ -10,10 +13,38 @@ export default function PrescriptionPrintModal({
   doctorInfo
 }) {
   const [currentVia, setCurrentVia] = useState(1);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
   if (!isOpen || !prescription || !patient) return null;
 
   const isTwoVias = prescription.tipoReceita === 'controle_especial' || prescription.tipoReceita === 'antimicrobiano';
+
+  const handleDownloadPdf = async () => {
+    try {
+      setIsDownloadingPdf(true);
+      const safeName = (patient.nome || 'Paciente').replace(/\s+/g, '_');
+      const fileName = `Receita_${safeName}_Via${currentVia}.pdf`;
+      await downloadPdfDocument(
+        <PrescriptionPdf
+          prescription={prescription}
+          patient={patient}
+          doctorInfo={doctorInfo}
+          currentVia={currentVia}
+        />,
+        fileName
+      );
+    } catch (err) {
+      console.error('Falha ao baixar PDF:', err);
+      // Fallback para impressão caso falhe
+      printElement('printable-prescription-doc');
+    } finally {
+      setIsDownloadingPdf(false);
+    }
+  };
+
+  const handlePrint = () => {
+    printElement('printable-prescription-doc', `Receita - ${patient.nome || ''}`);
+  };
 
   return (
     <div 
@@ -60,7 +91,7 @@ export default function PrescriptionPrintModal({
 
           <div className="flex items-center gap-2">
             {isTwoVias && (
-              <div className="flex bg-slate-200 p-0.5 rounded-lg text-xs font-semibold">
+              <div className="flex bg-slate-200 p-0.5 rounded-lg text-xs font-semibold mr-1">
                 <button
                   type="button"
                   className={`px-3 py-1 rounded-md transition-all ${
@@ -84,9 +115,22 @@ export default function PrescriptionPrintModal({
 
             <button 
               type="button"
-              onClick={() => window.print()}
+              onClick={handleDownloadPdf}
+              disabled={isDownloadingPdf}
+              className="btn btn-outline"
+              style={{ padding: '0.45rem 0.9rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+              title="Baixar arquivo PDF nativo com alta fidelidade"
+            >
+              {isDownloadingPdf ? <Loader2 size={15} className="animate-spin" /> : <FileDown size={15} color="#2563eb" />}
+              <span>{isDownloadingPdf ? 'Gerando...' : 'Baixar PDF'}</span>
+            </button>
+
+            <button 
+              type="button"
+              onClick={handlePrint}
               className="btn btn-primary"
               style={{ padding: '0.45rem 1.1rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+              title="Imprimir folha A4 ou salvar via navegador"
             >
               <Printer size={15} />
               <span>Imprimir / Salvar PDF</span>
@@ -105,7 +149,7 @@ export default function PrescriptionPrintModal({
         </div>
 
         {/* Folha A4 Única Isolada para Impressão */}
-        <div className="printable-prescription-area flex justify-center">
+        <div id="printable-prescription-doc" className="printable-prescription-area flex justify-center">
           <PrescriptionPrintDocument
             prescription={prescription}
             patient={patient}

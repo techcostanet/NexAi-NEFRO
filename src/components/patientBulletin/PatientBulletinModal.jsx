@@ -8,9 +8,14 @@ import {
   Calendar, 
   MessageSquareHeart, 
   Sparkles,
-  Edit3
+  Edit3,
+  FileDown,
+  Loader2
 } from 'lucide-react';
 import PatientBulletinPrintDocument from './PatientBulletinPrintDocument';
+import PatientBulletinPdf from '../pdf/PatientBulletinPdf';
+import { downloadPdfDocument } from '../../services/pdfService';
+import { printElement } from '../../utils/printUtils';
 import { evaluatePatientExamsForBulletin } from '../../services/patientEducationService';
 
 export default function PatientBulletinModal({
@@ -23,56 +28,78 @@ export default function PatientBulletinModal({
   const [customNote, setCustomNote] = useState('');
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
-  // Lista de coletas disponíveis para gerar o boletim
+  // Ordena exames do histórico ou usa o atual
   const historico = useMemo(() => {
     if (!patient) return [];
-    if (Array.isArray(patient.historicoExames) && patient.historicoExames.length > 0) {
-      return patient.historicoExames;
+    const h = Array.isArray(patient.historicoExames) ? [...patient.historicoExames] : [];
+    if (h.length === 0 && patient.exames) {
+      h.push({
+        dataExame: patient.atualizadoEm ? patient.atualizadoEm.split('T')[0] : new Date().toISOString().split('T')[0],
+        ...patient.exames
+      });
     }
-    if (patient.exames && Object.keys(patient.exames).length > 0) {
-      return [{ ...patient.exames, dataExame: patient.exames.dataExame || new Date().toISOString().split('T')[0] }];
-    }
-    return [];
+    return h.sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
   }, [patient]);
 
-  // Exame selecionado para avaliação
-  const selectedExam = historico[selectedExamIndex] || patient?.exames || {};
+  const exameSelecionado = historico[selectedExamIndex] || patient?.exames || {};
+  const dataRef = exameSelecionado.dataExame || (patient?.atualizadoEm ? patient.atualizadoEm.split('T')[0] : null);
 
-  // Avaliação automatizada com inteligência clínica humanizada
   const bulletinData = useMemo(() => {
     if (!patient) return null;
-    return evaluatePatientExamsForBulletin(patient, selectedExam);
-  }, [patient, selectedExam]);
+    return evaluatePatientExamsForBulletin(patient, exameSelecionado, dataRef);
+  }, [patient, exameSelecionado, dataRef]);
 
-  if (!isOpen || !patient || !bulletinData) return null;
+  if (!isOpen || !patient) return null;
 
-  // Copia resumo carinhoso para WhatsApp
   const handleCopyWhatsApp = () => {
-    const primeiroNome = patient.nome.split(' ')[0];
-    const dataObj = selectedExam.dataExame ? new Date(selectedExam.dataExame + 'T12:00:00') : new Date();
-    const mesFormatado = dataObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
-
-    let msg = `🌟 *BOLETIM DE SAÚDE & CONQUISTAS* 🌟\n`;
-    msg += `Olá, *${primeiroNome}*! Aqui está o resumo das suas conquistas nos exames de *${mesFormatado}*:\n\n`;
-    msg += `🏆 *Seu Placar:* ${bulletinData.metasBatidas} de ${bulletinData.totalMetas} metas alcançadas com louvor! (${bulletinData.taxaSucesso}%)\n\n`;
-
-    bulletinData.cards.forEach(c => {
-      const emoji = c.status === 'CONQUISTA' ? '🟢' : (c.status === 'QUASE_LA' ? '🟡' : '🔴');
-      msg += `${emoji} *${c.categoria}* (${c.valorFormatado})\n`;
-      msg += `"${c.mensagem}"\n`;
-      msg += `💡 _Dica: ${c.dica}_\n\n`;
+    if (!bulletinData) return;
+    const { pacienteNome, totalMetas, metasBatidas, taxaSucesso, cards } = bulletinData;
+    
+    let text = `🎉 *Boletim de Saúde & Conquistas - NexAi-NEFRO*\n`;
+    text += `Olá, *${pacienteNome}*! Aqui está o resultado dos seus exames mais recentes:\n\n`;
+    text += `🏆 *Seu Desempenho:* ${metasBatidas} de ${totalMetas} metas alcançadas (${taxaSucesso}% de Sucesso!)\n\n`;
+    
+    cards.forEach(c => {
+      const emoji = c.statusId === 'otimo' ? '🌟' : c.statusId === 'bom' ? '✅' : '⚠️';
+      text += `${emoji} *${c.nome}:* ${c.valorFormatado} (Alvo: ${c.alvoTexto})\n_${c.feedbackTexto}_\n\n`;
     });
 
     if (customNote) {
-      msg += `✍️ *Recadinho da Equipe:* ${customNote}\n\n`;
+      text += `💬 *Recado da Equipe Médica:*\n"${customNote}"\n\n`;
     }
 
-    msg += `Conte sempre com toda a nossa equipe de Nefrologia! Juntos cuidando de você com carinho. ❤️🩺`;
+    text += `🏥 _${doctorInfo?.clinicaPrincipal || 'Centro Nefrológico'} • Cuidando de você a cada sessão!_`;
 
-    navigator.clipboard.writeText(msg);
+    navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
+  };
+
+  const handleDownloadPdf = async () => {
+    try {
+      setIsDownloadingPdf(true);
+      const safeName = (patient.nome || 'Paciente').replace(/\s+/g, '_');
+      const fileName = `Boletim_Saude_${safeName}.pdf`;
+      await downloadPdfDocument(
+        <PatientBulletinPdf
+          bulletinData={bulletinData}
+          doctorInfo={doctorInfo}
+          customNote={customNote}
+        />,
+        fileName
+      );
+    } catch (err) {
+      console.error('Falha ao baixar PDF do boletim:', err);
+      printElement('printable-patient-bulletin-doc');
+    } finally {
+      setIsDownloadingPdf(false);
+    }
+  };
+
+  const handlePrint = () => {
+    printElement('printable-patient-bulletin-doc', `Boletim de Saúde - ${patient.nome || ''}`);
   };
 
   return (
@@ -99,8 +126,8 @@ export default function PatientBulletinModal({
         style={{ 
           background: '#f8fafc', 
           width: '100%', 
-          maxWidth: '840px', 
-          maxHeight: '95vh', 
+          maxWidth: '820px', 
+          maxHeight: '94vh', 
           overflowY: 'auto', 
           padding: '1.25rem',
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
@@ -108,18 +135,18 @@ export default function PatientBulletinModal({
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Barra superior de ações (oculta na impressão) */}
+        {/* Barra superior de ações */}
         <div className="flex justify-between items-center mb-3 pb-3 border-b no-print" style={{ borderColor: 'var(--border)' }}>
-          <div className="flex items-center gap-2.5">
-            <div style={{ background: '#dbeafe', padding: '6px', borderRadius: '10px', color: '#2563eb' }}>
-              <Trophy size={20} />
+          <div className="flex items-center gap-2">
+            <div style={{ background: '#dbeafe', padding: '0.45rem', borderRadius: '10px' }}>
+              <Trophy size={18} color="#2563eb" />
             </div>
             <div>
-              <h2 className="text-sm font-bold text-slate-800 leading-tight">
-                Boletim de Saúde & Conquistas do Paciente
+              <h2 className="text-sm font-bold text-slate-800 m-0">
+                Boletim de Conquistas & Metas de Saúde
               </h2>
               <span className="text-xxs text-muted">
-                Impressão A4 / WhatsApp
+                Impressão A4 / PDF Oficial / WhatsApp
               </span>
             </div>
           </div>
@@ -138,10 +165,22 @@ export default function PatientBulletinModal({
 
             <button 
               type="button"
-              onClick={() => window.print()}
+              onClick={handleDownloadPdf}
+              disabled={isDownloadingPdf}
+              className="btn btn-outline"
+              style={{ padding: '0.45rem 0.9rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+              title="Baixar arquivo PDF nativo com alta fidelidade"
+            >
+              {isDownloadingPdf ? <Loader2 size={15} className="animate-spin" /> : <FileDown size={15} color="#2563eb" />}
+              <span>{isDownloadingPdf ? 'Gerando...' : 'Baixar PDF'}</span>
+            </button>
+
+            <button 
+              type="button"
+              onClick={handlePrint}
               className="btn btn-primary"
               style={{ padding: '0.45rem 1.1rem', fontSize: '0.82rem', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
-              title="Imprimir folha A4 ou salvar em PDF limpo"
+              title="Imprimir folha A4 ou salvar via navegador"
             >
               <Printer size={15} />
               <span>Imprimir A4 / PDF</span>
@@ -178,20 +217,17 @@ export default function PatientBulletinModal({
             </select>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setIsEditingNote(!isEditingNote)}
-              className="btn btn-outline"
-              style={{ padding: '0.25rem 0.65rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-            >
-              <Edit3 size={13} color="#2563eb" />
-              <span>{isEditingNote ? 'Fechar Edição do Recadinho' : 'Editar Recadinho da Equipe'}</span>
-            </button>
-          </div>
+          <button
+            type="button"
+            className="btn btn-outline"
+            style={{ padding: '0.3rem 0.7rem', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+            onClick={() => setIsEditingNote(!isEditingNote)}
+          >
+            <MessageSquareHeart size={13} color="#2563eb" />
+            <span>{customNote ? 'Editar Recado da Equipe' : '+ Escrever Recado p/ Paciente'}</span>
+          </button>
         </div>
 
-        {/* Painel de Edição do Recadinho Especial (quando ativado) */}
         {isEditingNote && (
           <div className="no-print bg-blue-50 border border-blue-200 p-3 rounded-xl mb-3 animate-in">
             <label className="text-xs font-bold text-blue-900 block mb-1">
@@ -209,7 +245,7 @@ export default function PatientBulletinModal({
         )}
 
         {/* Visualização Prévia do Documento Oficial A4 */}
-        <div style={{
+        <div id="printable-patient-bulletin-doc" className="printable-patient-bulletin-area" style={{
           background: '#ffffff',
           boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
           borderRadius: '12px',

@@ -341,11 +341,11 @@ svg {
 .shrink-0 { flex-shrink: 0; }
 .self-end { align-self: flex-end; }
 
-/* ================= REGRAS DE IMPRESSÃO PROFISSIONAL (A4 & PDF - 1 FOLHA) ================= */
+/* ================= REGRAS DE IMPRESSÃO PROFISSIONAL (A4 & PDF UNIVERSAL) ================= */
 @media print {
   @page {
     size: A4 portrait;
-    margin: 8mm 12mm !important;
+    margin: 8mm 10mm !important;
   }
 
   html, body {
@@ -356,7 +356,7 @@ svg {
     color: #000000 !important;
     font-size: 11pt;
     width: 100% !important;
-    height: 100% !important;
+    height: auto !important;
     overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -384,11 +384,16 @@ svg {
     height: 0 !important;
   }
 
-  /* Reset dos containers modais para não ocuparem espaço nem gerarem scroll */
+  /* Reset dos containers modais para não ocuparem espaço nem gerarem scroll ou cortes */
   .prescription-print-modal-overlay,
   .prescription-print-modal-container,
   .patient-bulletin-modal-overlay,
-  .patient-bulletin-modal-container {
+  .patient-bulletin-modal-container,
+  .transplant-modal-overlay,
+  .transplant-modal-container,
+  .reports-center-modal-overlay,
+  .reports-center-modal-container,
+  [role="dialog"] {
     position: static !important;
     background: transparent !important;
     backdrop-filter: none !important;
@@ -397,20 +402,32 @@ svg {
     padding: 0 !important;
     margin: 0 !important;
     max-height: none !important;
+    height: auto !important;
     overflow: visible !important;
     width: 100% !important;
   }
 
-  /* Torna estritamente visível a área do receituário médico e do boletim do paciente */
+  /* Torna estritamente visíveis todas as áreas homologadas de impressão do sistema */
+  .printable-area,
+  .printable-area *,
   .printable-prescription-area,
   .printable-prescription-area *,
   .printable-patient-bulletin-area,
-  .printable-patient-bulletin-area * {
+  .printable-patient-bulletin-area *,
+  .printable-transplant-area,
+  .printable-transplant-area *,
+  .report-print-container,
+  .report-print-container *,
+  .print-isolated-wrapper,
+  .print-isolated-wrapper * {
     visibility: visible !important;
   }
 
+  .printable-area,
   .printable-prescription-area,
-  .printable-patient-bulletin-area {
+  .printable-patient-bulletin-area,
+  .printable-transplant-area,
+  .report-print-container {
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
@@ -419,19 +436,19 @@ svg {
     margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
+    color: #000000 !important;
     border: none !important;
     box-shadow: none !important;
     z-index: 99999999 !important;
     display: block !important;
-    page-break-after: avoid !important;
-    page-break-before: avoid !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
+    overflow: visible !important;
   }
 
-  /* Folha A4 - rigorosamente 1 ÚNICA PÁGINA */
+  /* Folhas A4 padronizadas */
   .prescription-a4-sheet,
-  .patient-bulletin-a4-sheet {
+  .patient-bulletin-a4-sheet,
+  .transplant-a4-sheet,
+  .report-a4-sheet {
     border: none !important;
     box-shadow: none !important;
     margin: 0 auto !important;
@@ -439,29 +456,39 @@ svg {
     width: 100% !important;
     max-width: 100% !important;
     height: auto !important;
-    max-height: 260mm !important;
     min-height: 0 !important;
     display: block !important;
-    page-break-after: avoid !important;
-    page-break-before: avoid !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
     overflow: visible !important;
     background: #ffffff !important;
     color: #000000 !important;
     box-sizing: border-box !important;
   }
 
+  /* Quebras de páginas controladas e tabelas */
+  table {
+    page-break-inside: auto;
+  }
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  thead {
+    display: table-header-group !important;
+  }
+  tfoot {
+    display: table-footer-group !important;
+  }
+
+  .avoid-page-break,
   .prescription-a4-sheet div,
   .prescription-a4-sheet section,
-  .prescription-a4-sheet p,
-  .prescription-a4-sheet span,
   .patient-bulletin-a4-sheet div,
   .patient-bulletin-a4-sheet section,
-  .patient-bulletin-a4-sheet p,
-  .patient-bulletin-a4-sheet span {
+  .transplant-a4-sheet div,
+  .transplant-a4-sheet section {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
   }
 }
+
 
