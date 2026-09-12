@@ -307,7 +307,7 @@ export default function PrescriptionPdf({
 
         {/* Rodapé */}
         <View style={styles.footer}>
-          <Text>NexAi-NEFRO • Prontuário Eletrônico em Nuvem</Text>
+          <Text>Nex-Ai.NEFRO • Prontuário Eletrônico em Nuvem</Text>
           <Text>Documento Médico Oficial • Emissão Digital</Text>
         </View>
       </Page>

@@ -46,7 +46,7 @@ export default function ChangelogModal({ isOpen, onClose }) {
             </div>
             <div>
               <h2 className="text-xl font-bold">Notas de Versão (Release Notes)</h2>
-              <p className="text-muted text-xs">Histórico cronológico de melhorias e atualizações técnicas do NexAi-NEFRO</p>
+              <p className="text-muted text-xs">Histórico cronológico de melhorias e atualizações técnicas do Nex-Ai.NEFRO</p>
             </div>
           </div>
           <button 

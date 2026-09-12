@@ -57,7 +57,7 @@ export default function PatientBulletinModal({
     if (!bulletinData) return;
     const { pacienteNome, totalMetas, metasBatidas, taxaSucesso, cards } = bulletinData;
     
-    let text = `🎉 *Boletim de Saúde & Conquistas - NexAi-NEFRO*\n`;
+    let text = `🎉 *Boletim de Saúde & Conquistas - Nex-Ai.NEFRO*\n`;
     text += `Olá, *${pacienteNome}*! Aqui está o resultado dos seus exames mais recentes:\n\n`;
     text += `🏆 *Seu Desempenho:* ${metasBatidas} de ${totalMetas} metas alcançadas (${taxaSucesso}% de Sucesso!)\n\n`;
     

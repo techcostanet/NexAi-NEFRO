@@ -2563,7 +2563,7 @@ export default function PatientProfile() {
             <div id="printable-transplant-report-doc" className="printable-transplant-area transplant-a4-sheet p-6 bg-white border border-slate-200 rounded-xl flex flex-col gap-5 text-sm" style={{ fontFamily: 'system-ui, sans-serif' }}>
               <div className="border-b pb-4 flex justify-between items-start">
                 <div>
-                  <h1 className="text-xl font-black text-blue-900 tracking-tight">NexAi-NEFRO</h1>
+                  <h1 className="text-xl font-black text-blue-900 tracking-tight">Nex-Ai.NEFRO</h1>
                   <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider block">
                     Sistema de Prontuário Eletrônico em Nuvem
                   </span>
@@ -2658,7 +2658,7 @@ export default function PatientProfile() {
               <div className="mt-8 pt-8 border-t flex justify-between items-end text-center">
                 <div className="text-xs text-slate-400 text-left">
                   Prontuário autêntico emitido via Cloud Firestore<br />
-                  NexAi-NEFRO Software Médico
+                  Nex-Ai.NEFRO Software Médico
                 </div>
                 <div className="flex flex-col items-center">
                   <div className="w-56 border-b border-slate-400 mb-1" />

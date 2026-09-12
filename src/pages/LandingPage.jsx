@@ -26,7 +26,7 @@ import {
   HeartPulse,
   FileUp
 } from 'lucide-react';
-import KidneyIcon from '../components/KidneyIcon';
+import BrandLogo from '../components/BrandLogo';
 import { subscribeSystemPlans } from '../services/financialService';
 import CheckoutModal from '../components/CheckoutModal';
 import ChangelogModal from '../components/ChangelogModal';
@@ -72,7 +72,7 @@ export default function LandingPage() {
 
   const faqs = [
     {
-      q: "O NexAi-NEFRO é exclusivo para médicos nefrologistas?",
+      q: "O Nex-Ai.NEFRO é exclusivo para médicos nefrologistas?",
       a: "Sim. Toda a arquitetura clínica, os parâmetros de cálculo (Kt/V, cinética de ureia, clearance de creatinina), as tabelas laboratoriais (PTH, Fósforo, Ferritina, IST) e o controle de turnos de hemodiálise foram desenhados especificamente para a rotina do nefrologista e clínicas de diálise."
     },
     {
@@ -113,20 +113,12 @@ export default function LandingPage() {
       >
         <div className="container" style={{ maxWidth: '1200px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 1.5rem' }}>
           {/* Logo */}
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <div style={{ background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', padding: '0.55rem', borderRadius: '12px', color: 'white', display: 'flex', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)' }}>
-              <KidneyIcon size={24} color="#ffffff" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold text-lg tracking-tight" style={{ color: '#0f172a' }}>NexAi<span style={{ color: '#2563eb' }}>-NEFRO</span></span>
-                <span style={{ fontSize: '0.68rem', background: '#dbeafe', color: '#1e40af', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
-                  v{APP_VERSION}
-                </span>
-              </div>
-              <span className="text-xs text-muted block -mt-0.5">Software Médico Especializado</span>
-            </div>
-          </div>
+          <BrandLogo 
+            size="md"
+            versionBadge={`v${APP_VERSION}`}
+            subtitle="Software Médico Especializado"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          />
 
           {/* Links Centrais */}
           <div className="hidden md:flex items-center gap-6" style={{ fontSize: '0.88rem', fontWeight: '600', color: '#475569' }}>
@@ -380,12 +372,12 @@ export default function LandingPage() {
         <div className="container" style={{ maxWidth: '1100px' }}>
           
           <div className="text-center mb-12">
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Por que migrar para o NexAi-NEFRO?</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Por que migrar para o Nex-Ai.NEFRO?</span>
             <h2 className="text-3xl font-black text-slate-900 mt-1" style={{ letterSpacing: '-0.02em' }}>
               Projetado para eliminar planilhas lentas e prontuários genéricos
             </h2>
             <p className="text-muted text-sm max-w-2xl mx-auto mt-2">
-              Prontuários hospitalares genéricos não entendem de diálise, fluxo de sangue, bicarbonato e distúrbio mineral. O NexAi-NEFRO nasceu focado na nefrologia.
+              Prontuários hospitalares genéricos não entendem de diálise, fluxo de sangue, bicarbonato e distúrbio mineral. O Nex-Ai.NEFRO nasceu focado na nefrologia.
             </p>
           </div>
 
@@ -1121,7 +1113,7 @@ export default function LandingPage() {
                 Preocupado com o tempo para cadastrar todos os seus pacientes?
               </h3>
               <p style={{ fontSize: '0.94rem', color: '#475569', lineHeight: '1.6', margin: 0 }}>
-                No <strong>Plano Anual</strong>, você não precisa cadastrar nada do zero! Basta nos enviar suas listas ou relatórios em <strong>PDF ou planilhas em Excel (XLS)</strong>. Nossa equipe técnica realiza toda a importação inicial dos seus pacientes e o histórico completo de exames laboratoriais. Você já começa a usar o NexAi-NEFRO com seus prontuários 100% prontos desde o primeiro dia!
+                No <strong>Plano Anual</strong>, você não precisa cadastrar nada do zero! Basta nos enviar suas listas ou relatórios em <strong>PDF ou planilhas em Excel (XLS)</strong>. Nossa equipe técnica realiza toda a importação inicial dos seus pacientes e o histórico completo de exames laboratoriais. Você já começa a usar o Nex-Ai.NEFRO com seus prontuários 100% prontos desde o primeiro dia!
               </p>
             </div>
 
@@ -1263,9 +1255,8 @@ export default function LandingPage() {
       {/* ================= FOOTER ================= */}
       <footer style={{ background: '#0f172a', color: '#94a3b8', padding: '2.5rem 1.5rem', fontSize: '0.75rem', borderTop: '1px solid #1e293b' }}>
         <div className="container" style={{ maxWidth: '1200px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <div className="flex items-center gap-2">
-            <KidneyIcon size={18} color="#38bdf8" />
-            <strong className="text-white">NexAi-NEFRO</strong>
+          <div className="flex items-center gap-3">
+            <BrandLogo size="sm" textColor="light" />
             <span>• Plataforma Especializada em Nefrologia Clínica & Hemodiálise</span>
           </div>
 
@@ -1297,7 +1288,7 @@ export default function LandingPage() {
 
       {/* ================= BOTÃO FLUTUANTE DE WHATSAPP ================= */}
       <a 
-        href="https://wa.me/5531987624789?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20d%C3%BAvidas%20sobre%20o%20software%20NexAi-NEFRO" 
+        href="https://wa.me/5531987624789?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20d%C3%BAvidas%20sobre%20o%20software%20Nex-Ai.NEFRO" 
         target="_blank" 
         rel="noopener noreferrer"
         style={{

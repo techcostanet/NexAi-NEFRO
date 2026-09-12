@@ -151,7 +151,7 @@ export default function TransplantReportPdf({
         {/* Topo */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.brand}>NexAi-NEFRO</Text>
+            <Text style={styles.brand}>Nex-Ai.NEFRO</Text>
             <Text style={styles.subBrand}>Prontuário Eletrônico em Nuvem</Text>
             <Text style={{ fontSize: 7.5, color: '#475569', marginTop: 1 }}>
               Unidade: {patient.clinica || 'Centro Nefrológico'} • Hospital: {patient.hospital || 'Hospital Vinculado'}
@@ -239,7 +239,7 @@ export default function TransplantReportPdf({
         <View style={styles.signatureBlock}>
           <View>
             <Text style={{ fontSize: 7, color: '#94a3b8' }}>Prontuário autêntico e laudo emitido via Cloud Firestore</Text>
-            <Text style={{ fontSize: 7, color: '#94a3b8' }}>NexAi-NEFRO Software Médico</Text>
+            <Text style={{ fontSize: 7, color: '#94a3b8' }}>Nex-Ai.NEFRO Software Médico</Text>
           </View>
           <View style={{ alignItems: 'center' }}>
             <View style={styles.sigLine} />
@@ -250,7 +250,7 @@ export default function TransplantReportPdf({
 
         {/* Rodapé fixo */}
         <View style={styles.footer} fixed>
-          <Text>NexAi-NEFRO • Sistema Especializado de Nefrologia</Text>
+          <Text>Nex-Ai.NEFRO • Sistema Especializado de Nefrologia</Text>
           <Text render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`} />
         </View>
       </Page>

@@ -607,7 +607,7 @@ export default function DoctorProfile() {
             </span>
           </div>
           <p className="text-xs text-muted mb-4">
-            Personalize os tons de botões, destaques, ícones e cartões clínicos em toda a interface do NexAi-NEFRO.
+            Personalize os tons de botões, destaques, ícones e cartões clínicos em toda a interface do Nex-Ai.NEFRO.
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>

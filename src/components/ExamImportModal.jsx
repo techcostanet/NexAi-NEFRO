@@ -433,7 +433,7 @@ export default function ExamImportModal({
                       </button>
                     </th>
                     <th style={{ padding: '0.65rem 0.75rem', color: '#475569' }}>Nome no Arquivo</th>
-                    <th style={{ padding: '0.65rem 0.75rem', color: '#475569', minWidth: '220px' }}>Paciente Vinculado (NexAi)</th>
+                    <th style={{ padding: '0.65rem 0.75rem', color: '#475569', minWidth: '220px' }}>Paciente Vinculado (Nex-Ai.NEFRO)</th>
                     <th style={{ padding: '0.65rem 0.75rem', color: '#475569', width: '130px' }}>Data</th>
                     <th style={{ padding: '0.65rem 0.75rem', color: '#475569' }}>Exames Identificados</th>
                     <th style={{ padding: '0.65rem 0.75rem', width: '40px', textAlign: 'center' }}>Ações</th>

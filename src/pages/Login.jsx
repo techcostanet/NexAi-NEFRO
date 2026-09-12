@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import KidneyIcon from '../components/KidneyIcon';
+import BrandLogo from '../components/BrandLogo';
 import { APP_VERSION } from '../version';
 import { useAuth } from '../context/AuthContext';
 import { Loader2 } from 'lucide-react';
@@ -47,23 +47,13 @@ export default function Login() {
         }}
       >
         <div className="flex flex-col items-center mb-6">
-          <div 
-            style={{ 
-              background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
-              padding: '1rem', 
-              borderRadius: '50%', 
-              marginBottom: '1rem', 
-              color: 'white',
-              boxShadow: '0 8px 16px rgba(37, 99, 235, 0.25)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <KidneyIcon size={34} color="white" />
-          </div>
-          <h1 className="text-2xl font-bold text-center" style={{ letterSpacing: '-0.3px' }}>NexAi-NEFRO</h1>
-          <p className="text-muted text-sm mt-0.5">Gestão Nefrológica</p>
+          <BrandLogo 
+            size="xl"
+            direction="vertical"
+            subtitle="Software de Gestão Nefrológica Especializada"
+            className="cursor-pointer"
+            onClick={() => navigate('/')}
+          />
         </div>
 
         <form onSubmit={handleLogin} className="flex flex-col gap-3.5">

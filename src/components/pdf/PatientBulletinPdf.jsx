@@ -225,7 +225,7 @@ export default function PatientBulletinPdf({
         <View style={styles.signatureSection}>
           <View>
             <Text style={{ fontSize: 7.5, color: '#64748b' }}>Cuidar da saúde é uma vitória diária!</Text>
-            <Text style={{ fontSize: 7, color: '#94a3b8' }}>NexAi-NEFRO • Acompanhamento Dialítico Integrado</Text>
+            <Text style={{ fontSize: 7, color: '#94a3b8' }}>Nex-Ai.NEFRO • Acompanhamento Dialítico Integrado</Text>
           </View>
           <View style={{ alignItems: 'center' }}>
             <View style={styles.sigLine} />
@@ -237,7 +237,7 @@ export default function PatientBulletinPdf({
         {/* Rodapé fixo */}
         <View style={styles.footer} fixed>
           <Text>Boletim de Orientação em Saúde • Não substitui consulta médica</Text>
-          <Text>NexAi-NEFRO</Text>
+          <Text>Nex-Ai.NEFRO</Text>
         </View>
       </Page>
     </Document>

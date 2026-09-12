@@ -228,7 +228,7 @@ export default function PrescriptionPrintDocument({
 
         {/* Rodapé Institucional Discreto */}
         <div className="prescription-footer" style={{ textAlign: 'center', marginTop: '10px', fontSize: '0.65rem', color: '#94a3b8', borderTop: '1px dotted #e2e8f0', paddingTop: '3px' }}>
-          {doctorClinica} {doctorTelefone && `• Tel: ${doctorTelefone}`} • NexAi-NEFRO Prontuário em Nuvem
+          {doctorClinica} {doctorTelefone && `• Tel: ${doctorTelefone}`} • Nex-Ai.NEFRO Prontuário em Nuvem
         </div>
       </div>
     </div>

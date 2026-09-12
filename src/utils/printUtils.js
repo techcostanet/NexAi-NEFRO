@@ -6,7 +6,7 @@
  * e conflitos de temas escuros/claros no navegador.
  */
 
-export function printElement(elementOrId, documentTitle = 'NexAi-NEFRO - Documento') {
+export function printElement(elementOrId, documentTitle = 'Nex-Ai.NEFRO - Documento') {
   return new Promise((resolve) => {
     let targetEl = null;
 

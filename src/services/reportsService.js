@@ -12,7 +12,7 @@ export const REPORT_CATEGORIES = [
 ];
 
 /**
- * Catálogo Completo dos 20 Relatórios Especializados do NexAi-NEFRO
+ * Catálogo Completo dos 20 Relatórios Especializados do Nex-Ai.NEFRO
  */
 export const REPORTS_CATALOG = [
   // ================= 1. GESTÃO POPULACIONAL & CENSO =================
@@ -297,7 +297,7 @@ export const REPORTS_CATALOG = [
     id: 'historico_receitas',
     title: 'Histórico e Rastreabilidade de Receituários Emitidos',
     category: 'farmacia_infeccao',
-    description: 'Auditoria de receitas simples e de controle especial emitidas através da plataforma NexAi-NEFRO.',
+    description: 'Auditoria de receitas simples e de controle especial emitidas através da plataforma Nex-Ai.NEFRO.',
     columns: [
       { id: 'dataEmissao', header: 'Data Emissão', width: 14 },
       { id: 'numeroReceita', header: 'Nº Receita', width: 16 },
@@ -1377,7 +1377,7 @@ export function exportReportToExcel(report, rows = [], kpis = [], metadata = {})
 
   // Cabeçalho institucional do Excel
   const aoa = [
-    ['NexAi-NEFRO — PLATAFORMA ESPECIALIZADA EM GESTÃO CLÍNICA NEFROLÓGICA'],
+    ['Nex-Ai.NEFRO — PLATAFORMA ESPECIALIZADA EM GESTÃO CLÍNICA NEFROLÓGICA'],
     [report.title.toUpperCase()],
     [`Emitido em: ${emissionDate}`, `Médico Responsável: ${doctorName} ${doctorCrm}`, `Clínica: ${metadata.clinica || 'Geral'}`],
     [`Filtros Aplicados: ${metadata.filtersDesc || 'Todos os registros do serviço'}`],
@@ -1418,7 +1418,7 @@ export function exportReportToExcel(report, rows = [], kpis = [], metadata = {})
   // Gerar nome de arquivo amigável e limpo
   const cleanId = report.id.replace(/_/g, '-');
   const dateStamp = new Date().toISOString().slice(0, 10);
-  const fileName = `nexai-relatorio-${cleanId}-${dateStamp}.xlsx`;
+  const fileName = `nex-ai-nefro-relatorio-${cleanId}-${dateStamp}.xlsx`;
 
   XLSX.writeFile(wb, fileName);
 }

@@ -42,7 +42,7 @@ async function main() {
   const changeMessage = filteredArgs.join(' ') || 'Melhorias gerais e correções no sistema';
 
   console.log('=====================================================');
-  console.log('🚀 NexAi-NEFRO - Pipeline Automático de Release');
+  console.log('🚀 Nex-Ai.NEFRO - Pipeline Automático de Release');
   console.log('=====================================================');
 
   // 1. Atualizar package.json
@@ -81,7 +81,7 @@ async function main() {
       fs.appendFileSync(changelogPath, newEntry);
     }
   } else {
-    fs.writeFileSync(changelogPath, `# Registro de Mudanças (Changelog) - NexAi-NEFRO\n${newEntry}`);
+    fs.writeFileSync(changelogPath, `# Registro de Mudanças (Changelog) - Nex-Ai.NEFRO\n${newEntry}`);
   }
   console.log(`📝 CHANGELOG.md atualizado com sucesso.`);
 

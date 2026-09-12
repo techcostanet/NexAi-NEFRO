@@ -9,6 +9,7 @@ import DoctorDashboard from './pages/DoctorDashboard';
 import DoctorProfile from './pages/DoctorProfile';
 import PatientProfile from './pages/PatientProfile';
 import ChangelogModal from './components/ChangelogModal';
+import BrandLogo from './components/BrandLogo';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { APP_VERSION } from './version';
 import { Sparkles, Loader2 } from 'lucide-react';
@@ -64,7 +65,8 @@ function AppContent() {
           gap: '12px',
           flexWrap: 'wrap'
         }}>
-          <span>NexAi-NEFRO • Gestão Nefrológica</span>
+          <BrandLogo size="xs" />
+          <span>• Gestão Nefrológica</span>
           <span>•</span>
           <button 
             onClick={() => setIsChangelogOpen(true)}

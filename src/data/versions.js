@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.53",
+    "date": "12/09/2026",
+    "title": "Nova identidade visual e logomarca 3D interativa com efeito hover e padroniza...",
+    "highlights": [
+      "✨ Nova identidade visual e logomarca 3D interativa com efeito hover e padronizacao global do nome Nex-Ai.NEFRO"
+    ]
+  },
+  {
     "version": "1.1.52",
     "date": "12/09/2026",
     "title": "Indicadores laboratoriais tricolores e badges compactos no historico de coletas",

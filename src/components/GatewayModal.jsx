@@ -36,7 +36,7 @@ export default function GatewayModal({ isOpen, onClose, currentConfig = {}, admi
         ativo: currentConfig.pix?.ativo ?? true,
         tipoChave: currentConfig.pix?.tipoChave || 'CNPJ',
         chavePix: currentConfig.pix?.chavePix || '12.345.678/0001-90',
-        titular: currentConfig.pix?.titular || 'NexAi Soluções em Saúde LTDA',
+        titular: currentConfig.pix?.titular || 'Nex-Ai.NEFRO Soluções em Saúde LTDA',
         banco: currentConfig.pix?.banco || 'Banco do Brasil / Cora'
       },
       cartao: {
@@ -189,7 +189,7 @@ export default function GatewayModal({ isOpen, onClose, currentConfig = {}, admi
                 <input 
                   type="text" 
                   className="input-field" 
-                  placeholder="NexAi Soluções em Saúde LTDA"
+                  placeholder="Nex-Ai.NEFRO Soluções em Saúde LTDA"
                   value={formData.pix.titular}
                   onChange={(e) => setFormData(prev => ({
                     ...prev,

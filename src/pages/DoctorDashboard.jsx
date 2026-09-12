@@ -34,6 +34,7 @@ import PatientFormModal from '../components/PatientFormModal';
 import ChangelogModal from '../components/ChangelogModal';
 import ExamImportModal from '../components/ExamImportModal';
 import ReportsCenterModal from '../components/reports/ReportsCenterModal';
+import BrandLogo from '../components/BrandLogo';
 import { useAuth } from '../context/AuthContext';
 
 export default function DoctorDashboard() {
@@ -240,18 +241,25 @@ export default function DoctorDashboard() {
       
       {/* Cabeçalho */}
       <header className="flex justify-between items-center mt-3 mb-4 flex-wrap gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>
-              Olá, {doctor.nome || 'Médico'}
-            </h1>
-            <span style={{ fontSize: '0.72rem', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' }}>
-              100% Cloud
-            </span>
+        <div className="flex items-center gap-3">
+          <BrandLogo 
+            size="md" 
+            showText={false} 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
+          />
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>
+                Olá, {doctor.nome || 'Médico'}
+              </h1>
+              <span style={{ fontSize: '0.72rem', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' }}>
+                Nex-Ai.NEFRO
+              </span>
+            </div>
+            <p className="text-muted text-sm mt-0.5">
+              {doctor.especialidade || 'Nefrologia Clínica e Hemodiálise'} • CRM {doctor.crm}/{doctor.ufCrm}
+            </p>
           </div>
-          <p className="text-muted text-sm mt-0.5">
-            {doctor.especialidade || 'Nefrologia Clínica e Hemodiálise'} • CRM {doctor.crm}/{doctor.ufCrm}
-          </p>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

@@ -59,7 +59,7 @@ export const DEFAULT_GATEWAY_CONFIG = {
     ativo: true,
     tipoChave: "CNPJ",
     chavePix: "12.345.678/0001-90",
-    titular: "NexAi Soluções em Saúde LTDA",
+    titular: "Nex-Ai.NEFRO Soluções em Saúde LTDA",
     banco: "Banco do Brasil / Cora"
   },
   cartao: {

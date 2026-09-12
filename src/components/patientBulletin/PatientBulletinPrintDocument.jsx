@@ -293,7 +293,7 @@ export default function PatientBulletinPrintDocument({
           color: '#64748b'
         }}>
           <div>
-            <span>Emitido em: <strong>{new Date().toLocaleDateString('pt-BR')}</strong> • NexAi-NEFRO</span>
+            <span>Emitido em: <strong>{new Date().toLocaleDateString('pt-BR')}</strong> • Nex-Ai.NEFRO</span>
             <span style={{ display: 'block', color: '#94a3b8', fontSize: '8px' }}>
               Este boletim é um material educativo de apoio e reforço positivo ao tratamento.
             </span>

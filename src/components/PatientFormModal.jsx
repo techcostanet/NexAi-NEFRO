@@ -53,7 +53,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
   const [customEtiologia, setCustomEtiologia] = useState(false);
   const [formData, setFormData] = useState({
     nome: '',
-    clinica: 'Clínica Nefrológica NexAi',
+    clinica: 'Clínica Nefrológica Nex-Ai.NEFRO',
     hospital: 'Hospital de Nefrologia',
     turno: '3º Turno',
     etiologiaDRC: 'Diabetes Mellitus / Nefropatia Diabética',
@@ -85,7 +85,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
   useEffect(() => {
     if (!isOpen) return;
 
-    const defaultClinic = (locaisAtuacao && locaisAtuacao.length > 0) ? locaisAtuacao[0].nome : 'Clínica Nefrológica NexAi';
+    const defaultClinic = (locaisAtuacao && locaisAtuacao.length > 0) ? locaisAtuacao[0].nome : 'Clínica Nefrológica Nex-Ai.NEFRO';
     if (patientToEdit) {
       const isKnown = locaisAtuacao.some(l => l.nome === patientToEdit.clinica);
       setCustomClinic(!isKnown && !!patientToEdit.clinica);
@@ -325,7 +325,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                     <input 
                       type="text" 
                       className="input-field" 
-                      placeholder="Ex: Centro de Diálise NexAi"
+                      placeholder="Ex: Centro de Diálise Nex-Ai.NEFRO"
                       value={formData.clinica}
                       onChange={(e) => setFormData(prev => ({ ...prev, clinica: e.target.value }))}
                     />

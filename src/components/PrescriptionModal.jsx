@@ -208,7 +208,7 @@ export default function PrescriptionModal({
           ufCrm: crmUf,
           rqe: doctorInfo?.rqe || '45890',
           especialidade: doctorInfo?.especialidade || 'Nefrologia Clínica',
-          clinica: doctorInfo?.clinicaPrincipal || patient.clinica || 'Clínica Nefrológica NexAi',
+          clinica: doctorInfo?.clinicaPrincipal || patient.clinica || 'Clínica Nefrológica Nex-Ai.NEFRO',
           endereco: doctorInfo?.endereco || 'São Paulo - SP',
           telefone: doctorInfo?.telefone || ''
         },

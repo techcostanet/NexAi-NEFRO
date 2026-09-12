@@ -51,6 +51,7 @@ import { logAuditEvent, subscribeAuditLogs } from '../services/auditService';
 import { useAuth } from '../context/AuthContext';
 import PlanModal from '../components/PlanModal';
 import GatewayModal from '../components/GatewayModal';
+import BrandLogo from '../components/BrandLogo';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -536,18 +537,22 @@ export default function AdminDashboard() {
       
       {/* Cabeçalho do Super Admin */}
       <header className="flex justify-between items-center mt-3 mb-5 flex-wrap gap-4">
-        <div className="flex items-center gap-3">
-          <div style={{ padding: '10px', background: 'linear-gradient(135deg, #7c3aed, #4f46e5)', borderRadius: '14px', color: 'white', boxShadow: '0 8px 16px rgba(124, 58, 237, 0.25)' }}>
-            <Shield size={26} />
-          </div>
+        <div className="flex items-center gap-3.5">
+          <BrandLogo 
+            size="lg" 
+            showText={false}
+            onClick={() => navigate('/')}
+          />
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>Painel Administrador</h1>
+              <span className="font-extrabold text-2xl tracking-tight" style={{ color: '#0f172a' }}>
+                Nex-<span style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6, #d946ef)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 900 }}>Ai</span>.NEFRO
+              </span>
               <span style={{ fontSize: '0.72rem', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' }}>
-                100% Cloud Firestore
+                Super Admin
               </span>
             </div>
-            <p className="text-muted text-sm mt-0.5">Gestão de Licenças, Auditoria e Finanças</p>
+            <p className="text-muted text-sm mt-0.5">Gestão de Licenças Médicas, Auditoria & Finanças</p>
           </div>
         </div>
 

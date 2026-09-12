@@ -94,8 +94,8 @@ export default function ReportPrintDocument({
       }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '18px', fontWeight: '800', color: '#0369a1', letterSpacing: '-0.5px' }}>
-              NexAi<span style={{ color: '#0284c7' }}>-NEFRO</span>
+            <span style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.5px' }}>
+              Nex-<span style={{ color: '#0284c7', fontWeight: '900' }}>Ai</span>.NEFRO
             </span>
             <span style={{
               background: '#e0f2fe',
@@ -251,7 +251,7 @@ export default function ReportPrintDocument({
       }}>
         <div>
           <div><strong>Total de registros impressos:</strong> {rows.length}</div>
-          <div>Documento gerado eletronicamente em {emissionDate} pela plataforma NexAi-NEFRO.</div>
+          <div>Documento gerado eletronicamente em {emissionDate} pela plataforma Nex-Ai.NEFRO.</div>
           <div style={{ color: '#94a3b8', fontSize: '8px' }}>Autenticidade rastreada no Cloud Firestore • Uso exclusivo institucional</div>
         </div>
 
