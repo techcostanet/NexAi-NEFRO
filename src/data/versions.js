@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.54",
+    "date": "12/09/2026",
+    "title": "Centralizacao do nome no login e inclusao do simbolo de nefrologia no centro ...",
+    "highlights": [
+      "✨ Centralizacao do nome no login e inclusao do simbolo de nefrologia no centro da logomarca 3D"
+    ]
+  },
+  {
     "version": "1.1.53",
     "date": "12/09/2026",
     "title": "Nova identidade visual e logomarca 3D interativa com efeito hover e padroniza...",

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 
 /**
- * 🌟 BrandIcon: Ícone 3D Isométrico com Cruz Médica central e Efeito Hover Interativo
- * Baseado na nova identidade visual: Cubo 3D em gradiente Azul/Púrpura/Magenta
- * com faces facetadas, cruz médica central (+) branca e brilho suave.
+ * 🌟 BrandIcon: Ícone 3D Isométrico com Símbolo de Nefrologia (Rins Anatômicos) e Efeito Hover Interativo
+ * Integra o Cubo 3D Isométrico facetado em gradiente vibrante com a silhueta médica dos rins no centro.
  */
 export function BrandIcon({ size = 36, className = '', isHovered = false }) {
   return (
@@ -55,13 +54,13 @@ export function BrandIcon({ size = 36, className = '', isHovered = false }) {
             <stop offset="100%" stopColor="#d946ef" />
           </linearGradient>
 
-          {/* Sombra suave interna da cruz */}
-          <filter id="crossGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" floodColor="#0f172a" floodOpacity="0.3" />
+          {/* Sombra suave e contraste do símbolo nefrológico */}
+          <filter id="nefroGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="1.5" stdDeviation="1.8" floodColor="#0f172a" floodOpacity="0.45" />
           </filter>
         </defs>
 
-        {/* Grupo do Cubo Isométrico */}
+        {/* Grupo do Cubo Isométrico 3D */}
         <g strokeLinejoin="round" strokeLinecap="round">
           {/* Face Superior (Top Diamond) */}
           <path
@@ -100,33 +99,42 @@ export function BrandIcon({ size = 36, className = '', isHovered = false }) {
           />
         </g>
 
-        {/* Cruz Médica (+) Central Branca */}
+        {/* Símbolo da Nefrologia (Rins Anatômicos) Central */}
         <g 
-          filter="url(#crossGlow)"
+          filter="url(#nefroGlow)"
+          transform="translate(50, 49) scale(2.2) translate(-12, -12.35)"
           style={{
-            transform: isHovered ? 'scale(1.08)' : 'scale(1)',
-            transformOrigin: '50px 50px',
-            transition: 'transform 0.3s ease'
+            transformOrigin: '50px 49px',
+            transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)'
           }}
         >
-          {/* Barra Horizontal */}
-          <rect
-            x="36"
-            y="46.5"
-            width="28"
-            height="7"
-            rx="3.5"
-            fill="#ffffff"
+          {/* Rim Esquerdo */}
+          <path 
+            d="M7.2 4.2C4.5 4.5 3 7.2 3 11.2C3 15.5 5.2 18.8 8.2 18.8C10.2 18.8 10.8 16 9.8 13.8C8.8 11.6 9.8 7.5 8.8 5.6C8.4 4.8 7.8 4.3 7.2 4.2Z" 
+            fill="rgba(255, 255, 255, 0.28)"
+            stroke="#ffffff" 
+            strokeWidth="2.1" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
           />
-          {/* Barra Vertical */}
-          <rect
-            x="46.5"
-            y="36"
-            width="7"
-            height="28"
-            rx="3.5"
-            fill="#ffffff"
+          
+          {/* Rim Direito */}
+          <path 
+            d="M16.8 4.2C19.5 4.5 21 7.2 21 11.2C21 15.5 18.8 18.8 15.8 18.8C13.8 18.8 13.2 16 14.2 13.8C15.2 11.6 14.2 7.5 15.2 5.6C15.6 4.8 16.2 4.3 16.8 4.2Z" 
+            fill="rgba(255, 255, 255, 0.28)"
+            stroke="#ffffff" 
+            strokeWidth="2.1" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
           />
+          
+          {/* Artéria / Veia Renal central */}
+          <path d="M9.8 12.5C11 12.5 11.5 13 12 14" stroke="#ffffff" strokeWidth="2.0" strokeLinecap="round" opacity="0.95" />
+          <path d="M14.2 12.5C13 12.5 12.5 13 12 14" stroke="#ffffff" strokeWidth="2.0" strokeLinecap="round" opacity="0.95" />
+          
+          {/* Ureteres */}
+          <path d="M11.5 14.5V20.5" stroke="#ffffff" strokeWidth="2.0" strokeLinecap="round" opacity="0.9" />
+          <path d="M12.5 14.5V20.5" stroke="#ffffff" strokeWidth="2.0" strokeLinecap="round" opacity="0.9" />
         </g>
       </svg>
     </div>
@@ -135,7 +143,7 @@ export function BrandIcon({ size = 36, className = '', isHovered = false }) {
 
 /**
  * 🏷️ BrandLogo: Componente Oficial da Marca Nex-Ai.NEFRO
- * Exibe a logomarca completa (Ícone 3D + Tipografia Nex-Ai.NEFRO) com animação ao passar o mouse.
+ * Exibe a logomarca completa (Ícone 3D com Rins + Tipografia Nex-Ai.NEFRO) com alinhamento perfeito (horizontal ou vertical).
  */
 export default function BrandLogo({
   size = 'md',             // 'sm' | 'md' | 'lg' | 'xl'
@@ -155,38 +163,64 @@ export default function BrandLogo({
     sm: { icon: 28, text: 'text-base', sub: 'text-xs', gap: 'gap-2' },
     md: { icon: 36, text: 'text-xl', sub: 'text-xs', gap: 'gap-2.5' },
     lg: { icon: 48, text: 'text-2xl', sub: 'text-sm', gap: 'gap-3' },
-    xl: { icon: 60, text: 'text-3xl', sub: 'text-base', gap: 'gap-3.5' }
+    xl: { icon: 64, text: 'text-3xl', sub: 'text-sm', gap: 'gap-3.5' }
   };
 
   const currentSize = sizeMap[size] || sizeMap.md;
 
   const isLight = textColor === 'light';
   const baseTextColor = isLight ? '#ffffff' : '#0f172a';
+  const isVertical = direction === 'vertical';
 
   return (
     <div
-      className={`brand-logo-container flex ${direction === 'vertical' ? 'flex-col items-center text-center' : 'items-center'} ${currentSize.gap} ${className}`}
+      className={`brand-logo-container flex ${isVertical ? 'flex-col items-center justify-center text-center' : 'items-center'} ${currentSize.gap} ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={onClick}
       style={{
         cursor: onClick ? 'pointer' : 'default',
         userSelect: 'none',
-        display: 'inline-flex'
+        display: isVertical ? 'flex' : 'inline-flex',
+        flexDirection: isVertical ? 'column' : 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: isVertical ? 'center' : 'left',
+        width: isVertical ? '100%' : 'auto'
       }}
     >
-      {/* Ícone 3D com Efeito Hover */}
+      {/* Ícone 3D com Símbolo de Nefrologia */}
       <BrandIcon size={currentSize.icon} isHovered={isHovered} />
 
       {/* Tipografia da Marca Nex-Ai.NEFRO */}
       {showText && (
-        <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.15 }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+        <div 
+          style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            lineHeight: 1.15,
+            alignItems: isVertical ? 'center' : 'flex-start',
+            justifyContent: 'center',
+            textAlign: isVertical ? 'center' : 'left',
+            width: isVertical ? '100%' : 'auto'
+          }}
+        >
+          <div 
+            style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              justifyContent: isVertical ? 'center' : 'flex-start',
+              gap: '6px',
+              textAlign: isVertical ? 'center' : 'left',
+              width: isVertical ? '100%' : 'auto'
+            }}
+          >
             <span
               className={`font-extrabold tracking-tight ${currentSize.text}`}
               style={{
                 color: baseTextColor,
                 letterSpacing: '-0.4px',
+                textAlign: isVertical ? 'center' : 'left',
                 transition: 'color 0.25s ease'
               }}
             >
@@ -229,8 +263,11 @@ export default function BrandLogo({
               className={currentSize.sub}
               style={{
                 color: isLight ? 'rgba(255,255,255,0.7)' : 'var(--text-muted, #64748b)',
-                marginTop: '2px',
-                fontWeight: 500
+                marginTop: '5px',
+                fontWeight: 500,
+                textAlign: isVertical ? 'center' : 'left',
+                display: 'block',
+                width: isVertical ? '100%' : 'auto'
               }}
             >
               {subtitle}

@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.54] - 2026-09-12
+### Alterações
+- Centralizacao do nome no login e inclusao do simbolo de nefrologia no centro da logomarca 3D
+
 ## [1.1.53] - 2026-09-12
 ### Alterações
 - Nova identidade visual e logomarca 3D interativa com efeito hover e padronizacao global do nome Nex-Ai.NEFRO

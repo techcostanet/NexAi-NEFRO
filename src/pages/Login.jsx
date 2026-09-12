@@ -46,12 +46,12 @@ export default function Login() {
           borderRadius: '24px'
         }}
       >
-        <div className="flex flex-col items-center mb-6">
+        <div className="flex flex-col items-center justify-center text-center mb-6 w-full">
           <BrandLogo 
             size="xl"
             direction="vertical"
             subtitle="Software de Gestão Nefrológica Especializada"
-            className="cursor-pointer"
+            className="cursor-pointer justify-center text-center"
             onClick={() => navigate('/')}
           />
         </div>
