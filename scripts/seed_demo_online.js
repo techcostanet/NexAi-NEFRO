@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, setDoc, writeBatch } from "firebase/firestore";
+import { getFirestore, collection, doc, setDoc, writeBatch, getDocs, query, where } from "firebase/firestore";
 import { DEMO_PATIENTS_DATA } from "../src/data/demoPatients.js";
 import { DEFAULT_DOCTORS } from "../src/services/doctorService.js";
 
@@ -31,18 +31,37 @@ async function main() {
       console.log(`  -> Médico cadastrado: ${doctor.nome} (${doctor.id})`);
     }
 
-    // 2. Cadastrar pacientes de demonstração
-    console.log(`📋 Semeando ${DEMO_PATIENTS_DATA.length} pacientes de demonstração clínica...`);
-    const batch = writeBatch(db);
-    DEMO_PATIENTS_DATA.forEach(patient => {
-      const pRef = doc(db, "patients", patient.id);
-      batch.set(pRef, {
-        ...patient,
-        atualizadoEm: new Date().toISOString()
-      }, { merge: true });
+    // 2. Limpar pacientes obsoletos do Dr. Marcelo
+    const patientsCol = collection(db, "patients");
+    const snap = await getDocs(query(patientsCol, where("doctorId", "==", "dr-marcelo")));
+    const newPatientIds = new Set(DEMO_PATIENTS_DATA.map(p => p.id));
+    const deleteBatch = writeBatch(db);
+    let deleteCount = 0;
+    snap.docs.forEach(d => {
+      if (!newPatientIds.has(d.id)) {
+        deleteBatch.delete(d.ref);
+        deleteCount++;
+      }
     });
+    if (deleteCount > 0) await deleteBatch.commit();
 
-    await batch.commit();
+    // 3. Cadastrar os 60 pacientes de demonstração
+    console.log(`📋 Semeando ${DEMO_PATIENTS_DATA.length} pacientes de demonstração clínica...`);
+    const CHUNK_SIZE = 50;
+    for (let i = 0; i < DEMO_PATIENTS_DATA.length; i += CHUNK_SIZE) {
+      const chunk = DEMO_PATIENTS_DATA.slice(i, i + CHUNK_SIZE);
+      const batch = writeBatch(db);
+      chunk.forEach(patient => {
+        const pRef = doc(db, "patients", patient.id);
+        batch.set(pRef, {
+          ...patient,
+          doctorId: "dr-marcelo",
+          atualizadoEm: new Date().toISOString()
+        }, { merge: true });
+      });
+      await batch.commit();
+    }
+
     console.log("✅ Pacientes de demonstração gravados no Firestore com sucesso!");
     process.exit(0);
   } catch (err) {

@@ -73,49 +73,58 @@ async function main() {
   
   if (fs.existsSync(changelogPath)) {
     const existing = fs.readFileSync(changelogPath, 'utf8');
-    const headerEnd = existing.indexOf('\n## [');
-    if (headerEnd !== -1) {
-      const updated = existing.slice(0, headerEnd) + newEntry + existing.slice(headerEnd);
-      fs.writeFileSync(changelogPath, updated);
+    if (existing.includes(`## [${newVersion}]`)) {
+      console.log(`ℹ️ Entrada [${newVersion}] já presente no CHANGELOG.md`);
     } else {
-      fs.appendFileSync(changelogPath, newEntry);
+      const headerEnd = existing.indexOf('\n## [');
+      if (headerEnd !== -1) {
+        const updated = existing.slice(0, headerEnd) + newEntry + existing.slice(headerEnd);
+        fs.writeFileSync(changelogPath, updated);
+      } else {
+        fs.appendFileSync(changelogPath, newEntry);
+      }
+      console.log(`📝 CHANGELOG.md atualizado com sucesso.`);
     }
   } else {
     fs.writeFileSync(changelogPath, `# Registro de Mudanças (Changelog) - Nex-Ai.NEFRO\n${newEntry}`);
+    console.log(`📝 CHANGELOG.md criado com sucesso.`);
   }
-  console.log(`📝 CHANGELOG.md atualizado com sucesso.`);
 
   // 3.5. Sincronizar src/data/versions.js (Notas de Versão / Release Notes no Modal da Aplicação)
   const versionsDataPath = path.join(rootDir, 'src', 'data', 'versions.js');
   if (fs.existsSync(versionsDataPath)) {
-    const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const year = today.getFullYear();
-    const datePt = `${day}/${month}/${year}`;
-
-    // Divide mensagem em tópicos caso contenha separadores ou usa como destaque
-    const rawParts = changeMessage.split(/(?:;|\. )+/).map(p => p.trim()).filter(Boolean);
-    const title = rawParts[0].length > 80 ? rawParts[0].slice(0, 77) + '...' : rawParts[0];
-    const highlights = rawParts.length > 1 
-      ? rawParts.map(r => r.startsWith('•') || r.startsWith('-') ? r.replace(/^[-•]\s*/, '') : `✨ ${r}`)
-      : [`✨ ${changeMessage}`];
-
-    const newVersionObject = {
-      version: newVersion,
-      date: datePt,
-      title: title,
-      highlights: highlights
-    };
-
     let versionsContent = fs.readFileSync(versionsDataPath, 'utf8');
-    const arrayStart = versionsContent.indexOf('export const SYSTEM_CHANGELOG = [');
-    if (arrayStart !== -1) {
-      const insertionPoint = arrayStart + 'export const SYSTEM_CHANGELOG = ['.length;
-      const formattedEntry = `\n  ${JSON.stringify(newVersionObject, null, 2).replace(/\n/g, '\n  ')},`;
-      versionsContent = versionsContent.slice(0, insertionPoint) + formattedEntry + versionsContent.slice(insertionPoint);
-      fs.writeFileSync(versionsDataPath, versionsContent);
-      console.log(`📜 src/data/versions.js sincronizado com sucesso com a v${newVersion}.`);
+    if (versionsContent.includes(`"version": "${newVersion}"`)) {
+      console.log(`ℹ️ Entrada [${newVersion}] já presente em src/data/versions.js`);
+    } else {
+      const today = new Date();
+      const day = String(today.getDate()).padStart(2, '0');
+      const month = String(today.getMonth() + 1).padStart(2, '0');
+      const year = today.getFullYear();
+      const datePt = `${day}/${month}/${year}`;
+
+      // Divide mensagem em tópicos caso contenha separadores ou usa como destaque
+      const rawParts = changeMessage.split(/(?:;|\. )+/).map(p => p.trim()).filter(Boolean);
+      const title = rawParts[0].length > 80 ? rawParts[0].slice(0, 77) + '...' : rawParts[0];
+      const highlights = rawParts.length > 1 
+        ? rawParts.map(r => r.startsWith('•') || r.startsWith('-') ? r.replace(/^[-•]\s*/, '') : `✨ ${r}`)
+        : [`✨ ${changeMessage}`];
+
+      const newVersionObject = {
+        version: newVersion,
+        date: datePt,
+        title: title,
+        highlights: highlights
+      };
+
+      const arrayStart = versionsContent.indexOf('export const SYSTEM_CHANGELOG = [');
+      if (arrayStart !== -1) {
+        const insertionPoint = arrayStart + 'export const SYSTEM_CHANGELOG = ['.length;
+        const formattedEntry = `\n  ${JSON.stringify(newVersionObject, null, 2).replace(/\n/g, '\n  ')},`;
+        versionsContent = versionsContent.slice(0, insertionPoint) + formattedEntry + versionsContent.slice(insertionPoint);
+        fs.writeFileSync(versionsDataPath, versionsContent);
+        console.log(`📜 src/data/versions.js sincronizado com sucesso com a v${newVersion}.`);
+      }
     }
   }
 

@@ -36,7 +36,7 @@ const SYSTEM_ACCOUNTS = [
     passwords: ["demo123", "123456", "demo", "123", "senha123"],
     role: "doctor",
     doctorId: "dr-marcelo",
-    nome: "Dr. Marcelo Ramos (Demo)"
+    nome: "Dr. Marcelo Ramos"
   },
   {
     email: "dra.gisele@nefroapp.com",

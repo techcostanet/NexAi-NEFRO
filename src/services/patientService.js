@@ -460,7 +460,22 @@ export async function deletePatient(id) {
 export async function seedDemoPatientsToFirestore(targetDoctorId = 'dr-marcelo') {
   if (!db) throw new Error("Cloud Firestore não conectado.");
 
+  // 1. Busca pacientes legados existentes do médico para limpar registros obsoletos
+  const colRef = collection(db, PATIENTS_COLLECTION);
+  const q = query(colRef, where("doctorId", "==", targetDoctorId));
+  const snap = await getDocs(q);
+
   const batch = writeBatch(db);
+  const validDemoIds = new Set(DEMO_PATIENTS_DATA.map(p => p.id));
+
+  // Remove pacientes que não pertencem ao novo conjunto de 60 pacientes (ex: antigos paciente-demo-1 a 6)
+  snap.docs.forEach(docSnap => {
+    if (!validDemoIds.has(docSnap.id)) {
+      batch.delete(docSnap.ref);
+    }
+  });
+
+  // 2. Grava os 60 novos pacientes
   DEMO_PATIENTS_DATA.forEach(patient => {
     const docRef = doc(db, PATIENTS_COLLECTION, patient.id);
     batch.set(docRef, {
@@ -469,6 +484,64 @@ export async function seedDemoPatientsToFirestore(targetDoctorId = 'dr-marcelo')
       atualizadoEm: new Date().toISOString()
     }, { merge: true });
   });
+
+  // 3. Atualiza o perfil do médico no Firestore se for o Dr. Marcelo
+  if (targetDoctorId === 'dr-marcelo') {
+    const docDoctorRef = doc(db, "doctors", "dr-marcelo");
+    batch.set(docDoctorRef, {
+      nome: "Dr. Marcelo Ramos",
+      cpf: "348.912.756-82",
+      clinicaPrincipal: "Clínica Renalis",
+      hospitalVinculo: "Hospital Santa Casa",
+      unidadeDialise: "Unidade de Hemodiálise Renalis",
+      statusLicenca: "Ativo",
+      tipoConta: "Médico Assinante",
+      plano: "Profissional Ilimitado",
+      pacientesCount: DEMO_PATIENTS_DATA.length,
+      locaisAtuacao: [
+        { 
+          id: "loc-01", 
+          nome: "Clínica Renalis", 
+          tipo: "Clínica de Hemodiálise", 
+          cidade: "São Paulo/SP", 
+          turnos: "1º, 2º e 3º Turnos",
+          diasSemana: "Seg/Qua/Sex",
+          rtNome: "Dr. Marcelo Ramos",
+          rtCrm: "654321/SP",
+          telefoneEnfermagem: "(11) 97123-4567",
+          status: "Ativo",
+          criadoEm: "2026-08-01T00:00:00.000Z"
+        },
+        { 
+          id: "loc-02", 
+          nome: "Clínica Nefrovita", 
+          tipo: "Clínica de Hemodiálise", 
+          cidade: "São Paulo/SP", 
+          turnos: "1º, 2º e 3º Turnos",
+          diasSemana: "Ter/Qui/Sáb",
+          rtNome: "Dr. Marcelo Ramos",
+          rtCrm: "654321/SP",
+          telefoneEnfermagem: "(11) 98888-1111",
+          status: "Ativo",
+          criadoEm: "2026-08-01T00:00:00.000Z"
+        },
+        { 
+          id: "loc-03", 
+          nome: "Clínica Hemovida", 
+          tipo: "Clínica de Hemodiálise", 
+          cidade: "São Paulo/SP", 
+          turnos: "1º, 2º e 3º Turnos",
+          diasSemana: "Seg a Sáb",
+          rtNome: "Dr. Marcelo Ramos",
+          rtCrm: "654321/SP",
+          telefoneEnfermagem: "(11) 97777-2222",
+          status: "Ativo",
+          criadoEm: "2026-08-01T00:00:00.000Z"
+        }
+      ],
+      atualizadoEm: new Date().toISOString()
+    }, { merge: true });
+  }
 
   await batch.commit();
   return DEMO_PATIENTS_DATA.length;

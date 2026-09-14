@@ -48,6 +48,7 @@ import {
   subscribeGatewayConfig 
 } from '../services/financialService';
 import { logAuditEvent, subscribeAuditLogs } from '../services/auditService';
+import { seedDemoPatientsToFirestore } from '../services/patientService';
 import { useAuth } from '../context/AuthContext';
 import PlanModal from '../components/PlanModal';
 import GatewayModal from '../components/GatewayModal';
@@ -65,6 +66,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [auditLoading, setAuditLoading] = useState(true);
   const [feedback, setFeedback] = useState(null);
+  const [seeding, setSeeding] = useState(false);
   
   // Filtros
   const [searchTerm, setSearchTerm] = useState('');
@@ -186,6 +188,27 @@ export default function AdminDashboard() {
       } catch (err) {
         console.error("Erro ao excluir médico:", err);
         setFeedback({ type: 'error', text: 'Falha ao excluir licença médica no Firestore.' });
+      }
+    }
+  };
+
+  const handleResetDemoData = async () => {
+    if (window.confirm("Deseja restaurar a base de dados de demonstração no Cloud Firestore? Isso recriará os 60 pacientes clínicos hiper-realistas com exames, alertas, evoluções e as 3 clínicas (Clínica Renalis, Clínica Nefrovita, Clínica Hemovida).")) {
+      try {
+        setSeeding(true);
+        await seedDemoPatientsToFirestore('dr-marcelo');
+        await logAuditEvent({
+          tipoAcao: 'DEMO_RESET',
+          descricao: 'Restauração da base completa de 60 pacientes clínicos em 3 clínicas no Firestore',
+          adminEmail: currentUser?.email || 'admin@nefroapp.com'
+        });
+        setFeedback({ type: 'success', text: 'Base de demonstração com 60 pacientes restaurada com sucesso no Firestore!' });
+        setTimeout(() => setFeedback(null), 5000);
+      } catch (err) {
+        console.error("Erro ao restaurar dados de demonstração:", err);
+        setFeedback({ type: 'error', text: 'Falha ao restaurar dados no Firestore.' });
+      } finally {
+        setSeeding(false);
       }
     }
   };
@@ -557,6 +580,17 @@ export default function AdminDashboard() {
         </div>
 
         <div className="flex items-center gap-2">
+          <button 
+            className="btn btn-outline" 
+            onClick={handleResetDemoData}
+            disabled={seeding}
+            style={{ padding: '0.55rem 0.95rem', fontSize: '0.82rem', borderColor: '#bfdbfe', background: '#eff6ff', color: '#1d4ed8', fontWeight: '600' }}
+            title="Restaura os 60 pacientes demonstrativos distribuídos em 3 clínicas com exames e prescrições completas"
+          >
+            {seeding ? <Loader2 className="animate-spin" size={15} /> : <RotateCcw size={15} />}
+            <span>{seeding ? 'Restaurando...' : 'Restaurar Base'}</span>
+          </button>
+
           <button 
             className="btn btn-outline" 
             onClick={handleLogout} 

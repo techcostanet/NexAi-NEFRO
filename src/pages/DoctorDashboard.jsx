@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   LogOut, 
@@ -27,7 +27,7 @@ import {
   UploadCloud,
   BarChart3
 } from 'lucide-react';
-import { subscribeToPatients, STATUS_TRANSPLANTE_OPTIONS } from '../services/patientService';
+import { subscribeToPatients, STATUS_TRANSPLANTE_OPTIONS, seedDemoPatientsToFirestore } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
 import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
 import PatientFormModal from '../components/PatientFormModal';
@@ -40,6 +40,7 @@ import { useAuth } from '../context/AuthContext';
 export default function DoctorDashboard() {
   const navigate = useNavigate();
   const { activeDoctorId, logout } = useAuth();
+  const hasAutoSyncedDemoRef = useRef(false);
   
   const [doctor, setDoctor] = useState({ 
     nome: 'Carregando...', 
@@ -73,6 +74,17 @@ export default function DoctorDashboard() {
     // Escuta a lista de pacientes em tempo real filtrada estritamente pelo médico ativo
     const unsubPatients = subscribeToPatients(currentDoctorId, (data) => {
       setPatients(data || []);
+
+      // Auto-sincronização transparente da conta de demonstração se estiver incompleta ou com dados legados
+      if (currentDoctorId === 'dr-marcelo' && !hasAutoSyncedDemoRef.current) {
+        const isOutdated = !data || data.length < 50 || data.some(p => (p.nome || '').includes('[DEMO]'));
+        if (isOutdated) {
+          hasAutoSyncedDemoRef.current = true;
+          seedDemoPatientsToFirestore('dr-marcelo').catch(err => {
+            console.warn("Falha na auto-sincronização da base de demonstração:", err);
+          });
+        }
+      }
     });
 
     // Escuta perfil do médico ativo

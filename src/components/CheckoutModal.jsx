@@ -407,7 +407,7 @@ export default function CheckoutModal({ isOpen, onClose, selectedPlan, allPlans 
                   </div>
                   <ul className="text-xs text-emerald-800 flex flex-col gap-1.5 pl-2">
                     <li>✓ Acesso imediato a prontuários e sessões de hemodiálise</li>
-                    <li>✓ 6 pacientes demonstrativos com exames já pré-carregados</li>
+                    <li>✓ 60 pacientes demonstrativos distribuídos em 3 clínicas</li>
                     <li>✓ Prescrições contínuas, ciclos de ferro/EPO e alertas laboratoriais</li>
                     <li>✓ Seus dados ficam salvos em segurança na nuvem</li>
                   </ul>

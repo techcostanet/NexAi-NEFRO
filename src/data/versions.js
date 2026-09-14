@@ -1,5 +1,14 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.57",
+    "date": "14/09/2026",
+    "title": "Base de demonstracao hiper-realista: 60 pacientes completos em 3 clinicas, pe...",
+    "highlights": [
+      "✨ Base de demonstracao hiper-realista: 60 pacientes completos em 3 clinicas, perfil atualizado do Dr",
+      "✨ Marcelo e sincronizacao automatica no Cloud Firestore"
+    ]
+  },
+  {
     "version": "1.1.56",
     "date": "12/09/2026",
     "title": "Suporte e aprendizado ao modelo de laudos do Laboratório Paula Castro",

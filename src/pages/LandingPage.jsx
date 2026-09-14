@@ -77,7 +77,7 @@ export default function LandingPage() {
     },
     {
       q: "Como funciona a Avaliação Gratuita de 7 Dias?",
-      a: "Você se cadastra em menos de 1 minuto sem precisar informar cartão de crédito. Sua conta é liberada imediatamente com 6 pacientes demonstrativos completos para você testar evoluções clínicas, prescrições e gráficos laboratoriais."
+      a: "Você se cadastra em menos de 1 minuto sem precisar informar cartão de crédito. Sua conta é liberada imediatamente com 60 pacientes demonstrativos completos em 3 clínicas para você testar evoluções clínicas, prescrições e gráficos laboratoriais."
     },
     {
       q: "Meus dados e os prontuários dos pacientes ficam seguros?",
@@ -289,7 +289,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <strong className="text-sm block text-slate-800">Painel do Nefrologista • Dr. Marcelo Ramos</strong>
-                      <span className="text-xs text-muted">Clínica Nefrológica Principal • 6 Pacientes em Acompanhamento</span>
+                      <span className="text-xs text-muted">Clínica Renalis • 60 Pacientes em 3 Clínicas</span>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -826,7 +826,7 @@ export default function LandingPage() {
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
-                    <span>6 pacientes demonstrativos inclusos</span>
+                    <span>60 pacientes demonstrativos em 3 clínicas</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />

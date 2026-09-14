@@ -48,7 +48,7 @@ export const DEFAULT_PLANS = [
     intervalo: "trial",
     destaque: false,
     status: "Ativo",
-    recursos: ["Acesso completo por 7 dias", "Sem necessidade de cartão de crédito", "Ativação instantânea imediata", "6 pacientes demonstrativos inclusos"],
+    recursos: ["Acesso completo por 7 dias", "Sem necessidade de cartão de crédito", "Ativação instantânea imediata", "60 pacientes demonstrativos em 3 clínicas"],
     ordem: 3,
     criadoEm: "2026-08-01T00:00:00.000Z"
   }
