@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.66",
+    "date": "20/09/2026",
+    "title": "Atualizacao da Landing Page com novas funcionalidades de Heparina, Receituari...",
+    "highlights": [
+      "✨ Atualizacao da Landing Page com novas funcionalidades de Heparina, Receituario em 2 Vias, Boletim e Transplante"
+    ]
+  },
+  {
     "version": "1.1.65",
     "date": "20/09/2026",
     "title": "Fix: ancoragem do rodape e bloco final da receita na base da folha A4 ao impr...",

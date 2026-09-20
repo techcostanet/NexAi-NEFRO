@@ -24,7 +24,11 @@ import {
   Star,
   Layers,
   HeartPulse,
-  FileUp
+  FileUp,
+  Syringe,
+  FileCheck,
+  Printer,
+  HeartHandshake
 } from 'lucide-react';
 import BrandLogo from '../components/BrandLogo';
 import { subscribeSystemPlans } from '../services/financialService';
@@ -36,7 +40,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [plans, setPlans] = useState([]);
   const [billingCycle, setBillingCycle] = useState('anual'); // 'mensal' | 'anual'
-  const [activeShowcaseTab, setActiveShowcaseTab] = useState('dialise'); // 'dialise' | 'exames' | 'medicamentos' | 'prontuario'
+  const [activeShowcaseTab, setActiveShowcaseTab] = useState('dialise'); // 'dialise' | 'heparina' | 'receituario' | 'boletim' | 'exames' | 'medicamentos' | 'prontuario'
   const [openFaq, setOpenFaq] = useState(null);
   
   // Checkout Modal
@@ -90,6 +94,10 @@ export default function LandingPage() {
     {
       q: "Como funciona a Migração e Importação Inicial no Plano Anual?",
       a: "Quem assina o Plano Anual recebe Implantação VIP gratuita: nossa equipe técnica cadastra todos os seus pacientes e o histórico de exames laboratoriais a partir dos seus arquivos em PDF ou planilhas em Excel (XLS). Você não perde horas digitando tudo do zero e já começa a atender com prontuários completos desde o primeiro dia!"
+    },
+    {
+      q: "O receituário atende às normas da ANVISA para medicamentos controlados e antimicrobianos?",
+      a: "Sim. O sistema gera automaticamente o receituário oficial em 2 vias (1ª Via do Paciente e 2ª Via da Farmácia/Retenção) em conformidade com a Portaria SVS/MS nº 344/98 e a RDC ANVISA nº 20/2011, além de campos padronizados para identificação do comprador e fornecedor."
     },
     {
       q: "Como funciona o cancelamento ou renovação?",
@@ -299,6 +307,18 @@ export default function LandingPage() {
                   </div>
                 </div>
 
+                {/* Barra de Filtros & Triagem Rápida */}
+                <div className="flex items-center gap-2 mb-3 flex-wrap text-xs">
+                  <span style={{ background: '#2563eb', color: '#ffffff', padding: '3px 9px', borderRadius: '7px', fontWeight: '700' }}>Todas as Unidades (60)</span>
+                  <span style={{ background: '#e2e8f0', color: '#475569', padding: '3px 9px', borderRadius: '7px', fontWeight: '600' }}>1º Turno (20)</span>
+                  <span style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '3px 9px', borderRadius: '7px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <Clock size={12} /> Ciclos a Vencer (2)
+                  </span>
+                  <span style={{ background: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', padding: '3px 9px', borderRadius: '7px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                    <Syringe size={12} /> Sem Heparina (1)
+                  </span>
+                </div>
+
                 {/* Cards de Pacientes Mockup */}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', textAlign: 'left' }}>
                   
@@ -309,9 +329,14 @@ export default function LandingPage() {
                         <strong className="text-sm block text-slate-900">AMÉLIA SILVA</strong>
                         <span className="text-xs text-muted">68 anos • FAV (MSE) • 3º Turno</span>
                       </div>
-                      <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
-                        Ativo
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
+                          Ativo
+                        </span>
+                        <span style={{ fontSize: '0.68rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '1px 6px', borderRadius: '6px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <Syringe size={10} /> Heparina 1000+500/h
+                        </span>
+                      </div>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem', background: '#f8fafc', padding: '8px', borderRadius: '8px' }}>
                       <div>Hb: <strong>11.4 g/dL</strong></div>
@@ -328,9 +353,14 @@ export default function LandingPage() {
                         <strong className="text-sm block text-slate-900">ADCÉLIO PEREIRA</strong>
                         <span className="text-xs text-muted">54 anos • Permcath • 1º Turno</span>
                       </div>
-                      <span style={{ fontSize: '0.7rem', background: '#fef3c7', color: '#b45309', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
-                        Alerta Exame
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span style={{ fontSize: '0.7rem', background: '#fef3c7', color: '#b45309', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
+                          Alerta Exame
+                        </span>
+                        <span style={{ fontSize: '0.68rem', background: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', padding: '1px 6px', borderRadius: '6px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <Syringe size={10} /> Sem Heparina (Risco)
+                        </span>
+                      </div>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem', background: '#f8fafc', padding: '8px', borderRadius: '8px' }}>
                       <div>Hb: <strong style={{ color: '#dc2626' }}>9.2 g/dL</strong></div>
@@ -347,9 +377,14 @@ export default function LandingPage() {
                         <strong className="text-sm block text-slate-900">CARLOS EDUARDO</strong>
                         <span className="text-xs text-muted">61 anos • FAV (MSD) • 2º Turno</span>
                       </div>
-                      <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
-                        Ativo
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
+                          Ativo
+                        </span>
+                        <span style={{ fontSize: '0.68rem', background: '#f5f3ff', color: '#6d28d9', border: '1px solid #ddd6fe', padding: '1px 6px', borderRadius: '6px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                          <Syringe size={10} /> Enoxaparina 40mg
+                        </span>
+                      </div>
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem', background: '#f8fafc', padding: '8px', borderRadius: '8px' }}>
                       <div>Hb: <strong>12.0 g/dL</strong></div>
@@ -391,6 +426,62 @@ export default function LandingPage() {
               <h3 className="font-bold text-base text-slate-900 mb-1.5">Importador Inteligente de Exames</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
                 Facilite sua rotina importando resultados de exames laboratoriais a partir de arquivos PDF, planilhas Excel (XLSX) e DOCX. Os resultados são extraídos e processados automaticamente!
+              </p>
+            </div>
+
+            {/* Card Heparina */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-md transition">
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#eff6ff', color: '#1d4ed8', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                <Syringe size={22} />
+              </div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <h3 className="font-bold text-base text-slate-900 m-0">Anticoagulação & Heparina</h3>
+                <span style={{ fontSize: '0.68rem', background: '#dbeafe', color: '#1d4ed8', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>Exclusivo</span>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Controle individual de ataque e manutenção, Enoxaparina 20/40mg e modo Sem Heparina com alertas visuais para prevenir coagulação de linhas e sangramentos em FAVs recentes.
+              </p>
+            </div>
+
+            {/* Card Receituário 2 Vias */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-md transition">
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#f5f3ff', color: '#6d28d9', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                <FileCheck size={22} />
+              </div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <h3 className="font-bold text-base text-slate-900 m-0">Receituário em 2 Vias & A4</h3>
+                <span style={{ fontSize: '0.68rem', background: '#ede9fe', color: '#6d28d9', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>Novo</span>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Emissão instantânea de Receita Simples, Antimicrobianos e Controle Especial em 2 vias (com retenção de farmácia e dados do comprador) em folha timbrada A4 ou PDF vetorial.
+              </p>
+            </div>
+
+            {/* Card Boletim Educativo */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-md transition">
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#fef3c7', color: '#b45309', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                <HeartHandshake size={22} />
+              </div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <h3 className="font-bold text-base text-slate-900 m-0">Boletim Educativo do Paciente</h3>
+                <span style={{ fontSize: '0.68rem', background: '#fef3c7', color: '#b45309', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>Novo</span>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Melhore a adesão ao tratamento entregando uma folha A4 acolhedora com conquistas do mês (Kt/V atingido, fósforo na meta) e dicas nutricionais em linguagem leiga para a família.
+              </p>
+            </div>
+
+            {/* Card Transplante Renal */}
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:shadow-md transition">
+              <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#ecfdf5', color: '#047857', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+                <Activity size={22} />
+              </div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <h3 className="font-bold text-base text-slate-900 m-0">Módulo Transplante Renal</h3>
+                <span style={{ fontSize: '0.68rem', background: '#d1fae5', color: '#047857', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>Novo</span>
+              </div>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Acompanhe a elegibilidade do paciente para inscrição em lista de espera e gere o Laudo de Encaminhamento ao Transplante Renal pré-formatado para os centros transplantadores.
               </p>
             </div>
 
@@ -485,23 +576,47 @@ export default function LandingPage() {
               type="button"
               onClick={() => setActiveShowcaseTab('dialise')}
               className={`btn ${activeShowcaseTab === 'dialise' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1.1rem', borderRadius: '12px' }}
+              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
             >
-              🩺 Hemodiálise & Parâmetros
+              🩺 Hemodiálise
+            </button>
+            <button 
+              type="button"
+              onClick={() => setActiveShowcaseTab('heparina')}
+              className={`btn ${activeShowcaseTab === 'heparina' ? 'btn-primary' : 'btn-outline'}`}
+              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
+            >
+              💉 Anticoagulação (Heparina)
+            </button>
+            <button 
+              type="button"
+              onClick={() => setActiveShowcaseTab('receituario')}
+              className={`btn ${activeShowcaseTab === 'receituario' ? 'btn-primary' : 'btn-outline'}`}
+              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
+            >
+              📋 Receituário (2 Vias)
+            </button>
+            <button 
+              type="button"
+              onClick={() => setActiveShowcaseTab('boletim')}
+              className={`btn ${activeShowcaseTab === 'boletim' ? 'btn-primary' : 'btn-outline'}`}
+              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
+            >
+              🌟 Boletim do Paciente
             </button>
             <button 
               type="button"
               onClick={() => setActiveShowcaseTab('exames')}
               className={`btn ${activeShowcaseTab === 'exames' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1.1rem', borderRadius: '12px' }}
+              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
             >
-              🧪 Painel de Exames & Gráficos
+              🧪 Painel de Exames
             </button>
             <button 
               type="button"
               onClick={() => setActiveShowcaseTab('medicamentos')}
               className={`btn ${activeShowcaseTab === 'medicamentos' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1.1rem', borderRadius: '12px' }}
+              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
             >
               💊 Prescrições & Ciclos
             </button>
@@ -509,7 +624,7 @@ export default function LandingPage() {
               type="button"
               onClick={() => setActiveShowcaseTab('prontuario')}
               className={`btn ${activeShowcaseTab === 'prontuario' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1.1rem', borderRadius: '12px' }}
+              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
             >
               👤 Prontuário & Acessos
             </button>
@@ -546,6 +661,150 @@ export default function LandingPage() {
                   <div className="bg-white p-3 rounded-lg border border-slate-200">
                     <span className="text-xs text-muted block">Intercorrências</span>
                     <strong className="text-base text-emerald-700">Nenhuma registrada</strong>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeShowcaseTab === 'heparina' && (
+              <div>
+                <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+                  <div>
+                    <h3 className="font-bold text-lg text-slate-900">Segurança de Anticoagulação em Hemodiálise</h3>
+                    <p className="text-xs text-muted">Controle rigoroso de heparinização extracorpórea, prevenção de coagulação e alertas de sangramento</p>
+                  </div>
+                  <span style={{ fontSize: '0.72rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
+                    Segurança do Paciente
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                  <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-xl">
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-xs font-bold text-blue-900 flex items-center gap-1.5"><Syringe size={14} color="#2563eb" /> Heparina Não Fracionada</span>
+                      <span className="text-[10px] bg-blue-200 text-blue-800 px-2 py-0.5 rounded font-bold">Padrão Diálise</span>
+                    </div>
+                    <strong className="text-sm block text-blue-950">Ataque: 1.000 UI + Manutenção: 500 UI/h</strong>
+                    <span className="text-xs text-blue-700 block mt-1">Interrupção programada 1h antes do término da sessão</span>
+                  </div>
+
+                  <div className="p-3.5 bg-amber-50 border border-amber-200 rounded-xl">
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-xs font-bold text-amber-900 flex items-center gap-1.5"><Syringe size={14} color="#d97706" /> Alerta: Sem Heparina</span>
+                      <span className="text-[10px] bg-amber-200 text-amber-900 px-2 py-0.5 rounded font-bold">Risco Clínico</span>
+                    </div>
+                    <strong className="text-sm block text-amber-950">Lavagem com SF 0,9% a cada 30 min</strong>
+                    <span className="text-xs text-amber-700 block mt-1">Indicação: FAV recente / Pós-biópsia renal</span>
+                  </div>
+
+                  <div className="p-3.5 bg-indigo-50 border border-indigo-200 rounded-xl">
+                    <div className="flex justify-between items-center mb-1.5">
+                      <span className="text-xs font-bold text-indigo-900 flex items-center gap-1.5"><Syringe size={14} color="#4f46e5" /> HBPM (Enoxaparina)</span>
+                      <span className="text-[10px] bg-indigo-200 text-indigo-900 px-2 py-0.5 rounded font-bold">Dose Única</span>
+                    </div>
+                    <strong className="text-sm block text-indigo-950">40 mg no circuito arterial</strong>
+                    <span className="text-xs text-indigo-700 block mt-1">Injeção em bolus no início da sessão dialítica</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeShowcaseTab === 'receituario' && (
+              <div>
+                <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+                  <div>
+                    <h3 className="font-bold text-lg text-slate-900">Receituário Oficial & Controle Especial (2 Vias)</h3>
+                    <p className="text-xs text-muted">Emissão rápida de receitas com retenção de farmácia, antimicrobianos e LME em folha timbrada A4 ou PDF</p>
+                  </div>
+                  <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#15803d', border: '1px solid #bbf7d0', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
+                    Portaria 344/98 & RDC 20/2011
+                  </span>
+                </div>
+
+                <div className="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                  <div className="flex justify-between items-center pb-2 mb-3 border-b border-blue-900">
+                    <div>
+                      <strong className="text-sm text-blue-900 block font-black">CLÍNICA RENALIS • NEFROLOGIA E HEMODIÁLISE</strong>
+                      <span className="text-[11px] text-slate-500">São Paulo - SP • Dr. Marcelo Ramos • CRM-SP 654321 • RQE 98765</span>
+                    </div>
+                    <span className="text-xs bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 rounded-md font-bold">
+                      1ª VIA (FARMÁCIA) / 2ª VIA (PACIENTE)
+                    </span>
+                  </div>
+
+                  <div className="space-y-2 text-xs">
+                    <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex justify-between items-center">
+                      <div>
+                        <strong className="text-slate-900">1. Sacarato de Hidróxido Férrico (Noripurum) 100mg</strong>
+                        <p className="text-slate-600 m-0 mt-0.5">Uso: [EV pós-HD] Diluir 1 ampola em 100ml SF 0,9% e infundir na linha venosa 1x por semana.</p>
+                      </div>
+                      <span className="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded font-bold">Uso Contínuo (5 ampolas)</span>
+                    </div>
+
+                    <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200 flex justify-between items-center">
+                      <div>
+                        <strong className="text-slate-900">2. Ciprofloxacino 500mg</strong>
+                        <p className="text-slate-600 m-0 mt-0.5">Uso: [Oral] Tomar 1 comprimido de 12 em 12 horas por 7 dias para infecção de sítio de cateter.</p>
+                      </div>
+                      <span className="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded font-bold">14 Comprimidos</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 pt-3 border-t border-slate-200 flex justify-between items-center text-[11px] text-slate-500 flex-wrap gap-2">
+                    <span>Identificação de comprador, dados da farmácia e assinatura na base</span>
+                    <div className="flex gap-3">
+                      <span className="text-blue-600 font-semibold flex items-center gap-1"><Printer size={13} /> Impressão A4 Direta</span>
+                      <span className="text-emerald-600 font-semibold flex items-center gap-1"><FileCheck size={13} /> PDF Vetorial Nativo</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeShowcaseTab === 'boletim' && (
+              <div>
+                <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+                  <div>
+                    <h3 className="font-bold text-lg text-slate-900">Boletim Educativo e Conquistas do Paciente</h3>
+                    <p className="text-xs text-muted">Relatório humanizado em linguagem leiga para melhorar a adesão à dieta, hidratação e diálise</p>
+                  </div>
+                  <span style={{ fontSize: '0.72rem', background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
+                    Adesão & Cuidado Humanizado
+                  </span>
+                </div>
+
+                <div className="p-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-emerald-50 border border-blue-200 rounded-xl">
+                  <div className="text-center pb-2 mb-3 border-b border-blue-200">
+                    <strong className="text-base text-slate-900 block font-bold">🌟 Boletim de Saúde & Conquistas de Amélia Silva</strong>
+                    <span className="text-xs text-slate-600">Acompanhamento do seu tratamento de hemodiálise • Setembro de 2026</span>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem', marginBottom: '1rem' }}>
+                    <div className="bg-white p-3 rounded-lg border border-emerald-200 shadow-sm text-center">
+                      <span className="text-2xl block mb-1">🎉</span>
+                      <strong className="text-xs text-emerald-800 block">Kt/V: Eficiência da Diálise</strong>
+                      <span className="text-sm font-black text-emerald-700">1.45 (Excelente!)</span>
+                      <p className="text-[10px] text-slate-500 m-0 mt-0.5">Seu sangue está sendo muito bem filtrado</p>
+                    </div>
+
+                    <div className="bg-white p-3 rounded-lg border border-blue-200 shadow-sm text-center">
+                      <span className="text-2xl block mb-1">🥛</span>
+                      <strong className="text-xs text-blue-800 block">Fósforo Controlado</strong>
+                      <span className="text-sm font-black text-blue-700">4.6 mg/dL (Na Meta)</span>
+                      <p className="text-[10px] text-slate-500 m-0 mt-0.5">Parabéns por evitar queijos amarelos e refrigerantes</p>
+                    </div>
+
+                    <div className="bg-white p-3 rounded-lg border border-indigo-200 shadow-sm text-center">
+                      <span className="text-2xl block mb-1">⚖️</span>
+                      <strong className="text-xs text-indigo-800 block">Peso Interdialítico</strong>
+                      <span className="text-sm font-black text-indigo-700">+1.8 kg (Ótimo)</span>
+                      <p className="text-[10px] text-slate-500 m-0 mt-0.5">Controle de líquidos exemplar neste mês</p>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-700">
+                    <strong className="text-slate-900 block mb-1">💬 Mensagem do seu Nefrologista:</strong>
+                    <p className="m-0 italic">"Parabéns pelo comprometimento com a dieta e medicamentos, dona Amélia! Seus exames melhoraram expressivamente neste mês. Continue firme com o controle de sal e líquidos nos finais de semana!"</p>
                   </div>
                 </div>
               </div>
@@ -958,6 +1217,18 @@ export default function LandingPage() {
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <strong>Controle de Heparina & Anticoagulação</strong>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <strong>Receituário em 2 Vias (Portaria 344/98)</strong>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <strong>Boletim Educativo & Transplante Renal</strong>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
                     <strong>Gráficos de PTH, Fósforo, Hb e Kt/V</strong>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -1052,6 +1323,18 @@ export default function LandingPage() {
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
                     <span>Evoluções de Hemodiálise Ilimitadas</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Controle de Heparina & Anticoagulação</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Receituário em 2 Vias & A4 Oficial</span>
+                  </li>
+                  <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Boletim do Paciente e Transplante Renal</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
