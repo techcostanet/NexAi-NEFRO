@@ -523,8 +523,36 @@ export default function PatientProfile() {
                   <span>Tx: {transplantOpt.label}</span>
                 </span>
 
-                <span style={{ fontSize: '0.75rem', padding: '3px 10px', borderRadius: '20px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                <span style={{ fontSize: '0.75rem', padding: '3px 11px', borderRadius: '20px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', fontWeight: '600', whiteSpace: 'nowrap' }}>
                   {patient.turno || '3º Turno'}
+                </span>
+
+                {/* Pill de Anticoagulação alinhado ao padrão dos pills de status */}
+                <span 
+                  className="cursor-pointer transition-all hover:scale-105"
+                  onClick={() => setIsPatientModalOpen(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    fontSize: '0.75rem',
+                    fontWeight: anticoagulacaoInfo.isSemHeparina ? '700' : '600',
+                    padding: '3px 11px',
+                    borderRadius: '20px',
+                    background: anticoagulacaoInfo.bg,
+                    color: anticoagulacaoInfo.color,
+                    border: `1px solid ${anticoagulacaoInfo.border}`,
+                    boxShadow: anticoagulacaoInfo.isSemHeparina ? '0 0 0 2px rgba(239, 68, 68, 0.3)' : 'none',
+                    whiteSpace: 'nowrap'
+                  }}
+                  title={`Anticoagulação na Diálise: ${anticoagulacaoInfo.textoCompleto} (Clique para alterar)`}
+                >
+                  {anticoagulacaoInfo.isSemHeparina ? (
+                    <AlertTriangle size={13} color="#dc2626" />
+                  ) : (
+                    <Syringe size={13} color="#2563eb" />
+                  )}
+                  <span>{anticoagulacaoInfo.labelCurto}</span>
                 </span>
               </div>
 
@@ -554,34 +582,12 @@ export default function PatientProfile() {
                   <button
                     type="button"
                     onClick={() => setIsPatientModalOpen(true)}
-                    className="text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-md hover:bg-blue-100 transition-colors"
+                    className="text-xs text-blue-600 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-md hover:bg-blue-100 transition-colors"
                     title="Definir etiologia da DRC"
                   >
                     + Definir Etiologia
                   </button>
                 )}
-
-                <span 
-                  className="cursor-pointer transition-transform hover:scale-105"
-                  onClick={() => setIsPatientModalOpen(true)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    fontSize: '0.75rem',
-                    fontWeight: anticoagulacaoInfo.isSemHeparina ? '700' : '600',
-                    padding: '2px 8px',
-                    borderRadius: '8px',
-                    background: anticoagulacaoInfo.bg,
-                    color: anticoagulacaoInfo.color,
-                    border: `1px solid ${anticoagulacaoInfo.border}`,
-                    boxShadow: anticoagulacaoInfo.isSemHeparina ? '0 0 0 2px rgba(239, 68, 68, 0.3)' : 'none'
-                  }}
-                  title={`Anticoagulação: ${anticoagulacaoInfo.textoCompleto} (Clique para alterar)`}
-                >
-                  <Syringe size={12} color={anticoagulacaoInfo.isSemHeparina ? '#dc2626' : '#2563eb'} />
-                  <span>{anticoagulacaoInfo.labelCurto}</span>
-                </span>
               </div>
             </div>
           </div>

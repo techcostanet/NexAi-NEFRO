@@ -72,15 +72,17 @@ export const TIPOS_ANTICOAGULACAO = [
 
 export const PRESETS_HEPARINA = [
   { 
+    id: 'hep_padrao',
     label: '1.000 UI + 500 UI/h (Padrão)', 
     tipo: 'heparina_padrao', 
     doseAtaque: '1000', 
     doseManutencao: '500', 
     doseEnoxaparina: '',
     motivoSemHeparina: '',
-    observacoes: 'Desligar infusão 45 min antes do término da diálise.' 
+    observacoes: 'Desligar infusão 1h antes do término.' 
   },
   { 
+    id: 'hep_reforcada',
     label: '1.500 UI + 750 UI/h (Reforçada)', 
     tipo: 'heparina_padrao', 
     doseAtaque: '1500', 
@@ -90,6 +92,7 @@ export const PRESETS_HEPARINA = [
     observacoes: 'Desligar infusão 1h antes do término.' 
   },
   { 
+    id: 'hep_baixa',
     label: '500 UI + 500 UI/h (Dose Baixa)', 
     tipo: 'heparina_padrao', 
     doseAtaque: '500', 
@@ -99,6 +102,7 @@ export const PRESETS_HEPARINA = [
     observacoes: 'Risco moderado de sangramento. Monitorar fístula.' 
   },
   { 
+    id: 'enox_40',
     label: 'Enoxaparina 40 mg (Bólus Único)', 
     tipo: 'enoxaparina', 
     doseAtaque: '', 
@@ -108,6 +112,7 @@ export const PRESETS_HEPARINA = [
     observacoes: 'Administrar na linha arterial no início da sessão.' 
   },
   { 
+    id: 'enox_20',
     label: 'Enoxaparina 20 mg (Dose Reduzida)', 
     tipo: 'enoxaparina', 
     doseAtaque: '', 
@@ -117,7 +122,8 @@ export const PRESETS_HEPARINA = [
     observacoes: 'Dose baixa. Administrar no início da diálise.' 
   },
   { 
-    label: '⚠️ Sem Heparina (Risco Hemorrágico)', 
+    id: 'sem_heparina',
+    label: 'Sem Heparina (Risco Hemorrágico)', 
     tipo: 'sem_heparina', 
     doseAtaque: '', 
     doseManutencao: '', 
@@ -136,8 +142,8 @@ export function getAnticoagulacaoInfo(patient) {
     if (txt.toLowerCase().includes('sem') || txt.toLowerCase() === 's/h') {
       return {
         tipo: 'sem_heparina',
-        labelCurto: '⚠️ SEM HEPARINA',
-        badgeText: '⚠️ S/H',
+        labelCurto: 'SEM HEPARINA',
+        badgeText: 'SEM HEPARINA',
         textoCompleto: 'Sem Heparina (Lavagem c/ SF)',
         isSemHeparina: true,
         bg: '#fee2e2',
@@ -151,8 +157,8 @@ export function getAnticoagulacaoInfo(patient) {
   if (tipo === 'sem_heparina') {
     return {
       tipo: 'sem_heparina',
-      labelCurto: '⚠️ SEM HEPARINA',
-      badgeText: '⚠️ S/H (Lavagem)',
+      labelCurto: 'SEM HEPARINA',
+      badgeText: 'SEM HEPARINA',
       textoCompleto: `Sem Heparina: ${ac.motivoSemHeparina || 'Lavagens salinas periódicas'}`,
       isSemHeparina: true,
       bg: '#fee2e2',
@@ -167,8 +173,8 @@ export function getAnticoagulacaoInfo(patient) {
     const dose = ac.doseEnoxaparina || '40';
     return {
       tipo: 'enoxaparina',
-      labelCurto: `💉 Enoxa ${dose}mg`,
-      badgeText: `💉 Enoxa ${dose}mg`,
+      labelCurto: `Enoxaparina ${dose}mg`,
+      badgeText: `Enoxa ${dose}mg`,
       textoCompleto: `Enoxaparina ${dose} mg (Bólus inicial)`,
       isSemHeparina: false,
       bg: '#f0fdf4',
@@ -182,8 +188,8 @@ export function getAnticoagulacaoInfo(patient) {
   if (tipo === 'citrato') {
     return {
       tipo: 'citrato',
-      labelCurto: '🧪 Citrato',
-      badgeText: '🧪 Citrato Regional',
+      labelCurto: 'Citrato',
+      badgeText: 'Citrato Regional',
       textoCompleto: 'Anticoagulação Regional com Citrato',
       isSemHeparina: false,
       bg: '#fdf4ff',
@@ -199,8 +205,8 @@ export function getAnticoagulacaoInfo(patient) {
   
   return {
     tipo: 'heparina_padrao',
-    labelCurto: `💉 Heparina ${ataque}+${manutencao}/h`,
-    badgeText: `💉 Heparina: ${ataque}+${manutencao}/h`,
+    labelCurto: `Heparina ${ataque}+${manutencao}/h`,
+    badgeText: `Heparina ${ataque}+${manutencao}/h`,
     textoCompleto: `Heparina: Ataque ${ataque} UI + Manutenção ${manutencao} UI/h`,
     isSemHeparina: false,
     bg: '#f1f5f9',

@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.62",
+    "date": "20/09/2026",
+    "title": "Melhoria de design, espacamento e correcao de selecao de 40mg/20mg na anticoa...",
+    "highlights": [
+      "✨ Melhoria de design, espacamento e correcao de selecao de 40mg/20mg na anticoagulacao"
+    ]
+  },
+  {
     "version": "1.1.61",
     "date": "20/09/2026",
     "title": "Implementacao do controle de heparina e anticoagulacao na hemodialise nos car...",

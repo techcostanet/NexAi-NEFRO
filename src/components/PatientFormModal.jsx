@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, User, Loader2 } from 'lucide-react';
+import { X, Save, User, Loader2, Syringe, AlertTriangle } from 'lucide-react';
 import { 
   savePatient, 
   calculateAge, 
@@ -7,7 +7,6 @@ import {
   TIPOS_ANTICOAGULACAO,
   PRESETS_HEPARINA
 } from '../services/patientService';
-import { Syringe, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import AllergySelector from './AllergySelector';
 
@@ -684,31 +683,90 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
           </div>
 
           {/* Anticoagulação na Hemodiálise (Heparina) */}
-          <div className="border-t pt-4" style={{ borderColor: 'var(--border)' }}>
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
-                <Syringe size={16} color="#0284c7" />
-                <span>Anticoagulação na Hemodiálise</span>
-              </h3>
+          <div className="border-t pt-5 mt-2" style={{ borderColor: 'var(--border)' }}>
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-2.5">
+                <div 
+                  style={{ 
+                    width: '34px', 
+                    height: '34px', 
+                    borderRadius: '10px', 
+                    background: '#e0f2fe', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}
+                >
+                  <Syringe size={18} color="#0284c7" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
+                    Anticoagulação na Hemodiálise
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Defina o esquema de heparinização contínua ou protocolo sem anticoagulante
+                  </p>
+                </div>
+              </div>
               {formData.anticoagulacao?.tipo === 'sem_heparina' && (
-                <span style={{ fontSize: '0.68rem', fontWeight: 'bold', background: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', padding: '2px 8px', borderRadius: '6px' }}>
-                  ⚠️ PROTOCOLO SEM HEPARINA ATIVO
+                <span 
+                  style={{ 
+                    fontSize: '0.72rem', 
+                    fontWeight: '700', 
+                    background: '#fee2e2', 
+                    color: '#b91c1c', 
+                    border: '1px solid #fecaca', 
+                    padding: '4px 10px', 
+                    borderRadius: '20px', 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '5px' 
+                  }}
+                >
+                  <AlertTriangle size={12} color="#b91c1c" />
+                  PROTOCOLO S/H ATIVO
                 </span>
               )}
             </div>
 
-            {/* Botões Rápidos de 1 Clique (Presets Clínicos) */}
-            <div className="mb-3">
-              <span className="text-2xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
+            {/* Esquemas Rápidos Clínicos com Espaçamento Adequado */}
+            <div 
+              style={{ 
+                background: '#f8fafc', 
+                border: '1px solid #e2e8f0', 
+                borderRadius: '12px', 
+                padding: '0.9rem 1rem', 
+                marginBottom: '1.25rem' 
+              }}
+            >
+              <span className="text-2xs font-bold text-slate-500 uppercase tracking-wider block mb-2.5">
                 Esquemas Rápidos (Clique para preencher):
               </span>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {PRESETS_HEPARINA.map((preset, idx) => {
-                  const isCurrent = formData.anticoagulacao?.tipo === preset.tipo &&
-                    (preset.tipo !== 'heparina_padrao' || formData.anticoagulacao?.doseAtaque === preset.doseAtaque);
+                  // Checagem estrita para isolar 40mg de 20mg e checar ataque + manutenção
+                  const current = formData.anticoagulacao || {};
+                  const isCurrent = (() => {
+                    if (current.tipo !== preset.tipo) return false;
+                    if (preset.tipo === 'heparina_padrao') {
+                      return String(current.doseAtaque || '') === String(preset.doseAtaque || '') &&
+                             String(current.doseManutencao || '') === String(preset.doseManutencao || '');
+                    }
+                    if (preset.tipo === 'enoxaparina') {
+                      return String(current.doseEnoxaparina || '') === String(preset.doseEnoxaparina || '');
+                    }
+                    if (preset.tipo === 'sem_heparina') {
+                      return true;
+                    }
+                    return false;
+                  })();
+
+                  const isSemHep = preset.tipo === 'sem_heparina';
+
                   return (
                     <button
-                      key={idx}
+                      key={preset.id || idx}
                       type="button"
                       onClick={() => {
                         setFormData(prev => ({
@@ -723,27 +781,42 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                           }
                         }));
                       }}
-                      className="btn btn-outline"
                       style={{
-                        padding: '3px 8px',
-                        fontSize: '0.72rem',
-                        fontWeight: isCurrent ? 'bold' : '500',
+                        padding: '6px 13px',
+                        fontSize: '0.78rem',
+                        fontWeight: isCurrent ? '700' : '500',
                         borderRadius: '8px',
-                        background: isCurrent ? '#eff6ff' : (preset.tipo === 'sem_heparina' ? '#fff1f2' : '#f8fafc'),
-                        borderColor: isCurrent ? '#3b82f6' : (preset.tipo === 'sem_heparina' ? '#fecdd3' : '#e2e8f0'),
-                        color: isCurrent ? '#1d4ed8' : (preset.tipo === 'sem_heparina' ? '#be123c' : '#334155')
+                        border: '1px solid',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        background: isCurrent 
+                          ? (isSemHep ? '#fee2e2' : '#eff6ff') 
+                          : (isSemHep ? '#fff5f5' : '#ffffff'),
+                        borderColor: isCurrent 
+                          ? (isSemHep ? '#ef4444' : '#3b82f6') 
+                          : (isSemHep ? '#fca5a5' : '#cbd5e1'),
+                        color: isCurrent 
+                          ? (isSemHep ? '#991b1b' : '#1d4ed8') 
+                          : (isSemHep ? '#dc2626' : '#334155'),
+                        boxShadow: isCurrent 
+                          ? (isSemHep ? '0 1px 3px rgba(239, 68, 68, 0.25)' : '0 1px 3px rgba(59, 130, 246, 0.25)') 
+                          : 'none'
                       }}
                     >
-                      {preset.label}
+                      {isSemHep ? <AlertTriangle size={13} /> : <Syringe size={13} />}
+                      <span>{preset.label}</span>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
               <div>
-                <label className="text-sm font-semibold mb-1 block">Tipo de Anticoagulação</label>
+                <label className="text-sm font-semibold mb-1.5 block">Tipo de Anticoagulação</label>
                 <select
                   className="input-field"
                   value={formData.anticoagulacao?.tipo || 'heparina_padrao'}
@@ -764,7 +837,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               {formData.anticoagulacao?.tipo === 'heparina_padrao' && (
                 <>
                   <div>
-                    <label className="text-sm font-semibold mb-1 block">Dose de Ataque (UI)</label>
+                    <label className="text-sm font-semibold mb-1.5 block">Dose de Ataque (UI)</label>
                     <input
                       type="text"
                       className="input-field"
@@ -778,7 +851,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                   </div>
 
                   <div>
-                    <label className="text-sm font-semibold mb-1 block">Manutenção (UI/h)</label>
+                    <label className="text-sm font-semibold mb-1.5 block">Manutenção (UI/h)</label>
                     <input
                       type="text"
                       className="input-field"
@@ -795,7 +868,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
 
               {formData.anticoagulacao?.tipo === 'enoxaparina' && (
                 <div>
-                  <label className="text-sm font-semibold mb-1 block">Dose Enoxaparina (mg)</label>
+                  <label className="text-sm font-semibold mb-1.5 block">Dose Enoxaparina (mg)</label>
                   <input
                     type="text"
                     className="input-field"
@@ -810,14 +883,14 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               )}
 
               {formData.anticoagulacao?.tipo === 'sem_heparina' && (
-                <div style={{ gridColumn: '1 / -1' }} className="p-3 bg-red-50 border border-red-200 rounded-xl">
-                  <label className="text-xs font-bold text-red-900 mb-1 flex items-center gap-1.5">
-                    <AlertTriangle size={14} color="#dc2626" />
+                <div style={{ gridColumn: '1 / -1' }} className="p-4 bg-red-50 border border-red-200 rounded-xl">
+                  <label className="text-xs font-bold text-red-900 mb-1.5 flex items-center gap-1.5">
+                    <AlertTriangle size={15} color="#dc2626" />
                     <span>Motivo / Justificativa Clínica para Diálise SEM Heparina:</span>
                   </label>
                   <input
                     type="text"
-                    className="input-field w-full mb-1"
+                    className="input-field w-full mb-2 bg-white"
                     placeholder="Ex: Risco hemorrágico, pós-biópsia renal, cirurgia recente, pericardite..."
                     value={formData.anticoagulacao?.motivoSemHeparina || ''}
                     onChange={(e) => setFormData(prev => ({
@@ -825,18 +898,18 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                       anticoagulacao: { ...prev.anticoagulacao, motivoSemHeparina: e.target.value }
                     }))}
                   />
-                  <span className="text-2xs text-red-700 block">
-                    💡 Conduta padrão recomendada: Lavagens periódicas com 100ml de SF 0,9% a cada 30 minutos e monitorização do capilar.
-                  </span>
+                  <div className="flex items-center gap-2 text-xs text-red-700 bg-red-100/60 p-2 rounded-lg">
+                    <span>💡 <strong>Conduta padrão:</strong> Lavagens periódicas com 100ml de SF 0,9% a cada 30 minutos e monitorização do capilar.</span>
+                  </div>
                 </div>
               )}
 
               <div style={{ gridColumn: '1 / -1' }}>
-                <label className="text-sm font-semibold mb-1 block">Observações de Infusão / Conduta</label>
+                <label className="text-sm font-semibold mb-1.5 block">Observações de Infusão / Conduta</label>
                 <input
                   type="text"
                   className="input-field"
-                  placeholder="Ex: Desligar infusão 45 min antes do término; não heparinar na 1ª hora..."
+                  placeholder="Ex: Desligar infusão 30-45 min antes do término; não heparinar na 1ª hora..."
                   value={formData.anticoagulacao?.observacoes || ''}
                   onChange={(e) => setFormData(prev => ({
                     ...prev,

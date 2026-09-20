@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.62] - 2026-09-20
+### Alterações
+- Melhoria de design, espacamento e correcao de selecao de 40mg/20mg na anticoagulacao
+
 ## [1.1.61] - 2026-09-20
 ### Alterações
 - Implementacao do controle de heparina e anticoagulacao na hemodialise nos cards, tabela, modal e perfil do paciente

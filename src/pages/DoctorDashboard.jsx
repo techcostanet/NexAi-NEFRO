@@ -25,7 +25,8 @@ import {
   ArrowUp,
   ArrowDown,
   UploadCloud,
-  BarChart3
+  BarChart3,
+  Syringe
 } from 'lucide-react';
 import { subscribeToPatients, STATUS_TRANSPLANTE_OPTIONS, seedDemoPatientsToFirestore, getAnticoagulacaoInfo } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
@@ -802,7 +803,12 @@ export default function DoctorDashboard() {
                             }}
                             title={`Anticoagulação na Diálise: ${acInfo.textoCompleto}`}
                           >
-                            {acInfo.labelCurto}
+                            {acInfo.isSemHeparina ? (
+                              <AlertTriangle size={11} color="#dc2626" />
+                            ) : (
+                              <Syringe size={11} color="#2563eb" />
+                            )}
+                            <span>{acInfo.labelCurto}</span>
                           </span>
                         );
                       })()}
@@ -985,11 +991,19 @@ export default function DoctorDashboard() {
                             color: acInfo.color, 
                             padding: '1px 6px', 
                             borderRadius: '6px', 
-                            fontWeight: acInfo.isSemHeparina ? '700' : '500' 
+                            fontWeight: acInfo.isSemHeparina ? '700' : '500',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px'
                           }} 
                           title={`Anticoagulação: ${acInfo.textoCompleto}`}
                         >
-                          {acInfo.labelCurto}
+                          {acInfo.isSemHeparina ? (
+                            <AlertTriangle size={10} color="#dc2626" />
+                          ) : (
+                            <Syringe size={10} color="#2563eb" />
+                          )}
+                          <span>{acInfo.labelCurto}</span>
                         </span>
                       );
                     })()}
@@ -1231,17 +1245,25 @@ export default function DoctorDashboard() {
                               <span 
                                 style={{ 
                                   fontSize: '0.72rem', 
-                                  padding: '2px 8px', 
+                                  padding: '3px 8px', 
                                   borderRadius: '6px', 
                                   border: `1px solid ${acInfo.border}`,
                                   background: acInfo.bg,
                                   color: acInfo.color,
                                   fontWeight: acInfo.isSemHeparina ? 'bold' : '500',
-                                  whiteSpace: 'nowrap'
+                                  whiteSpace: 'nowrap',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '4px'
                                 }}
                                 title={acInfo.textoCompleto}
                               >
-                                {acInfo.badgeText}
+                                {acInfo.isSemHeparina ? (
+                                  <AlertTriangle size={11} color="#dc2626" />
+                                ) : (
+                                  <Syringe size={11} color="#2563eb" />
+                                )}
+                                <span>{acInfo.badgeText}</span>
                               </span>
                             );
                           })()}
