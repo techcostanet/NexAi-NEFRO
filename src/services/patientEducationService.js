@@ -27,26 +27,26 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     if (hb >= 10.0 && hb <= 12.0) {
       status = GOAL_STATUS.CONQUISTA;
-      mensagem = 'Parabéns! Seu sangue está forte e sua energia protegida para o dia a dia. Continue assim!';
-      dica = 'Mantenha suas aplicações de ferro e eritropoietina em dia após as sessões para sustentar essa disposição.';
+      mensagem = 'Sangue forte! Sua energia e disposição estão bem protegidas.';
+      dica = 'Mantenha o ferro e eritropoietina em dia nas sessões de diálise.';
     } else if (hb >= 9.0 && hb < 10.0) {
       status = GOAL_STATUS.QUASE_LA;
-      mensagem = 'Falta muito pouco! Seu sangue precisa de um pequeno reforço para você ter ainda mais disposição.';
-      dica = 'Não deixe de receber as doses de ferro e eritropoietina nos dias prescritos na clínica de diálise.';
+      mensagem = 'Falta pouco! Seu sangue precisa de reforço para você não sentir cansaço.';
+      dica = 'Não deixe de receber as doses de ferro na máquina prescritas pela equipe.';
     } else if (hb < 9.0) {
       status = GOAL_STATUS.ATENCAO;
-      mensagem = 'Atenção com sua energia: seu sangue está pedindo reforço. Estamos juntos para recuperar sua força!';
-      dica = 'Avise a equipe médica se sentir cansaço ou sono fora do comum e garanta o recebimento do seu ferro na máquina.';
+      mensagem = 'Atenção com anemia: seu sangue está fraco e pede reforço imediato.';
+      dica = 'Avise a equipe se sentir tontura e garanta o ferro na máquina.';
     } else { // hb > 12.0
       status = GOAL_STATUS.QUASE_LA;
-      mensagem = 'Seu sangue está bem concentrado! Vamos acompanhar de perto para mantê-lo na faixa perfeita.';
-      dica = 'Beba água dentro do limite prescrito pela sua equipe para manter o sangue fluido e bem equilibrado.';
+      mensagem = 'Sangue concentrado. Vamos acompanhar para manter no ponto certo.';
+      dica = 'Beba os líquidos na medida certa orientada pela sua equipe.';
     }
 
     cards.push({
       id: 'hb',
-      categoria: 'Energia & Disposição',
-      subtitulo: 'Hemoglobina (Força do Sangue)',
+      categoria: 'Energia & Sangue Forte',
+      subtitulo: 'Hemoglobina (Anemia)',
       valorFormatado: `${hb.toFixed(1).replace('.', ',')} g/dL`,
       faixaMeta: 'Meta: 10,0 a 12,0 g/dL',
       status,
@@ -66,20 +66,20 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     if (p >= 3.5 && p <= 5.5) {
       status = GOAL_STATUS.CONQUISTA;
-      mensagem = 'Sensacional! Fósforo na meta protege seus ossos contra dores e deixa seus vasos sanguíneos limpos e flexíveis.';
-      dica = 'Continue tomando seu quelante exatamente DURANTE as refeições (na primeira garfada) para manter essa nota 10!';
+      mensagem = 'Ossos e artérias protegidos! Seu fósforo está excelente.';
+      dica = 'Continue tomando seu quelante exatamente no meio das refeições.';
     } else if (p > 5.5 && p <= 7.0) {
       status = GOAL_STATUS.QUASE_LA;
-      mensagem = 'O fósforo subiu um pouquinho este mês. Com pequenos ajustes à mesa, ele volta rapidinho para a meta!';
-      dica = 'Evite refrigerantes escuros (cola), queijos amarelos e embutidos (salsicha, presunto). Tome o quelante junto com a comida.';
+      mensagem = 'Fósforo subiu um pouco. Cuidado com queijos amarelos e refrigerantes escuros.';
+      dica = 'Tome o comprimido quelante junto com a comida para ele agir no estômago.';
     } else if (p > 7.0) {
       status = GOAL_STATUS.ATENCAO;
-      mensagem = 'Atenção carinhosa com os ossos: o fósforo está elevado. Vamos unir forças para protegê-los!';
-      dica = 'Nunca tome o quelante com a barriga vazia — ele precisa mastigar junto com a comida para funcionar no estômago.';
+      mensagem = 'Atenção: fósforo alto! Risco de dor nos ossos e coceira na pele.';
+      dica = 'Evite embutidos (salsicha, linguiça), refrigerantes de cola e queijos amarelos.';
     } else { // p < 3.5
       status = GOAL_STATUS.QUASE_LA;
-      mensagem = 'Fósforo um pouco baixo. Vamos cuidar para sua alimentação ficar bem equilibrada, nutritiva e saborosa.';
-      dica = 'Consuma as proteínas saudáveis indicadas pela nutricionista (ovos cozidos, carnes magras) para fortalecer seu corpo.';
+      mensagem = 'Fósforo baixo. Sua alimentação precisa de mais nutrientes saudáveis.';
+      dica = 'Consuma as carnes magras e ovos cozidos recomendados pela nutricionista.';
     }
 
     cards.push({
@@ -105,26 +105,26 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     if (k >= 3.5 && k <= 5.5) {
       status = GOAL_STATUS.CONQUISTA;
-      mensagem = 'Excelente! Seu coração está batendo com segurança máxima, tranquilidade e no compasso certo.';
-      dica = 'Parabéns pelo cuidado com as frutas e verduras! Mantenha esse método de preparo dos alimentos.';
+      mensagem = 'Coração seguro! Seu potássio está na faixa perfeita.';
+      dica = 'Parabéns pelo cuidado com as frutas e verduras no dia a dia!';
     } else if (k > 5.5 && k <= 6.2) {
       status = GOAL_STATUS.QUASE_LA;
-      mensagem = 'Cuidado amigo com o coração: o potássio subiu um pouco. Vamos redobrar o carinho no preparo dos vegetais.';
-      dica = 'Ferva os legumes e verduras em duas águas: ferva, escorra a água e ferva de novo antes de temperar.';
+      mensagem = 'Potássio subiu um pouco. Cuidado redobrado com frutas e verduras.';
+      dica = 'Ferva os legumes e verduras em duas águas antes de temperar.';
     } else if (k > 6.2) {
       status = GOAL_STATUS.ATENCAO;
-      mensagem = 'Atenção prioritária: seu potássio está alto e o coração pede descanso e proteção imediata!';
-      dica = 'Evite temporariamente água de coco, carambola, banana prata, abacate e extrato de tomate até o próximo exame.';
+      mensagem = 'Atenção urgente: potássio alto! Perigo imediato para o seu coração.';
+      dica = 'Evite banana, água de coco, carambola, abacate e extrato de tomate.';
     } else { // k < 3.5
       status = GOAL_STATUS.QUASE_LA;
-      mensagem = 'Potássio um pouco baixo. O coração também precisa dele na medida certa para bater com vigor.';
-      dica = 'A nutricionista pode sugerir uma fruta gostosa no seu dia a dia para equilibrar seus eletrólitos.';
+      mensagem = 'Potássio baixo. O coração também precisa dele equilibrado.';
+      dica = 'A nutricionista pode indicar uma fruta segura para equilibrar seus sais.';
     }
 
     cards.push({
       id: 'k',
       categoria: 'Ritmo do Coração',
-      subtitulo: 'Potássio Sérico (K⁺)',
+      subtitulo: 'Potássio Sérico',
       valorFormatado: `${k.toFixed(1).replace('.', ',')} mEq/L`,
       faixaMeta: 'Meta: 3,5 a 5,5 mEq/L',
       status,
@@ -144,21 +144,21 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     if (ca >= 8.8 && ca <= 10.2) {
       status = GOAL_STATUS.CONQUISTA;
-      mensagem = 'Muito bem! Seus ossos, dentes e músculos têm todo o cálcio necessário para funcionarem sem dor.';
-      dica = 'Tome sua vitamina D ou ativadores nos dias combinados com a equipe para fixar bem o cálcio no esqueleto.';
+      mensagem = 'Cálcio perfeito! Ossos e músculos fortes sem dores.';
+      dica = 'Tome sua vitamina D nos dias combinados com a equipe médica.';
     } else if (ca < 8.8) {
       status = GOAL_STATUS.QUASE_LA;
-      mensagem = 'O cálcio está ligeiramente baixo. Vamos ajustar os remédios de suporte ósseo para você se sentir 100%.';
-      dica = 'Siga a orientação médica sobre reposição de cálcio e vitamina D — nunca tome remédios por conta própria.';
+      mensagem = 'Cálcio um pouco baixo. Vamos ajustar as medicações de suporte.';
+      dica = 'Siga a orientação médica sobre reposição de cálcio e vitamina D.';
     } else { // ca > 10.2
       status = GOAL_STATUS.QUASE_LA;
-      mensagem = 'Cálcio um pouco elevado no sangue. Vamos dosar certinho suas medicações para protegê-lo.';
-      dica = 'Avise seu médico se estiver tomando comprimidos efervescentes ou suplementos de cálcio além dos prescritos.';
+      mensagem = 'Cálcio elevado. Vamos adequar seus medicamentos para proteger seus vasos.';
+      dica = 'Não tome suplementos ou antiácidos de cálcio por conta própria.';
     }
 
     cards.push({
       id: 'ca',
-      categoria: 'Saúde Mineral',
+      categoria: 'Saúde dos Ossos',
       subtitulo: 'Cálcio Total',
       valorFormatado: `${ca.toFixed(1).replace('.', ',')} mg/dL`,
       faixaMeta: 'Meta: 8,8 a 10,2 mg/dL',
@@ -179,18 +179,18 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     if (ktv >= 1.20) {
       status = GOAL_STATUS.CONQUISTA;
-      mensagem = 'Nota 10 na Limpeza! Sua sessão de diálise filtrou o sangue com máxima pureza e eficácia.';
-      dica = 'Parabéns por cumprir todo o horário das suas sessões de diálise sem sair antes do tempo!';
+      mensagem = 'Limpeza nota 10! A máquina filtrou o sangue com máxima eficácia.';
+      dica = 'Parabéns por cumprir todo o horário das suas sessões de diálise!';
     } else {
       status = GOAL_STATUS.QUASE_LA;
-      mensagem = 'Podemos filtrar ainda mais! Vamos garantir que cada minuto na máquina trabalhe a seu favor.';
-      dica = 'Procure completar todas as 4 horas de sessão e cuide bem do seu acesso vascular (FAV ou cateter).';
+      mensagem = 'Podemos filtrar mais toxinas. Complete sempre todo o tempo da máquina.';
+      dica = 'Procure completar todas as 4 horas de sessão e cuide bem do seu acesso.';
     }
 
     cards.push({
       id: 'ktv',
       categoria: 'Filtração & Limpeza',
-      subtitulo: 'Kt/V Único (Dose de Diálise)',
+      subtitulo: 'Dose da Diálise (Kt/V)',
       valorFormatado: `${ktv.toFixed(2).replace('.', ',')}`,
       faixaMeta: 'Meta: ≥ 1,20 por sessão',
       status,
@@ -214,9 +214,9 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
       faixaMeta: 'Meta: ≥ 65% de redução',
       status,
       mensagem: status === GOAL_STATUS.CONQUISTA 
-        ? 'Excelente limpeza! A diálise removeu as toxinas com grande eficiência.'
-        : 'Podemos depurar mais toxinas completando sempre o horário integral da sessão.',
-      dica: 'Não reduza o tempo de diálise e mantenha a circulação da fístula sempre livre sem apertos.',
+        ? 'Excelente limpeza! A diálise retirou as impurezas com grande eficácia.'
+        : 'Podemos filtrar mais impurezas completando sempre todo o horário da sessão.',
+      dica: 'Não reduza o tempo de diálise e mantenha a circulação da fístula livre sem apertos.',
       icone: 'Zap',
       corPrimaria: '#059669'
     });
@@ -231,18 +231,18 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     if (alb >= 3.8) {
       status = GOAL_STATUS.CONQUISTA;
-      mensagem = 'Nutrição de campeão! Seus músculos continuam firmes e sua imunidade pronta para te proteger.';
-      dica = 'Continue comendo boas fontes de proteína indicadas pela nutricionista (claras de ovo, peixes, aves).';
+      mensagem = 'Nutrição de campeão! Seus músculos e imunidade estão firmes e fortes.';
+      dica = 'Continue comendo as boas fontes de proteína indicadas pela nutricionista.';
     } else {
       status = GOAL_STATUS.QUASE_LA;
-      mensagem = 'Seu corpo precisa de um reforço de nutrientes para manter os músculos e a defesa bem fortes.';
-      dica = 'Converse com a nutricionista da clínica para incluir suplementos proteicos apropriados para quem faz diálise.';
+      mensagem = 'Seu corpo pede reforço nutritivo para manter a força e as defesas.';
+      dica = 'Converse com a nutricionista para incluir alimentos proteicos na sua rotina.';
     }
 
     cards.push({
       id: 'albumina',
       categoria: 'Força & Imunidade',
-      subtitulo: 'Albumina (Estado Nutricional)',
+      subtitulo: 'Albumina (Nutrição)',
       valorFormatado: `${alb.toFixed(1).replace('.', ',')} g/dL`,
       faixaMeta: 'Meta: ≥ 3,8 g/dL',
       status,
@@ -262,20 +262,20 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     if (gli >= 70 && gli <= 125) {
       status = GOAL_STATUS.CONQUISTA;
-      mensagem = 'Açúcar sob controle absoluto! Você está protegendo sua visão, circulação e seus vasos sanguíneos.';
-      dica = 'Mantenha os bons hábitos alimentares e seus remédios de controle glicêmico nos horários certos.';
+      mensagem = 'Açúcar controlado! Seus olhos, nervos e circulação agradecem.';
+      dica = 'Mantenha os hábitos saudáveis e remédios do diabetes nos horários certos.';
     } else if (gli > 125 && gli <= 180) {
       status = GOAL_STATUS.QUASE_LA;
-      mensagem = 'O açúcar no sangue subiu um pouco. Vamos alinhar a alimentação para voltar ao equilíbrio perfeito!';
-      dica = 'Evite doces, bolachas recheadas e pão em excesso. Prefira alimentos integrais recomendados pela nutri.';
+      mensagem = 'Açúcar subiu um pouco. Cuidado com doces, pães e refrigerantes.';
+      dica = 'Evite refrigerantes normais e açúcares. Prefira água e refeições equilibradas.';
     } else if (gli > 180) {
       status = GOAL_STATUS.ATENCAO;
-      mensagem = 'Glicose elevada: seu corpo está pedindo atenção com a alimentação e o ajuste dos remédios.';
-      dica = 'Cheque a glicemia antes das refeições e converse com o médico sobre o ajuste de insulina ou comprimidos.';
+      mensagem = 'Atenção: açúcar alto no sangue. Mantenha os remédios em dia.';
+      dica = 'Meça a glicose regularmente e converse com o médico sobre o tratamento.';
     } else { // gli < 70
       status = GOAL_STATUS.ATENCAO;
-      mensagem = 'Glicose muito baixa: tome cuidado com tonturas ou tremores. O corpo precisa de energia!';
-      dica = 'Nunca fique longos períodos sem comer e tenha sempre uma orientação de lanchinho para diálise.';
+      mensagem = 'Atenção: açúcar muito baixo. Cuidado com tontura ou suor frio.';
+      dica = 'Nunca fique muito tempo sem comer e tenha sempre orientação de lanche.';
     }
 
     cards.push({
@@ -300,14 +300,14 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
     cards.push({
       id: 'tgp',
       categoria: 'Saúde do Fígado',
-      subtitulo: 'TGP (ALT) - Função Hepática',
+      subtitulo: 'TGP (Função do Fígado)',
       valorFormatado: `${Math.round(tgp)} U/L`,
       faixaMeta: 'Meta: Até 45 U/L',
       status,
       mensagem: status === GOAL_STATUS.CONQUISTA 
-        ? 'Fígado saudável e protegido! Suas enzimas hepáticas estão em perfeito estado.'
-        : 'Enzima do fígado um pouco elevada. Vamos investigar e proteger seu sistema hepático.',
-      dica: 'Evite medicamentos por conta própria (como anti-inflamatórios ou chás caseiros) e mantenha a vacinação em dia.',
+        ? 'Fígado saudável e protegido! Suas enzimas estão em ordem.'
+        : 'Fígado requer atenção. Vamos acompanhar com cuidado.',
+      dica: 'Evite remédios ou chás caseiros sem perguntar para o médico.',
       icone: 'ShieldCheck',
       corPrimaria: '#0d9488'
     });

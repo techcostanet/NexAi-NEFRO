@@ -146,20 +146,28 @@ const styles = StyleSheet.create({
 export default function PatientBulletinPdf({
   bulletinData,
   doctorInfo,
-  customNote = ''
+  customNote = '',
+  selectedCardIds = null,
+  showTips = true
 }) {
   if (!bulletinData) return null;
 
   const {
     pacienteNome,
     dataReferencia,
-    totalMetas = 5,
-    metasBatidas = 0,
-    taxaSucesso = 0,
     tituloPlacar = 'Metas de Saúde',
     mensagemGeral = '',
     cards = []
   } = bulletinData;
+
+  // Filtra cartões conforme seleção
+  const displayCards = Array.isArray(selectedCardIds) && selectedCardIds.length > 0
+    ? cards.filter(c => selectedCardIds.includes(c.id))
+    : cards;
+
+  const totalMetas = displayCards.length;
+  const metasBatidas = displayCards.filter(c => c.status === 'CONQUISTA' || c.statusId === 'otimo').length;
+  const taxaSucesso = totalMetas > 0 ? Math.round((metasBatidas / totalMetas) * 100) : 100;
 
   const docName = doctorInfo?.nome || 'Dr(a). Médico(a) Nefrologista';
   const docCrm = doctorInfo?.crm ? `CRM/${doctorInfo?.ufCrm || 'SP'} ${doctorInfo?.crm}` : 'Nefrologia Clínica';
@@ -198,17 +206,17 @@ export default function PatientBulletinPdf({
 
         {/* Grade de Metas Clínicas */}
         <View style={styles.cardsGrid}>
-          {cards.slice(0, 6).map((card, idx) => (
+          {displayCards.map((card, idx) => (
             <View key={idx} style={styles.card}>
               <View style={styles.cardTitleRow}>
-                <Text style={styles.cardName}>{card.nome}</Text>
+                <Text style={styles.cardName}>{card.categoria || card.nome}</Text>
                 <Text style={styles.cardValue}>{card.valorFormatado}</Text>
               </View>
-              <Text style={styles.cardTarget}>Meta: {card.alvoTexto}</Text>
-              <Text style={styles.cardFeedback}>{card.feedbackTexto}</Text>
-              {card.dicaPratica && (
-                <Text style={styles.cardTip}>💡 {card.dicaPratica}</Text>
-              )}
+              <Text style={styles.cardTarget}>Meta: {card.faixaMeta || card.alvoTexto}</Text>
+              <Text style={styles.cardFeedback}>"{card.mensagem || card.feedbackTexto}"</Text>
+              {showTips && (card.dica || card.dicaPratica) ? (
+                <Text style={styles.cardTip}>💡 Dica: {card.dica || card.dicaPratica}</Text>
+              ) : null}
             </View>
           ))}
         </View>
@@ -216,7 +224,7 @@ export default function PatientBulletinPdf({
         {/* Recado Carinhoso / Orientação Especial */}
         {customNote ? (
           <View style={styles.noteBox}>
-            <Text style={styles.noteTitle}>Recado Especial da Equipe Médica:</Text>
+            <Text style={styles.noteTitle}>Orientação Médica para este Mês:</Text>
             <Text style={styles.noteContent}>"{customNote}"</Text>
           </View>
         ) : null}

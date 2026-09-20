@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.58",
+    "date": "20/09/2026",
+    "title": "Melhorias no Boletim Educativo do Paciente: selecao interativa de exames, liv...",
+    "highlights": [
+      "✨ Melhorias no Boletim Educativo do Paciente: selecao interativa de exames, live preview A4 e conduta medica com presets"
+    ]
+  },
+  {
     "version": "1.1.57",
     "date": "14/09/2026",
     "title": "Base de demonstracao hiper-realista: 60 pacientes completos em 3 clinicas, pe...",
