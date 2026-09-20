@@ -141,21 +141,26 @@ export default function PatientProfile() {
   const [prescriptionToPrint, setPrescriptionToPrint] = useState(null);
   const [isPrescriptionMenuOpen, setIsPrescriptionMenuOpen] = useState(false);
   const prescriptionMenuRef = useRef(null);
+  const [isTransplantMenuOpen, setIsTransplantMenuOpen] = useState(false);
+  const transplantMenuRef = useRef(null);
 
-  // Fecha o menu de prescrição ao clicar fora
+  // Fecha os menus de prescrição e transplante ao clicar fora
   useEffect(() => {
     function handleClickOutside(event) {
       if (prescriptionMenuRef.current && !prescriptionMenuRef.current.contains(event.target)) {
         setIsPrescriptionMenuOpen(false);
       }
+      if (transplantMenuRef.current && !transplantMenuRef.current.contains(event.target)) {
+        setIsTransplantMenuOpen(false);
+      }
     }
-    if (isPrescriptionMenuOpen) {
+    if (isPrescriptionMenuOpen || isTransplantMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isPrescriptionMenuOpen]);
+  }, [isPrescriptionMenuOpen, isTransplantMenuOpen]);
 
   // Novos Modais para Peso, Transplante e Lock Therapy
   const [isWeightModalOpen, setIsWeightModalOpen] = useState(false);
@@ -576,25 +581,134 @@ export default function PatientProfile() {
               <span>+ Peso</span>
             </button>
 
-            <button 
-              className="btn btn-outline" 
-              onClick={() => setIsChecklistModalOpen(true)}
-              style={{ padding: '0.42rem 0.72rem', fontSize: '0.80rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#ddd6fe', background: '#f5f3ff', color: '#6d28d9' }}
-              title="Checklist e Prontidão de Transplante Renal"
-            >
-              <CheckSquare size={14} color="#7c3aed" />
-              <span>Prontidão Tx</span>
-            </button>
+            {/* Menu Unificado: Módulo de Transplante Renal (Tx) */}
+            <div style={{ position: 'relative' }} ref={transplantMenuRef}>
+              <button 
+                type="button"
+                className="btn btn-outline" 
+                onClick={() => setIsTransplantMenuOpen(!isTransplantMenuOpen)}
+                style={{ 
+                  padding: '0.42rem 0.72rem', 
+                  fontSize: '0.80rem', 
+                  fontWeight: '600', 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '5px', 
+                  whiteSpace: 'nowrap', 
+                  borderRadius: '10px', 
+                  borderColor: isTransplantMenuOpen ? '#7c3aed' : '#ddd6fe', 
+                  background: isTransplantMenuOpen ? '#ede9fe' : '#f5f3ff', 
+                  color: isTransplantMenuOpen ? '#5b21b6' : '#6d28d9',
+                  boxShadow: isTransplantMenuOpen ? '0 0 0 2px rgba(124, 58, 237, 0.2)' : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+                title="Módulo de Transplante Renal: Checklist do SNT e Laudo Médico"
+              >
+                <CheckSquare size={14} color={isTransplantMenuOpen ? "#5b21b6" : "#7c3aed"} />
+                <span>Transplante (Tx)</span>
+                <ChevronDown 
+                  size={13} 
+                  color={isTransplantMenuOpen ? "#5b21b6" : "#6d28d9"}
+                  style={{ 
+                    transform: isTransplantMenuOpen ? 'rotate(180deg)' : 'none', 
+                    transition: 'transform 0.2s ease' 
+                  }} 
+                />
+              </button>
 
-            <button 
-              className="btn btn-outline" 
-              onClick={() => setIsTransplantReportOpen(true)}
-              style={{ padding: '0.42rem 0.72rem', fontSize: '0.80rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#bfdbfe', background: '#eff6ff', color: '#1d4ed8' }}
-              title="Emitir Laudo Médico e Relatório de Transplante em PDF"
-            >
-              <Printer size={14} color="#2563eb" />
-              <span>Laudo Tx</span>
-            </button>
+              {isTransplantMenuOpen && (
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 6px)',
+                    left: 0,
+                    zIndex: 60,
+                    minWidth: '280px',
+                    maxWidth: 'calc(100vw - 2rem)',
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                    padding: '6px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '3px'
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsTransplantMenuOpen(false);
+                      setIsChecklistModalOpen(true);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      padding: '8px 10px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      width: '100%',
+                      transition: 'background 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <div style={{ padding: '6px', borderRadius: '8px', background: '#f5f3ff', color: '#7c3aed', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <CheckSquare size={16} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b' }}>
+                        Checklist & Prontidão SNT
+                      </div>
+                      <div style={{ fontSize: '0.70rem', color: '#64748b' }}>
+                        Sorologias, exames e status da fila
+                      </div>
+                    </div>
+                  </button>
+
+                  <div style={{ height: '1px', background: '#f1f5f9', margin: '3px 6px' }} />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsTransplantMenuOpen(false);
+                      setIsTransplantReportOpen(true);
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      padding: '8px 10px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      width: '100%',
+                      transition: 'background 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <div style={{ padding: '6px', borderRadius: '8px', background: '#eff6ff', color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Printer size={16} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b' }}>
+                        Laudo de Encaminhamento
+                      </div>
+                      <div style={{ fontSize: '0.70rem', color: '#64748b' }}>
+                        Documento timbrado em PDF / impressão
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
 
             <button 
               className="btn btn-outline" 

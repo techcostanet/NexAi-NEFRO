@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.60] - 2026-09-20
+### Alterações
+- Unificacao dos botoes de Transplante (Prontidao Tx e Laudo Tx) em menu inteligente no prontuario
+
 ## [1.1.59] - 2026-09-20
 ### Alterações
 - Unificacao dos botoes Prescrever e + Receita em um menu suspenso inteligente de Prescricao

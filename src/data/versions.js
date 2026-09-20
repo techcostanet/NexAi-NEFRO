@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.60",
+    "date": "20/09/2026",
+    "title": "Unificacao dos botoes de Transplante (Prontidao Tx e Laudo Tx) em menu inteli...",
+    "highlights": [
+      "✨ Unificacao dos botoes de Transplante (Prontidao Tx e Laudo Tx) em menu inteligente no prontuario"
+    ]
+  },
+  {
     "version": "1.1.59",
     "date": "20/09/2026",
     "title": "Unificacao dos botoes Prescrever e + Receita em um menu suspenso inteligente ...",
