@@ -124,6 +124,25 @@ const styles = StyleSheet.create({
     paddingLeft: 12,
     marginTop: 2
   },
+  orientacoesBox: {
+    marginTop: 8,
+    marginBottom: 8,
+    paddingTop: 6,
+    borderTopWidth: 0.5,
+    borderTopColor: '#cbd5e1'
+  },
+  orientacoesTitle: {
+    fontSize: 8,
+    fontWeight: 'bold',
+    color: '#0f172a',
+    marginBottom: 2,
+    textTransform: 'uppercase'
+  },
+  orientacoesText: {
+    fontSize: 8,
+    color: '#334155',
+    lineHeight: 1.3
+  },
   twoViasBox: {
     borderWidth: 1,
     borderColor: '#cbd5e1',
@@ -252,6 +271,13 @@ export default function PrescriptionPdf({
               <Text><Text style={styles.label}>Endereço: </Text><Text style={styles.value}>{patient.endereco}</Text></Text>
             </View>
           )}
+          {prescription.incluirAlergias !== false && Array.isArray(patient.alergias) && patient.alergias.length > 0 && (
+            <View style={{ marginTop: 2 }}>
+              <Text style={{ fontSize: 7.5, color: '#b91c1c', fontStyle: 'italic' }}>
+                * Alergias relatadas: {patient.alergias.join(', ')}
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* Lista de Medicamentos */}
@@ -261,23 +287,39 @@ export default function PrescriptionPdf({
               Nenhum medicamento prescrito nesta receita.
             </Text>
           ) : (
-            itens.map((it, idx) => (
-              <View key={idx} style={styles.itemBlock}>
-                <View style={styles.itemHeader}>
-                  <View style={styles.itemIndexAndName}>
-                    <Text style={styles.itemIndex}>{idx + 1}.</Text>
-                    <Text style={styles.itemName}>{it.nome} {it.concentracao || ''} {it.formaFarmaceutica ? `(${it.formaFarmaceutica})` : ''}</Text>
+            itens.map((it, idx) => {
+              const medName = (it.medicamento || it.nome || 'Medicamento não especificado').trim();
+              const posologia = it.via 
+                ? `[${it.via}] ${it.posologia || 'Conforme orientação médica'}` 
+                : (it.posologia || 'Conforme orientação médica');
+              const obs = it.instrucoesAdicionais || it.orientacoes || '';
+
+              return (
+                <View key={idx} style={styles.itemBlock}>
+                  <View style={styles.itemHeader}>
+                    <View style={styles.itemIndexAndName}>
+                      <Text style={styles.itemIndex}>{idx + 1}.</Text>
+                      <Text style={styles.itemName}>{medName}</Text>
+                    </View>
+                    {it.quantidade && <Text style={styles.itemDose}>{it.quantidade}</Text>}
                   </View>
-                  {it.quantidade && <Text style={styles.itemDose}>{it.quantidade}</Text>}
+                  <Text style={styles.itemPosology}>Uso: {posologia}</Text>
+                  {obs ? (
+                    <Text style={styles.itemObservation}>Obs: {obs}</Text>
+                  ) : null}
                 </View>
-                <Text style={styles.itemPosology}>Uso: {it.posologia || 'Conforme orientação médica'}</Text>
-                {it.orientacoes && (
-                  <Text style={styles.itemObservation}>Obs: {it.orientacoes}</Text>
-                )}
-              </View>
-            ))
+              );
+            })
           )}
         </View>
+
+        {/* Orientações Médicas Gerais */}
+        {prescription.observacoesGerais ? (
+          <View style={styles.orientacoesBox}>
+            <Text style={styles.orientacoesTitle}>ORIENTAÇÕES MÉDICAS:</Text>
+            <Text style={styles.orientacoesText}>{prescription.observacoesGerais}</Text>
+          </View>
+        ) : null}
 
         {/* Bloco de Duas Vias (Controle Especial / Antimicrobiano) */}
         {(isControleEspecial || isAntimicrobiano) && currentVia === 1 && (

@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.63",
+    "date": "20/09/2026",
+    "title": "Correcao da exibicao do medicamento no PDF e padronizacao do formato da recei...",
+    "highlights": [
+      "✨ Correcao da exibicao do medicamento no PDF e padronizacao do formato da receita entre Baixar PDF e Imprimir"
+    ]
+  },
+  {
     "version": "1.1.62",
     "date": "20/09/2026",
     "title": "Melhoria de design, espacamento e correcao de selecao de 40mg/20mg na anticoa...",

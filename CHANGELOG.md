@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.63] - 2026-09-20
+### Alterações
+- Correcao da exibicao do medicamento no PDF e padronizacao do formato da receita entre Baixar PDF e Imprimir
+
 ## [1.1.62] - 2026-09-20
 ### Alterações
 - Melhoria de design, espacamento e correcao de selecao de 40mg/20mg na anticoagulacao
