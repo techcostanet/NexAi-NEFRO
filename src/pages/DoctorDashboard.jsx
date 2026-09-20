@@ -258,8 +258,8 @@ export default function DoctorDashboard() {
   return (
     <div className="container" style={{ paddingBottom: '5rem' }}>
       
-      {/* Cabeçalho */}
-      <header className="flex justify-between items-center mt-3 mb-4 flex-wrap gap-4">
+      {/* Cabeçalho Padronizado */}
+      <header className="flex justify-between items-center mt-3 mb-4 flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <BrandLogo 
             size="md" 
@@ -268,27 +268,27 @@ export default function DoctorDashboard() {
           />
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px' }}>
+              <h1 className="text-2xl font-bold" style={{ letterSpacing: '-0.3px', margin: 0 }}>
                 Olá, {doctor.nome || 'Médico'}
               </h1>
-              <span style={{ fontSize: '0.72rem', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' }}>
+              <span style={{ fontSize: '0.72rem', background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '2px 8px', borderRadius: '12px', fontWeight: '600', whiteSpace: 'nowrap' }}>
                 Nex-Ai.NEFRO
               </span>
             </div>
-            <p className="text-muted text-sm mt-0.5">
+            <p className="text-muted text-sm mt-0.5" style={{ margin: 0 }}>
               {doctor.especialidade || 'Nefrologia Clínica e Hemodiálise'} • CRM {doctor.crm}/{doctor.ufCrm}
             </p>
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="flex items-center gap-2 flex-wrap mobile-scroll-row" style={{ justifyContent: 'flex-end' }}>
           <button 
             className="btn btn-outline" 
             onClick={() => setIsChangelogOpen(true)}
             style={{ 
-              padding: '0.4rem 1rem', 
-              fontSize: '0.8rem', 
-              borderRadius: '20px', 
+              padding: '0.5rem 0.85rem', 
+              fontSize: '0.82rem', 
+              borderRadius: '10px', 
               background: 'rgba(239, 246, 255, 0.95)', 
               borderColor: '#bfdbfe',
               color: '#1d4ed8',
@@ -296,44 +296,50 @@ export default function DoctorDashboard() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              boxShadow: '0 2px 10px rgba(37, 99, 235, 0.08)'
+              boxShadow: '0 1px 3px rgba(37, 99, 235, 0.08)'
             }}
-            title="Notas de versão"
+            title="Notas de versão do Nex-Ai.NEFRO"
           >
             <Sparkles size={14} color="#2563eb" />
             <span>Notas de Versão</span>
           </button>
-        </div>
 
-        <div className="flex items-center gap-2 flex-wrap mobile-scroll-row">
           <button 
             className="btn btn-outline" 
             onClick={() => setIsReportsModalOpen(true)}
             disabled={doctor.statusLicenca === 'Suspenso' || doctor.statusLicenca === 'Cancelado'}
             style={{ 
-              padding: '0.55rem 0.95rem', 
-              fontSize: '0.85rem', 
-              display: 'flex', 
+              padding: '0.5rem 0.85rem', 
+              fontSize: '0.82rem', 
+              display: 'inline-flex', 
               alignItems: 'center', 
               gap: '6px',
               borderColor: '#c7d2fe', 
               background: '#f5f3ff', 
               color: '#4f46e5',
-              fontWeight: '600'
+              fontWeight: '600',
+              borderRadius: '10px'
             }}
             title="Central de Relatórios Clínicos"
           >
-            <BarChart3 size={16} color="#4f46e5" />
+            <BarChart3 size={15} color="#4f46e5" />
             <span>Relatórios</span>
           </button>
 
           <button 
             className="btn btn-outline" 
             onClick={() => navigate('/doctor/profile')}
-            style={{ padding: '0.55rem 0.95rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+            style={{ 
+              padding: '0.5rem 0.85rem', 
+              fontSize: '0.82rem', 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '6px',
+              borderRadius: '10px'
+            }}
             title="Dados e locais de atendimento"
           >
-            <UserCog size={16} color="var(--primary)" />
+            <UserCog size={15} color="var(--primary)" />
             <span>Meus Dados</span>
           </button>
 
@@ -342,19 +348,20 @@ export default function DoctorDashboard() {
             onClick={() => setIsImportModalOpen(true)}
             disabled={doctor.statusLicenca === 'Suspenso' || doctor.statusLicenca === 'Cancelado'}
             style={{ 
-              padding: '0.55rem 0.95rem', 
-              fontSize: '0.85rem', 
-              display: 'flex', 
+              padding: '0.5rem 0.85rem', 
+              fontSize: '0.82rem', 
+              display: 'inline-flex', 
               alignItems: 'center', 
               gap: '6px', 
               borderColor: '#bfdbfe', 
               background: '#eff6ff', 
               color: '#1d4ed8',
-              fontWeight: '600'
+              fontWeight: '600',
+              borderRadius: '10px'
             }}
             title="Importar exames (PDF, Excel, Word ou Imagem)"
           >
-            <UploadCloud size={16} color="#2563eb" />
+            <UploadCloud size={15} color="#2563eb" />
             <span>Importar</span>
           </button>
 
@@ -362,19 +369,32 @@ export default function DoctorDashboard() {
             className="btn btn-primary" 
             onClick={handleOpenNewPatient}
             disabled={doctor.statusLicenca === 'Suspenso' || doctor.statusLicenca === 'Cancelado'}
-            style={{ padding: '0.55rem 1.1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+            style={{ 
+              padding: '0.5rem 1rem', 
+              fontSize: '0.82rem', 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '6px',
+              borderRadius: '10px'
+            }}
           >
-            <UserPlus size={16} />
+            <UserPlus size={15} />
             <span>Novo Paciente</span>
           </button>
 
           <button 
             className="btn btn-outline" 
             onClick={handleLogout} 
-            style={{ padding: '0.55rem', borderRadius: '12px' }}
-            title="Sair"
+            style={{ 
+              padding: '0.5rem 0.65rem', 
+              borderRadius: '10px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            title="Sair do sistema"
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
           </button>
         </div>
       </header>

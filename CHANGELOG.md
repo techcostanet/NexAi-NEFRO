@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.64] - 2026-09-20
+### Alterações
+- Padronizacao da barra de acoes e cabecalho em todas as contas de clientes e demonstracao
+
 ## [1.1.63] - 2026-09-20
 ### Alterações
 - Correcao da exibicao do medicamento no PDF e padronizacao do formato da receita entre Baixar PDF e Imprimir

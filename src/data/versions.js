@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.64",
+    "date": "20/09/2026",
+    "title": "Padronizacao da barra de acoes e cabecalho em todas as contas de clientes e d...",
+    "highlights": [
+      "✨ Padronizacao da barra de acoes e cabecalho em todas as contas de clientes e demonstracao"
+    ]
+  },
+  {
     "version": "1.1.63",
     "date": "20/09/2026",
     "title": "Correcao da exibicao do medicamento no PDF e padronizacao do formato da recei...",
