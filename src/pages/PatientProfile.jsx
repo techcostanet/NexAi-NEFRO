@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -25,6 +25,7 @@ import {
   AlertCircle,
   FlaskConical,
   ChevronRight,
+  ChevronDown,
   UploadCloud,
   HeartHandshake,
   Bug,
@@ -138,6 +139,23 @@ export default function PatientProfile() {
   const [prescriptionInitialTipo, setPrescriptionInitialTipo] = useState('simples');
   const [isPrescriptionPrintModalOpen, setIsPrescriptionPrintModalOpen] = useState(false);
   const [prescriptionToPrint, setPrescriptionToPrint] = useState(null);
+  const [isPrescriptionMenuOpen, setIsPrescriptionMenuOpen] = useState(false);
+  const prescriptionMenuRef = useRef(null);
+
+  // Fecha o menu de prescrição ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (prescriptionMenuRef.current && !prescriptionMenuRef.current.contains(event.target)) {
+        setIsPrescriptionMenuOpen(false);
+      }
+    }
+    if (isPrescriptionMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isPrescriptionMenuOpen]);
 
   // Novos Modais para Peso, Transplante e Lock Therapy
   const [isWeightModalOpen, setIsWeightModalOpen] = useState(false);
@@ -608,25 +626,169 @@ export default function PatientProfile() {
               <span>Importar</span>
             </button>
 
-            <button 
-              className="btn btn-outline" 
-              onClick={handleOpenNewMedication}
-              style={{ padding: '0.42rem 0.72rem', fontSize: '0.80rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#fed7aa', background: '#fff7ed', color: '#c2410c' }}
-              title="Prescrever medicamentos"
-            >
-              <Pill size={14} color="#ea580c" />
-              <span>Prescrever</span>
-            </button>
+            {/* Menu Unificado: Prescrição & Receituário */}
+            <div style={{ position: 'relative' }} ref={prescriptionMenuRef}>
+              <button 
+                type="button"
+                className="btn btn-outline" 
+                onClick={() => setIsPrescriptionMenuOpen(!isPrescriptionMenuOpen)}
+                style={{ 
+                  padding: '0.42rem 0.72rem', 
+                  fontSize: '0.80rem', 
+                  fontWeight: '600', 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '5px', 
+                  whiteSpace: 'nowrap', 
+                  borderRadius: '10px', 
+                  borderColor: isPrescriptionMenuOpen ? '#818cf8' : '#fed7aa', 
+                  background: isPrescriptionMenuOpen ? '#eef2ff' : '#fff7ed', 
+                  color: isPrescriptionMenuOpen ? '#4338ca' : '#c2410c',
+                  boxShadow: isPrescriptionMenuOpen ? '0 0 0 2px rgba(99, 102, 241, 0.2)' : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+                title="Prescrever medicamentos ou emitir receita médica"
+              >
+                <Pill size={14} color={isPrescriptionMenuOpen ? "#4f46e5" : "#ea580c"} />
+                <span>Prescrever / Receita</span>
+                <ChevronDown 
+                  size={13} 
+                  color={isPrescriptionMenuOpen ? "#4f46e5" : "#c2410c"}
+                  style={{ 
+                    transform: isPrescriptionMenuOpen ? 'rotate(180deg)' : 'none', 
+                    transition: 'transform 0.2s ease' 
+                  }} 
+                />
+              </button>
 
-            <button 
-              className="btn btn-outline" 
-              onClick={() => handleOpenNewPrescription('simples')}
-              style={{ padding: '0.42rem 0.72rem', fontSize: '0.80rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#c7d2fe', background: '#eef2ff', color: '#4338ca' }}
-              title="Emitir nova receita médica"
-            >
-              <FileCheck size={14} color="#4f46e5" />
-              <span>+ Receita</span>
-            </button>
+              {isPrescriptionMenuOpen && (
+                <div 
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 6px)',
+                    right: 0,
+                    zIndex: 60,
+                    minWidth: '275px',
+                    maxWidth: 'calc(100vw - 2rem)',
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
+                    padding: '6px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '3px'
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPrescriptionMenuOpen(false);
+                      handleOpenNewPrescription('simples');
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      padding: '8px 10px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      width: '100%',
+                      transition: 'background 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <div style={{ padding: '6px', borderRadius: '8px', background: '#eef2ff', color: '#4f46e5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <FileCheck size={16} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b' }}>
+                        Emitir Receita Simples
+                      </div>
+                      <div style={{ fontSize: '0.70rem', color: '#64748b' }}>
+                        Receita timbrada / PDF p/ farmácia
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPrescriptionMenuOpen(false);
+                      handleOpenNewPrescription('controle_especial');
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      padding: '8px 10px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      width: '100%',
+                      transition: 'background 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <div style={{ padding: '6px', borderRadius: '8px', background: '#fdf4ff', color: '#c026d3', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <FileCheck size={16} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b' }}>
+                        Receita Controle Especial
+                      </div>
+                      <div style={{ fontSize: '0.70rem', color: '#64748b' }}>
+                        Duas vias (antibióticos / controlados)
+                      </div>
+                    </div>
+                  </button>
+
+                  <div style={{ height: '1px', background: '#f1f5f9', margin: '3px 6px' }} />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsPrescriptionMenuOpen(false);
+                      handleOpenNewMedication();
+                    }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      padding: '8px 10px',
+                      borderRadius: '8px',
+                      border: 'none',
+                      background: 'transparent',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                      width: '100%',
+                      transition: 'background 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                  >
+                    <div style={{ padding: '6px', borderRadius: '8px', background: '#fff7ed', color: '#ea580c', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Pill size={16} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b' }}>
+                        Adicionar ao Prontuário
+                      </div>
+                      <div style={{ fontSize: '0.70rem', color: '#64748b' }}>
+                        Medicamento contínuo / diálise
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
 
             <button 
               className="btn btn-outline" 

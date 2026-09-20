@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.59] - 2026-09-20
+### Alterações
+- Unificacao dos botoes Prescrever e + Receita em um menu suspenso inteligente de Prescricao
+
 ## [1.1.58] - 2026-09-20
 ### Alterações
 - Melhorias no Boletim Educativo do Paciente: selecao interativa de exames, live preview A4 e conduta medica com presets
