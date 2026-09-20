@@ -68,7 +68,7 @@ export default function PrescriptionPrintDocument({
         width: '100%',
         maxWidth: '720px',
         margin: '0 auto',
-        padding: '24px 32px',
+        padding: '24px 32px 18px 32px',
         backgroundColor: '#ffffff',
         color: '#0f172a',
         fontFamily: "'Helvetica Neue', Helvetica, Arial, 'Inter', sans-serif",
@@ -77,11 +77,12 @@ export default function PrescriptionPrintDocument({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        minHeight: '840px',
+        minHeight: '1020px',
         boxSizing: 'border-box'
       }}
     >
-      <div>
+      {/* ================= BLOCO SUPERIOR: CABEÇALHO, PACIENTE E MEDICAMENTOS ================= */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* ================= CABEÇALHO DA CLÍNICA ================= */}
         <div style={{ borderBottom: '2px solid #1e3a8a', paddingBottom: '8px', marginBottom: '12px' }}>
           <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e3a8a', letterSpacing: '0.4px', textTransform: 'uppercase' }}>
@@ -139,8 +140,8 @@ export default function PrescriptionPrintDocument({
           )}
         </div>
 
-        {/* ================= LISTA DE MEDICAMENTOS ================= */}
-        <div style={{ minHeight: '260px', marginBottom: '12px' }}>
+        {/* ================= LISTA DE MEDICAMENTOS (FLEX: 1 PARA EXPANDIR O MIOLO) ================= */}
+        <div style={{ flex: 1, minHeight: '160px', marginBottom: '12px' }}>
           {itens.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '30px 0', color: '#94a3b8', fontStyle: 'italic', fontSize: '0.82rem' }}>
               Nenhum medicamento prescrito nesta receita.
@@ -179,10 +180,13 @@ export default function PrescriptionPrintDocument({
             })
           )}
         </div>
+      </div>
 
+      {/* ================= BLOCO INFERIOR ANCORADO NA BASE: ORIENTAÇÕES, ASSINATURA E RODAPÉ ================= */}
+      <div className="prescription-bottom-block" style={{ marginTop: 'auto', paddingTop: '8px' }}>
         {/* ================= ORIENTAÇÕES MÉDICAS ================= */}
         {prescription.observacoesGerais && (
-          <div style={{ marginTop: '8px', marginBottom: '10px', paddingTop: '6px', borderTop: '0.5px solid #cbd5e1', fontSize: '0.80rem' }}>
+          <div style={{ marginBottom: '12px', paddingTop: '6px', borderTop: '0.5px solid #cbd5e1', fontSize: '0.80rem' }}>
             <strong style={{ display: 'block', color: '#0f172a', fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '2px' }}>
               Orientações Médicas:
             </strong>
@@ -212,11 +216,9 @@ export default function PrescriptionPrintDocument({
             </div>
           </div>
         )}
-      </div>
 
-      <div>
         {/* ================= SEÇÃO DE ASSINATURA ================= */}
-        <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #e2e8f0', textAlign: 'center' }}>
+        <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px solid #e2e8f0', textAlign: 'center' }}>
           <div style={{ width: '220px', margin: '0 auto 4px auto', borderTop: '1px solid #0f172a' }}></div>
           <strong style={{ display: 'block', fontSize: '0.88rem', color: '#0f172a' }}>{doctorName}</strong>
           <span style={{ display: 'block', fontSize: '0.75rem', color: '#475569', marginTop: '1px' }}>

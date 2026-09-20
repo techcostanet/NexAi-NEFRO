@@ -74,7 +74,7 @@ export function printElement(elementOrId, documentTitle = 'Nex-Ai.NEFRO - Docume
               -webkit-print-color-adjust: exact !important;
               print-color-adjust: exact !important;
               width: 100% !important;
-              height: auto !important;
+              height: 100% !important;
               overflow: visible !important;
             }
             * {
@@ -84,6 +84,35 @@ export function printElement(elementOrId, documentTitle = 'Nex-Ai.NEFRO - Docume
             }
             .no-print {
               display: none !important;
+            }
+            .print-isolated-wrapper,
+            .printable-prescription-area {
+              width: 100% !important;
+              height: 100% !important;
+              display: flex !important;
+              flex-direction: column !important;
+              margin: 0 !important;
+              padding: 0 !important;
+            }
+            .prescription-a4-sheet {
+              width: 100% !important;
+              max-width: 100% !important;
+              height: 275mm !important;
+              min-height: 275mm !important;
+              max-height: 277mm !important;
+              box-sizing: border-box !important;
+              display: flex !important;
+              flex-direction: column !important;
+              justify-content: space-between !important;
+              padding: 14px 24px !important;
+              margin: 0 !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+            }
+            .prescription-bottom-block {
+              margin-top: auto !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
             }
             table {
               page-break-inside: auto;

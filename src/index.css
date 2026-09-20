@@ -533,8 +533,35 @@ svg {
     overflow: visible !important;
   }
 
-  /* Folhas A4 padronizadas */
-  .prescription-a4-sheet,
+  /* Folha A4 Receituário Médico (fixado em flex column para ancorar rodapé e assinatura na base da página) */
+  .prescription-a4-sheet {
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    padding: 14px 24px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 275mm !important;
+    min-height: 275mm !important;
+    max-height: 277mm !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-sizing: border-box !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .prescription-bottom-block {
+    margin-top: auto !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Demais folhas A4 padronizadas */
   .patient-bulletin-a4-sheet,
   .transplant-a4-sheet,
   .report-a4-sheet {

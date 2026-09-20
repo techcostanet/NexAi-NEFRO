@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.65",
+    "date": "20/09/2026",
+    "title": "Fix: ancoragem do rodape e bloco final da receita na base da folha A4 ao impr...",
+    "highlights": [
+      "✨ Fix: ancoragem do rodape e bloco final da receita na base da folha A4 ao imprimir"
+    ]
+  },
+  {
     "version": "1.1.64",
     "date": "20/09/2026",
     "title": "Padronizacao da barra de acoes e cabecalho em todas as contas de clientes e d...",

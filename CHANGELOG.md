@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.65] - 2026-09-20
+### Alterações
+- Fix: ancoragem do rodape e bloco final da receita na base da folha A4 ao imprimir
+
 ## [1.1.64] - 2026-09-20
 ### Alterações
 - Padronizacao da barra de acoes e cabecalho em todas as contas de clientes e demonstracao
