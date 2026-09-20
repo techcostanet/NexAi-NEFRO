@@ -27,7 +27,7 @@ import {
   UploadCloud,
   BarChart3
 } from 'lucide-react';
-import { subscribeToPatients, STATUS_TRANSPLANTE_OPTIONS, seedDemoPatientsToFirestore } from '../services/patientService';
+import { subscribeToPatients, STATUS_TRANSPLANTE_OPTIONS, seedDemoPatientsToFirestore, getAnticoagulacaoInfo } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
 import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
 import PatientFormModal from '../components/PatientFormModal';
@@ -55,6 +55,7 @@ export default function DoctorDashboard() {
   const [filterTurno, setFilterTurno] = useState('Todos');
   const [filterStatus, setFilterStatus] = useState('Todos');
   const [filterMedAlert, setFilterMedAlert] = useState(false);
+  const [filterSemHeparina, setFilterSemHeparina] = useState(false);
   const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'compact' | 'table'
   const [sortConfig, setSortConfig] = useState({ key: 'nome', direction: 'asc' });
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
@@ -156,7 +157,12 @@ export default function DoctorDashboard() {
     
     if (filterMedAlert) {
       const medAlerts = getPatientMedicationAlerts(p);
-      return matchesSearch && matchesLocal && matchesTurno && matchesStatus && medAlerts.hasAlerts;
+      if (!medAlerts.hasAlerts) return false;
+    }
+
+    if (filterSemHeparina) {
+      const ac = getAnticoagulacaoInfo(p);
+      if (!ac.isSemHeparina) return false;
     }
 
     return matchesSearch && matchesLocal && matchesTurno && matchesStatus;
@@ -635,6 +641,30 @@ export default function DoctorDashboard() {
             <Clock size={16} color={filterMedAlert ? '#b45309' : '#64748b'} />
             <span>Ciclos a Vencer ({totalAlerts})</span>
           </button>
+
+          <button 
+            type="button"
+            className="btn"
+            onClick={() => setFilterSemHeparina(!filterSemHeparina)}
+            style={{ 
+              padding: '0.55rem 0.85rem',
+              fontSize: '0.85rem',
+              borderRadius: '12px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              border: '1px solid',
+              background: filterSemHeparina ? '#fee2e2' : '#ffffff',
+              borderColor: filterSemHeparina ? '#ef4444' : 'var(--border)',
+              color: filterSemHeparina ? '#b91c1c' : 'var(--text-main)',
+              fontWeight: filterSemHeparina ? 'bold' : '500',
+              cursor: 'pointer'
+            }}
+            title="Filtrar pacientes com protocolo Sem Heparina (alto risco de sangramento)"
+          >
+            <AlertTriangle size={15} color={filterSemHeparina ? '#b91c1c' : '#64748b'} />
+            <span>Sem Heparina ({patients.filter(p => getAnticoagulacaoInfo(p).isSemHeparina).length})</span>
+          </button>
         </div>
       </div>
 
@@ -752,6 +782,30 @@ export default function DoctorDashboard() {
                           ⚖️ {patient.pesoSeco} kg
                         </span>
                       )}
+
+                      {(() => {
+                        const acInfo = getAnticoagulacaoInfo(patient);
+                        return (
+                          <span 
+                            style={{ 
+                              fontSize: '0.72rem', 
+                              padding: '2px 8px', 
+                              borderRadius: '10px', 
+                              border: `1px solid ${acInfo.border}`,
+                              background: acInfo.bg,
+                              color: acInfo.color,
+                              fontWeight: acInfo.isSemHeparina ? '700' : '500',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              boxShadow: acInfo.isSemHeparina ? '0 0 0 1px #fca5a5' : 'none'
+                            }}
+                            title={`Anticoagulação na Diálise: ${acInfo.textoCompleto}`}
+                          >
+                            {acInfo.labelCurto}
+                          </span>
+                        );
+                      })()}
 
                       <span 
                         style={{ 
@@ -920,6 +974,26 @@ export default function DoctorDashboard() {
                       </span>
                     )}
 
+                    {(() => {
+                      const acInfo = getAnticoagulacaoInfo(patient);
+                      return (
+                        <span 
+                          style={{ 
+                            fontSize: '0.68rem', 
+                            background: acInfo.bg, 
+                            border: `1px solid ${acInfo.border}`, 
+                            color: acInfo.color, 
+                            padding: '1px 6px', 
+                            borderRadius: '6px', 
+                            fontWeight: acInfo.isSemHeparina ? '700' : '500' 
+                          }} 
+                          title={`Anticoagulação: ${acInfo.textoCompleto}`}
+                        >
+                          {acInfo.labelCurto}
+                        </span>
+                      );
+                    })()}
+
                     <span 
                       style={{ 
                         fontSize: '0.68rem', 
@@ -1051,6 +1125,10 @@ export default function DoctorDashboard() {
                       </div>
                     </th>
 
+                    <th style={{ padding: '0.85rem 1rem', color: '#475569' }}>
+                      <span>Anticoagulação</span>
+                    </th>
+
                     <th 
                       onClick={() => handleSort('medicacoes')}
                       style={{ padding: '0.85rem 1rem', color: '#475569', cursor: 'pointer', userSelect: 'none' }}
@@ -1144,6 +1222,29 @@ export default function DoctorDashboard() {
                             <Activity size={13} color="var(--primary)" />
                             <span>{patient.acessoVascular?.tipo || 'FAV'} {patient.acessoVascular?.ladoMembro ? `(${patient.acessoVascular.ladoMembro})` : ''}</span>
                           </div>
+                        </td>
+
+                        <td style={{ padding: '0.85rem 1rem' }}>
+                          {(() => {
+                            const acInfo = getAnticoagulacaoInfo(patient);
+                            return (
+                              <span 
+                                style={{ 
+                                  fontSize: '0.72rem', 
+                                  padding: '2px 8px', 
+                                  borderRadius: '6px', 
+                                  border: `1px solid ${acInfo.border}`,
+                                  background: acInfo.bg,
+                                  color: acInfo.color,
+                                  fontWeight: acInfo.isSemHeparina ? 'bold' : '500',
+                                  whiteSpace: 'nowrap'
+                                }}
+                                title={acInfo.textoCompleto}
+                              >
+                                {acInfo.badgeText}
+                              </span>
+                            );
+                          })()}
                         </td>
 
                         <td style={{ padding: '0.85rem 1rem' }}>

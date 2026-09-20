@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.61",
+    "date": "20/09/2026",
+    "title": "Implementacao do controle de heparina e anticoagulacao na hemodialise nos car...",
+    "highlights": [
+      "✨ Implementacao do controle de heparina e anticoagulacao na hemodialise nos cards, tabela, modal e perfil do paciente"
+    ]
+  },
+  {
     "version": "1.1.60",
     "date": "20/09/2026",
     "title": "Unificacao dos botoes de Transplante (Prontidao Tx e Laudo Tx) em menu inteli...",

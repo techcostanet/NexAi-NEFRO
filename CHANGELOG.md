@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.61] - 2026-09-20
+### Alterações
+- Implementacao do controle de heparina e anticoagulacao na hemodialise nos cards, tabela, modal e perfil do paciente
+
 ## [1.1.60] - 2026-09-20
 ### Alterações
 - Unificacao dos botoes de Transplante (Prontidao Tx e Laudo Tx) em menu inteligente no prontuario

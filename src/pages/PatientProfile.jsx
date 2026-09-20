@@ -39,7 +39,8 @@ import {
   FileCheck,
   Eye,
   Copy,
-  Trophy
+  Trophy,
+  Syringe
 } from 'lucide-react';
 import { 
   subscribeToPatientById, 
@@ -51,7 +52,8 @@ import {
   addPatientWeightRecord,
   deletePatientWeightRecord,
   deletePatientBloodCulture,
-  STATUS_TRANSPLANTE_OPTIONS
+  STATUS_TRANSPLANTE_OPTIONS,
+  getAnticoagulacaoInfo
 } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
 import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
@@ -449,6 +451,9 @@ export default function PatientProfile() {
     return st.status === 'expirando' || st.status === 'expirado';
   });
 
+  // Anticoagulação na Hemodiálise
+  const anticoagulacaoInfo = getAnticoagulacaoInfo(patient);
+
   // Filtragem de Medicamentos
   const filteredMedicamentos = medicamentosList.filter(med => {
     if (medFilter === 'todos') return true;
@@ -555,6 +560,28 @@ export default function PatientProfile() {
                     + Definir Etiologia
                   </button>
                 )}
+
+                <span 
+                  className="cursor-pointer transition-transform hover:scale-105"
+                  onClick={() => setIsPatientModalOpen(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    fontSize: '0.75rem',
+                    fontWeight: anticoagulacaoInfo.isSemHeparina ? '700' : '600',
+                    padding: '2px 8px',
+                    borderRadius: '8px',
+                    background: anticoagulacaoInfo.bg,
+                    color: anticoagulacaoInfo.color,
+                    border: `1px solid ${anticoagulacaoInfo.border}`,
+                    boxShadow: anticoagulacaoInfo.isSemHeparina ? '0 0 0 2px rgba(239, 68, 68, 0.3)' : 'none'
+                  }}
+                  title={`Anticoagulação: ${anticoagulacaoInfo.textoCompleto} (Clique para alterar)`}
+                >
+                  <Syringe size={12} color={anticoagulacaoInfo.isSemHeparina ? '#dc2626' : '#2563eb'} />
+                  <span>{anticoagulacaoInfo.labelCurto}</span>
+                </span>
               </div>
             </div>
           </div>
@@ -917,8 +944,42 @@ export default function PatientProfile() {
         </div>
 
         {/* Alertas Críticos Globais do Paciente */}
-        {(hasLabAlerts || medAlerts.length > 0 || hasPositiveCulture || isHipervolemia) && (
+        {(hasLabAlerts || medAlerts.length > 0 || hasPositiveCulture || isHipervolemia || anticoagulacaoInfo.isSemHeparina) && (
           <div className="mt-4 pt-4 border-t flex flex-col gap-2.5" style={{ borderColor: 'rgba(226, 232, 240, 0.8)' }}>
+            
+            {/* Alerta de Segurança: Sem Heparina */}
+            {anticoagulacaoInfo.isSemHeparina && (
+              <div 
+                style={{
+                  padding: '0.85rem 1.25rem',
+                  borderRadius: '14px',
+                  background: '#fef2f2',
+                  border: '1.5px solid #ef4444',
+                  color: '#991b1b',
+                  fontSize: '0.82rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.75rem',
+                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.15)'
+                }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <AlertTriangle size={20} color="#dc2626" style={{ flexShrink: 0 }} />
+                  <span style={{ lineHeight: '1.4' }}>
+                    <strong style={{ color: '#b91c1c' }}>⚠️ PROTOCOLO DE DIÁLISE SEM HEPARINA (S/H):</strong> {anticoagulacaoInfo.motivo ? `Motivo: ${anticoagulacaoInfo.motivo}. ` : 'Risco hemorrágico elevado. '}Realizar lavagens com SF 0,9% a cada 30 min. Não administrar heparina ou enoxaparina.
+                  </span>
+                </div>
+                <button 
+                  onClick={() => setIsPatientModalOpen(true)}
+                  className="btn"
+                  style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #f87171', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold' }}
+                >
+                  Alterar Esquema →
+                </button>
+              </div>
+            )}
             {hasPositiveCulture && (
               <div 
                 style={{
@@ -1177,10 +1238,24 @@ export default function PatientProfile() {
                   <span className="text-muted">Fluxo Dialisato (Qd):</span>
                   <strong className="text-slate-800 font-semibold">{acessoVascular.fluxoDialisato ? `${acessoVascular.fluxoDialisato} ml/min` : '-'}</strong>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
                   <span className="text-muted">Calibre da Agulha:</span>
                   <strong className="text-slate-800 font-semibold">{acessoVascular.agulha || '-'}</strong>
                 </div>
+                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted">Anticoagulação:</span>
+                  <strong className="text-slate-800 font-semibold" style={{ color: anticoagulacaoInfo.isSemHeparina ? '#dc2626' : 'inherit' }}>
+                    {anticoagulacaoInfo.textoCompleto}
+                  </strong>
+                </div>
+                {anticoagulacaoInfo.observacoes && (
+                  <div className="flex justify-between">
+                    <span className="text-muted">Conduta / Infusão:</span>
+                    <span className="text-slate-700 font-medium text-right text-xs max-w-[65%]">
+                      {anticoagulacaoInfo.observacoes}
+                    </span>
+                  </div>
+                )}
               </div>
             </section>
 

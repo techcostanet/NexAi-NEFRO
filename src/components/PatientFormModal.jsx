@@ -3,8 +3,11 @@ import { X, Save, User, Loader2 } from 'lucide-react';
 import { 
   savePatient, 
   calculateAge, 
-  STATUS_TRANSPLANTE_OPTIONS
+  STATUS_TRANSPLANTE_OPTIONS,
+  TIPOS_ANTICOAGULACAO,
+  PRESETS_HEPARINA
 } from '../services/patientService';
+import { Syringe, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import AllergySelector from './AllergySelector';
 
@@ -61,7 +64,6 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
     idade: '',
     statusTransplante: 'Não Avaliado',
     status: 'Não Avaliado',
-    etiologiaDRC: 'Nefropatia Diabética',
     pesoSeco: '',
     dataInicioDialise: '',
     alergias: [],
@@ -72,6 +74,14 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       agulha: '16G',
       dataConfeccao: '',
       ladoMembro: 'MSE'
+    },
+    anticoagulacao: {
+      tipo: 'heparina_padrao',
+      doseAtaque: '1000',
+      doseManutencao: '500',
+      doseEnoxaparina: '40',
+      motivoSemHeparina: '',
+      observacoes: 'Desligar infusão 45 min antes do término da diálise.'
     },
     exames: {},
     medicamentos: {},
@@ -116,7 +126,6 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         idade: patientToEdit.idade !== undefined && patientToEdit.idade !== null ? patientToEdit.idade : (calculateAge(patientToEdit.dataNascimento) || ''),
         statusTransplante: initialTransplante,
         status: initialTransplante,
-        etiologiaDRC: currentEtiologia,
         pesoSeco: patientToEdit.pesoSeco !== undefined && patientToEdit.pesoSeco !== null ? patientToEdit.pesoSeco : '',
         dataInicioDialise: patientToEdit.dataInicioDialise || '',
         alergias: Array.isArray(patientToEdit.alergias) ? patientToEdit.alergias : [],
@@ -127,6 +136,14 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
           agulha: patientToEdit.acessoVascular?.agulha || '',
           dataConfeccao: patientToEdit.acessoVascular?.dataConfeccao || '',
           ladoMembro: currentLado
+        },
+        anticoagulacao: {
+          tipo: patientToEdit.anticoagulacao?.tipo || (patientToEdit.heparina === 'sem_heparina' ? 'sem_heparina' : 'heparina_padrao'),
+          doseAtaque: patientToEdit.anticoagulacao?.doseAtaque !== undefined ? String(patientToEdit.anticoagulacao.doseAtaque) : '1000',
+          doseManutencao: patientToEdit.anticoagulacao?.doseManutencao !== undefined ? String(patientToEdit.anticoagulacao.doseManutencao) : '500',
+          doseEnoxaparina: patientToEdit.anticoagulacao?.doseEnoxaparina || '40',
+          motivoSemHeparina: patientToEdit.anticoagulacao?.motivoSemHeparina || patientToEdit.heparinaMotivo || '',
+          observacoes: patientToEdit.anticoagulacao?.observacoes || ''
         },
         exames: patientToEdit.exames || {},
         medicamentos: patientToEdit.medicamentos || {},
@@ -150,7 +167,6 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         idade: '',
         statusTransplante: 'Não Avaliado',
         status: 'Não Avaliado',
-        etiologiaDRC: 'Nefropatia Diabética',
         pesoSeco: '',
         dataInicioDialise: '',
         alergias: [],
@@ -161,6 +177,14 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
           agulha: '16G',
           dataConfeccao: '',
           ladoMembro: 'MSE'
+        },
+        anticoagulacao: {
+          tipo: 'heparina_padrao',
+          doseAtaque: '1000',
+          doseManutencao: '500',
+          doseEnoxaparina: '40',
+          motivoSemHeparina: '',
+          observacoes: 'Desligar infusão 45 min antes do término da diálise.'
         },
         exames: {},
         medicamentos: {},
@@ -653,6 +677,170 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                   onChange={(e) => setFormData(prev => ({ 
                     ...prev, 
                     acessoVascular: { ...prev.acessoVascular, agulha: e.target.value } 
+                  }))}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Anticoagulação na Hemodiálise (Heparina) */}
+          <div className="border-t pt-4" style={{ borderColor: 'var(--border)' }}>
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
+                <Syringe size={16} color="#0284c7" />
+                <span>Anticoagulação na Hemodiálise</span>
+              </h3>
+              {formData.anticoagulacao?.tipo === 'sem_heparina' && (
+                <span style={{ fontSize: '0.68rem', fontWeight: 'bold', background: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', padding: '2px 8px', borderRadius: '6px' }}>
+                  ⚠️ PROTOCOLO SEM HEPARINA ATIVO
+                </span>
+              )}
+            </div>
+
+            {/* Botões Rápidos de 1 Clique (Presets Clínicos) */}
+            <div className="mb-3">
+              <span className="text-2xs font-bold text-slate-500 uppercase tracking-wider block mb-1.5">
+                Esquemas Rápidos (Clique para preencher):
+              </span>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                {PRESETS_HEPARINA.map((preset, idx) => {
+                  const isCurrent = formData.anticoagulacao?.tipo === preset.tipo &&
+                    (preset.tipo !== 'heparina_padrao' || formData.anticoagulacao?.doseAtaque === preset.doseAtaque);
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => {
+                        setFormData(prev => ({
+                          ...prev,
+                          anticoagulacao: {
+                            tipo: preset.tipo,
+                            doseAtaque: preset.doseAtaque,
+                            doseManutencao: preset.doseManutencao,
+                            doseEnoxaparina: preset.doseEnoxaparina,
+                            motivoSemHeparina: preset.motivoSemHeparina,
+                            observacoes: preset.observacoes
+                          }
+                        }));
+                      }}
+                      className="btn btn-outline"
+                      style={{
+                        padding: '3px 8px',
+                        fontSize: '0.72rem',
+                        fontWeight: isCurrent ? 'bold' : '500',
+                        borderRadius: '8px',
+                        background: isCurrent ? '#eff6ff' : (preset.tipo === 'sem_heparina' ? '#fff1f2' : '#f8fafc'),
+                        borderColor: isCurrent ? '#3b82f6' : (preset.tipo === 'sem_heparina' ? '#fecdd3' : '#e2e8f0'),
+                        color: isCurrent ? '#1d4ed8' : (preset.tipo === 'sem_heparina' ? '#be123c' : '#334155')
+                      }}
+                    >
+                      {preset.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+              <div>
+                <label className="text-sm font-semibold mb-1 block">Tipo de Anticoagulação</label>
+                <select
+                  className="input-field"
+                  value={formData.anticoagulacao?.tipo || 'heparina_padrao'}
+                  onChange={(e) => setFormData(prev => ({
+                    ...prev,
+                    anticoagulacao: {
+                      ...prev.anticoagulacao,
+                      tipo: e.target.value
+                    }
+                  }))}
+                >
+                  {TIPOS_ANTICOAGULACAO.map(t => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              {formData.anticoagulacao?.tipo === 'heparina_padrao' && (
+                <>
+                  <div>
+                    <label className="text-sm font-semibold mb-1 block">Dose de Ataque (UI)</label>
+                    <input
+                      type="text"
+                      className="input-field"
+                      placeholder="Ex: 1000"
+                      value={formData.anticoagulacao?.doseAtaque || ''}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        anticoagulacao: { ...prev.anticoagulacao, doseAtaque: e.target.value }
+                      }))}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-semibold mb-1 block">Manutenção (UI/h)</label>
+                    <input
+                      type="text"
+                      className="input-field"
+                      placeholder="Ex: 500"
+                      value={formData.anticoagulacao?.doseManutencao || ''}
+                      onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        anticoagulacao: { ...prev.anticoagulacao, doseManutencao: e.target.value }
+                      }))}
+                    />
+                  </div>
+                </>
+              )}
+
+              {formData.anticoagulacao?.tipo === 'enoxaparina' && (
+                <div>
+                  <label className="text-sm font-semibold mb-1 block">Dose Enoxaparina (mg)</label>
+                  <input
+                    type="text"
+                    className="input-field"
+                    placeholder="Ex: 20 ou 40"
+                    value={formData.anticoagulacao?.doseEnoxaparina || ''}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      anticoagulacao: { ...prev.anticoagulacao, doseEnoxaparina: e.target.value }
+                    }))}
+                  />
+                </div>
+              )}
+
+              {formData.anticoagulacao?.tipo === 'sem_heparina' && (
+                <div style={{ gridColumn: '1 / -1' }} className="p-3 bg-red-50 border border-red-200 rounded-xl">
+                  <label className="text-xs font-bold text-red-900 mb-1 flex items-center gap-1.5">
+                    <AlertTriangle size={14} color="#dc2626" />
+                    <span>Motivo / Justificativa Clínica para Diálise SEM Heparina:</span>
+                  </label>
+                  <input
+                    type="text"
+                    className="input-field w-full mb-1"
+                    placeholder="Ex: Risco hemorrágico, pós-biópsia renal, cirurgia recente, pericardite..."
+                    value={formData.anticoagulacao?.motivoSemHeparina || ''}
+                    onChange={(e) => setFormData(prev => ({
+                      ...prev,
+                      anticoagulacao: { ...prev.anticoagulacao, motivoSemHeparina: e.target.value }
+                    }))}
+                  />
+                  <span className="text-2xs text-red-700 block">
+                    💡 Conduta padrão recomendada: Lavagens periódicas com 100ml de SF 0,9% a cada 30 minutos e monitorização do capilar.
+                  </span>
+                </div>
+              )}
+
+              <div style={{ gridColumn: '1 / -1' }}>
+                <label className="text-sm font-semibold mb-1 block">Observações de Infusão / Conduta</label>
+                <input
+                  type="text"
+                  className="input-field"
+                  placeholder="Ex: Desligar infusão 45 min antes do término; não heparinar na 1ª hora..."
+                  value={formData.anticoagulacao?.observacoes || ''}
+                  onChange={(e) => setFormData(prev => ({
+                    ...prev,
+                    anticoagulacao: { ...prev.anticoagulacao, observacoes: e.target.value }
                   }))}
                 />
               </div>

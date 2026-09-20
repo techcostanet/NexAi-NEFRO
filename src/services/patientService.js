@@ -62,6 +62,156 @@ export const ALLERGIES_PADRAO = [
   'Polissulfona / Capilar Dialítico'
 ];
 
+export const TIPOS_ANTICOAGULACAO = [
+  { value: 'heparina_padrao', label: 'Heparina Não Fracionada (Padrão)' },
+  { value: 'enoxaparina', label: 'Enoxaparina (HBPM / Clexane)' },
+  { value: 'sem_heparina', label: 'Sem Heparina (Lavagem c/ SF)' },
+  { value: 'citrato', label: 'Citrato Regional' },
+  { value: 'outra', label: 'Outra / Personalizada' }
+];
+
+export const PRESETS_HEPARINA = [
+  { 
+    label: '1.000 UI + 500 UI/h (Padrão)', 
+    tipo: 'heparina_padrao', 
+    doseAtaque: '1000', 
+    doseManutencao: '500', 
+    doseEnoxaparina: '',
+    motivoSemHeparina: '',
+    observacoes: 'Desligar infusão 45 min antes do término da diálise.' 
+  },
+  { 
+    label: '1.500 UI + 750 UI/h (Reforçada)', 
+    tipo: 'heparina_padrao', 
+    doseAtaque: '1500', 
+    doseManutencao: '750', 
+    doseEnoxaparina: '',
+    motivoSemHeparina: '',
+    observacoes: 'Desligar infusão 1h antes do término.' 
+  },
+  { 
+    label: '500 UI + 500 UI/h (Dose Baixa)', 
+    tipo: 'heparina_padrao', 
+    doseAtaque: '500', 
+    doseManutencao: '500', 
+    doseEnoxaparina: '',
+    motivoSemHeparina: '',
+    observacoes: 'Risco moderado de sangramento. Monitorar fístula.' 
+  },
+  { 
+    label: 'Enoxaparina 40 mg (Bólus Único)', 
+    tipo: 'enoxaparina', 
+    doseAtaque: '', 
+    doseManutencao: '', 
+    doseEnoxaparina: '40', 
+    motivoSemHeparina: '',
+    observacoes: 'Administrar na linha arterial no início da sessão.' 
+  },
+  { 
+    label: 'Enoxaparina 20 mg (Dose Reduzida)', 
+    tipo: 'enoxaparina', 
+    doseAtaque: '', 
+    doseManutencao: '', 
+    doseEnoxaparina: '20', 
+    motivoSemHeparina: '',
+    observacoes: 'Dose baixa. Administrar no início da diálise.' 
+  },
+  { 
+    label: '⚠️ Sem Heparina (Risco Hemorrágico)', 
+    tipo: 'sem_heparina', 
+    doseAtaque: '', 
+    doseManutencao: '', 
+    doseEnoxaparina: '',
+    motivoSemHeparina: 'Risco hemorrágico / sangramento recente',
+    observacoes: 'Lavagem com 100ml SF 0,9% a cada 30 minutos. Monitorar pressão venosa e capilar.' 
+  }
+];
+
+export function getAnticoagulacaoInfo(patient) {
+  const ac = patient?.anticoagulacao || {};
+  const tipo = ac.tipo || (patient?.heparina ? 'heparina_padrao' : 'heparina_padrao');
+  
+  if (typeof patient?.heparina === 'string' && !ac.tipo) {
+    const txt = patient.heparina.trim();
+    if (txt.toLowerCase().includes('sem') || txt.toLowerCase() === 's/h') {
+      return {
+        tipo: 'sem_heparina',
+        labelCurto: '⚠️ SEM HEPARINA',
+        badgeText: '⚠️ S/H',
+        textoCompleto: 'Sem Heparina (Lavagem c/ SF)',
+        isSemHeparina: true,
+        bg: '#fee2e2',
+        color: '#991b1b',
+        border: '#fecaca',
+        observacoes: patient.heparinaMotivo || 'Risco de sangramento'
+      };
+    }
+  }
+
+  if (tipo === 'sem_heparina') {
+    return {
+      tipo: 'sem_heparina',
+      labelCurto: '⚠️ SEM HEPARINA',
+      badgeText: '⚠️ S/H (Lavagem)',
+      textoCompleto: `Sem Heparina: ${ac.motivoSemHeparina || 'Lavagens salinas periódicas'}`,
+      isSemHeparina: true,
+      bg: '#fee2e2',
+      color: '#991b1b',
+      border: '#fecaca',
+      motivo: ac.motivoSemHeparina || 'Risco hemorrágico / sangramento',
+      observacoes: ac.observacoes || 'Lavagem com SF 0,9% a cada 30 min.'
+    };
+  }
+
+  if (tipo === 'enoxaparina') {
+    const dose = ac.doseEnoxaparina || '40';
+    return {
+      tipo: 'enoxaparina',
+      labelCurto: `💉 Enoxa ${dose}mg`,
+      badgeText: `💉 Enoxa ${dose}mg`,
+      textoCompleto: `Enoxaparina ${dose} mg (Bólus inicial)`,
+      isSemHeparina: false,
+      bg: '#f0fdf4',
+      color: '#166534',
+      border: '#bbf7d0',
+      doseEnoxaparina: dose,
+      observacoes: ac.observacoes || 'Administrar na linha arterial no início da sessão.'
+    };
+  }
+
+  if (tipo === 'citrato') {
+    return {
+      tipo: 'citrato',
+      labelCurto: '🧪 Citrato',
+      badgeText: '🧪 Citrato Regional',
+      textoCompleto: 'Anticoagulação Regional com Citrato',
+      isSemHeparina: false,
+      bg: '#fdf4ff',
+      color: '#86198f',
+      border: '#f5d0fe',
+      observacoes: ac.observacoes || 'Monitorar cálcio iônico pré e pós-filtro.'
+    };
+  }
+
+  // Heparina Não Fracionada Padrão (Default)
+  const ataque = ac.doseAtaque || '1000';
+  const manutencao = ac.doseManutencao || '500';
+  
+  return {
+    tipo: 'heparina_padrao',
+    labelCurto: `💉 Heparina ${ataque}+${manutencao}/h`,
+    badgeText: `💉 Heparina: ${ataque}+${manutencao}/h`,
+    textoCompleto: `Heparina: Ataque ${ataque} UI + Manutenção ${manutencao} UI/h`,
+    isSemHeparina: false,
+    bg: '#f1f5f9',
+    color: '#334155',
+    border: '#cbd5e1',
+    doseAtaque: ataque,
+    doseManutencao: manutencao,
+    observacoes: ac.observacoes || 'Desligar infusão 30 a 60 min antes do término.'
+  };
+}
+
 /**
  * Normaliza e gera um ID amigável a partir do nome
  */
