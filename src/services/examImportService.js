@@ -18,11 +18,11 @@ export const EXAM_ALIASES = {
   ferritina: ['ferritina', 'ferr', 'ferrit', 'ferritina serica'],
   ferro: ['ferro', 'ferro serico', 'fe', 'ferro total', 'dosagem de ferro'],
   transferrina: ['transferrina', 'transferrina serica'],
-  ist: ['ist', 'sat transferrina', 'sat. trans', 'sat transf', 'saturacao transferrina', 'indice saturacao transferrina', 'sat de transferrina'],
-  pth: ['pth', 'paratormonio', 'pth intacto', 'ipth', 'pth-intacto', 'paratormonio intacto'],
+  ist: ['ist', 'sat transferrina', 'sat. trans', 'sat transf', 'saturacao transferrina', 'indice saturacao transferrina', 'sat de transferrina', 'indice de saturacao da transferrina', 'indice de saturacao de transferrina', 'saturacao da transferrina'],
+  pth: ['pth', 'paratormonio', 'pth intacto', 'ipth', 'pth-intacto', 'paratormonio intacto', 'paratormonio - pth', 'paratormonio pth'],
   fosforo: ['fosforo', 'fosfato', 'p', 'po4', 'p serico', 'fosforo serico'],
   ca: ['calcio', 'calcio total', 'ca', 'ca total', 'calcio serico'],
-  vitD: ['vit d', 'vitamina d', '25-oh vit d', '25 oh vitamina d', 'vitd', '25-hidroxivitamina d'],
+  vitD: ['vit d', 'vitamina d', '25-oh vit d', '25 oh vitamina d', 'vitd', '25-hidroxivitamina d', 'vitamina d 25 dihidroxi', 'vitamina d 25-hidroxi', '25 dihidroxi'],
   fa: ['fa', 'fosfatase alcalina', 'fosf alcalina', 'f alc', 'fosf. alc.'],
   k: ['potassio', 'k', 'k+', 'potassio serico'],
   na: ['sodio', 'na', 'na+', 'sodio serico'],
@@ -34,12 +34,17 @@ export const EXAM_ALIASES = {
   albumina: ['albumina', 'alb', 'albumina serica'],
   pcr: ['pcr', 'proteina c reativa', 'pcr ultrassensivel', 'pcr us'],
   glicemia: ['glicemia', 'glicose', 'dextro', 'gli', 'glicemia em jejum', 'glicemia de jejum'],
-  hba1c: ['hba1c', 'hemoglobina glicada', 'a1c', 'hb a1c', 'hemoglobina glicada - hba1c', 'hemoglobina glicada a1c', 'hemoglobina glicada a1', 'hemoglobina glicada (hba1c)'],
-  tgp: ['tgp', 'alt', 'transaminase glutamico piruvica', 'transaminase piruvica', 'alanina aminotransferase', 'alt/tgp', 'alt tgp'],
+  hba1c: ['hba1c', 'hemoglobina glicada', 'a1c', 'hb a1c', 'hemoglobina glicada - hba1c', 'hemoglobina glicada a1c', 'hemoglobina glicada a1', 'hemoglobina glicada (hba1c)', 'hemoglobina glicada (a1'],
+  tgp: ['tgp', 'alt', 'transaminase glutamico piruvica', 'transaminase piruvica', 'alanina aminotransferase', 'alt/tgp', 'alt tgp', 'transaminase glutamico piruvica- tgp', 'transaminase glutamico piruvica - tgp'],
   tgo: ['tgo', 'ast', 'transaminase glutamico oxalacetica', 'transaminase oxalacetica', 'aspartato aminotransferase', 'ast/tgo', 'ast tgo'],
   aluminio: ['aluminio', 'aluminio serico', 'al'],
   leucocitos: ['leucocitos', 'serie branca leucocitos', 'leucocitos totais'],
-  plaquetas: ['plaquetas', 'contagem de plaquetas', 'plaquetas totais']
+  plaquetas: ['plaquetas', 'contagem de plaquetas', 'plaquetas totais'],
+  hbsag: ['hbsag', 'hbsag hepatite b', 'hepatite b hbsag', 'antigeno australia', 'antigeno de superficie hepatite b'],
+  antiHbs: ['anti hbs', 'anti-hbs', 'hbs anti', 'hbs, anti', 'hbs anti hepatite b', 'anticorpo anti hbs'],
+  antiHcv: ['anti hcv', 'anti-hcv', 'hepatite c anti hcv', 'hepatite c - anti hcv'],
+  antiHbc: ['anti hbc', 'anti-hbc', 'hbc anti'],
+  hiv: ['hiv', 'anti hiv', 'anti-hiv', 'hiv 1 e 2']
 };
 
 /**
@@ -114,12 +119,12 @@ export function matchHeaderToExamKey(headerName) {
     return 'tgo';
   }
 
-  // Hemoglobina Glicada
+  // Hemoglobina Glicada (deve vir antes de Hemoglobina simples)
   if (norm.includes('glicada') || norm.includes('hba1c') || norm.includes('a1c')) {
     return 'hba1c';
   }
 
-  // Paratormônio
+  // Paratormônio (PTH)
   if (norm.includes('paratormonio') || norm.includes('pth')) {
     return 'pth';
   }
@@ -127,6 +132,16 @@ export function matchHeaderToExamKey(headerName) {
   // Fosfatase Alcalina
   if (norm.includes('fosfatase alcalina') || norm.includes('fosf alcalina') || norm === 'fa') {
     return 'fa';
+  }
+
+  // IST (deve vir estritamente ANTES de Transferrina simples, pois 'indice de saturacao da transferrina' contém 'transferrina')
+  if (norm.includes('saturacao') || norm.includes('ist') || (norm.includes('indice') && norm.includes('transferrina'))) {
+    return 'ist';
+  }
+
+  // Transferrina simples
+  if (norm.includes('transferrina')) {
+    return 'transferrina';
   }
 
   // Ferro vs Ferritina
@@ -137,9 +152,26 @@ export function matchHeaderToExamKey(headerName) {
     return 'ferro';
   }
 
-  // Transferrina
-  if (norm.includes('transferrina')) {
-    return 'transferrina';
+  // Vitamina D
+  if (norm.includes('vitamina d') || norm.includes('vit d') || norm.includes('25 dihidroxi') || norm.includes('25 hidroxi') || norm.includes('hidroxivitamina')) {
+    return 'vitD';
+  }
+
+  // Sorologias (Hepatite B, Hepatite C, HIV)
+  if (norm.includes('anti hbs') || norm.includes('hbs anti') || norm.includes('anti-hbs') || norm.includes('hbs, anti') || (norm.includes('hbs') && norm.includes('anti'))) {
+    return 'antiHbs';
+  }
+  if (norm.includes('hbsag') || norm.includes('antigeno de superficie') || (norm.includes('hepatite b') && !norm.includes('anti'))) {
+    return 'hbsag';
+  }
+  if (norm.includes('anti hcv') || norm.includes('anti-hcv') || (norm.includes('hepatite c') && norm.includes('hcv'))) {
+    return 'antiHcv';
+  }
+  if (norm.includes('anti hbc') || norm.includes('anti-hbc')) {
+    return 'antiHbc';
+  }
+  if (norm.includes('hiv') || norm.includes('aids')) {
+    return 'hiv';
   }
 
   // Alumínio
@@ -266,33 +298,31 @@ export function matchPatientInList(scannedName, patientsList = []) {
     return { patient: null, score: 0, status: 'NOT_FOUND' };
   }
 
-  // 1. Tenta correspondência exata por CPF se houver dígitos suficientes
-  const cpfDigits = String(scannedName).replace(/\D/g, '');
-  if (cpfDigits.length === 11) {
-    const cpfMatch = patientsList.find(p => p.cpf && String(p.cpf).replace(/\D/g, '') === cpfDigits);
-    if (cpfMatch) {
-      return { patient: cpfMatch, score: 100, status: 'EXACT_OR_HIGH' };
+  const rawScannedStr = String(scannedName);
+  const scannedDigits = rawScannedStr.replace(/\D/g, '');
+
+  // 1. Tenta correspondência exata por CPF (com ou sem pontuação)
+  if (scannedDigits.length >= 11) {
+    for (const patient of patientsList) {
+      if (patient.cpf) {
+        const patientCpfDigits = String(patient.cpf).replace(/\D/g, '');
+        if (patientCpfDigits.length === 11 && scannedDigits.includes(patientCpfDigits)) {
+          return { patient, score: 100, status: 'EXACT_OR_HIGH' };
+        }
+      }
     }
   }
 
   // 2. Limpa rótulos de cabeçalhos de prontuário
-  let cleanName = String(scannedName)
+  let cleanName = rawScannedStr
     .replace(/(?:Nome|Nome Social|Paciente|Cliente)[\s.:_]+/gi, ' ')
-    .replace(/(?:Data Nasc|Data|CPF|RG|Nasc|Sexo|Convenio|Entrada|Idade)[\s.:_].*$/gi, ' ')
+    .replace(/(?:Data Nasc|Data|CPF|RG|Nasc|Sexo|Convenio|Entrada|Idade|Requisicao|Solicitante)[\s.:_].*$/gi, ' ')
     .trim();
 
   let bestMatch = null;
   let bestScore = 0;
 
   for (const patient of patientsList) {
-    // Verifica se o CPF do paciente está contido no texto escaneado
-    if (patient.cpf) {
-      const patientCpfDigits = String(patient.cpf).replace(/\D/g, '');
-      if (patientCpfDigits.length === 11 && String(scannedName).includes(patientCpfDigits)) {
-        return { patient, score: 100, status: 'EXACT_OR_HIGH' };
-      }
-    }
-
     const score = calculateNameSimilarity(cleanName, patient.nome);
     if (score > bestScore) {
       bestScore = score;
@@ -625,18 +655,21 @@ export async function parsePdfFile(file, patientsList = []) {
 
       // 1. Extração do Cabeçalho da Página
       for (const line of lines) {
-        // Detecta Paciente no cabeçalho
-        if (!pagePatientName) {
-          const matchNome = line.match(/(?:Nome|Paciente|Cliente)[\s.:_]+([A-ZÀ-Úa-z\s]+?)(?=\s*(?:Data|CPF|RG|Nasc|Sexo|Convenio|Entrada|Idade|$))/i);
-          if (matchNome && matchNome[1].trim().length >= 3 && !matchNome[1].toLowerCase().includes('social')) {
-            pagePatientName = matchNome[1].trim();
-          }
-        }
-
         // Detecta CPF
         if (!pageCpf) {
-          const matchCpf = line.match(/(?:CPF)[\s.:_]+([\d.\/-]+)/i);
+          const matchCpf = line.match(/(?:CPF)[\s.:_]+(\d{3}\.?\d{3}\.?\d{3}-?\d{2}|\d{11})/i);
           if (matchCpf) pageCpf = matchCpf[1].trim();
+        }
+
+        // Detecta Nome do Paciente no cabeçalho (dando prioridade ao Nome oficial sobre Nome Social)
+        const matchNomeOficial = line.match(/(?:^|\s)Nome[\s.:_]+([A-ZÀ-Úa-z\s]+?)(?=\s*(?:Data|CPF|RG|Nasc|Sexo|Convenio|Entrada|Idade|Requisicao|Solicitante|$))/i);
+        if (matchNomeOficial && matchNomeOficial[1].trim().length >= 3 && !matchNomeOficial[1].toLowerCase().includes('social')) {
+          pagePatientName = matchNomeOficial[1].trim();
+        } else if (!pagePatientName) {
+          const matchNomeGen = line.match(/(?:Nome\s+Social|Paciente|Cliente)[\s.:_]+([A-ZÀ-Úa-z\s]+?)(?=\s*(?:Data|CPF|RG|Nasc|Sexo|Convenio|Entrada|Idade|Requisicao|Solicitante|$))/i);
+          if (matchNomeGen && matchNomeGen[1].trim().length >= 3) {
+            pagePatientName = matchNomeGen[1].trim();
+          }
         }
 
         // Detecta Data da Coleta (prioridade máxima para Data Coleta)
@@ -685,12 +718,14 @@ export async function parsePdfFile(file, patientsList = []) {
       // Se detectou paciente ou se é a primeira página
       const matched = matchPatientInList(pageCpf ? `${pagePatientName || ''} CPF ${pageCpf}` : (pagePatientName || ''), patientsList);
 
-      // Verifica se é continuação do mesmo paciente da página anterior
-      const isSamePatient = currentReport && (
-        (pageCpf && currentReport.cpf && pageCpf.replace(/\D/g, '') === currentReport.cpf.replace(/\D/g, '')) ||
-        (matched.patient && currentReport.pacienteId === matched.patient.id) ||
-        (pagePatientName && currentReport.nomeArquivo && calculateNameSimilarity(pagePatientName, currentReport.nomeArquivo) >= 0.75)
+      // Verifica se a página identifica um NOVO paciente diferente
+      const isDifferentPatient = currentReport && (
+        (pageCpf && currentReport.cpf && pageCpf.replace(/\D/g, '') !== currentReport.cpf.replace(/\D/g, '')) ||
+        (matched.patient && currentReport.pacienteId && matched.patient.id !== currentReport.pacienteId) ||
+        (pagePatientName && currentReport.nomeArquivo && calculateNameSimilarity(pagePatientName, currentReport.nomeArquivo) < 0.6)
       );
+
+      const isSamePatient = currentReport && !isDifferentPatient;
 
       if (!isSamePatient) {
         currentReport = {
@@ -737,17 +772,22 @@ export async function parsePdfFile(file, patientsList = []) {
 
         // Se entrou em seção de valores de referência, notas ou assinaturas
         if (
-          normLine.startsWith('valor de referencia') || 
-          normLine.startsWith('valores de referencia') ||
           normLine.startsWith('ref:') ||
           normLine.includes('filtracao glomerular estimada') ||
           normLine.startsWith('nota:') ||
           normLine.startsWith('notas:') ||
           normLine.startsWith('responsavel:') ||
-          normLine.startsWith('assinado digitalmente')
+          normLine.startsWith('assinado digitalmente') ||
+          normLine.startsWith('liberado eletronicamente') ||
+          normLine.startsWith('este exame possui assinatura')
         ) {
           inReferenceSection = true;
           currentExamKey = null;
+        }
+
+        // A linha "valores de referencia" não deve travar o bloco se vier no topo (como no Labicon)
+        if (normLine === 'valores de referencia' || normLine === 'valor de referencia') {
+          continue;
         }
 
         // Detecta Tipagem Sanguínea
@@ -760,11 +800,11 @@ export async function parsePdfFile(file, patientsList = []) {
           if (match) currentReport.exames.fatorRh = match[1];
         }
 
-        // Detecta Sorologias qualitativas
+        // Detecta Sorologias qualitativas em texto livre
         if (/AMOSTRA\s+N[AÃ]O\s+REAGENTE\s+PARA\s+HIV/i.test(line)) currentReport.exames.hiv = 'Não Reagente';
-        if (/AMOSTRA\s+N[AÃ]O\s+REAGENTE\s+PARA\s+HbsAg/i.test(line)) currentReport.exames.hbsag = 'Não Reagente';
-        if (/AMOSTRA\s+N[AÃ]O\s+REAGENTE\s+PARA\s+ANTI-HCV/i.test(line)) currentReport.exames.antiHcv = 'Não Reagente';
-        if (/AMOSTRA\s+N[AÃ]O\s+REAGENTE\s+PARA\s+O\s+ANTI-HBC/i.test(line)) currentReport.exames.antiHbc = 'Não Reagente';
+        if (/AMOSTRA\s+N[AÃ]O\s+REAGENTE.*(?:HbsAg|HEPATITE\s+B)/i.test(line)) currentReport.exames.hbsag = 'Não Reagente';
+        if (/AMOSTRA\s+N[AÃ]O\s+REAGENTE.*(?:ANTI-HCV|HEPATITE\s+C)/i.test(line)) currentReport.exames.antiHcv = 'Não Reagente';
+        if (/AMOSTRA\s+N[AÃ]O\s+REAGENTE.*(?:ANTI-HBC)/i.test(line)) currentReport.exames.antiHbc = 'Não Reagente';
 
         // Detecta cabeçalho de exame
         const potentialExamKey = matchHeaderToExamKey(line);
@@ -773,64 +813,96 @@ export async function parsePdfFile(file, patientsList = []) {
           inReferenceSection = false;
         }
 
-        // 1. Extração direta de linhas no formato "Exame: Valor" (ex: Hemoglobina, Creatinina Sérica, Albumina)
+        // 1. Extração direta de linhas no formato específico
         if (!inReferenceSection) {
+          // Hemoglobina no hemograma ou laudo individual
+          const matchHb = line.match(/(?:^|\b)Hemoglobina[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+          if (matchHb && currentReport.exames.hb === undefined && !normLine.includes('glicada')) {
+            const v = parseExamNumber(matchHb[1]);
+            if (v !== null) currentReport.exames.hb = v;
+          }
+
+          // Hematócrito no hemograma ou laudo individual
+          const matchHt = line.match(/(?:^|\b)Hemat[oó]crito[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+          if (matchHt && currentReport.exames.ht === undefined) {
+            const v = parseExamNumber(matchHt[1]);
+            if (v !== null) currentReport.exames.ht = v;
+          }
+
+          // Hemoglobina Glicada - HbA1c (ex: "Hemoglobina Glicada (A1: 6,3 %", "HbA1c: 6,3 %")
+          const matchHba1c = line.match(/(?:Hemoglobina\s+Glicada|Hb\s*A1c|HbA1c)[^%]*?([0-9]+[.,]?[0-9]*)\s*%/i);
+          if (matchHba1c && currentReport.exames.hba1c === undefined) {
+            const v = parseExamNumber(matchHba1c[1]);
+            if (v !== null) currentReport.exames.hba1c = v;
+          }
+
+          // Ferro sérico (ex: "Ferro sérico.......................: 32 µg/dL")
+          const matchFerro = line.match(/(?:^|\b)Ferro(?:\s*s[eé]rico)?[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+          if (matchFerro && currentReport.exames.ferro === undefined && !normLine.includes('capacidade')) {
+            const v = parseExamNumber(matchFerro[1]);
+            if (v !== null) currentReport.exames.ferro = v;
+          }
+
+          // Índice de Saturação de Transferrina (ex: "Índice de Saturação de Transferrina: 11 %")
+          const matchIst = line.match(/(?:[IÍ]ndice\s*de\s*Satura[çc][aã]o\s*(?:da|de)?\s*Transferrina|Satura[çc][aã]o\s*(?:da|de)?\s*Transferrina|IST)[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+          if (matchIst && currentReport.exames.ist === undefined) {
+            const v = parseExamNumber(matchIst[1]);
+            if (v !== null) currentReport.exames.ist = v;
+          }
+
           // Albumina (em Proteínas Totais ou isolada)
-          const matchAlb = line.match(/(?:^|\b)Albumina[\s.:_]+([0-9]+[.,]?[0-9]*)/i);
+          const matchAlb = line.match(/(?:^|\b)Albumina[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
           if (matchAlb && currentReport.exames.albumina === undefined) {
             const v = parseExamNumber(matchAlb[1]);
             if (v !== null) currentReport.exames.albumina = v;
           }
 
           // Creatinina Sérica
-          const matchCr = line.match(/(?:^|\b)Creatinina(?:\s*S[eé]rica)?[\s.:_]+([0-9]+[.,]?[0-9]*)/i);
+          const matchCr = line.match(/(?:^|\b)Creatinina(?:\s*S[eé]rica)?[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
           if (matchCr && currentReport.exames.creatinina === undefined) {
             const v = parseExamNumber(matchCr[1]);
             if (v !== null) currentReport.exames.creatinina = v;
           }
 
-          // Hemoglobina no hemograma
-          const matchHb = line.match(/(?:^|\b)Hemoglobina[\s.:_]+([0-9]+[.,]?[0-9]*)/i);
-          if (matchHb && currentReport.exames.hb === undefined && !normLine.includes('glicada')) {
-            const v = parseExamNumber(matchHb[1]);
-            if (v !== null) currentReport.exames.hb = v;
-          }
-
-          // Hematócrito no hemograma
-          const matchHt = line.match(/(?:^|\b)Hemat[oó]crito[\s.:_]+([0-9]+[.,]?[0-9]*)/i);
-          if (matchHt && currentReport.exames.ht === undefined) {
-            const v = parseExamNumber(matchHt[1]);
-            if (v !== null) currentReport.exames.ht = v;
-          }
-
           // Leucócitos
-          const matchLeu = line.match(/(?:^|\b)Leuc[oó]citos[\s.:_]+([0-9.]+)/i);
+          const matchLeu = line.match(/(?:^|\b)Leuc[oó]citos[.:_\s]+([0-9.]+)/i);
           if (matchLeu && currentReport.exames.leucocitos === undefined) {
             const v = parseExamNumber(matchLeu[1]);
             if (v !== null) currentReport.exames.leucocitos = v;
           }
 
           // Plaquetas
-          const matchPlq = line.match(/(?:^|\b)(?:Plaquetas|Contagem\s*de\s*Plaquetas)[\s.:_]+([0-9.]+)/i);
+          const matchPlq = line.match(/(?:^|\b)(?:Plaquetas|Contagem\s*de\s*Plaquetas)[.:_\s]+([0-9.]+)/i);
           if (matchPlq && currentReport.exames.plaquetas === undefined) {
             const v = parseExamNumber(matchPlq[1]);
             if (v !== null) currentReport.exames.plaquetas = v;
           }
 
           // Ureia Pré / Ureia Pós inline
-          const matchUreiaPre = line.match(/(?:^|\b)Ur[eé]ia\s*Pr[eé][\s.:_]+([0-9]+[.,]?[0-9]*)/i);
+          const matchUreiaPre = line.match(/(?:^|\b)Ur[eé]ia\s*Pr[eé][.:_\s]+([0-9]+[.,]?[0-9]*)/i);
           if (matchUreiaPre && currentReport.exames.ureiaPre === undefined) {
             const v = parseExamNumber(matchUreiaPre[1]);
             if (v !== null) currentReport.exames.ureiaPre = v;
           }
-          const matchUreiaPos = line.match(/(?:^|\b)Ur[eé]ia\s*P[oó]s[\s.:_]+([0-9]+[.,]?[0-9]*)/i);
+          const matchUreiaPos = line.match(/(?:^|\b)Ur[eé]ia\s*P[oó]s(?:\s*di[aá]lise)?[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
           if (matchUreiaPos && currentReport.exames.ureiaPos === undefined) {
             const v = parseExamNumber(matchUreiaPos[1]);
             if (v !== null) currentReport.exames.ureiaPos = v;
           }
+
+          // Sorologias qualitativas quando há exame ativo
+          if (currentExamKey && ['hbsag', 'antiHbs', 'antiHcv', 'antiHbc', 'hiv'].includes(currentExamKey)) {
+            if (/Resultado[.:_\s]+N[aã]o\s+reagente/i.test(line) || /^N[aã]o\s+reagente\b/i.test(line.trim())) {
+              currentReport.exames[currentExamKey] = 'Não Reagente';
+              currentExamKey = null;
+            } else if (/Resultado[.:_\s]+Reagente/i.test(line) || /^Reagente\b/i.test(line.trim())) {
+              currentReport.exames[currentExamKey] = 'Reagente';
+              currentExamKey = null;
+            }
+          }
         }
 
-        // 2. Extração de valor sozinho na linha para o exame ativo (ex: "56 mg / dl", "33 U / l", "7,2 %")
+        // 2. Extração de valor sozinho ou na linha de "Resultado: ..." para o exame ativo
         if (currentExamKey && !inReferenceSection && currentReport.exames[currentExamKey] === undefined) {
           const isMetadataLine = normLine.startsWith('material') || 
                                  normLine.startsWith('metodo') || 
@@ -841,10 +913,11 @@ export async function parsePdfFile(file, patientsList = []) {
                                  normLine.startsWith('convenio');
 
           if (!isMetadataLine) {
+            // Suporta "Resultado...........: 8,9 mg/dL Lactantes: 9,0 a 11,0 mg/dL"
+            const resultMatch = line.match(/(?:^|\b)(?:Resultado|Valor)[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
             const unitMatch = line.match(/^([0-9]+[.,]?[0-9]*)\s*(?:g\s*\/\s*d[lL]|mg\s*\/\s*d[lL]|mcg\s*\/\s*d[lL]|mcg\s*\/\s*[lL]|ng\s*\/\s*m[lL]|pg\s*\/\s*m[lL]|m[eE]q\s*\/\s*[lL]|U\s*\/\s*[lL]|g%|%)(?:\s|$)/i);
-            const resultMatch = line.match(/^(?:Resultado|Valor)[\s.:_]*([0-9]+[.,]?[0-9]*)/i);
 
-            const chosenMatch = unitMatch || resultMatch;
+            const chosenMatch = resultMatch || unitMatch;
             if (chosenMatch) {
               const val = parseExamNumber(chosenMatch[1]);
               if (val !== null) {

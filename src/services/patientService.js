@@ -436,7 +436,16 @@ export async function savePatientExam(patientId, examData, examIndex = null) {
       glicemia: latestExam.glicemia !== undefined ? latestExam.glicemia : (patient.exames?.glicemia || null),
       hba1c: latestExam.hba1c !== undefined ? latestExam.hba1c : (patient.exames?.hba1c || null),
       tgp: latestExam.tgp !== undefined ? latestExam.tgp : (patient.exames?.tgp || null),
-      tgo: latestExam.tgo !== undefined ? latestExam.tgo : (patient.exames?.tgo || null)
+      tgo: latestExam.tgo !== undefined ? latestExam.tgo : (patient.exames?.tgo || null),
+      ferro: latestExam.ferro !== undefined ? latestExam.ferro : (patient.exames?.ferro || null),
+      transferrina: latestExam.transferrina !== undefined ? latestExam.transferrina : (patient.exames?.transferrina || null),
+      leucocitos: latestExam.leucocitos !== undefined ? latestExam.leucocitos : (patient.exames?.leucocitos || null),
+      plaquetas: latestExam.plaquetas !== undefined ? latestExam.plaquetas : (patient.exames?.plaquetas || null),
+      hbsag: latestExam.hbsag !== undefined ? latestExam.hbsag : (patient.exames?.hbsag || null),
+      antiHbs: latestExam.antiHbs !== undefined ? latestExam.antiHbs : (patient.exames?.antiHbs || null),
+      antiHcv: latestExam.antiHcv !== undefined ? latestExam.antiHcv : (patient.exames?.antiHcv || null),
+      antiHbc: latestExam.antiHbc !== undefined ? latestExam.antiHbc : (patient.exames?.antiHbc || null),
+      hiv: latestExam.hiv !== undefined ? latestExam.hiv : (patient.exames?.hiv || null)
     },
     medicamentos: (patient.medicamentos && (Array.isArray(patient.medicamentos) ? patient.medicamentos.length > 0 : Object.keys(patient.medicamentos).length > 0)) ? patient.medicamentos : (latestExam.medicamentos || []),
     atualizadoEm: new Date().toISOString()
