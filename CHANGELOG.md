@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.68] - 2026-09-21
+### Alterações
+- importacao de 30 pacientes Dialsist para Dr. Danrley e suporte a CPF e Convenio
+
 ## [1.1.67] - 2026-09-21
 ### Alterações
 - Suporte aprimorado para importação de laudos laboratoriais do Labicon com aprendizado inteligente de layout e exames nefrológicos

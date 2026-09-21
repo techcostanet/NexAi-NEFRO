@@ -55,6 +55,11 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
   const [customEtiologia, setCustomEtiologia] = useState(false);
   const [formData, setFormData] = useState({
     nome: '',
+    cpf: '',
+    sexo: 'Masculino',
+    convenio: 'SUS',
+    modalidade: 'HD',
+    dataInicioClinica: '',
     clinica: 'Clínica Nefrológica Nex-Ai.NEFRO',
     hospital: 'Hospital de Nefrologia',
     turno: '3º Turno',
@@ -117,6 +122,11 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         id: patientToEdit.id,
         doctorId: patientToEdit.doctorId || effectiveDoctorId || null,
         nome: patientToEdit.nome || '',
+        cpf: patientToEdit.cpf || '',
+        sexo: patientToEdit.sexo || 'Masculino',
+        convenio: patientToEdit.convenio || 'SUS',
+        modalidade: patientToEdit.modalidade || 'HD',
+        dataInicioClinica: patientToEdit.dataInicioClinica || '',
         clinica: patientToEdit.clinica || defaultClinic,
         hospital: patientToEdit.hospital || 'Hospital de Nefrologia',
         turno: patientToEdit.turno || '3º Turno',
@@ -158,6 +168,11 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
       setFormData({
         doctorId: effectiveDoctorId || null,
         nome: '',
+        cpf: '',
+        sexo: 'Masculino',
+        convenio: 'SUS',
+        modalidade: 'HD',
+        dataInicioClinica: '',
         clinica: defaultClinic,
         hospital: 'Hospital de Nefrologia',
         turno: '3º Turno',
@@ -221,6 +236,11 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         ...formData,
         doctorId: patientToEdit?.doctorId || formData.doctorId || effectiveDoctorId || null,
         nome: formData.nome.trim(),
+        cpf: formData.cpf ? formData.cpf.trim() : null,
+        sexo: formData.sexo || 'Masculino',
+        convenio: formData.convenio || 'SUS',
+        modalidade: formData.modalidade || 'HD',
+        dataInicioClinica: formData.dataInicioClinica || null,
         idade: formData.idade ? Number(formData.idade) : (calculateAge(formData.dataNascimento) || null),
         status: formData.statusTransplante,
         statusTransplante: formData.statusTransplante,
@@ -317,6 +337,58 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                   onChange={(e) => setFormData(prev => ({ ...prev, nome: e.target.value }))}
                   required
                 />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold mb-1 block">CPF</label>
+                <input 
+                  type="text" 
+                  className="input-field" 
+                  placeholder="000.000.000-00" 
+                  value={formData.cpf}
+                  onChange={(e) => setFormData(prev => ({ ...prev, cpf: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold mb-1 block">Sexo</label>
+                <select 
+                  className="input-field" 
+                  value={formData.sexo}
+                  onChange={(e) => setFormData(prev => ({ ...prev, sexo: e.target.value }))}
+                >
+                  <option value="">Não informado</option>
+                  <option value="M">Masculino</option>
+                  <option value="F">Feminino</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold mb-1 block">Convênio</label>
+                <select 
+                  className="input-field" 
+                  value={formData.convenio}
+                  onChange={(e) => setFormData(prev => ({ ...prev, convenio: e.target.value }))}
+                >
+                  <option value="SUS">SUS (Público)</option>
+                  <option value="Convênio Privado">Convênio Privado</option>
+                  <option value="Particular">Particular</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold mb-1 block">Modalidade</label>
+                <select 
+                  className="input-field" 
+                  value={formData.modalidade}
+                  onChange={(e) => setFormData(prev => ({ ...prev, modalidade: e.target.value }))}
+                >
+                  <option value="HD">HD (Hemodiálise)</option>
+                  <option value="HDF">HDF (Hemodiafiltração)</option>
+                  <option value="APD">APD (Diálise Peritoneal Automatizada)</option>
+                  <option value="CAPD">CAPD (Diálise Peritoneal Contínua)</option>
+                  <option value="Conservador">Tratamento Conservador</option>
+                </select>
               </div>
 
               <div>
@@ -504,12 +576,22 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block">Início da Diálise</label>
+                <label className="text-sm font-semibold mb-1 block">Início da Diálise (1º TTO)</label>
                 <input 
                   type="date" 
                   className="input-field" 
                   value={formData.dataInicioDialise}
                   onChange={(e) => setFormData(prev => ({ ...prev, dataInicioDialise: e.target.value }))}
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold mb-1 block">Início nesta Clínica</label>
+                <input 
+                  type="date" 
+                  className="input-field" 
+                  value={formData.dataInicioClinica}
+                  onChange={(e) => setFormData(prev => ({ ...prev, dataInicioClinica: e.target.value }))}
                 />
               </div>
 

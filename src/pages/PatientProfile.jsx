@@ -527,6 +527,42 @@ export default function PatientProfile() {
                   {patient.turno || '3º Turno'}
                 </span>
 
+                {patient.convenio && (
+                  <span 
+                    style={{ 
+                      fontSize: '0.75rem', 
+                      padding: '3px 11px', 
+                      borderRadius: '20px', 
+                      background: '#f0fdf4', 
+                      color: '#15803d', 
+                      border: '1px solid #bbf7d0', 
+                      fontWeight: '700', 
+                      whiteSpace: 'nowrap' 
+                    }}
+                    title={`Convênio Pagador: ${patient.convenio}`}
+                  >
+                    🏥 {patient.convenio}
+                  </span>
+                )}
+
+                {patient.modalidade && (
+                  <span 
+                    style={{ 
+                      fontSize: '0.75rem', 
+                      padding: '3px 11px', 
+                      borderRadius: '20px', 
+                      background: patient.modalidade === 'APD' || patient.modalidade === 'CAPD' ? '#fdf4ff' : '#f8fafc', 
+                      color: patient.modalidade === 'APD' || patient.modalidade === 'CAPD' ? '#86198f' : '#334155', 
+                      border: `1px solid ${patient.modalidade === 'APD' || patient.modalidade === 'CAPD' ? '#f5d0fe' : '#cbd5e1'}`, 
+                      fontWeight: '700', 
+                      whiteSpace: 'nowrap' 
+                    }}
+                    title={`Modalidade Dialítica: ${patient.modalidade}`}
+                  >
+                    ⚡ {patient.modalidade}
+                  </span>
+                )}
+
                 {/* Pill de Anticoagulação alinhado ao padrão dos pills de status */}
                 <span 
                   className="cursor-pointer transition-all hover:scale-105"
@@ -562,6 +598,12 @@ export default function PatientProfile() {
                   <strong className="text-slate-800">{patient.clinica || 'Dialize Betim'}</strong>
                 </span>
                 
+                {patient.cpf && (
+                  <span className="text-slate-600 font-semibold" style={{ background: '#f1f5f9', padding: '1px 7px', borderRadius: '6px', fontFamily: 'monospace', fontSize: '0.8rem' }}>
+                    CPF: {patient.cpf}
+                  </span>
+                )}
+
                 {patient.idade && (
                   <span className="text-slate-500">• {patient.idade} anos {patient.sexo ? `(${patient.sexo})` : ''}</span>
                 )}
@@ -1285,6 +1327,26 @@ export default function PatientProfile() {
               </div>
 
               <div className="flex flex-col gap-2 text-xs">
+                {patient.cpf && (
+                  <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted">CPF:</span>
+                    <strong className="text-slate-800 font-mono font-semibold">{patient.cpf}</strong>
+                  </div>
+                )}
+                {patient.convenio && (
+                  <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted">Convênio:</span>
+                    <span style={{ fontSize: '0.72rem', padding: '1px 7px', borderRadius: '6px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', fontWeight: '700' }}>
+                      {patient.convenio}
+                    </span>
+                  </div>
+                )}
+                {patient.modalidade && (
+                  <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted">Modalidade Dialítica:</span>
+                    <strong className="text-slate-800 font-semibold">{patient.modalidade} {patient.tipoPaciente ? `(${patient.tipoPaciente})` : ''}</strong>
+                  </div>
+                )}
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
                   <span className="text-muted">Status Transplante:</span>
                   <span style={{ fontSize: '0.72rem', padding: '1px 8px', borderRadius: '8px', background: transplantOpt.badgeBg, color: transplantOpt.color, border: `1px solid ${transplantOpt.border}`, fontWeight: 'bold' }}>
@@ -1299,9 +1361,19 @@ export default function PatientProfile() {
                   <span className="text-muted">Peso Seco Alvo:</span>
                   <strong className="text-slate-800 font-semibold">{patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}</strong>
                 </div>
+                {patient.dataInicioClinica && (
+                  <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted">Início nesta Clínica:</span>
+                    <strong className="text-slate-800 font-semibold">
+                      {new Date(patient.dataInicioClinica + 'T12:00:00').toLocaleDateString('pt-BR')} {patient.tempoNaClinica ? `(${patient.tempoNaClinica})` : ''}
+                    </strong>
+                  </div>
+                )}
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Início da Diálise:</span>
-                  <strong className="text-slate-800 font-semibold">{patient.dataInicioDialise ? new Date(patient.dataInicioDialise + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}</strong>
+                  <span className="text-muted">1º Tratamento / Início TRS:</span>
+                  <strong className="text-slate-800 font-semibold">
+                    {patient.dataInicioDialise ? new Date(patient.dataInicioDialise + 'T12:00:00').toLocaleDateString('pt-BR') : '-'} {patient.tempoTotalTratamento ? `(${patient.tempoTotalTratamento})` : ''}
+                  </strong>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
                   <span className="text-muted">Hospital de Retaguarda:</span>

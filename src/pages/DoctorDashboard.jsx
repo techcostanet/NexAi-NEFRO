@@ -142,8 +142,13 @@ export default function DoctorDashboard() {
 
   // Filtragem completa de pacientes
   const filteredPatients = patients.filter(p => {
-    const matchesSearch = (p.nome || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          (p.clinica || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const searchClean = searchTerm.toLowerCase().trim();
+    const searchDigits = searchTerm.replace(/\D/g, '');
+    const patientCpfDigits = (p.cpf || '').replace(/\D/g, '');
+    const matchesSearch = (p.nome || '').toLowerCase().includes(searchClean) ||
+                          (p.clinica || '').toLowerCase().includes(searchClean) ||
+                          (p.cpf && p.cpf.toLowerCase().includes(searchClean)) ||
+                          (searchDigits.length >= 3 && patientCpfDigits.includes(searchDigits));
     
     // Filtro por Local de Atuação
     const matchesLocal = filterLocal === 'Todos' || 
@@ -767,12 +772,53 @@ export default function DoctorDashboard() {
                       </button>
                     </div>
                     
-                    <div className="text-xs text-muted flex items-center gap-1 mb-2 font-medium">
-                      <Building2 size={13} color="#2563eb" />
-                      <span>{patient.clinica || 'Clínica Não Informada'}</span>
+                    <div className="text-xs text-muted flex items-center justify-between mb-2 font-medium flex-wrap gap-1">
+                      <div className="flex items-center gap-1 truncate">
+                        <Building2 size={13} color="#2563eb" style={{ flexShrink: 0 }} />
+                        <span className="truncate">{patient.clinica || 'Clínica Não Informada'}</span>
+                      </div>
+                      {patient.cpf && (
+                        <span style={{ fontSize: '0.68rem', color: '#475569', background: '#f1f5f9', padding: '1px 6px', borderRadius: '6px', fontFamily: 'monospace', fontWeight: '600' }}>
+                          CPF: {patient.cpf}
+                        </span>
+                      )}
                     </div>
 
                     <div className="flex items-center gap-1.5 flex-wrap">
+                      {patient.convenio && (
+                        <span 
+                          style={{ 
+                            fontSize: '0.70rem', 
+                            padding: '2px 7px', 
+                            borderRadius: '8px', 
+                            background: '#eff6ff', 
+                            color: '#1d4ed8', 
+                            border: '1px solid #bfdbfe', 
+                            fontWeight: '700' 
+                          }}
+                          title={`Convênio: ${patient.convenio}`}
+                        >
+                          {patient.convenio}
+                        </span>
+                      )}
+
+                      {patient.modalidade && patient.modalidade !== 'HD' && (
+                        <span 
+                          style={{ 
+                            fontSize: '0.70rem', 
+                            padding: '2px 7px', 
+                            borderRadius: '8px', 
+                            background: '#fdf4ff', 
+                            color: '#a21caf', 
+                            border: '1px solid #f5d0fe', 
+                            fontWeight: '700' 
+                          }}
+                          title={`Modalidade Dialítica: ${patient.modalidade}`}
+                        >
+                          {patient.modalidade}
+                        </span>
+                      )}
+
                       <span 
                         style={{ 
                           fontSize: '0.72rem', 
@@ -1203,11 +1249,23 @@ export default function DoctorDashboard() {
                         onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                       >
                         <td style={{ padding: '0.85rem 1rem', fontWeight: 'bold', color: '#1e293b' }}>
-                          <div className="flex items-center gap-2">
-                            <span>{patient.nome}</span>
-                            {patient.idade && (
-                              <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>
-                                ({patient.idade} anos)
+                          <div className="flex flex-col">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span>{patient.nome}</span>
+                              {patient.idade && (
+                                <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>
+                                  ({patient.idade} anos)
+                                </span>
+                              )}
+                              {patient.convenio && (
+                                <span style={{ fontSize: '0.65rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '1px 5px', borderRadius: '4px', fontWeight: '700' }}>
+                                  {patient.convenio}
+                                </span>
+                              )}
+                            </div>
+                            {patient.cpf && (
+                              <span style={{ fontSize: '0.70rem', color: '#64748b', fontWeight: 'normal', fontFamily: 'monospace' }}>
+                                CPF: {patient.cpf}
                               </span>
                             )}
                           </div>

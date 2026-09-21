@@ -1,5 +1,14 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.68",
+    "date": "21/09/2026",
+    "title": "importacao de 30 pacientes Dialsist para Dr",
+    "highlights": [
+      "✨ importacao de 30 pacientes Dialsist para Dr",
+      "✨ Danrley e suporte a CPF e Convenio"
+    ]
+  },
+  {
     "version": "1.1.67",
     "date": "21/09/2026",
     "title": "Suporte aprimorado para importação de laudos laboratoriais do Labicon com apr...",
