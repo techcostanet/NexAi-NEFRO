@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.67",
+    "date": "21/09/2026",
+    "title": "Suporte aprimorado para importação de laudos laboratoriais do Labicon com apr...",
+    "highlights": [
+      "✨ Suporte aprimorado para importação de laudos laboratoriais do Labicon com aprendizado inteligente de layout e exames nefrológicos"
+    ]
+  },
+  {
     "version": "1.1.66",
     "date": "20/09/2026",
     "title": "Atualizacao da Landing Page com novas funcionalidades de Heparina, Receituari...",

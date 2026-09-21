@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.67] - 2026-09-21
+### Alterações
+- Suporte aprimorado para importação de laudos laboratoriais do Labicon com aprendizado inteligente de layout e exames nefrológicos
+
 ## [1.1.66] - 2026-09-20
 ### Alterações
 - Atualizacao da Landing Page com novas funcionalidades de Heparina, Receituario em 2 Vias, Boletim e Transplante
