@@ -617,10 +617,29 @@ svg {
 }
 
 @keyframes logoFloat {
-  0% {
-    transform: translateY(-2px) scale(1.08) rotate(3deg);
-  }
-  100% {
-    transform: translateY(-4px) scale(1.1) rotate(-1.5deg);
-  }
+}
+
+/* Custom Scrollbar Elegante e Sempre Visível */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 #f1f5f9;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
 }

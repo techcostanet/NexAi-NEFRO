@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.70",
+    "date": "22/09/2026",
+    "title": "Correcao da rolagem na tela de conferencia de importacao de exames e fixacao ...",
+    "highlights": [
+      "✨ Correcao da rolagem na tela de conferencia de importacao de exames e fixacao do rodape com botao confirmar"
+    ]
+  },
+  {
     "version": "1.1.69",
     "date": "22/09/2026",
     "title": "Retirada de paciente por obito e suporte ao Mapa Exames Dialsist com reconhec...",

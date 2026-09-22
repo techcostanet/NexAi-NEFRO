@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.70] - 2026-09-22
+### Alterações
+- Correcao da rolagem na tela de conferencia de importacao de exames e fixacao do rodape com botao confirmar
+
 ## [1.1.69] - 2026-09-22
 ### Alterações
 - Retirada de paciente por obito e suporte ao Mapa Exames Dialsist com reconhecimento de nomes abreviados

@@ -214,13 +214,14 @@ export default function ExamImportModal({
         left: 0, 
         right: 0, 
         bottom: 0, 
-        backgroundColor: 'rgba(15, 23, 42, 0.7)', 
+        backgroundColor: 'rgba(15, 23, 42, 0.75)', 
         backdropFilter: 'blur(6px)', 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
         zIndex: 9999,
-        padding: '1rem'
+        padding: '0.75rem',
+        overflowY: 'auto'
       }}
       onClick={onClose}
     >
@@ -229,20 +230,21 @@ export default function ExamImportModal({
         style={{ 
           background: 'var(--surface-solid)', 
           width: '100%', 
-          maxWidth: '1050px', 
+          maxWidth: '1100px', 
+          height: '92vh',
           maxHeight: '92vh', 
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden', 
-          padding: '1.75rem',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.3)',
+          padding: '1.25rem 1.5rem',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
           borderRadius: '20px',
           position: 'relative'
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Cabeçalho do Modal */}
-        <div className="flex justify-between items-center pb-3 border-b mb-4" style={{ borderColor: 'var(--border)' }}>
+        <div className="flex justify-between items-center pb-3 border-b mb-3" style={{ borderColor: 'var(--border)', flexShrink: 0 }}>
           <div className="flex items-center gap-2.5">
             <div style={{ background: 'rgba(37, 99, 235, 0.1)', padding: '8px', borderRadius: '12px' }}>
               <Sparkles size={22} color="var(--primary)" />
@@ -270,14 +272,14 @@ export default function ExamImportModal({
 
         {/* Mensagens de Alerta & Sucesso */}
         {error && (
-          <div style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #fca5a5', padding: '0.75rem 1rem', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #fca5a5', padding: '0.65rem 0.9rem', borderRadius: '10px', marginBottom: '0.75rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <AlertCircle size={18} color="#dc2626" />
             <span>{error}</span>
           </div>
         )}
 
         {successMessage && (
-          <div style={{ background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', padding: '0.75rem 1rem', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{ background: '#ecfdf5', color: '#065f46', border: '1px solid #a7f3d0', padding: '0.65rem 0.9rem', borderRadius: '10px', marginBottom: '0.75rem', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
             <CheckCircle2 size={18} color="#059669" />
             <span>{successMessage}</span>
           </div>
@@ -365,9 +367,9 @@ export default function ExamImportModal({
 
         {/* ================= ETAPA 3: RECONCILIAÇÃO & CONFERÊNCIA ================= */}
         {parsedData && !loading && (
-          <div className="flex flex-col flex-1 overflow-hidden">
+          <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 0%', minHeight: 0, overflow: 'hidden' }}>
             {/* Barra Resumo de Detecção */}
-            <div className="flex justify-between items-center gap-3 flex-wrap p-3 mb-3 rounded-xl bg-slate-50 border" style={{ borderColor: 'var(--border)' }}>
+            <div className="flex justify-between items-center gap-3 flex-wrap p-2.5 mb-2.5 rounded-xl bg-slate-50 border" style={{ borderColor: 'var(--border)', flexShrink: 0 }}>
               <div className="flex items-center gap-3 flex-wrap">
                 <div className="flex items-center gap-1 text-xs">
                   <span className="font-bold text-slate-700">Arquivo:</span>
@@ -410,10 +412,23 @@ export default function ExamImportModal({
               </div>
             </div>
 
-            {/* Tabela de Reconciliação */}
-            <div style={{ flex: 1, overflowY: 'auto', border: '1px solid var(--border)', borderRadius: '12px', marginBottom: '1rem' }}>
+            {/* Tabela de Reconciliação com Scroll Independente e Cabeçalho Fixo */}
+            <div 
+              className="custom-scrollbar"
+              style={{ 
+                flex: '1 1 0%', 
+                minHeight: 0, 
+                overflowY: 'auto', 
+                overflowX: 'auto', 
+                border: '1px solid var(--border)', 
+                borderRadius: '12px', 
+                marginBottom: '0.75rem',
+                background: '#ffffff',
+                boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.02)'
+              }}
+            >
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left' }}>
-                <thead style={{ position: 'sticky', top: 0, background: '#f8fafc', zIndex: 1, borderBottom: '1px solid var(--border)' }}>
+                <thead style={{ position: 'sticky', top: 0, background: '#f8fafc', zIndex: 10, borderBottom: '1.5px solid var(--border)', boxShadow: '0 2px 4px rgba(0,0,0,0.04)' }}>
                   <tr>
                     <th style={{ padding: '0.65rem 0.75rem', width: '40px', textAlign: 'center' }}>
                       <button 
@@ -590,26 +605,35 @@ export default function ExamImportModal({
               </table>
             </div>
 
-            {/* Rodapé de Ações */}
-            <div className="flex justify-between items-center gap-3 pt-3 border-t flex-wrap" style={{ borderColor: 'var(--border)' }}>
+            {/* Rodapé de Ações - Sempre Visível e Ancorado */}
+            <div 
+              className="flex justify-between items-center gap-3 pt-3 border-t flex-wrap" 
+              style={{ 
+                borderColor: 'var(--border)', 
+                flexShrink: 0,
+                marginTop: 'auto',
+                background: 'var(--surface-solid)',
+                zIndex: 20
+              }}
+            >
               <button 
                 type="button" 
                 className="btn btn-outline" 
                 onClick={handleReset}
                 disabled={saving}
-                style={{ fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+                style={{ fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px', borderRadius: '10px' }}
               >
                 <RefreshCw size={14} />
                 <span>Escolher Outro Arquivo</span>
               </button>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <button 
                   type="button" 
                   className="btn btn-outline" 
                   onClick={onClose} 
                   disabled={saving}
-                  style={{ fontSize: '0.82rem' }}
+                  style={{ fontSize: '0.82rem', borderRadius: '10px' }}
                 >
                   Cancelar
                 </button>
@@ -619,9 +643,20 @@ export default function ExamImportModal({
                   className="btn btn-primary" 
                   onClick={handleCommit}
                   disabled={saving || confirmedCount === 0}
-                  style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', padding: '0.55rem 1.25rem' }}
+                  style={{ 
+                    fontSize: '0.88rem', 
+                    fontWeight: '700',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px', 
+                    padding: '0.6rem 1.4rem',
+                    borderRadius: '12px',
+                    boxShadow: confirmedCount > 0 ? '0 4px 12px rgba(37, 99, 235, 0.3)' : 'none',
+                    cursor: saving || confirmedCount === 0 ? 'not-allowed' : 'pointer'
+                  }}
+                  title={confirmedCount === 0 ? 'Selecione pelo menos um paciente com vínculo para gravar' : 'Gravar todos os exames confirmados no Cloud Firestore'}
                 >
-                  {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                  {saving ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle2 size={18} />}
                   <span>{saving ? 'Gravando no Firestore...' : `Confirmar e Gravar (${confirmedCount})`}</span>
                 </button>
               </div>
