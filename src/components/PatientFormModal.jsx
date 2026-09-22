@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, User, Loader2, Syringe, AlertTriangle } from 'lucide-react';
+import { X, Save, User, UserX, Loader2, Syringe, AlertTriangle } from 'lucide-react';
 import { 
   savePatient, 
   calculateAge, 
@@ -9,6 +9,7 @@ import {
 } from '../services/patientService';
 import { useAuth } from '../context/AuthContext';
 import AllergySelector from './AllergySelector';
+import ConfirmDeceasedModal from './ConfirmDeceasedModal';
 
 const TIPOS_ACESSO_PADRAO = [
   { value: 'FAV', label: 'FAV (Fístula Arteriovenosa)' },
@@ -95,6 +96,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [isDeceasedModalOpen, setIsDeceasedModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -1002,17 +1004,54 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 mt-4 border-t pt-4" style={{ borderColor: 'var(--border)' }}>
-            <button type="button" className="btn btn-outline" onClick={onClose} disabled={saving}>
-              Cancelar
-            </button>
-            <button type="submit" className="btn btn-primary" disabled={saving}>
-              {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-              {saving ? 'Salvando...' : 'Salvar Paciente'}
-            </button>
+          <div className="flex justify-between items-center gap-3 mt-4 border-t pt-4" style={{ borderColor: 'var(--border)' }}>
+            <div>
+              {patientToEdit && (
+                <button
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => setIsDeceasedModalOpen(true)}
+                  disabled={saving}
+                  style={{ 
+                    borderColor: '#fecaca', 
+                    background: '#fff1f2', 
+                    color: '#be123c', 
+                    display: 'inline-flex', 
+                    alignItems: 'center', 
+                    gap: '6px',
+                    fontSize: '0.82rem',
+                    padding: '0.45rem 0.85rem'
+                  }}
+                  title="Registrar óbito e retirar paciente do sistema permanentemente"
+                >
+                  <UserX size={15} color="#e11d48" />
+                  <span>Registrar Óbito</span>
+                </button>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <button type="button" className="btn btn-outline" onClick={onClose} disabled={saving}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn btn-primary" disabled={saving}>
+                {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
+                {saving ? 'Salvando...' : 'Salvar Paciente'}
+              </button>
+            </div>
           </div>
         </form>
       </div>
+
+      <ConfirmDeceasedModal
+        isOpen={isDeceasedModalOpen}
+        onClose={() => setIsDeceasedModalOpen(false)}
+        patient={patientToEdit}
+        onSuccess={() => {
+          setIsDeceasedModalOpen(false);
+          onClose();
+        }}
+      />
     </div>
   );
 }

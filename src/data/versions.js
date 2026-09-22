@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.69",
+    "date": "22/09/2026",
+    "title": "Retirada de paciente por obito e suporte ao Mapa Exames Dialsist com reconhec...",
+    "highlights": [
+      "✨ Retirada de paciente por obito e suporte ao Mapa Exames Dialsist com reconhecimento de nomes abreviados"
+    ]
+  },
+  {
     "version": "1.1.68",
     "date": "21/09/2026",
     "title": "importacao de 30 pacientes Dialsist para Dr",

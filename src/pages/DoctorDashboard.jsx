@@ -26,7 +26,8 @@ import {
   ArrowDown,
   UploadCloud,
   BarChart3,
-  Syringe
+  Syringe,
+  UserX
 } from 'lucide-react';
 import { subscribeToPatients, STATUS_TRANSPLANTE_OPTIONS, seedDemoPatientsToFirestore, getAnticoagulacaoInfo } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
@@ -35,6 +36,7 @@ import PatientFormModal from '../components/PatientFormModal';
 import ChangelogModal from '../components/ChangelogModal';
 import ExamImportModal from '../components/ExamImportModal';
 import ReportsCenterModal from '../components/reports/ReportsCenterModal';
+import ConfirmDeceasedModal from '../components/ConfirmDeceasedModal';
 import BrandLogo from '../components/BrandLogo';
 import { useAuth } from '../context/AuthContext';
 
@@ -61,6 +63,8 @@ export default function DoctorDashboard() {
   const [sortConfig, setSortConfig] = useState({ key: 'nome', direction: 'asc' });
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
   const [patientToEdit, setPatientToEdit] = useState(null);
+  const [patientForDeceased, setPatientForDeceased] = useState(null);
+  const [isDeceasedModalOpen, setIsDeceasedModalOpen] = useState(false);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
@@ -114,6 +118,12 @@ export default function DoctorDashboard() {
     e.stopPropagation();
     setPatientToEdit(patient);
     setIsPatientModalOpen(true);
+  };
+
+  const handleOpenDeceasedModal = (e, patient) => {
+    e.stopPropagation();
+    setPatientForDeceased(patient);
+    setIsDeceasedModalOpen(true);
   };
 
   // Helper para verificar alertas de medicação no paciente
@@ -762,14 +772,25 @@ export default function DoctorDashboard() {
                       <h3 className="font-bold text-base text-slate-800 tracking-tight" title={patient.nome}>
                         {patient.nome}
                       </h3>
-                      <button 
-                        className="btn btn-outline" 
-                        onClick={(e) => handleEditPatient(e, patient)}
-                        style={{ padding: '0.25rem', borderRadius: '8px', border: 'none', background: 'transparent' }}
-                        title="Editar cadastro do paciente"
-                      >
-                        <Edit size={16} color="var(--text-muted)" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button 
+                          className="btn btn-outline" 
+                          onClick={(e) => handleEditPatient(e, patient)}
+                          style={{ padding: '0.25rem', borderRadius: '8px', border: 'none', background: 'transparent' }}
+                          title="Editar cadastro do paciente"
+                        >
+                          <Edit size={16} color="var(--text-muted)" />
+                        </button>
+                        <button 
+                          type="button"
+                          className="btn btn-outline" 
+                          onClick={(e) => handleOpenDeceasedModal(e, patient)}
+                          style={{ padding: '0.25rem', borderRadius: '8px', border: 'none', background: 'transparent' }}
+                          title="Registrar óbito e retirar do sistema"
+                        >
+                          <UserX size={16} color="#ef4444" />
+                        </button>
+                      </div>
                     </div>
                     
                     <div className="text-xs text-muted flex items-center justify-between mb-2 font-medium flex-wrap gap-1">
@@ -1004,14 +1025,25 @@ export default function DoctorDashboard() {
                         {patient.clinica || 'Dialize Betim'}
                       </span>
                     </div>
-                    <button 
-                      className="btn btn-outline" 
-                      onClick={(e) => handleEditPatient(e, patient)}
-                      style={{ padding: '0.2rem', borderRadius: '6px', border: 'none', background: 'transparent' }}
-                      title="Editar cadastro do paciente"
-                    >
-                      <Edit size={14} color="var(--text-muted)" />
-                    </button>
+                    <div className="flex items-center gap-0.5">
+                      <button 
+                        className="btn btn-outline" 
+                        onClick={(e) => handleEditPatient(e, patient)}
+                        style={{ padding: '0.2rem', borderRadius: '6px', border: 'none', background: 'transparent' }}
+                        title="Editar cadastro do paciente"
+                      >
+                        <Edit size={14} color="var(--text-muted)" />
+                      </button>
+                      <button 
+                        type="button"
+                        className="btn btn-outline" 
+                        onClick={(e) => handleOpenDeceasedModal(e, patient)}
+                        style={{ padding: '0.2rem', borderRadius: '6px', border: 'none', background: 'transparent' }}
+                        title="Registrar óbito e retirar do sistema"
+                      >
+                        <UserX size={14} color="#ef4444" />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-1.5 flex-wrap">
@@ -1377,6 +1409,16 @@ export default function DoctorDashboard() {
                             </button>
 
                             <button 
+                              type="button"
+                              className="btn btn-outline" 
+                              onClick={(e) => handleOpenDeceasedModal(e, patient)}
+                              style={{ padding: '0.3rem 0.5rem', fontSize: '0.75rem', borderColor: '#fecaca', background: '#fff1f2', color: '#be123c' }}
+                              title="Registrar óbito e retirar do sistema"
+                            >
+                              <UserX size={13} color="#e11d48" />
+                            </button>
+
+                            <button 
                               className="btn btn-primary"
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -1426,6 +1468,18 @@ export default function DoctorDashboard() {
         patients={patients}
         doctor={doctor}
         locaisList={doctor.locaisAtuacao || []}
+      />
+
+      <ConfirmDeceasedModal
+        isOpen={isDeceasedModalOpen}
+        onClose={() => {
+          setIsDeceasedModalOpen(false);
+          setPatientForDeceased(null);
+        }}
+        patient={patientForDeceased}
+        onSuccess={() => {
+          // A lista em tempo real do Firestore atualiza automaticamente
+        }}
       />
     </div>
   );

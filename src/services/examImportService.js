@@ -250,43 +250,70 @@ export function matchHeaderToExamKey(headerName) {
 }
 
 /**
- * Calcula similaridade fonética e por tokens entre dois nomes
+ * Calcula similaridade fonética e por tokens entre dois nomes, com suporte avançado
+ * a preposições brasileiras, iniciais (ex: J., M., C.) e abreviações (ex: Ap., Rodrig.).
  * Retorna valor entre 0 e 1
  */
 export function calculateNameSimilarity(nameA, nameB) {
-  const a = normalizeString(nameA);
-  const b = normalizeString(nameB);
+  const prepositions = new Set(['de', 'da', 'do', 'dos', 'das', 'e']);
+  
+  const cleanTokens = (str) => {
+    return normalizeString(str)
+      .split(' ')
+      .filter(t => t.length > 0 && !prepositions.has(t));
+  };
 
-  if (!a || !b) return 0;
-  if (a === b) return 1.0;
-
-  const tokensA = a.split(' ').filter(t => t.length > 1);
-  const tokensB = b.split(' ').filter(t => t.length > 1);
+  const tokensA = cleanTokens(nameA);
+  const tokensB = cleanTokens(nameB);
 
   if (tokensA.length === 0 || tokensB.length === 0) return 0;
+  if (tokensA.join(' ') === tokensB.join(' ')) return 1.0;
 
-  // Primeiro nome é prioritário
-  const firstNameMatch = tokensA[0] === tokensB[0];
-  let matchedTokens = 0;
+  // Função auxiliar de correspondência entre 2 tokens (suporta igualdade, prefixo/abreviação e iniciais)
+  const matchTwoTokens = (t1, t2) => {
+    if (t1 === t2) return 1.0;
+    // Se um é inicial ou prefixo do outro (ex: 'ap' e 'aparecida', 'j' e 'junio', 'rodr' e 'rodrigues')
+    if (t1.length >= 1 && t2.startsWith(t1)) return 0.92;
+    if (t2.length >= 1 && t1.startsWith(t2)) return 0.92;
+    return 0;
+  };
 
+  // 1. Primeiro nome (essencial na identificação de pacientes)
+  const firstScore = matchTwoTokens(tokensA[0], tokensB[0]);
+  if (firstScore === 0) {
+    const strA = tokensA.join(' ');
+    const strB = tokensB.join(' ');
+    if (strB.includes(strA) || strA.includes(strB)) return 0.88;
+    return 0.1;
+  }
+
+  // 2. Último sobrenome
+  const lastA = tokensA[tokensA.length - 1];
+  const lastB = tokensB[tokensB.length - 1];
+  const lastScore = matchTwoTokens(lastA, lastB);
+
+  // 3. Casamento ponderado de todos os tokens
+  let matchedTokensCount = 0;
   tokensA.forEach(tA => {
-    // Correspondência exata ou inicial (ex: "A." para "Alves")
-    const match = tokensB.some(tB => tB === tA || (tA.length === 1 && tB.startsWith(tA)) || (tB.length === 1 && tA.startsWith(tB)));
-    if (match) matchedTokens++;
+    const bestTokenMatch = Math.max(0, ...tokensB.map(tB => matchTwoTokens(tA, tB)));
+    if (bestTokenMatch > 0) matchedTokensCount += bestTokenMatch;
   });
 
-  const tokenScore = (matchedTokens / Math.max(tokensA.length, tokensB.length));
+  let overallScore = matchedTokensCount / Math.max(tokensA.length, tokensB.length);
 
-  if (firstNameMatch && tokenScore >= 0.5) {
-    return Math.min(1.0, 0.5 + (tokenScore * 0.5));
+  // Bônus se primeiro e último nome casarem com perfeição ou com inicial
+  if (firstScore >= 0.9 && lastScore >= 0.9) {
+    overallScore = Math.max(overallScore, 0.90);
   }
 
-  // Verifica inclusão direta (ex: "Alan Alves" está contido em "Alan Alves Teixeira")
-  if (b.includes(a) || a.includes(b)) {
-    return 0.90;
+  // Verifica inclusão de substring direta
+  const strA = tokensA.join(' ');
+  const strB = tokensB.join(' ');
+  if (strB.includes(strA) || strA.includes(strB)) {
+    overallScore = Math.max(overallScore, 0.90);
   }
 
-  return tokenScore * 0.8;
+  return Math.min(1.0, overallScore);
 }
 
 /**
@@ -592,9 +619,207 @@ export async function parseDocxFile(file, patientsList = []) {
 }
 
 /**
+ * 📊 PARSER MAPA EXAMES COLUNAR (Sistema Dialsist Web / DialiZe)
+ * Processa relatórios colunares mensais de hemodiálise com coletas fracionadas em múltiplos dias
+ */
+export function parseDialsistExamMap(pagesLines, patientsList = [], detectedGlobalDate = null, fileName = '') {
+  const DIALSIST_COL_MAP = {
+    'HB': 'hb', 'HCT': 'ht', 'FE': 'ferro', 'FERRIT': 'ferritina', 'ISTR': 'ist', 'TRANSF': 'transferrina',
+    'CAS': 'ca', 'P': 'fosforo', 'CAXP': 'caxp', 'PTH': 'pth', 'ALU': 'aluminio', 'FALC': 'fa',
+    'CR': 'creatinina', 'U1': 'ureiaPre', 'U2': 'ureiaPos', 'PRU': 'pru', 'KTV': 'ktv', 'K': 'k',
+    'ALB': 'albumina', 'TGP': 'tgp', 'GLIC': 'glicemia', 'VITD': 'vitD', 'HEM G': 'hba1c',
+    'SODIO': 'na', 'HBSA': 'hbsag', 'HBSAG': 'hbsag', 'HBS': 'antiHbs', 'HCV': 'antiHcv', 'HIV': 'hiv'
+  };
+
+  // Coleta todas as linhas válidas de tabelas em todas as páginas
+  const allRows = [];
+  let periodDate = detectedGlobalDate;
+
+  pagesLines.forEach(({ pageNum, items, lines }) => {
+    // Tenta detectar período no cabeçalho (ex: "Período 01/09/2026 a 30/09/2026")
+    if (!periodDate) {
+      const headerText = (lines || []).slice(0, 10).join(' ');
+      const mPeriod = headerText.match(/Per[ií]odo\s+(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4})\s+a\s+(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4})/i);
+      if (mPeriod) {
+        let [_, d, m, y] = mPeriod[1].match(/(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})/);
+        if (y.length === 2) y = '20' + y;
+        periodDate = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+      }
+    }
+
+    if (!items || items.length === 0) return;
+
+    // Localiza a linha de cabeçalho na página (procurando item 'Nome' à esquerda)
+    const headerItemNome = items.find(it => it.str.trim() === 'Nome' && it.transform[4] < 45);
+    const headerY = headerItemNome ? Math.round(headerItemNome.transform[5]) : 474;
+
+    const headerItems = items.filter(it => Math.abs(it.transform[5] - headerY) <= 3 && it.str.trim());
+    headerItems.sort((a, b) => a.transform[4] - b.transform[4]);
+
+    // Agrupa itens em linhas abaixo do cabeçalho
+    const lineBuckets = {};
+    items.forEach(it => {
+      const str = it.str.trim();
+      if (!str) return;
+      const y = Math.round(it.transform[5]);
+      if (y >= (headerY - 4) || y < 45) return; // ignora acima do cabeçalho e rodapé inferior
+
+      const closeY = Object.keys(lineBuckets).find(k => Math.abs(k - y) <= 3);
+      const key = closeY || y;
+      if (!lineBuckets[key]) lineBuckets[key] = [];
+      lineBuckets[key].push({ str, x: Math.round(it.transform[4]) });
+    });
+
+    const sortedYs = Object.keys(lineBuckets).sort((a, b) => b - a);
+    sortedYs.forEach(y => {
+      const row = lineBuckets[y].sort((a, b) => a.x - b.x);
+      const lineText = row.map(r => r.str).join(' ');
+
+      // Filtra estritamente linhas de estatísticas / rodapé
+      if (
+        lineText.includes('Total de pacientes') || 
+        lineText.includes('Média') || 
+        lineText.includes('Mediana') || 
+        lineText.includes('Desvio padrão') || 
+        lineText.includes('Total de exames') || 
+        lineText.includes('Legenda:') ||
+        lineText.includes('Minimo') ||
+        lineText.includes('Máximo') ||
+        lineText.includes('Obs.:')
+      ) {
+        return;
+      }
+
+      // Separa partes do nome (x < 60) e data de coleta (60 <= x <= 95)
+      const namePart = row.filter(it => it.x < 60).map(it => it.str).join(' ');
+      const date = row.find(it => it.x >= 60 && it.x <= 95 && /\d{2}\/\d{2}\/\d{2}/.test(it.str))?.str || '';
+      const values = row.filter(it => it.x > 95);
+
+      if (namePart || date || values.length > 0) {
+        allRows.push({ pageNum, y, namePart, date, values, headerItems });
+      }
+    });
+  });
+
+  // Agrupamento dos registros colunares por paciente
+  const rawPatients = [];
+  let current = null;
+
+  for (let i = 0; i < allRows.length; i++) {
+    const r = allRows[i];
+    let isNew = false;
+
+    if (!current) {
+      isNew = true;
+    } else if (r.namePart) {
+      const prevDate = current.dates[current.dates.length - 1];
+      if (r.date && prevDate) {
+        const [d1] = r.date.split('/').map(Number);
+        const [d2] = prevDate.split('/').map(Number);
+        // Em mapas do Dialsist, cada novo paciente reinicia a sequência de datas de coleta do mês
+        if (d1 <= d2) {
+          isNew = true;
+        }
+      }
+    }
+
+    if (isNew) {
+      if (current) rawPatients.push(current);
+      current = {
+        nameParts: r.namePart ? [r.namePart] : [],
+        dates: r.date ? [r.date] : [],
+        rows: [r]
+      };
+    } else {
+      if (r.namePart) current.nameParts.push(r.namePart);
+      if (r.date) current.dates.push(r.date);
+      current.rows.push(r);
+    }
+  }
+  if (current) rawPatients.push(current);
+
+  // Consolidação clínica dos exames de cada paciente no mês
+  const results = [];
+  rawPatients.forEach((p, idx) => {
+    let fullName = p.nameParts.join(' ').trim();
+    fullName = fullName.replace(/\b(Minimo|Maximo|Mediana|Media)\b/gi, '').trim();
+    if (!fullName || fullName.length < 3) return;
+
+    const matched = matchPatientInList(fullName, patientsList);
+
+    const exames = {};
+    p.rows.forEach(r => {
+      r.values.forEach(v => {
+        let closestCol = null;
+        let minDiff = 999;
+        r.headerItems.forEach(h => {
+          const diff = Math.abs(v.x - h.transform[4]);
+          if (diff < minDiff) {
+            minDiff = diff;
+            closestCol = h.str.trim();
+          }
+        });
+
+        if (minDiff <= 18 && DIALSIST_COL_MAP[closestCol]) {
+          const key = DIALSIST_COL_MAP[closestCol];
+          const rawStr = v.str.trim();
+
+          // Sorologias qualitativas
+          if (['hbsag', 'antiHbs', 'antiHcv', 'hiv'].includes(key)) {
+            if (rawStr === 'NR') exames[key] = 'Não Reagente';
+            else if (rawStr === 'R') exames[key] = 'Reagente';
+            else if (rawStr === 'IN') exames[key] = 'Indeterminado';
+          } else {
+            const num = parseFloat(rawStr.replace(',', '.'));
+            if (!isNaN(num) && exames[key] === undefined) {
+              exames[key] = num;
+            }
+          }
+        }
+      });
+    });
+
+    // Se o exame tiver U1 e U2 mas não tiver Kt/V ou IST, aplica cálculos derivados
+    const finalExames = applyDerivedCalculations(exames);
+
+    // Formata data do exame a partir da data de coleta mais recente
+    let finalDate = periodDate || new Date().toISOString().split('T')[0];
+    if (p.dates.length > 0) {
+      const lastD = p.dates[p.dates.length - 1];
+      const matchD = lastD.match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+      if (matchD) {
+        let [_, d, m, y] = matchD;
+        if (y.length === 2) y = '20' + y;
+        finalDate = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+      }
+    }
+
+    results.push({
+      id: `import-dialsist-row-${idx}-${Date.now()}`,
+      nomeArquivo: fullName,
+      cpf: matched.patient?.cpf || null,
+      pacienteId: matched.patient?.id || '',
+      pacienteNome: matched.patient?.nome || '',
+      statusMatch: matched.status,
+      confianca: matched.score,
+      dataExame: finalDate,
+      exames: finalExames,
+      confirmado: matched.status === 'EXACT_OR_HIGH'
+    });
+  });
+
+  return {
+    tipoArquivo: 'PDF - Mapa Exames (Dialsist Web)',
+    dataSugerida: periodDate || (results[0]?.dataExame) || new Date().toISOString().split('T')[0],
+    totalIdentificados: results.length,
+    registros: results
+  };
+}
+
+/**
  * 📑 PARSER PDF UNIVERSAL (.pdf)
  * Suporta Laudos Clínicos Individuais/Multi-páginas (Labicon, Hermes Pardini, DB, Fleury, etc.)
- * e Mapões/Tabelas Consolidadas de Diálise
+ * e Mapões/Tabelas Consolidadas de Diálise (Sistema Dialsist Web / DialiZe)
  */
 export async function parsePdfFile(file, patientsList = []) {
   const arrayBuffer = await file.arrayBuffer();
@@ -630,13 +855,27 @@ export async function parsePdfFile(file, patientsList = []) {
       return bucket.items.map(it => it.str).join(' ').trim();
     }).filter(Boolean);
 
-    pagesLines.push({ pageNum, lines });
+    pagesLines.push({ pageNum, lines, items: textContent.items });
+  }
+
+  const allLines = pagesLines.flatMap(p => p.lines);
+  const fullTextUpper = allLines.join(' ').toUpperCase();
+
+  // ================= ESTRATÉGIA 0: MAPA EXAMES COLUNAR (SISTEMA DIALSIST / DIALIZE) =================
+  const isDialsistMap = fullTextUpper.includes('MAPA EXAMES') || 
+                        fullTextUpper.includes('DIALSIST') || 
+                        fullTextUpper.includes('DIALIZE') ||
+                        (fullTextUpper.includes('NOME') && fullTextUpper.includes('DATA') && fullTextUpper.includes('KTV') && fullTextUpper.includes('CAS'));
+
+  if (isDialsistMap) {
+    const dialsistResult = parseDialsistExamMap(pagesLines, patientsList, detectedGlobalDate, file?.name || '');
+    if (dialsistResult.registros.length > 0) {
+      return dialsistResult;
+    }
   }
 
   // ================= ESTRATÉGIA 1: LAUDO CLÍNICO LABORATORIAL =================
   // Identifica se o documento é estruturado como laudo médico (cabeçalho com nome/CPF do paciente e blocos de exames)
-  const allLines = pagesLines.flatMap(p => p.lines);
-  const fullTextUpper = allLines.join(' ').toUpperCase();
   const isClinicalReport = fullTextUpper.includes('RESULTADO') || 
                           fullTextUpper.includes('LAUDO') || 
                           fullTextUpper.includes('LABORAT') || 

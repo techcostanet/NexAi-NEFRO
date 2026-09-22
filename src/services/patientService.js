@@ -610,12 +610,44 @@ export async function deletePatientEvolution(patientId, evolutionId) {
 }
 
 /**
- * Exclui um paciente permanentemente do Cloud Firestore
+ * Exclui um paciente permanentemente do Cloud Firestore (ex: óbito ou desligamento total)
  */
-export async function deletePatient(id) {
+export async function deletePatient(id, doctorId = null, patientName = '', reason = 'OBITO') {
   if (!db) throw new Error("Cloud Firestore não inicializado.");
   const docRef = doc(db, PATIENTS_COLLECTION, id);
   await deleteDoc(docRef);
+
+  // Atualiza contador no perfil do médico, se informado
+  if (doctorId) {
+    try {
+      const docDoctorRef = doc(db, "doctors", doctorId);
+      const snap = await getDoc(docDoctorRef);
+      if (snap.exists()) {
+        const cur = snap.data().pacientesCount || 0;
+        await updateDoc(docDoctorRef, {
+          pacientesCount: Math.max(0, cur - 1),
+          atualizadoEm: new Date().toISOString()
+        });
+      }
+    } catch (e) {
+      console.warn("Não foi possível atualizar contagem de pacientes do médico:", e);
+    }
+  }
+
+  // Registra trilha de auditoria e segurança
+  try {
+    const auditRef = doc(collection(db, "audit_logs"), `audit-delete-${id}-${Date.now()}`);
+    await setDoc(auditRef, {
+      id: auditRef.id,
+      timestamp: new Date().toISOString(),
+      tipoAcao: 'PATIENT_DELETED_DECEASED',
+      descricao: `Paciente ${patientName || id} retirado do sistema por motivo de óbito. Prontuário e exames excluídos permanentemente.`,
+      targetDoctorId: doctorId || null,
+      detalhes: { patientId: id, patientName, motivo: reason }
+    });
+  } catch (e) {
+    console.warn("Log de auditoria não pôde ser gravado:", e);
+  }
 }
 
 /**

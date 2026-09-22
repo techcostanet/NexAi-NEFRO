@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.69] - 2026-09-22
+### Alterações
+- Retirada de paciente por obito e suporte ao Mapa Exames Dialsist com reconhecimento de nomes abreviados
+
 ## [1.1.68] - 2026-09-21
 ### Alterações
 - importacao de 30 pacientes Dialsist para Dr. Danrley e suporte a CPF e Convenio

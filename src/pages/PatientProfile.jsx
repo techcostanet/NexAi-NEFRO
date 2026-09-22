@@ -11,6 +11,7 @@ import {
   Calendar, 
   Building2, 
   User, 
+  UserX,
   Clock, 
   Loader2, 
   FileText, 
@@ -66,6 +67,7 @@ import ExamImportModal from '../components/ExamImportModal';
 import PrescriptionModal from '../components/PrescriptionModal';
 import PrescriptionPrintModal from '../components/PrescriptionPrintModal';
 import PatientBulletinModal from '../components/patientBulletin/PatientBulletinModal';
+import ConfirmDeceasedModal from '../components/ConfirmDeceasedModal';
 import TransplantReportPdf from '../components/pdf/TransplantReportPdf';
 import { downloadPdfDocument } from '../services/pdfService';
 import { printElement } from '../utils/printUtils';
@@ -123,6 +125,7 @@ export default function PatientProfile() {
   
   // Modais
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
+  const [isDeceasedModalOpen, setIsDeceasedModalOpen] = useState(false);
   const [isExamModalOpen, setIsExamModalOpen] = useState(false);
   const [examToEdit, setExamToEdit] = useState(null);
   const [examIndexToEdit, setExamIndexToEdit] = useState(null);
@@ -644,6 +647,30 @@ export default function PatientProfile() {
             >
               <Edit size={14} color="#475569" />
               <span>Editar</span>
+            </button>
+
+            <button 
+              type="button"
+              className="btn btn-outline" 
+              onClick={() => setIsDeceasedModalOpen(true)}
+              style={{ 
+                padding: '0.42rem 0.72rem', 
+                fontSize: '0.80rem', 
+                fontWeight: '600', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '5px', 
+                whiteSpace: 'nowrap', 
+                borderRadius: '10px', 
+                borderColor: '#fecaca', 
+                background: '#fff1f2', 
+                color: '#be123c',
+                transition: 'all 0.15s ease'
+              }}
+              title="Registrar óbito e retirar paciente do sistema definitivamente"
+            >
+              <UserX size={14} color="#e11d48" />
+              <span>Registrar Óbito</span>
             </button>
 
             <button 
@@ -3286,6 +3313,16 @@ export default function PatientProfile() {
           </div>
         </div>
       )}
+
+      {/* Modal de Confirmação e Registro de Óbito */}
+      <ConfirmDeceasedModal
+        isOpen={isDeceasedModalOpen}
+        onClose={() => setIsDeceasedModalOpen(false)}
+        patient={patient}
+        onSuccess={() => {
+          navigate('/doctor');
+        }}
+      />
     </div>
   );
 }
