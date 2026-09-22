@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.71",
+    "date": "22/09/2026",
+    "title": "Implementacao completa do modulo de LME e medicamentos de alto custo SUS/CEAF...",
+    "highlights": [
+      "✨ Implementacao completa do modulo de LME e medicamentos de alto custo SUS/CEAF com auditor PCDT e gerador de PDF oficial"
+    ]
+  },
+  {
     "version": "1.1.70",
     "date": "22/09/2026",
     "title": "Correcao da rolagem na tela de conferencia de importacao de exames e fixacao ...",

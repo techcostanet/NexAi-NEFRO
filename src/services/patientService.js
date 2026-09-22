@@ -15,6 +15,7 @@ import {
 import { db } from "../config/firebase.js";
 import { normalizeMedicamentosList } from "../data/dialysisMedications.js";
 import { DEMO_PATIENTS_DATA } from "../data/demoPatients.js";
+import { logAuditEvent } from "./auditService.js";
 
 const PATIENTS_COLLECTION = "patients";
 const METADATA_COLLECTION = "system_metadata";
@@ -962,6 +963,110 @@ export async function deletePatientPrescription(patientId, prescriptionId) {
   });
 
   return receitas;
+}
+
+/**
+ * Adiciona ou edita uma LME (Laudo de Medicamento de Alto Custo) no prontuário do paciente no Cloud Firestore
+ */
+export async function savePatientLme(patientId, lmeData, lmeId = null) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado no Firestore");
+
+  const lmes = Array.isArray(patient.lmes) ? [...patient.lmes] : [];
+  const targetId = lmeId || lmeData.id || `lme-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+
+  // Cálculo da data de validade se não vier explicitada
+  let dataValidade = lmeData.dataValidade;
+  if (!dataValidade && lmeData.dataSolicitacao) {
+    const d = new Date(lmeData.dataSolicitacao);
+    const meses = Number(lmeData.vigenciaMeses || 6);
+    d.setMonth(d.getMonth() + meses);
+    dataValidade = d.toISOString().split('T')[0];
+  }
+
+  const lmeRecord = {
+    ...lmeData,
+    id: targetId,
+    dataSolicitacao: lmeData.dataSolicitacao || new Date().toISOString().split('T')[0],
+    dataValidade,
+    vigenciaMeses: Number(lmeData.vigenciaMeses || 6),
+    registradoEm: lmeData.registradoEm || new Date().toISOString(),
+    atualizadoEm: new Date().toISOString()
+  };
+
+  const existingIdx = lmes.findIndex(l => l.id === targetId);
+  if (existingIdx !== -1) {
+    lmes[existingIdx] = lmeRecord;
+  } else {
+    lmes.unshift(lmeRecord);
+  }
+
+  // Ordena por data de solicitação mais recente
+  lmes.sort((a, b) => new Date(b.dataSolicitacao || b.registradoEm || 0) - new Date(a.dataSolicitacao || a.registradoEm || 0));
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    lmes,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  // Trilha de auditoria no Cloud Firestore
+  try {
+    await logAuditEvent({
+      tipoAcao: lmeId ? 'LME_UPDATE' : (lmeData.isRenovacao ? 'LME_RENEWED' : 'LME_CREATED'),
+      descricao: `${lmeId ? 'Atualizada' : (lmeData.isRenovacao ? 'Renovada' : 'Emitida')} LME de ${lmeData.medicamentoNome || 'medicamento de alto custo'} para ${patient.nome}`,
+      targetDoctorId: patient.doctorId || null,
+      targetDoctorName: lmeData.medicoSolicitante?.nome || null,
+      detalhes: {
+        patientId,
+        patientName: patient.nome,
+        medicamentoId: lmeData.medicamentoId,
+        medicamentoNome: lmeData.medicamentoNome,
+        dataValidade
+      }
+    });
+  } catch (err) {
+    console.warn("Falha ao registrar log de auditoria da LME:", err);
+  }
+
+  return lmes;
+}
+
+/**
+ * Exclui uma LME do prontuário do paciente no Cloud Firestore
+ */
+export async function deletePatientLme(patientId, lmeId) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient || !Array.isArray(patient.lmes)) return [];
+
+  const lmeToDelete = patient.lmes.find(l => l.id === lmeId);
+  const lmes = patient.lmes.filter(l => l.id !== lmeId);
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    lmes,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  // Trilha de auditoria no Cloud Firestore
+  try {
+    await logAuditEvent({
+      tipoAcao: 'LME_DELETED',
+      descricao: `Removida LME de ${lmeToDelete?.medicamentoNome || 'medicamento'} do paciente ${patient.nome}`,
+      targetDoctorId: patient.doctorId || null,
+      detalhes: {
+        patientId,
+        patientName: patient.nome,
+        lmeId
+      }
+    });
+  } catch (err) {
+    console.warn("Falha ao registrar log de exclusão da LME:", err);
+  }
+
+  return lmes;
 }
 
 

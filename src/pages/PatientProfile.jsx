@@ -41,7 +41,8 @@ import {
   Eye,
   Copy,
   Trophy,
-  Syringe
+  Syringe,
+  ClipboardList
 } from 'lucide-react';
 import { 
   subscribeToPatientById, 
@@ -68,6 +69,8 @@ import PrescriptionModal from '../components/PrescriptionModal';
 import PrescriptionPrintModal from '../components/PrescriptionPrintModal';
 import PatientBulletinModal from '../components/patientBulletin/PatientBulletinModal';
 import ConfirmDeceasedModal from '../components/ConfirmDeceasedModal';
+import LmeModal from '../components/lme/LmeModal';
+import LmePatientSection from '../components/lme/LmePatientSection';
 import TransplantReportPdf from '../components/pdf/TransplantReportPdf';
 import { downloadPdfDocument } from '../services/pdfService';
 import { printElement } from '../utils/printUtils';
@@ -148,6 +151,11 @@ export default function PatientProfile() {
   const prescriptionMenuRef = useRef(null);
   const [isTransplantMenuOpen, setIsTransplantMenuOpen] = useState(false);
   const transplantMenuRef = useRef(null);
+
+  // Modais de LME (Alto Custo SUS)
+  const [isLmeModalOpen, setIsLmeModalOpen] = useState(false);
+  const [lmeToEdit, setLmeToEdit] = useState(null);
+  const [isRenovacaoLme, setIsRenovacaoLme] = useState(false);
 
   // Fecha os menus de prescrição e transplante ao clicar fora
   useEffect(() => {
@@ -301,6 +309,25 @@ export default function PatientProfile() {
     if (window.confirm("Deseja realmente excluir este registro de evolução médica?")) {
       await deletePatientEvolution(patient.id, evoId);
     }
+  };
+
+  // Ações de LME (Alto Custo SUS)
+  const handleOpenNewLme = () => {
+    setLmeToEdit(null);
+    setIsRenovacaoLme(false);
+    setIsLmeModalOpen(true);
+  };
+
+  const handleEditLme = (lme) => {
+    setLmeToEdit(lme);
+    setIsRenovacaoLme(false);
+    setIsLmeModalOpen(true);
+  };
+
+  const handleRenewLme = (lme) => {
+    setLmeToEdit(lme);
+    setIsRenovacaoLme(true);
+    setIsLmeModalOpen(true);
   };
 
   // Ações de Peso & Evolução Ponderal
@@ -671,6 +698,29 @@ export default function PatientProfile() {
             >
               <UserX size={14} color="#e11d48" />
               <span>Registrar Óbito</span>
+            </button>
+
+            <button 
+              type="button"
+              className="btn btn-outline" 
+              onClick={handleOpenNewLme}
+              style={{ 
+                padding: '0.42rem 0.72rem', 
+                fontSize: '0.80rem', 
+                fontWeight: '600', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '5px', 
+                whiteSpace: 'nowrap', 
+                borderRadius: '10px', 
+                borderColor: '#bfdbfe', 
+                background: '#eff6ff', 
+                color: '#1d4ed8' 
+              }}
+              title="Emitir ou renovar LME (Alto Custo SUS) com exames do paciente"
+            >
+              <ClipboardList size={14} color="#2563eb" />
+              <span>LME (Alto Custo)</span>
             </button>
 
             <button 
@@ -1275,6 +1325,21 @@ export default function PatientProfile() {
             </span>
           )}
         </button>
+
+        <button
+          className={`btn ${activeTab === 'lme' ? 'btn-primary' : 'btn-outline'}`}
+          onClick={() => setActiveTab('lme')}
+          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+          title="Gestão de LME e Medicamentos de Alto Custo (SUS / CEAF)"
+        >
+          <ClipboardList size={16} />
+          <span>LME (Alto Custo)</span>
+          {Array.isArray(patient?.lmes) && patient.lmes.length > 0 && (
+            <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '10px', background: activeTab === 'lme' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'lme' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
+              {patient.lmes.length}
+            </span>
+          )}
+        </button>
       </div>
 
       {/* ================= ABA 1: VISÃO GERAL ================= */}
@@ -1812,6 +1877,17 @@ export default function PatientProfile() {
                 );
               })()}
             </section>
+          </div>
+
+          {/* Seção de LMEs no Overview */}
+          <div style={{ gridColumn: '1 / -1', marginTop: '0.5rem' }}>
+            <LmePatientSection
+              patient={patient}
+              doctorInfo={doctorInfo}
+              onOpenNewLme={handleOpenNewLme}
+              onEditLme={handleEditLme}
+              onRenewLme={handleRenewLme}
+            />
           </div>
         </div>
       )}
@@ -2744,6 +2820,19 @@ export default function PatientProfile() {
         </div>
       )}
 
+      {/* ================= ABA 6: LME & MEDICAMENTOS DE ALTO CUSTO ================= */}
+      {activeTab === 'lme' && (
+        <div className="flex flex-col gap-4 animate-in">
+          <LmePatientSection
+            patient={patient}
+            doctorInfo={doctorInfo}
+            onOpenNewLme={handleOpenNewLme}
+            onEditLme={handleEditLme}
+            onRenewLme={handleRenewLme}
+          />
+        </div>
+      )}
+
       {/* ================= MODAIS ================= */}
       <PrescriptionModal 
         isOpen={isPrescriptionModalOpen}
@@ -3322,6 +3411,16 @@ export default function PatientProfile() {
         onSuccess={() => {
           navigate('/doctor');
         }}
+      />
+
+      {/* Modal de Emissão e Renovação de LME (Alto Custo SUS) */}
+      <LmeModal
+        isOpen={isLmeModalOpen}
+        onClose={() => setIsLmeModalOpen(false)}
+        patient={patient}
+        doctorInfo={doctorInfo}
+        lmeToEdit={lmeToEdit}
+        isRenovacao={isRenovacaoLme}
       />
     </div>
   );

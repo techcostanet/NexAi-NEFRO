@@ -27,16 +27,19 @@ import {
   UploadCloud,
   BarChart3,
   Syringe,
-  UserX
+  UserX,
+  ClipboardList
 } from 'lucide-react';
 import { subscribeToPatients, STATUS_TRANSPLANTE_OPTIONS, seedDemoPatientsToFirestore, getAnticoagulacaoInfo } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
 import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
+import { getPatientsWithLmeAlerts } from '../services/lmeService';
 import PatientFormModal from '../components/PatientFormModal';
 import ChangelogModal from '../components/ChangelogModal';
 import ExamImportModal from '../components/ExamImportModal';
 import ReportsCenterModal from '../components/reports/ReportsCenterModal';
 import ConfirmDeceasedModal from '../components/ConfirmDeceasedModal';
+import LmeCentralModal from '../components/lme/LmeCentralModal';
 import BrandLogo from '../components/BrandLogo';
 import { useAuth } from '../context/AuthContext';
 
@@ -59,6 +62,7 @@ export default function DoctorDashboard() {
   const [filterStatus, setFilterStatus] = useState('Todos');
   const [filterMedAlert, setFilterMedAlert] = useState(false);
   const [filterSemHeparina, setFilterSemHeparina] = useState(false);
+  const [filterLmeAlert, setFilterLmeAlert] = useState(false);
   const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'compact' | 'table'
   const [sortConfig, setSortConfig] = useState({ key: 'nome', direction: 'asc' });
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
@@ -68,6 +72,7 @@ export default function DoctorDashboard() {
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
+  const [isLmeCentralOpen, setIsLmeCentralOpen] = useState(false);
 
   const currentDoctorId = activeDoctorId;
 
@@ -150,6 +155,9 @@ export default function DoctorDashboard() {
 
   const locaisList = Array.isArray(doctor.locaisAtuacao) ? doctor.locaisAtuacao : [];
 
+  // Alertas consolidados de LME (Componente Especializado SUS)
+  const lmeAlerts = getPatientsWithLmeAlerts(patients);
+
   // Filtragem completa de pacientes
   const filteredPatients = patients.filter(p => {
     const searchClean = searchTerm.toLowerCase().trim();
@@ -179,6 +187,12 @@ export default function DoctorDashboard() {
     if (filterSemHeparina) {
       const ac = getAnticoagulacaoInfo(p);
       if (!ac.isSemHeparina) return false;
+    }
+
+    if (filterLmeAlert) {
+      const hasLmeAlert = lmeAlerts.expiring.some(it => it.patient?.id === p.id) ||
+                          lmeAlerts.expired.some(it => it.patient?.id === p.id);
+      if (!hasLmeAlert) return false;
     }
 
     return matchesSearch && matchesLocal && matchesTurno && matchesStatus;
@@ -339,6 +353,41 @@ export default function DoctorDashboard() {
           >
             <BarChart3 size={15} color="#4f46e5" />
             <span>Relatórios</span>
+          </button>
+
+          <button 
+            className="btn btn-outline" 
+            onClick={() => setIsLmeCentralOpen(true)}
+            disabled={doctor.statusLicenca === 'Suspenso' || doctor.statusLicenca === 'Cancelado'}
+            style={{ 
+              padding: '0.5rem 0.85rem', 
+              fontSize: '0.82rem', 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '6px',
+              borderColor: lmeAlerts.totalAlerts > 0 ? '#fed7aa' : '#bbf7d0', 
+              background: lmeAlerts.totalAlerts > 0 ? '#fff7ed' : '#f0fdf4', 
+              color: lmeAlerts.totalAlerts > 0 ? '#c2410c' : '#15803d',
+              fontWeight: '600',
+              borderRadius: '10px',
+              boxShadow: lmeAlerts.totalAlerts > 0 ? '0 1px 3px rgba(234, 88, 12, 0.15)' : 'none'
+            }}
+            title="Central de Gestão e Renovação de LME (Medicamentos de Alto Custo SUS/CEAF)"
+          >
+            <ClipboardList size={15} color={lmeAlerts.totalAlerts > 0 ? '#ea580c' : '#16a34a'} />
+            <span>Central LME</span>
+            {lmeAlerts.totalAlerts > 0 && (
+              <span style={{ 
+                fontSize: '0.72rem', 
+                background: '#ea580c', 
+                color: '#ffffff', 
+                padding: '1px 6px', 
+                borderRadius: '10px', 
+                fontWeight: '700' 
+              }}>
+                {lmeAlerts.totalAlerts}
+              </span>
+            )}
           </button>
 
           <button 
@@ -700,6 +749,30 @@ export default function DoctorDashboard() {
           >
             <AlertTriangle size={15} color={filterSemHeparina ? '#b91c1c' : '#64748b'} />
             <span>Sem Heparina ({patients.filter(p => getAnticoagulacaoInfo(p).isSemHeparina).length})</span>
+          </button>
+
+          <button 
+            type="button"
+            className="btn"
+            onClick={() => setFilterLmeAlert(!filterLmeAlert)}
+            style={{ 
+              padding: '0.55rem 0.85rem',
+              fontSize: '0.85rem',
+              borderRadius: '12px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              border: '1px solid',
+              background: filterLmeAlert ? '#ffedd5' : '#ffffff',
+              borderColor: filterLmeAlert ? '#f97316' : 'var(--border)',
+              color: filterLmeAlert ? '#c2410c' : 'var(--text-main)',
+              fontWeight: filterLmeAlert ? 'bold' : '500',
+              cursor: 'pointer'
+            }}
+            title="Filtrar pacientes com LMEs a vencer em até 30 dias ou já vencidas"
+          >
+            <ClipboardList size={15} color={filterLmeAlert ? '#ea580c' : '#64748b'} />
+            <span>LMEs a Vencer ({lmeAlerts.totalAlerts})</span>
           </button>
         </div>
       </div>
@@ -1480,6 +1553,14 @@ export default function DoctorDashboard() {
         onSuccess={() => {
           // A lista em tempo real do Firestore atualiza automaticamente
         }}
+      />
+
+      <LmeCentralModal
+        isOpen={isLmeCentralOpen}
+        onClose={() => setIsLmeCentralOpen(false)}
+        patients={patients}
+        doctor={doctor}
+        doctorInfo={doctor}
       />
     </div>
   );
