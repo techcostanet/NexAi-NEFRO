@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.72] - 2026-09-23
+### Alterações
+- Implementacao do Smart Lab Registry permanente no Firestore, homologacao completa do LABICON Laboratorio e catalogo transparente de laboratorios
+
 ## [1.1.71] - 2026-09-22
 ### Alterações
 - Implementacao completa do modulo de LME e medicamentos de alto custo SUS/CEAF com auditor PCDT e gerador de PDF oficial

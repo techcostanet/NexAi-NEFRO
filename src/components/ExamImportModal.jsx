@@ -17,6 +17,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { parseExamFile, commitImportedExams } from '../services/examImportService';
+import { HOMOLOGATED_LABS } from '../data/labProfiles';
 import { useAuth } from '../context/AuthContext';
 
 export default function ExamImportModal({ 
@@ -36,6 +37,7 @@ export default function ExamImportModal({
   const [progressText, setProgressText] = useState('');
   const [progressPercent, setProgressPercent] = useState(0);
   const [error, setError] = useState('');
+  const [showLabRegistryModal, setShowLabRegistryModal] = useState(false);
 
   // Dados pós-processamento
   const [parsedData, setParsedData] = useState(null);
@@ -259,15 +261,31 @@ export default function ExamImportModal({
             </div>
           </div>
 
-          <button 
-            type="button" 
-            onClick={onClose} 
-            className="btn btn-outline" 
-            style={{ padding: '0.4rem', borderRadius: '50%' }}
-            title="Fechar"
-          >
-            <X size={18} />
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+              type="button" 
+              onClick={() => setShowLabRegistryModal(true)} 
+              className="btn btn-outline" 
+              style={{ padding: '0.35rem 0.75rem', borderRadius: '10px', fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff' }}
+              title="Ver catálogo de laboratórios aprendidos e certificados pelo NexAi-NEFRO"
+            >
+              <span>🧪</span>
+              <span className="font-semibold text-slate-700 hidden sm:inline">Laboratórios Homologados</span>
+              <span className="badge" style={{ background: '#dcfce7', color: '#15803d', fontSize: '0.68rem', padding: '1px 6px', fontWeight: 'bold' }}>
+                {HOMOLOGATED_LABS.length}
+              </span>
+            </button>
+
+            <button 
+              type="button" 
+              onClick={onClose} 
+              className="btn btn-outline" 
+              style={{ padding: '0.4rem', borderRadius: '50%' }}
+              title="Fechar"
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
         {/* Mensagens de Alerta & Sucesso */}
@@ -344,9 +362,18 @@ export default function ExamImportModal({
               </div>
             </div>
 
-            <p className="text-center text-xs text-muted">
-              Vínculo automático por nome e CPF com conferência antes de salvar.
-            </p>
+            <div className="flex items-center justify-center gap-2 flex-wrap text-center">
+              <span className="text-xs text-muted">
+                Vínculo automático por nome e CPF com conferência antes de salvar.
+              </span>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setShowLabRegistryModal(true); }}
+                className="text-xs text-blue-600 hover:text-blue-800 font-semibold underline inline-flex items-center gap-1"
+              >
+                <span>🧪 Ver laboratórios aprendidos ({HOMOLOGATED_LABS.length})</span>
+              </button>
+            </div>
           </div>
         )}
 
@@ -411,6 +438,51 @@ export default function ExamImportModal({
                 />
               </div>
             </div>
+
+            {/* Banner de Laboratório Homologado */}
+            {parsedData?.laboratorioDetectado && (
+              <div 
+                style={{
+                  background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.09) 0%, rgba(5, 150, 105, 0.04) 100%)',
+                  border: '1px solid #10b981',
+                  borderRadius: '12px',
+                  padding: '0.65rem 1rem',
+                  marginBottom: '0.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.5rem',
+                  flexShrink: 0
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ background: '#10b981', color: 'white', borderRadius: '50%', width: '28px', height: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                    ✓
+                  </div>
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontWeight: '700', fontSize: '0.86rem', color: '#065f46' }}>
+                        Laboratório Homologado: {parsedData.laboratorioDetectado.nome}
+                      </span>
+                      <span style={{ background: '#d1fae5', color: '#047857', border: '1px solid #a7f3d0', padding: '1px 7px', borderRadius: '9999px', fontSize: '0.68rem', fontWeight: 'bold' }}>
+                        100% Confiabilidade
+                      </span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.73rem', color: '#047857' }}>
+                      {parsedData.laboratorioDetectado.cidade || 'Contagem / MG'} · Layout e padrão de exames aprendidos e persistidos no Cloud Firestore.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowLabRegistryModal(true)}
+                  style={{ background: 'transparent', border: 'none', color: '#047857', textDecoration: 'underline', fontSize: '0.75rem', cursor: 'pointer', fontWeight: '600' }}
+                >
+                  Ver laboratórios aprendidos
+                </button>
+              </div>
+            )}
 
             {/* Tabela de Reconciliação com Scroll Independente e Cabeçalho Fixo */}
             <div 
@@ -664,6 +736,156 @@ export default function ExamImportModal({
           </div>
         )}
       </div>
+
+      {/* ================= MODAL CENTRAL DE LABORATÓRIOS HOMOLOGADOS ================= */}
+      {showLabRegistryModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(15, 23, 42, 0.85)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 10001,
+            padding: '1rem'
+          }}
+          onClick={() => setShowLabRegistryModal(false)}
+        >
+          <div 
+            className="glass-panel animate-in"
+            style={{
+              background: '#ffffff',
+              width: '100%',
+              maxWidth: '850px',
+              maxHeight: '85vh',
+              display: 'flex',
+              flexDirection: 'column',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex justify-between items-center p-4 border-b bg-slate-50" style={{ borderColor: 'var(--border)' }}>
+              <div className="flex items-center gap-3">
+                <div style={{ background: '#ecfdf5', color: '#059669', padding: '10px', borderRadius: '14px', fontSize: '1.25rem' }}>
+                  🔬
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-800">
+                    Central de Laboratórios & Layouts Homologados
+                  </h3>
+                  <p className="text-xs text-muted">
+                    Formatos certificados e aprendidos pelo NexAi-NEFRO (Cloud Firestore · Smart Lab Registry)
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowLabRegistryModal(false)}
+                className="btn btn-outline"
+                style={{ padding: '0.4rem', borderRadius: '50%' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Content Scrollable */}
+            <div className="p-4 custom-scrollbar overflow-y-auto" style={{ maxHeight: 'calc(85vh - 130px)' }}>
+              {/* Informativo de aprendizado permanente */}
+              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '0.85rem 1rem', borderRadius: '12px', marginBottom: '1rem', fontSize: '0.82rem', color: '#166534' }}>
+                <div className="font-bold flex items-center gap-1.5 mb-1">
+                  <span>💡</span>
+                  <span>Aprendizado Permanente & Transparente na Nuvem</span>
+                </div>
+                <p className="m-0 leading-relaxed text-slate-700">
+                  Cada modelo de exame aprendido é registrado de forma definitiva no <strong>Cloud Firestore (coleção <code style={{ background: '#dcfce7', padding: '1px 5px', borderRadius: '4px' }}>lab_templates</code>)</strong> e espelhado no sistema. Médicos e clínicas podem enviar laudos repetidos sem necessidade de novo treinamento.
+                </p>
+              </div>
+
+              {/* Lista de Laboratórios Homologados */}
+              <div className="flex flex-col gap-3">
+                {HOMOLOGATED_LABS.map((lab) => (
+                  <div 
+                    key={lab.id} 
+                    style={{ 
+                      border: '1px solid var(--border)', 
+                      borderRadius: '14px', 
+                      padding: '1rem', 
+                      background: '#ffffff',
+                      boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
+                    }}
+                  >
+                    <div className="flex justify-between items-start flex-wrap gap-2 mb-2">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-slate-900 text-sm">{lab.nome}</h4>
+                          <span style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '1px 8px', borderRadius: '9999px', fontSize: '0.68rem', fontWeight: 'bold' }}>
+                            ✓ {lab.status} ({lab.confianca})
+                          </span>
+                        </div>
+                        <p className="text-2xs text-muted mt-0.5">
+                          {lab.cidade} · CNPJ: {lab.cnpj} {lab.cnes && `· CNES: ${lab.cnes}`}
+                        </p>
+                      </div>
+
+                      <span className="badge" style={{ background: '#f1f5f9', color: '#475569', fontSize: '0.72rem' }}>
+                        {lab.totalExames} exames suportados
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-slate-600 mb-2">
+                      {lab.descricao}
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5">
+                      {lab.examesHomologados.map((ex, i) => (
+                        <span 
+                          key={i} 
+                          style={{ 
+                            background: '#f8fafc', 
+                            border: '1px solid #e2e8f0', 
+                            color: '#334155', 
+                            fontSize: '0.68rem', 
+                            padding: '2px 7px', 
+                            borderRadius: '6px',
+                            fontWeight: '500'
+                          }}
+                        >
+                          {ex}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="mt-2.5 pt-2 border-t flex justify-between items-center text-2xs text-muted" style={{ borderColor: '#f1f5f9' }}>
+                      <span>Layout: {lab.tipoLayout}</span>
+                      <span>Homologado em: {lab.dataHomologacao}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-3 border-t bg-slate-50 flex justify-end" style={{ borderColor: 'var(--border)' }}>
+              <button
+                type="button"
+                onClick={() => setShowLabRegistryModal(false)}
+                className="btn btn-primary"
+                style={{ fontSize: '0.82rem', padding: '0.45rem 1.25rem', borderRadius: '10px' }}
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

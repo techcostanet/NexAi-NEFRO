@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.72",
+    "date": "23/09/2026",
+    "title": "Implementacao do Smart Lab Registry permanente no Firestore, homologacao comp...",
+    "highlights": [
+      "✨ Implementacao do Smart Lab Registry permanente no Firestore, homologacao completa do LABICON Laboratorio e catalogo transparente de laboratorios"
+    ]
+  },
+  {
     "version": "1.1.71",
     "date": "22/09/2026",
     "title": "Implementacao completa do modulo de LME e medicamentos de alto custo SUS/CEAF...",
