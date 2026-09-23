@@ -1,5 +1,15 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.77",
+    "date": "23/09/2026",
+    "title": "Otimização mobile da landing page sem overflow",
+    "highlights": [
+      "✨ Otimização mobile da landing page sem overflow",
+      "✨ Ajuste do teste grátis com ambiente limpo",
+      "✨ Adição de canal WhatsApp para Conta Demonstração"
+    ]
+  },
+  {
     "version": "1.1.76",
     "date": "23/09/2026",
     "title": "Suporte a PWA para instalacao no celular e tablet com icone oficial",

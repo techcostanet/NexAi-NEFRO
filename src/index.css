@@ -31,6 +31,12 @@
   padding: 0;
 }
 
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  position: relative;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg);
@@ -433,9 +439,48 @@ svg {
     margin-bottom: 0 !important;
   }
 
-  /* Ajuste responsivo de grid para telas compactas (< 360px) */
-  .patient-overview-grid {
-    grid-template-columns: 1fr !important;
+  /* Previne que botões com texto longo estourem a largura no celular */
+  .btn {
+    white-space: normal !important;
+    max-width: 100% !important;
+    text-align: center;
+  }
+
+  /* Imagens e vetores nunca transbordam o contêiner */
+  img, svg {
+    max-width: 100%;
+  }
+
+  /* Botão flutuante de WhatsApp posicionado ergonomicamente acima do banner PWA */
+  .landing-whatsapp-btn {
+    bottom: 5.5rem !important;
+    right: 1rem !important;
+    padding: 8px 14px !important;
+    font-size: 0.78rem !important;
+  }
+}
+
+/* ================= UTILITÁRIOS RESPONSIVOS PARA LANDING PAGE & GERAL ================= */
+@media (max-width: 640px) {
+  .sm\:hidden { display: none !important; }
+  .brand-logo-subtitle { display: none !important; }
+}
+@media (min-width: 641px) {
+  .sm\:inline { display: inline !important; }
+  .sm\:block { display: block !important; }
+  .sm\:hidden-desktop { display: none !important; }
+}
+@media (max-width: 768px) {
+  .md\:hidden { display: none !important; }
+}
+@media (min-width: 769px) {
+  .md\:flex { display: flex !important; }
+  .md\:block { display: block !important; }
+  .md\:inline { display: inline !important; }
+}
+@media (min-width: 1024px) {
+  .featured-plan-card {
+    transform: scale(1.02);
   }
 }
 

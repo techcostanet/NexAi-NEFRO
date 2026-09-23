@@ -81,7 +81,11 @@ export default function LandingPage() {
     },
     {
       q: "Como funciona a Avaliação Gratuita de 7 Dias?",
-      a: "Você se cadastra em menos de 1 minuto sem precisar informar cartão de crédito. Sua conta é liberada imediatamente com 60 pacientes demonstrativos completos em 3 clínicas para você testar evoluções clínicas, prescrições e gráficos laboratoriais."
+      a: "Você se cadastra em menos de 1 minuto sem precisar informar cartão de crédito. Sua conta é liberada imediatamente com o sistema limpo e pronto para você cadastrar seus pacientes e testar evoluções clínicas, prescrições e gráficos laboratoriais na sua rotina real."
+    },
+    {
+      q: "Vocês possuem uma Conta de Demonstração com dados já preenchidos?",
+      a: "Sim! Se você tiver dúvidas ou quiser explorar o Nex-Ai.NEFRO com pacientes, sessões de hemodiálise, relatórios e históricos de exames já preenchidos sem precisar digitar nada, disponibilizamos uma Conta de Demonstração completa com dados fictícios. Basta nos chamar no WhatsApp pelo botão da página que liberamos o acesso imediatamente."
     },
     {
       q: "Meus dados e os prontuários dos pacientes ficam seguros?",
@@ -106,7 +110,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div style={{ background: '#f8fafc', color: '#0f172a', minHeight: '100vh', fontFamily: 'inherit' }}>
+    <div style={{ background: '#f8fafc', color: '#0f172a', minHeight: '100vh', fontFamily: 'inherit', width: '100%', maxWidth: '100vw', overflowX: 'hidden', position: 'relative' }}>
       
       {/* ================= HEADER FIXO / NAVBAR ================= */}
       <nav 
@@ -119,14 +123,16 @@ export default function LandingPage() {
           borderBottom: '1px solid rgba(226, 232, 240, 0.8)'
         }}
       >
-        <div className="container" style={{ maxWidth: '1200px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.85rem 1.5rem' }}>
+        <div className="container" style={{ maxWidth: '1200px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem 1rem', width: '100%', boxSizing: 'border-box' }}>
           {/* Logo */}
-          <BrandLogo 
-            size="md"
-            versionBadge={`v${APP_VERSION}`}
-            subtitle="Software Médico Especializado"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          />
+          <div style={{ flexShrink: 1, minWidth: 0 }}>
+            <BrandLogo 
+              size="md"
+              versionBadge={`v${APP_VERSION}`}
+              subtitle="Software Médico Especializado"
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            />
+          </div>
 
           {/* Links Centrais */}
           <div className="hidden md:flex items-center gap-6" style={{ fontSize: '0.88rem', fontWeight: '600', color: '#475569' }}>
@@ -138,12 +144,12 @@ export default function LandingPage() {
           </div>
 
           {/* Botões de Ação */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2" style={{ flexShrink: 0 }}>
             <button 
               type="button" 
               onClick={() => navigate('/login')}
               className="btn btn-outline"
-              style={{ fontSize: '0.84rem', padding: '0.5rem 1rem', fontWeight: '600' }}
+              style={{ fontSize: '0.82rem', padding: '0.45rem 0.75rem', fontWeight: '600', minHeight: '36px' }}
             >
               Entrar
             </button>
@@ -151,17 +157,26 @@ export default function LandingPage() {
               type="button" 
               onClick={handleStartTrial}
               className="btn btn-primary"
-              style={{ fontSize: '0.84rem', padding: '0.5rem 1.1rem', fontWeight: 'bold', background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)' }}
+              style={{ 
+                fontSize: '0.82rem', 
+                padding: '0.45rem 0.85rem', 
+                fontWeight: 'bold', 
+                background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
+                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+                minHeight: '36px',
+                whiteSpace: 'nowrap'
+              }}
             >
-              Testar 7 Dias Grátis
+              <span className="hidden sm:inline">Testar 7 Dias Grátis</span>
+              <span className="sm:hidden">Testar Grátis</span>
             </button>
           </div>
         </div>
       </nav>
 
       {/* ================= HERO SECTION ================= */}
-      <section style={{ padding: '4.5rem 1.5rem 3rem', background: 'radial-gradient(ellipse at top, rgba(239, 246, 255, 0.9) 0%, rgba(248, 250, 252, 0.4) 100%)' }}>
-        <div className="container" style={{ maxWidth: '1100px', textAlign: 'center' }}>
+      <section style={{ padding: 'clamp(2.5rem, 5vw, 4.5rem) 1rem 2.5rem', background: 'radial-gradient(ellipse at top, rgba(239, 246, 255, 0.9) 0%, rgba(248, 250, 252, 0.4) 100%)', width: '100%', boxSizing: 'border-box' }}>
+        <div className="container" style={{ maxWidth: '1100px', textAlign: 'center', width: '100%', boxSizing: 'border-box' }}>
           
           {/* Badge de Destaque */}
           <div 
@@ -176,25 +191,28 @@ export default function LandingPage() {
               fontSize: '0.78rem',
               fontWeight: '700',
               color: '#1d4ed8',
-              marginBottom: '1.5rem',
-              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.08)'
+              marginBottom: '1.25rem',
+              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.08)',
+              maxWidth: '100%'
             }}
           >
-            <Sparkles size={14} color="#2563eb" />
-            <span>Exclusivo para Nefrologistas e Clínicas de Diálise</span>
+            <Sparkles size={14} color="#2563eb" style={{ flexShrink: 0 }} />
+            <span style={{ whiteSpace: 'normal', textAlign: 'center' }}>Exclusivo para Nefrologistas e Clínicas de Diálise</span>
           </div>
 
           {/* Headline Principal */}
           <h1 
             style={{ 
-              fontSize: 'clamp(2rem, 4.5vw, 3.4rem)', 
+              fontSize: 'clamp(1.75rem, 4.5vw, 3.2rem)', 
               fontWeight: '900', 
-              lineHeight: 1.15, 
+              lineHeight: 1.18, 
               letterSpacing: '-0.03em', 
               color: '#0f172a', 
               marginBottom: '1.25rem',
               maxWidth: '900px',
-              margin: '0 auto 1.25rem'
+              margin: '0 auto 1.25rem',
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word'
             }}
           >
             O Prontuário Inteligente que revoluciona sua rotina de <span style={{ background: 'linear-gradient(135deg, #2563eb, #0284c7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Hemodiálise e Nefrologia</span>
@@ -203,32 +221,35 @@ export default function LandingPage() {
           {/* Sub-headline */}
           <p 
             style={{ 
-              fontSize: 'clamp(1rem, 2vw, 1.15rem)', 
+              fontSize: 'clamp(0.95rem, 2.2vw, 1.15rem)', 
               color: '#475569', 
               maxWidth: '720px', 
-              margin: '0 auto 2.25rem', 
-              lineHeight: 1.6 
+              margin: '0 auto 2rem', 
+              lineHeight: 1.6,
+              padding: '0 0.5rem'
             }}
           >
             Controle de sessões dialíticas em 2 minutos, acompanhamento de distúrbio mineral ósseo (PTH/Fósforo), prescrições com ciclos de ferro e alertas laboratoriais — <strong>100% em nuvem e seguro</strong>.
           </p>
 
           {/* CTAs */}
-          <div className="flex justify-center items-center gap-3 flex-wrap mb-4">
+          <div className="flex justify-center items-center gap-3 flex-wrap mb-4" style={{ width: '100%' }}>
             <button 
               type="button" 
               onClick={handleStartTrial}
               className="btn btn-primary"
               style={{ 
-                padding: '0.85rem 1.85rem', 
-                fontSize: '1rem', 
+                padding: '0.85rem 1.6rem', 
+                fontSize: '0.96rem', 
                 fontWeight: 'bold', 
                 borderRadius: '14px',
                 background: 'linear-gradient(135deg, #2563eb, #1e40af)',
                 boxShadow: '0 10px 25px rgba(37, 99, 235, 0.35)',
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px'
+                justifyContent: 'center',
+                gap: '8px',
+                maxWidth: '100%'
               }}
             >
               <span>Começar Teste Grátis por 7 Dias</span>
@@ -244,7 +265,8 @@ export default function LandingPage() {
                 fontWeight: '600', 
                 borderRadius: '14px',
                 background: '#ffffff',
-                borderColor: '#cbd5e1'
+                borderColor: '#cbd5e1',
+                maxWidth: '100%'
               }}
             >
               Conhecer as Telas
@@ -252,7 +274,7 @@ export default function LandingPage() {
           </div>
 
           {/* Micro Prova Social */}
-          <div className="flex justify-center items-center gap-6 mt-4 text-xs font-semibold text-slate-500 flex-wrap">
+          <div className="flex justify-center items-center gap-4 sm:gap-6 mt-4 text-xs font-semibold text-slate-500 flex-wrap">
             <span className="flex items-center gap-1.5"><CheckCircle2 size={15} color="#16a34a" /> Sem cartão</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 size={15} color="#16a34a" /> Ativação Imediata</span>
             <span className="flex items-center gap-1.5"><CheckCircle2 size={15} color="#16a34a" /> LGPD e CFM</span>
@@ -261,132 +283,137 @@ export default function LandingPage() {
           {/* Preview Hero / Mockup do Painel */}
           <div 
             style={{ 
-              marginTop: '3.5rem', 
+              marginTop: '2.5rem', 
               position: 'relative',
-              borderRadius: '24px',
-              padding: '10px',
+              borderRadius: '20px',
+              padding: '6px',
               background: 'linear-gradient(135deg, #cbd5e1, #e2e8f0)',
-              boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.25)'
+              boxShadow: '0 20px 50px -15px rgba(15, 23, 42, 0.25)',
+              maxWidth: '100%',
+              overflow: 'hidden',
+              boxSizing: 'border-box'
             }}
           >
             <div 
               style={{ 
                 background: '#ffffff', 
-                borderRadius: '18px', 
+                borderRadius: '16px', 
                 overflow: 'hidden',
-                border: '1px solid #e2e8f0'
+                border: '1px solid #e2e8f0',
+                width: '100%',
+                maxWidth: '100%'
               }}
             >
               {/* Header do Mockup Browser */}
-              <div style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444' }} />
-                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f59e0b' }} />
-                <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981' }} />
-                <div style={{ marginLeft: '1rem', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '2px 14px', fontSize: '0.72rem', color: '#64748b', fontWeight: '500' }}>
+              <div style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
+                <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#ef4444', flexShrink: 0 }} />
+                <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#f59e0b', flexShrink: 0 }} />
+                <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: '#10b981', flexShrink: 0 }} />
+                <div style={{ marginLeft: '0.5rem', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '6px', padding: '2px 10px', fontSize: '0.70rem', color: '#64748b', fontWeight: '500', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   https://nexai-nefro.web.app/doctor
                 </div>
               </div>
 
               {/* Conteúdo Ilustrativo da Tela do Médico */}
-              <div style={{ padding: '1.5rem', background: '#f8fafc' }}>
+              <div style={{ padding: '1rem 0.85rem', background: '#f8fafc', width: '100%', boxSizing: 'border-box' }}>
                 {/* Header Interno do Mockup */}
-                <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-                  <div className="flex items-center gap-2 text-left">
-                    <div style={{ padding: '8px', background: '#dbeafe', borderRadius: '10px', color: '#2563eb' }}>
-                      <Stethoscope size={20} />
+                <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
+                  <div className="flex items-center gap-2 text-left" style={{ minWidth: 0 }}>
+                    <div style={{ padding: '6px', background: '#dbeafe', borderRadius: '8px', color: '#2563eb', flexShrink: 0 }}>
+                      <Stethoscope size={18} />
                     </div>
-                    <div>
-                      <strong className="text-sm block text-slate-800">Painel do Nefrologista • Dr. Marcelo Ramos</strong>
-                      <span className="text-xs text-muted">Clínica Renalis • 60 Pacientes em 3 Clínicas</span>
+                    <div style={{ minWidth: 0 }}>
+                      <strong className="text-xs sm:text-sm block text-slate-800 truncate">Painel do Nefrologista • Dr. Marcelo</strong>
+                      <span className="text-[11px] text-muted block truncate">Clínica Renalis • 60 Pacientes em 3 Clínicas</span>
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: '8px', fontWeight: 'bold' }}>
-                      🟢 Sistema Online (Nuvem)
+                    <span style={{ fontSize: '0.68rem', background: '#dcfce7', color: '#15803d', padding: '2px 7px', borderRadius: '6px', fontWeight: 'bold' }}>
+                      🟢 Online
                     </span>
                   </div>
                 </div>
 
                 {/* Barra de Filtros & Triagem Rápida */}
-                <div className="flex items-center gap-2 mb-3 flex-wrap text-xs">
-                  <span style={{ background: '#2563eb', color: '#ffffff', padding: '3px 9px', borderRadius: '7px', fontWeight: '700' }}>Todas as Unidades (60)</span>
-                  <span style={{ background: '#e2e8f0', color: '#475569', padding: '3px 9px', borderRadius: '7px', fontWeight: '600' }}>1º Turno (20)</span>
-                  <span style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '3px 9px', borderRadius: '7px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                    <Clock size={12} /> Ciclos a Vencer (2)
+                <div className="mobile-scroll-row flex items-center gap-1.5 mb-3 text-xs" style={{ overflowX: 'auto', paddingBottom: '4px' }}>
+                  <span style={{ background: '#2563eb', color: '#ffffff', padding: '3px 8px', borderRadius: '6px', fontWeight: '700', fontSize: '0.72rem', whiteSpace: 'nowrap' }}>Todas as Unidades (60)</span>
+                  <span style={{ background: '#e2e8f0', color: '#475569', padding: '3px 8px', borderRadius: '6px', fontWeight: '600', fontSize: '0.72rem', whiteSpace: 'nowrap' }}>1º Turno (20)</span>
+                  <span style={{ background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '3px 8px', borderRadius: '6px', fontWeight: '700', fontSize: '0.72rem', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                    <Clock size={11} /> Ciclos a Vencer (2)
                   </span>
-                  <span style={{ background: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', padding: '3px 9px', borderRadius: '7px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                    <Syringe size={12} /> Sem Heparina (1)
+                  <span style={{ background: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', padding: '3px 8px', borderRadius: '6px', fontWeight: '700', fontSize: '0.72rem', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                    <Syringe size={11} /> Sem Heparina (1)
                   </span>
                 </div>
 
                 {/* Cards de Pacientes Mockup */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', textAlign: 'left' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '0.85rem', textAlign: 'left' }}>
                   
                   {/* Card 1 */}
-                  <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-sm">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <strong className="text-sm block text-slate-900">AMÉLIA SILVA</strong>
-                        <span className="text-xs text-muted">68 anos • FAV (MSE) • 3º Turno</span>
+                  <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm" style={{ width: '100%', boxSizing: 'border-box' }}>
+                    <div className="flex justify-between items-start mb-2 gap-2">
+                      <div style={{ minWidth: 0 }}>
+                        <strong className="text-xs sm:text-sm block text-slate-900 truncate">AMÉLIA SILVA</strong>
+                        <span className="text-[11px] text-muted block truncate">68 anos • FAV (MSE) • 3º Turno</span>
                       </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
+                      <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                        <span style={{ fontSize: '0.65rem', background: '#dcfce7', color: '#15803d', padding: '2px 5px', borderRadius: '5px', fontWeight: 'bold' }}>
                           Ativo
                         </span>
-                        <span style={{ fontSize: '0.68rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '1px 6px', borderRadius: '6px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                          <Syringe size={10} /> Heparina 1000+500/h
+                        <span style={{ fontSize: '0.62rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '1px 5px', borderRadius: '5px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                          <Syringe size={9} /> Heparina 1000+500/h
                         </span>
                       </div>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem', background: '#f8fafc', padding: '8px', borderRadius: '8px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', fontSize: '0.72rem', background: '#f8fafc', padding: '6px 8px', borderRadius: '8px' }}>
                       <div>Hb: <strong>11.4 g/dL</strong></div>
                       <div>PTH: <strong style={{ color: '#d97706' }}>380 pg/mL</strong></div>
-                      <div>Kt/V: <strong style={{ color: '#16a34a' }}>1.42 (Adequado)</strong></div>
+                      <div>Kt/V: <strong style={{ color: '#16a34a' }}>1.42 (OK)</strong></div>
                       <div>Peso Seco: <strong>64.5 kg</strong></div>
                     </div>
                   </div>
 
-                  {/* Card 2 */}
-                  <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-sm">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <strong className="text-sm block text-slate-900">ADCÉLIO PEREIRA</strong>
-                        <span className="text-xs text-muted">54 anos • Permcath • 1º Turno</span>
+                  {/* Card 2 (visível em telas sm ou maiores) */}
+                  <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm hidden sm:block" style={{ width: '100%', boxSizing: 'border-box' }}>
+                    <div className="flex justify-between items-start mb-2 gap-2">
+                      <div style={{ minWidth: 0 }}>
+                        <strong className="text-xs sm:text-sm block text-slate-900 truncate">ADCÉLIO PEREIRA</strong>
+                        <span className="text-[11px] text-muted block truncate">54 anos • Permcath • 1º Turno</span>
                       </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <span style={{ fontSize: '0.7rem', background: '#fef3c7', color: '#b45309', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
+                      <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                        <span style={{ fontSize: '0.65rem', background: '#fef3c7', color: '#b45309', padding: '2px 5px', borderRadius: '5px', fontWeight: 'bold' }}>
                           Alerta Exame
                         </span>
-                        <span style={{ fontSize: '0.68rem', background: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', padding: '1px 6px', borderRadius: '6px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                          <Syringe size={10} /> Sem Heparina (Risco)
+                        <span style={{ fontSize: '0.62rem', background: '#fee2e2', color: '#b91c1c', border: '1px solid #fecaca', padding: '1px 5px', borderRadius: '5px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                          <Syringe size={9} /> Sem Heparina
                         </span>
                       </div>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem', background: '#f8fafc', padding: '8px', borderRadius: '8px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', fontSize: '0.72rem', background: '#f8fafc', padding: '6px 8px', borderRadius: '8px' }}>
                       <div>Hb: <strong style={{ color: '#dc2626' }}>9.2 g/dL</strong></div>
                       <div>Fósforo: <strong style={{ color: '#dc2626' }}>6.8 mg/dL</strong></div>
                       <div>Kt/V: <strong>1.28</strong></div>
-                      <div>Prescrição: <strong style={{ color: '#2563eb' }}>EPO + Ferro IV</strong></div>
+                      <div>Prescrição: <strong style={{ color: '#2563eb' }}>EPO + Ferro</strong></div>
                     </div>
                   </div>
 
-                  {/* Card 3 */}
-                  <div className="p-3.5 bg-white rounded-xl border border-slate-200 shadow-sm hidden md:block">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <strong className="text-sm block text-slate-900">CARLOS EDUARDO</strong>
-                        <span className="text-xs text-muted">61 anos • FAV (MSD) • 2º Turno</span>
+                  {/* Card 3 (visível em telas md ou maiores) */}
+                  <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm hidden md:block" style={{ width: '100%', boxSizing: 'border-box' }}>
+                    <div className="flex justify-between items-start mb-2 gap-2">
+                      <div style={{ minWidth: 0 }}>
+                        <strong className="text-xs sm:text-sm block text-slate-900 truncate">CARLOS EDUARDO</strong>
+                        <span className="text-[11px] text-muted block truncate">61 anos • FAV (MSD) • 2º Turno</span>
                       </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
+                      <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                        <span style={{ fontSize: '0.65rem', background: '#dcfce7', color: '#15803d', padding: '2px 5px', borderRadius: '5px', fontWeight: 'bold' }}>
                           Ativo
                         </span>
-                        <span style={{ fontSize: '0.68rem', background: '#f5f3ff', color: '#6d28d9', border: '1px solid #ddd6fe', padding: '1px 6px', borderRadius: '6px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
-                          <Syringe size={10} /> Enoxaparina 40mg
+                        <span style={{ fontSize: '0.62rem', background: '#f5f3ff', color: '#6d28d9', border: '1px solid #ddd6fe', padding: '1px 5px', borderRadius: '5px', fontWeight: '700', display: 'inline-flex', alignItems: 'center', gap: '2px' }}>
+                          <Syringe size={9} /> Enoxaparina 40mg
                         </span>
                       </div>
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', fontSize: '0.75rem', background: '#f8fafc', padding: '8px', borderRadius: '8px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.4rem', fontSize: '0.72rem', background: '#f8fafc', padding: '6px 8px', borderRadius: '8px' }}>
                       <div>Hb: <strong>12.0 g/dL</strong></div>
                       <div>PTH: <strong>210 pg/mL</strong></div>
                       <div>Kt/V: <strong style={{ color: '#16a34a' }}>1.55</strong></div>
@@ -396,6 +423,67 @@ export default function LandingPage() {
 
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* ================= CALLOUT CONTA DEMONSTRAÇÃO COM DADOS FICTÍCIOS ================= */}
+          <div 
+            style={{ 
+              marginTop: '2rem',
+              background: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)',
+              border: '1.5px solid #86efac',
+              borderRadius: '20px',
+              padding: '1.25rem 1.5rem',
+              boxShadow: '0 8px 24px rgba(22, 163, 74, 0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '1rem',
+              textAlign: 'left',
+              width: '100%',
+              boxSizing: 'border-box'
+            }}
+          >
+            <div style={{ flex: '1 1 300px', minWidth: 0 }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#dcfce7', color: '#15803d', padding: '3px 10px', borderRadius: '999px', fontSize: '0.72rem', fontWeight: '800', marginBottom: '0.4rem' }}>
+                <Sparkles size={12} color="#16a34a" />
+                <span>EXPERIMENTE COM DADOS PRÉ-PREENCHIDOS</span>
+              </div>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: '800', color: '#0f172a', margin: '0 0 0.35rem 0', letterSpacing: '-0.01em' }}>
+                Quer ver o prontuário já funcionando na prática?
+              </h3>
+              <p style={{ fontSize: '0.84rem', color: '#475569', margin: 0, lineHeight: 1.5 }}>
+                No teste grátis, o sistema vem limpo para seus dados. Mas se você tiver dúvidas e quiser ver como o Nex-Ai.NEFRO fica com <strong>pacientes, prescrições e gráficos laboratoriais já preenchidos</strong>, solicite o acesso à nossa <strong>Conta de Demonstração</strong> via WhatsApp!
+              </p>
+            </div>
+
+            <div style={{ flexShrink: 0, width: '100%', maxWidth: '320px' }}>
+              <a
+                href="https://wa.me/5531987624789?text=Ol%C3%A1!%20Gostaria%20de%20acessar%20a%20Conta%20de%20Demonstra%C3%A7%C3%A3o%20com%20dados%20fict%C3%ADcios%20do%20Nex-Ai.NEFRO%20para%20conhecer%20o%20sistema."
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  background: '#25D366',
+                  color: '#ffffff',
+                  padding: '0.75rem 1.25rem',
+                  borderRadius: '12px',
+                  fontWeight: '700',
+                  fontSize: '0.88rem',
+                  boxShadow: '0 4px 14px rgba(37, 211, 102, 0.35)',
+                  transition: 'transform 0.15s ease',
+                  width: '100%',
+                  boxSizing: 'border-box'
+                }}
+              >
+                <MessageCircle size={18} />
+                <span>Pedir Acesso Demonstração</span>
+              </a>
             </div>
           </div>
 
@@ -557,26 +645,26 @@ export default function LandingPage() {
       </section>
 
       {/* ================= SHOWCASE DE TELAS INTERATIVO ================= */}
-      <section id="telas" style={{ padding: '5rem 1.5rem', background: '#f8fafc' }}>
-        <div className="container" style={{ maxWidth: '1100px' }}>
+      <section id="telas" style={{ padding: 'clamp(2.5rem, 5vw, 5rem) 1rem', background: '#f8fafc', width: '100%', boxSizing: 'border-box' }}>
+        <div className="container" style={{ maxWidth: '1100px', width: '100%', boxSizing: 'border-box' }}>
           
-          <div className="text-center mb-8">
+          <div className="text-center mb-6 sm:mb-8">
             <span className="text-xs font-bold uppercase tracking-wider text-blue-600">Demonstração Visual</span>
-            <h2 className="text-3xl font-black text-slate-900 mt-1" style={{ letterSpacing: '-0.02em' }}>
+            <h2 className="text-2xl sm:text-3xl font-black text-slate-900 mt-1" style={{ letterSpacing: '-0.02em', wordBreak: 'break-word' }}>
               Veja como o sistema funciona na prática
             </h2>
-            <p className="text-muted text-sm max-w-xl mx-auto mt-2">
-              Clique nas abas abaixo para explorar os módulos do prontuário nefrológico.
+            <p className="text-muted text-xs sm:text-sm max-w-xl mx-auto mt-2">
+              Toque nas abas abaixo para explorar os módulos do prontuário nefrológico.
             </p>
           </div>
 
-          {/* Abas Interativas */}
-          <div className="flex justify-center gap-2 mb-6 flex-wrap">
+          {/* Abas Interativas com Scroll Suave no Mobile */}
+          <div className="mobile-tabs-scroll flex justify-start sm:justify-center gap-2 mb-6" style={{ overflowX: 'auto', paddingBottom: '6px', width: '100%', WebkitOverflowScrolling: 'touch' }}>
             <button 
               type="button"
               onClick={() => setActiveShowcaseTab('dialise')}
               className={`btn ${activeShowcaseTab === 'dialise' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
+              style={{ fontSize: '0.82rem', padding: '0.45rem 0.85rem', borderRadius: '12px', flexShrink: 0, whiteSpace: 'nowrap' }}
             >
               🩺 Hemodiálise
             </button>
@@ -584,7 +672,7 @@ export default function LandingPage() {
               type="button"
               onClick={() => setActiveShowcaseTab('heparina')}
               className={`btn ${activeShowcaseTab === 'heparina' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
+              style={{ fontSize: '0.82rem', padding: '0.45rem 0.85rem', borderRadius: '12px', flexShrink: 0, whiteSpace: 'nowrap' }}
             >
               💉 Anticoagulação (Heparina)
             </button>
@@ -592,7 +680,7 @@ export default function LandingPage() {
               type="button"
               onClick={() => setActiveShowcaseTab('receituario')}
               className={`btn ${activeShowcaseTab === 'receituario' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
+              style={{ fontSize: '0.82rem', padding: '0.45rem 0.85rem', borderRadius: '12px', flexShrink: 0, whiteSpace: 'nowrap' }}
             >
               📋 Receituário (2 Vias)
             </button>
@@ -600,7 +688,7 @@ export default function LandingPage() {
               type="button"
               onClick={() => setActiveShowcaseTab('boletim')}
               className={`btn ${activeShowcaseTab === 'boletim' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
+              style={{ fontSize: '0.82rem', padding: '0.45rem 0.85rem', borderRadius: '12px', flexShrink: 0, whiteSpace: 'nowrap' }}
             >
               🌟 Boletim do Paciente
             </button>
@@ -608,7 +696,7 @@ export default function LandingPage() {
               type="button"
               onClick={() => setActiveShowcaseTab('exames')}
               className={`btn ${activeShowcaseTab === 'exames' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
+              style={{ fontSize: '0.82rem', padding: '0.45rem 0.85rem', borderRadius: '12px', flexShrink: 0, whiteSpace: 'nowrap' }}
             >
               🧪 Painel de Exames
             </button>
@@ -616,7 +704,7 @@ export default function LandingPage() {
               type="button"
               onClick={() => setActiveShowcaseTab('medicamentos')}
               className={`btn ${activeShowcaseTab === 'medicamentos' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
+              style={{ fontSize: '0.82rem', padding: '0.45rem 0.85rem', borderRadius: '12px', flexShrink: 0, whiteSpace: 'nowrap' }}
             >
               💊 Prescrições
             </button>
@@ -624,43 +712,43 @@ export default function LandingPage() {
               type="button"
               onClick={() => setActiveShowcaseTab('prontuario')}
               className={`btn ${activeShowcaseTab === 'prontuario' ? 'btn-primary' : 'btn-outline'}`}
-              style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
+              style={{ fontSize: '0.82rem', padding: '0.45rem 0.85rem', borderRadius: '12px', flexShrink: 0, whiteSpace: 'nowrap' }}
             >
               👤 Prontuário
             </button>
           </div>
 
           {/* Card da Tela Ativa */}
-          <div className="glass-panel" style={{ background: '#ffffff', padding: '2rem', borderRadius: '20px', border: '1px solid #e2e8f0', boxShadow: '0 15px 35px rgba(0,0,0,0.05)' }}>
+          <div className="glass-panel" style={{ background: '#ffffff', padding: 'clamp(1rem, 3vw, 2rem)', borderRadius: '20px', border: '1px solid #e2e8f0', boxShadow: '0 15px 35px rgba(0,0,0,0.05)', width: '100%', boxSizing: 'border-box' }}>
             
             {activeShowcaseTab === 'dialise' && (
               <div>
                 <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                   <div>
-                    <h3 className="font-bold text-lg text-slate-900">Evolução Clínica de Hemodiálise</h3>
+                    <h3 className="font-bold text-base sm:text-lg text-slate-900">Evolução Clínica de Hemodiálise</h3>
                     <p className="text-xs text-muted">Registro rápido de parâmetros pré, intra e pós-diálise com cálculo de UF</p>
                   </div>
-                  <span style={{ fontSize: '0.72rem', background: '#dbeafe', color: '#1d4ed8', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
+                  <span style={{ fontSize: '0.70rem', background: '#dbeafe', color: '#1d4ed8', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
                     Agilidade Máxima
                   </span>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '0.85rem', background: '#f8fafc', padding: '1rem', borderRadius: '14px', border: '1px solid #e2e8f0' }}>
                   <div className="bg-white p-3 rounded-lg border border-slate-200">
                     <span className="text-xs text-muted block">Pressão Pré / Pós</span>
-                    <strong className="text-base text-slate-900">140x90 ➡️ 120x80 mmHg</strong>
+                    <strong className="text-sm sm:text-base text-slate-900">140x90 ➡️ 120x80 mmHg</strong>
                   </div>
                   <div className="bg-white p-3 rounded-lg border border-slate-200">
                     <span className="text-xs text-muted block">Ultrafiltração (UF)</span>
-                    <strong className="text-base text-blue-700">2.400 mL (Adequada)</strong>
+                    <strong className="text-sm sm:text-base text-blue-700">2.400 mL (Adequada)</strong>
                   </div>
                   <div className="bg-white p-3 rounded-lg border border-slate-200">
                     <span className="text-xs text-muted block">Fluxo de Sangue (Qb)</span>
-                    <strong className="text-base text-slate-900">350 mL/min</strong>
+                    <strong className="text-sm sm:text-base text-slate-900">350 mL/min</strong>
                   </div>
                   <div className="bg-white p-3 rounded-lg border border-slate-200">
                     <span className="text-xs text-muted block">Intercorrências</span>
-                    <strong className="text-base text-emerald-700">Nenhuma registrada</strong>
+                    <strong className="text-sm sm:text-base text-emerald-700">Nenhuma registrada</strong>
                   </div>
                 </div>
               </div>
@@ -670,15 +758,15 @@ export default function LandingPage() {
               <div>
                 <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                   <div>
-                    <h3 className="font-bold text-lg text-slate-900">Segurança de Anticoagulação em Hemodiálise</h3>
+                    <h3 className="font-bold text-base sm:text-lg text-slate-900">Segurança de Anticoagulação em Hemodiálise</h3>
                     <p className="text-xs text-muted">Controle rigoroso de heparinização extracorpórea, prevenção de coagulação e alertas de sangramento</p>
                   </div>
-                  <span style={{ fontSize: '0.72rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
+                  <span style={{ fontSize: '0.70rem', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
                     Segurança do Paciente
                   </span>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '0.85rem' }}>
                   <div className="p-3.5 bg-blue-50 border border-blue-200 rounded-xl">
                     <div className="flex justify-between items-center mb-1.5">
                       <span className="text-xs font-bold text-blue-900 flex items-center gap-1.5"><Syringe size={14} color="#2563eb" /> Heparina Não Fracionada</span>
@@ -822,7 +910,7 @@ export default function LandingPage() {
                   </span>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 160px), 1fr))', gap: '0.75rem' }}>
                   <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
                     <span className="text-xs text-emerald-800 font-semibold block">Kt/V Dialítico</span>
                     <strong className="text-xl text-emerald-700">1.45</strong>
@@ -894,7 +982,7 @@ export default function LandingPage() {
                   </span>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '0.85rem' }}>
                   <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
                     <span className="text-xs text-muted block">Tipo de Acesso Vascular</span>
                     <strong className="text-sm text-slate-900">Fístula Arteriovenosa (FAV)</strong>
@@ -1037,10 +1125,12 @@ export default function LandingPage() {
           <div 
             style={{ 
               display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-              gap: '2rem', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', 
+              gap: '1.5rem', 
               alignItems: 'stretch',
-              paddingTop: '1.5rem'
+              paddingTop: '1.5rem',
+              width: '100%',
+              boxSizing: 'border-box'
             }}
           >
             
@@ -1051,7 +1141,7 @@ export default function LandingPage() {
                 borderRadius: '24px',
                 border: '1px solid #e2e8f0',
                 boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-                padding: '2.5rem 2rem',
+                padding: 'clamp(1.5rem, 3vw, 2.5rem) clamp(1rem, 2.5vw, 2rem)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
@@ -1085,7 +1175,7 @@ export default function LandingPage() {
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
-                    <span>60 pacientes demonstrativos em 3 clínicas</span>
+                    <span>Ambiente limpo para cadastrar seus pacientes</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
@@ -1098,36 +1188,49 @@ export default function LandingPage() {
                 </ul>
               </div>
 
-              <button 
-                type="button" 
-                onClick={handleStartTrial}
-                className="btn btn-outline"
-                style={{ 
-                  width: '100%', 
-                  padding: '0.85rem 1.5rem', 
-                  fontSize: '0.95rem', 
-                  fontWeight: '700', 
-                  borderRadius: '12px' 
-                }}
-              >
-                Iniciar Teste Grátis
-              </button>
+              <div>
+                <button 
+                  type="button" 
+                  onClick={handleStartTrial}
+                  className="btn btn-outline"
+                  style={{ 
+                    width: '100%', 
+                    padding: '0.85rem 1.5rem', 
+                    fontSize: '0.95rem', 
+                    fontWeight: '700', 
+                    borderRadius: '12px' 
+                  }}
+                >
+                  Iniciar Teste Grátis
+                </button>
+                <div style={{ marginTop: '0.85rem', textAlign: 'center' }}>
+                  <a
+                    href="https://wa.me/5531987624789?text=Ol%C3%A1!%20Gostaria%20de%20acessar%20a%20Conta%20de%20Demonstra%C3%A7%C3%A3o%20com%20dados%20fict%C3%ADcios%20do%20Nex-Ai.NEFRO."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ fontSize: '0.74rem', color: '#2563eb', textDecoration: 'none', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                  >
+                    <span>Dúvidas? Teste a Conta Demonstração no WhatsApp</span>
+                    <ArrowRight size={12} />
+                  </a>
+                </div>
+              </div>
             </div>
 
             {/* Card 2: Plano Anual (DESTAQUE) */}
             <div 
+              className="featured-plan-card"
               style={{ 
                 background: '#ffffff',
                 borderRadius: '24px',
                 border: '2px solid #2563eb', 
                 boxShadow: '0 20px 40px rgba(37, 99, 235, 0.12)',
-                padding: '2.5rem 2rem',
+                padding: 'clamp(1.75rem, 3.5vw, 2.5rem) clamp(1rem, 2.5vw, 2rem)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
                 textAlign: 'left',
                 position: 'relative',
-                transform: 'scale(1.02)',
                 zIndex: 10
               }}
             >
@@ -1376,41 +1479,43 @@ export default function LandingPage() {
           {/* Banner de Destaque: Transição e Migração sem Esforço */}
           <div 
             style={{ 
-              marginTop: '3.5rem',
+              marginTop: '3rem',
               background: '#ffffff',
               borderRadius: '24px',
               border: '2px solid #bfdbfe',
               boxShadow: '0 12px 32px rgba(37, 99, 235, 0.08)',
-              padding: '2.25rem 2.5rem',
+              padding: 'clamp(1.25rem, 3vw, 2.25rem) clamp(1rem, 3vw, 2.5rem)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               flexWrap: 'wrap',
-              gap: '1.5rem',
-              textAlign: 'left'
+              gap: '1.25rem',
+              textAlign: 'left',
+              width: '100%',
+              boxSizing: 'border-box'
             }}
           >
-            <div style={{ flex: '1 1 500px' }}>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#dbeafe', color: '#1e40af', padding: '5px 14px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: '800', marginBottom: '0.75rem' }}>
+            <div style={{ flex: '1 1 280px', minWidth: 0, maxWidth: '100%' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#dbeafe', color: '#1e40af', padding: '5px 14px', borderRadius: '999px', fontSize: '0.75rem', fontWeight: '800', marginBottom: '0.75rem', maxWidth: '100%' }}>
                 <span>🚀 ZERO TRABALHO DE DIGITAÇÃO</span>
               </div>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: '900', color: '#0f172a', margin: '0 0 0.5rem 0', letterSpacing: '-0.02em' }}>
+              <h3 style={{ fontSize: 'clamp(1.1rem, 2.5vw, 1.4rem)', fontWeight: '900', color: '#0f172a', margin: '0 0 0.5rem 0', letterSpacing: '-0.02em', wordBreak: 'break-word' }}>
                 Preocupado com o tempo para cadastrar todos os seus pacientes?
               </h3>
-              <p style={{ fontSize: '0.94rem', color: '#475569', lineHeight: '1.6', margin: 0 }}>
+              <p style={{ fontSize: '0.90rem', color: '#475569', lineHeight: '1.6', margin: 0 }}>
                 No <strong>Plano Anual</strong>, você não precisa cadastrar nada do zero! Basta nos enviar suas listas ou relatórios em <strong>PDF ou planilhas em Excel (XLS)</strong>. Nossa equipe técnica realiza toda a importação inicial dos seus pacientes e o histórico completo de exames laboratoriais. Você já começa a usar o Nex-Ai.NEFRO com seus prontuários 100% prontos desde o primeiro dia!
               </p>
             </div>
 
-            <div style={{ flexShrink: 0 }}>
+            <div style={{ flexShrink: 0, width: '100%', maxWidth: '380px' }}>
               <a
                 href="https://www.asaas.com/c/gsye7xf8m2lez8oi"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
                   textDecoration: 'none',
-                  padding: '1rem 1.75rem',
-                  fontSize: '0.95rem',
+                  padding: '0.95rem 1.5rem',
+                  fontSize: '0.92rem',
                   fontWeight: '800',
                   borderRadius: '14px',
                   background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
@@ -1418,13 +1523,17 @@ export default function LandingPage() {
                   border: 'none',
                   cursor: 'pointer',
                   boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
-                  display: 'inline-flex',
+                  display: 'flex',
                   alignItems: 'center',
-                  gap: '8px'
+                  justifyContent: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  textAlign: 'center'
                 }}
               >
                 <span>Garantir Plano Anual com Migração Inclusa</span>
-                <ArrowRight size={18} />
+                <ArrowRight size={18} style={{ flexShrink: 0 }} />
               </a>
             </div>
           </div>
@@ -1519,35 +1628,42 @@ export default function LandingPage() {
       </section>
 
       {/* ================= BANNER FINAL DE CONVERSÃO ================= */}
-      <section style={{ padding: '4.5rem 1.5rem', background: 'linear-gradient(135deg, #1e40af, #1e3a8a)', color: 'white', textAlign: 'center' }}>
-        <div className="container" style={{ maxWidth: '800px' }}>
-          <h2 className="text-3xl font-black mb-2" style={{ letterSpacing: '-0.02em' }}>
+      <section style={{ padding: 'clamp(2.5rem, 5vw, 4.5rem) 1rem', background: 'linear-gradient(135deg, #1e40af, #1e3a8a)', color: 'white', textAlign: 'center', width: '100%', boxSizing: 'border-box' }}>
+        <div className="container" style={{ maxWidth: '800px', width: '100%', boxSizing: 'border-box' }}>
+          <h2 className="text-2xl sm:text-3xl font-black mb-2" style={{ letterSpacing: '-0.02em', wordBreak: 'break-word' }}>
             Pronto para transformar sua rotina nefrológica?
           </h2>
-          <p className="text-blue-100 text-sm max-w-lg mx-auto mb-6">
+          <p className="text-blue-100 text-xs sm:text-sm max-w-lg mx-auto mb-6 leading-relaxed">
             Junte-se a nefrologistas que utilizam tecnologia de ponta para cuidar melhor dos seus pacientes em diálise.
           </p>
 
           <button 
             type="button" 
             onClick={handleStartTrial}
-            className="btn py-3 px-8 text-sm font-bold rounded-xl"
-            style={{ background: '#ffffff', color: '#1e40af', boxShadow: '0 10px 20px rgba(0,0,0,0.2)' }}
+            className="btn py-3 px-6 text-sm font-bold rounded-xl"
+            style={{ 
+              background: '#ffffff', 
+              color: '#1e40af', 
+              boxShadow: '0 10px 20px rgba(0,0,0,0.2)',
+              maxWidth: '100%',
+              whiteSpace: 'normal',
+              lineHeight: 1.3
+            }}
           >
-            Começar Meu Teste Grátis de 7 Dias Agora
+            Começar Teste Grátis por 7 Dias
           </button>
         </div>
       </section>
 
       {/* ================= FOOTER ================= */}
-      <footer style={{ background: '#0f172a', color: '#94a3b8', padding: '2.5rem 1.5rem', fontSize: '0.75rem', borderTop: '1px solid #1e293b' }}>
-        <div className="container" style={{ maxWidth: '1200px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+      <footer style={{ background: '#0f172a', color: '#94a3b8', padding: '2rem 1rem', fontSize: '0.75rem', borderTop: '1px solid #1e293b', width: '100%', boxSizing: 'border-box' }}>
+        <div className="container" style={{ maxWidth: '1200px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', width: '100%', boxSizing: 'border-box' }}>
           <div className="flex items-center gap-3">
             <BrandLogo size="sm" textColor="light" />
-            <span>• Nefrologia Clínica e Hemodiálise</span>
+            <span className="hidden sm:inline">• Nefrologia Clínica e Hemodiálise</span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
             <span className="text-slate-400">Tecnologia Google</span>
             <span>•</span>
             <span className="text-slate-400">LGPD e CFM</span>
@@ -1575,9 +1691,10 @@ export default function LandingPage() {
 
       {/* ================= BOTÃO FLUTUANTE DE WHATSAPP ================= */}
       <a 
-        href="https://wa.me/5531987624789?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20d%C3%BAvidas%20sobre%20o%20software%20Nex-Ai.NEFRO" 
+        href="https://wa.me/5531987624789?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20d%C3%BAvidas%20sobre%20o%20software%20Nex-Ai.NEFRO%20e%20conhecer%20a%20Conta%20de%20Demonstra%C3%A7%C3%A3o." 
         target="_blank" 
         rel="noopener noreferrer"
+        className="landing-whatsapp-btn"
         style={{
           position: 'fixed',
           bottom: '1.5rem',

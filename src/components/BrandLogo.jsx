@@ -255,7 +255,7 @@ export default function BrandLogo({
 
           {subtitle && (
             <span
-              className={currentSize.sub}
+              className={`${currentSize.sub} brand-logo-subtitle`}
               style={{
                 color: isLight ? 'rgba(255,255,255,0.7)' : 'var(--text-muted, #64748b)',
                 marginTop: '5px',
