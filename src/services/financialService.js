@@ -23,6 +23,7 @@ export const DEFAULT_PLANS = [
     valor: 99.90,
     intervalo: "mensal",
     destaque: false,
+    checkoutUrl: "https://www.asaas.com/c/3x8rzpiq9i86a2c9",
     status: "Ativo",
     recursos: ["Prontuários Nefrológicos Ilimitados", "Controle de Sessões de Hemodiálise", "Prescrições Contínuas e Ciclos com Alertas", "Gráficos de Exames (PTH, Fósforo, Hb, Kt/V)", "Suporte Técnico Especializado"],
     ordem: 1,
@@ -49,7 +50,7 @@ export const DEFAULT_PLANS = [
     intervalo: "trial",
     destaque: false,
     status: "Ativo",
-    recursos: ["Acesso completo por 7 dias", "Sem necessidade de cartão de crédito", "Ativação instantânea imediata", "60 pacientes demonstrativos em 3 clínicas"],
+    recursos: ["Acesso completo por 7 dias", "Sem necessidade de cartão de crédito", "Ativação instantânea imediata", "Pronto para cadastrar e testar pacientes reais"],
     ordem: 3,
     criadoEm: "2026-08-01T00:00:00.000Z"
   }

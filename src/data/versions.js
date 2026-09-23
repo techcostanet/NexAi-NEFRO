@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.78",
+    "date": "23/09/2026",
+    "title": "Adiciona link de checkout Asaas para o Plano Mensal",
+    "highlights": [
+      "✨ Adiciona link de checkout Asaas para o Plano Mensal"
+    ]
+  },
+  {
     "version": "1.1.77",
     "date": "23/09/2026",
     "title": "Otimização mobile da landing page sem overflow",

@@ -438,18 +438,18 @@ export default function CheckoutModal({ isOpen, onClose, selectedPlan, allPlans 
             ) : (
               /* Se for PLANO PAGO (Mensal R$ 99,90 ou Anual R$ 590,00) */
               <div className="flex flex-col gap-4">
-                {currentPlan?.intervalo === 'anual' && (
+                {(currentPlan?.checkoutUrl || currentPlan?.intervalo === 'anual' || currentPlan?.intervalo === 'mensal') && (
                   <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                     <div style={{ textAlign: 'left' }}>
                       <span style={{ fontSize: '0.8rem', color: '#1e40af', fontWeight: '700', display: 'block' }}>
                         Link Direto Asaas
                       </span>
                       <span style={{ fontSize: '0.72rem', color: '#3b82f6' }}>
-                        Pague online via fatura oficial do Asaas (R$ 590,00)
+                        Pague online via fatura oficial do Asaas ({currentPlan?.valor ? `R$ ${currentPlan.valor.toFixed(2).replace('.', ',')}` : (currentPlan?.intervalo === 'anual' ? 'R$ 590,00' : 'R$ 99,90')})
                       </span>
                     </div>
                     <a
-                      href="https://www.asaas.com/c/gsye7xf8m2lez8oi"
+                      href={currentPlan?.checkoutUrl || (currentPlan?.intervalo === 'mensal' ? 'https://www.asaas.com/c/3x8rzpiq9i86a2c9' : 'https://www.asaas.com/c/gsye7xf8m2lez8oi')}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn btn-primary"

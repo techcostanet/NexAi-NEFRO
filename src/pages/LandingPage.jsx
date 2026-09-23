@@ -1456,9 +1456,10 @@ export default function LandingPage() {
                 </ul>
               </div>
 
-              <button 
-                type="button" 
-                onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'mensal') || { id: 'plano-mensal', nome: 'Plano Mensal Nefrologia', valor: 0.00, intervalo: 'mensal' })}
+              <a 
+                href="https://www.asaas.com/c/3x8rzpiq9i86a2c9"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn btn-outline"
                 style={{ 
                   width: '100%', 
@@ -1467,11 +1468,15 @@ export default function LandingPage() {
                   fontWeight: '700', 
                   borderRadius: '14px',
                   whiteSpace: 'normal',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}
               >
                 Assinar Plano Mensal
-              </button>
+              </a>
             </div>
 
           </div>
