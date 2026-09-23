@@ -28,6 +28,7 @@ import {
   BarChart3,
   Syringe,
   UserX,
+  UserMinus,
   ClipboardList
 } from 'lucide-react';
 import { subscribeToPatients, STATUS_TRANSPLANTE_OPTIONS, seedDemoPatientsToFirestore, getAnticoagulacaoInfo } from '../services/patientService';
@@ -38,7 +39,7 @@ import PatientFormModal from '../components/PatientFormModal';
 import ChangelogModal from '../components/ChangelogModal';
 import ExamImportModal from '../components/ExamImportModal';
 import ReportsCenterModal from '../components/reports/ReportsCenterModal';
-import ConfirmDeceasedModal from '../components/ConfirmDeceasedModal';
+import PatientDischargeModal from '../components/PatientDischargeModal';
 import LmeCentralModal from '../components/lme/LmeCentralModal';
 import BrandLogo from '../components/BrandLogo';
 import { useAuth } from '../context/AuthContext';
@@ -67,8 +68,8 @@ export default function DoctorDashboard() {
   const [sortConfig, setSortConfig] = useState({ key: 'nome', direction: 'asc' });
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
   const [patientToEdit, setPatientToEdit] = useState(null);
-  const [patientForDeceased, setPatientForDeceased] = useState(null);
-  const [isDeceasedModalOpen, setIsDeceasedModalOpen] = useState(false);
+  const [patientForDischarge, setPatientForDischarge] = useState(null);
+  const [isDischargeModalOpen, setIsDischargeModalOpen] = useState(false);
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
@@ -125,10 +126,10 @@ export default function DoctorDashboard() {
     setIsPatientModalOpen(true);
   };
 
-  const handleOpenDeceasedModal = (e, patient) => {
+  const handleOpenDischargeModal = (e, patient) => {
     e.stopPropagation();
-    setPatientForDeceased(patient);
-    setIsDeceasedModalOpen(true);
+    setPatientForDischarge(patient);
+    setIsDischargeModalOpen(true);
   };
 
   // Helper para verificar alertas de medicação no paciente
@@ -857,11 +858,11 @@ export default function DoctorDashboard() {
                         <button 
                           type="button"
                           className="btn btn-outline" 
-                          onClick={(e) => handleOpenDeceasedModal(e, patient)}
+                          onClick={(e) => handleOpenDischargeModal(e, patient)}
                           style={{ padding: '0.25rem', borderRadius: '8px', border: 'none', background: 'transparent' }}
-                          title="Registrar óbito e retirar do sistema"
+                          title="Desligar paciente do cadastro"
                         >
-                          <UserX size={16} color="#ef4444" />
+                          <UserMinus size={16} color="#ef4444" />
                         </button>
                       </div>
                     </div>
@@ -1110,11 +1111,11 @@ export default function DoctorDashboard() {
                       <button 
                         type="button"
                         className="btn btn-outline" 
-                        onClick={(e) => handleOpenDeceasedModal(e, patient)}
+                        onClick={(e) => handleOpenDischargeModal(e, patient)}
                         style={{ padding: '0.2rem', borderRadius: '6px', border: 'none', background: 'transparent' }}
-                        title="Registrar óbito e retirar do sistema"
+                        title="Desligar paciente do cadastro"
                       >
-                        <UserX size={14} color="#ef4444" />
+                        <UserMinus size={14} color="#ef4444" />
                       </button>
                     </div>
                   </div>
@@ -1484,11 +1485,11 @@ export default function DoctorDashboard() {
                             <button 
                               type="button"
                               className="btn btn-outline" 
-                              onClick={(e) => handleOpenDeceasedModal(e, patient)}
+                              onClick={(e) => handleOpenDischargeModal(e, patient)}
                               style={{ padding: '0.3rem 0.5rem', fontSize: '0.75rem', borderColor: '#fecaca', background: '#fff1f2', color: '#be123c' }}
-                              title="Registrar óbito e retirar do sistema"
+                              title="Desligar paciente do cadastro"
                             >
-                              <UserX size={13} color="#e11d48" />
+                              <UserMinus size={13} color="#e11d48" />
                             </button>
 
                             <button 
@@ -1543,13 +1544,13 @@ export default function DoctorDashboard() {
         locaisList={doctor.locaisAtuacao || []}
       />
 
-      <ConfirmDeceasedModal
-        isOpen={isDeceasedModalOpen}
+      <PatientDischargeModal
+        isOpen={isDischargeModalOpen}
         onClose={() => {
-          setIsDeceasedModalOpen(false);
-          setPatientForDeceased(null);
+          setIsDischargeModalOpen(false);
+          setPatientForDischarge(null);
         }}
-        patient={patientForDeceased}
+        patient={patientForDischarge}
         onSuccess={() => {
           // A lista em tempo real do Firestore atualiza automaticamente
         }}

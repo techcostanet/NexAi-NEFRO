@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.75",
+    "date": "23/09/2026",
+    "title": "\\ Substituicao da opcao obito pelo modulo de Desligamento de Paciente com cat...",
+    "highlights": [
+      "✨ \\ Substituicao da opcao obito pelo modulo de Desligamento de Paciente com catalogo de motivos de saida\\"
+    ]
+  },
+  {
     "version": "1.1.74",
     "date": "23/09/2026",
     "title": "\\ Refinamento de microcopy nos modais e secao de LME sem barras ou caracteres...",

@@ -12,6 +12,7 @@ import {
   Building2, 
   User, 
   UserX,
+  UserMinus,
   Clock, 
   Loader2, 
   FileText, 
@@ -69,6 +70,7 @@ import PrescriptionModal from '../components/PrescriptionModal';
 import PrescriptionPrintModal from '../components/PrescriptionPrintModal';
 import PatientBulletinModal from '../components/patientBulletin/PatientBulletinModal';
 import ConfirmDeceasedModal from '../components/ConfirmDeceasedModal';
+import PatientDischargeModal from '../components/PatientDischargeModal';
 import LmeModal from '../components/lme/LmeModal';
 import LmePatientSection from '../components/lme/LmePatientSection';
 import TransplantReportPdf from '../components/pdf/TransplantReportPdf';
@@ -128,7 +130,7 @@ export default function PatientProfile() {
   
   // Modais
   const [isPatientModalOpen, setIsPatientModalOpen] = useState(false);
-  const [isDeceasedModalOpen, setIsDeceasedModalOpen] = useState(false);
+  const [isDischargeModalOpen, setIsDischargeModalOpen] = useState(false);
   const [isExamModalOpen, setIsExamModalOpen] = useState(false);
   const [examToEdit, setExamToEdit] = useState(null);
   const [examIndexToEdit, setExamIndexToEdit] = useState(null);
@@ -679,7 +681,7 @@ export default function PatientProfile() {
             <button 
               type="button"
               className="btn btn-outline" 
-              onClick={() => setIsDeceasedModalOpen(true)}
+              onClick={() => setIsDischargeModalOpen(true)}
               style={{ 
                 padding: '0.42rem 0.72rem', 
                 fontSize: '0.80rem', 
@@ -694,10 +696,10 @@ export default function PatientProfile() {
                 color: '#be123c',
                 transition: 'all 0.15s ease'
               }}
-              title="Registrar óbito do paciente"
+              title="Desligar paciente do cadastro"
             >
-              <UserX size={14} color="#e11d48" />
-              <span>Óbito</span>
+              <UserMinus size={14} color="#e11d48" />
+              <span>Desligar</span>
             </button>
 
             <button 
@@ -3587,10 +3589,10 @@ export default function PatientProfile() {
         </div>
       )}
 
-      {/* Modal de Confirmação e Registro de Óbito */}
-      <ConfirmDeceasedModal
-        isOpen={isDeceasedModalOpen}
-        onClose={() => setIsDeceasedModalOpen(false)}
+      {/* Modal de Desligamento do Paciente */}
+      <PatientDischargeModal
+        isOpen={isDischargeModalOpen}
+        onClose={() => setIsDischargeModalOpen(false)}
         patient={patient}
         onSuccess={() => {
           navigate('/doctor');

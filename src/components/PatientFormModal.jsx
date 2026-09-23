@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, User, UserX, Loader2, Syringe, AlertTriangle } from 'lucide-react';
+import { X, Save, User, UserX, UserMinus, Loader2, Syringe, AlertTriangle } from 'lucide-react';
 import { 
   savePatient, 
   calculateAge, 
@@ -9,7 +9,7 @@ import {
 } from '../services/patientService';
 import { useAuth } from '../context/AuthContext';
 import AllergySelector from './AllergySelector';
-import ConfirmDeceasedModal from './ConfirmDeceasedModal';
+import PatientDischargeModal from './PatientDischargeModal';
 
 const TIPOS_ACESSO_PADRAO = [
   { value: 'FAV', label: 'FAV (Fístula Arteriovenosa)' },
@@ -96,7 +96,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
-  const [isDeceasedModalOpen, setIsDeceasedModalOpen] = useState(false);
+  const [isDischargeModalOpen, setIsDischargeModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -1010,7 +1010,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                 <button
                   type="button"
                   className="btn btn-outline"
-                  onClick={() => setIsDeceasedModalOpen(true)}
+                  onClick={() => setIsDischargeModalOpen(true)}
                   disabled={saving}
                   style={{ 
                     borderColor: '#fecaca', 
@@ -1022,10 +1022,10 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                     fontSize: '0.82rem',
                     padding: '0.45rem 0.85rem'
                   }}
-                  title="Registrar óbito e retirar paciente do sistema permanentemente"
+                  title="Desligar paciente do cadastro médico"
                 >
-                  <UserX size={15} color="#e11d48" />
-                  <span>Óbito</span>
+                  <UserMinus size={15} color="#e11d48" />
+                  <span>Desligar</span>
                 </button>
               )}
             </div>
@@ -1043,12 +1043,12 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
         </form>
       </div>
 
-      <ConfirmDeceasedModal
-        isOpen={isDeceasedModalOpen}
-        onClose={() => setIsDeceasedModalOpen(false)}
+      <PatientDischargeModal
+        isOpen={isDischargeModalOpen}
+        onClose={() => setIsDischargeModalOpen(false)}
         patient={patientToEdit}
         onSuccess={() => {
-          setIsDeceasedModalOpen(false);
+          setIsDischargeModalOpen(false);
           onClose();
         }}
       />

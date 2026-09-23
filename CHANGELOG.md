@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.75] - 2026-09-23
+### Alterações
+- \ Substituicao da opcao obito pelo modulo de Desligamento de Paciente com catalogo de motivos de saida\
+
 ## [1.1.74] - 2026-09-23
 ### Alterações
 - \ Refinamento de microcopy nos modais e secao de LME sem barras ou caracteres compostos\

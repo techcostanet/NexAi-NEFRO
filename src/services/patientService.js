@@ -611,10 +611,29 @@ export async function deletePatientEvolution(patientId, evolutionId) {
 }
 
 /**
- * Exclui um paciente permanentemente do Cloud Firestore (ex: óbito ou desligamento total)
+ * Opções padronizadas de motivos para desligamento do paciente do cadastro médico
  */
-export async function deletePatient(id, doctorId = null, patientName = '', reason = 'OBITO') {
+export const MOTIVOS_DESLIGAMENTO_OPTIONS = [
+  { id: 'Transferência', label: 'Transferência', descricao: 'Transferido para outro serviço de diálise ou clínica' },
+  { id: 'Outro Médico', label: 'Outro Médico', descricao: 'Paciente assumido por outro profissional nefrologista' },
+  { id: 'Óbito', label: 'Óbito', descricao: 'Falecimento do paciente' },
+  { id: 'Transplante', label: 'Transplante', descricao: 'Transplante renal bem-sucedido' },
+  { id: 'Recuperação Renal', label: 'Recuperação Renal', descricao: 'Recuperação da função renal nativa' },
+  { id: 'Abandono', label: 'Abandono', descricao: 'Desistência ou interrupção do tratamento' },
+  { id: 'Troca de Turno', label: 'Troca de Turno', descricao: 'Transferência de escala fora do acompanhamento deste médico' },
+  { id: 'Outro', label: 'Outro', descricao: 'Outro motivo clínico ou administrativo' }
+];
+
+/**
+ * Desliga um paciente do cadastro médico no Cloud Firestore e registra na trilha de auditoria
+ */
+export async function dischargePatient(id, doctorId = null, patientName = '', dischargeData = {}) {
   if (!db) throw new Error("Cloud Firestore não inicializado.");
+  
+  const motivo = typeof dischargeData === 'string' ? dischargeData : (dischargeData.motivo || 'Outro');
+  const dataOcorrencia = typeof dischargeData === 'object' && dischargeData.data ? dischargeData.data : new Date().toISOString().split('T')[0];
+  const observacoes = typeof dischargeData === 'object' && dischargeData.observacoes ? dischargeData.observacoes.trim() : '';
+
   const docRef = doc(db, PATIENTS_COLLECTION, id);
   await deleteDoc(docRef);
 
@@ -637,18 +656,31 @@ export async function deletePatient(id, doctorId = null, patientName = '', reaso
 
   // Registra trilha de auditoria e segurança
   try {
-    const auditRef = doc(collection(db, "audit_logs"), `audit-delete-${id}-${Date.now()}`);
+    const auditRef = doc(collection(db, "audit_logs"), `audit-discharge-${id}-${Date.now()}`);
     await setDoc(auditRef, {
       id: auditRef.id,
       timestamp: new Date().toISOString(),
-      tipoAcao: 'PATIENT_DELETED_DECEASED',
-      descricao: `Paciente ${patientName || id} retirado do sistema por motivo de óbito. Prontuário e exames excluídos permanentemente.`,
+      tipoAcao: 'PATIENT_DISCHARGED',
+      descricao: `Paciente ${patientName || id} desligado do cadastro médico. Motivo: ${motivo}.`,
       targetDoctorId: doctorId || null,
-      detalhes: { patientId: id, patientName, motivo: reason }
+      detalhes: { 
+        patientId: id, 
+        patientName, 
+        motivo, 
+        dataOcorrencia, 
+        observacoes 
+      }
     });
   } catch (e) {
     console.warn("Log de auditoria não pôde ser gravado:", e);
   }
+}
+
+/**
+ * Alias retrocompatível para dischargePatient
+ */
+export async function deletePatient(id, doctorId = null, patientName = '', reason = 'Óbito') {
+  return dischargePatient(id, doctorId, patientName, { motivo: reason });
 }
 
 /**
