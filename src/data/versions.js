@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.73",
+    "date": "23/09/2026",
+    "title": "\\ Design refinado: espacamento do paciente grid 3 colunas preenchido e regra ...",
+    "highlights": [
+      "✨ \\ Design refinado: espacamento do paciente grid 3 colunas preenchido e regra de poucas palavras em todo o sistema\\"
+    ]
+  },
+  {
     "version": "1.1.72",
     "date": "23/09/2026",
     "title": "Implementacao do Smart Lab Registry permanente no Firestore, homologacao comp...",

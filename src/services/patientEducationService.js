@@ -45,7 +45,7 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     cards.push({
       id: 'hb',
-      categoria: 'Energia & Sangue Forte',
+      categoria: 'Energia e Sangue',
       subtitulo: 'Hemoglobina (Anemia)',
       valorFormatado: `${hb.toFixed(1).replace('.', ',')} g/dL`,
       faixaMeta: 'Meta: 10,0 a 12,0 g/dL',
@@ -57,7 +57,7 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
     });
   }
 
-  // ================= 2. FÓSFORO (OSSOS FIRMES & PROTEÇÃO DAS ARTÉRIAS) =================
+  // ================= 2. FÓSFORO (OSSOS FIRMES E PROTEÇÃO DAS ARTÉRIAS) =================
   if (exames.fosforo !== null && exames.fosforo !== undefined) {
     const p = Number(exames.fosforo);
     let status = GOAL_STATUS.CONQUISTA;
@@ -84,7 +84,7 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     cards.push({
       id: 'fosforo',
-      categoria: 'Ossos & Artérias',
+      categoria: 'Ossos e Artérias',
       subtitulo: 'Fósforo Sérico',
       valorFormatado: `${p.toFixed(1).replace('.', ',')} mg/dL`,
       faixaMeta: 'Meta: 3,5 a 5,5 mg/dL',
@@ -189,7 +189,7 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     cards.push({
       id: 'ktv',
-      categoria: 'Filtração & Limpeza',
+      categoria: 'Filtração e Limpeza',
       subtitulo: 'Dose da Diálise (Kt/V)',
       valorFormatado: `${ktv.toFixed(2).replace('.', ',')}`,
       faixaMeta: 'Meta: ≥ 1,20 por sessão',
@@ -208,7 +208,7 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     cards.push({
       id: 'ureia',
-      categoria: 'Filtração & Limpeza',
+      categoria: 'Filtração e Limpeza',
       subtitulo: 'Redução de Ureia na Máquina',
       valorFormatado: `${Math.round(urReducao)}% depurada`,
       faixaMeta: 'Meta: ≥ 65% de redução',
@@ -222,7 +222,7 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
     });
   }
 
-  // ================= 6. ALBUMINA (NUTRIÇÃO, MÚSCULOS & IMUNIDADE) =================
+  // ================= 6. ALBUMINA (NUTRIÇÃO, MÚSCULOS E IMUNIDADE) =================
   if (exames.albumina !== null && exames.albumina !== undefined) {
     const alb = Number(exames.albumina);
     let status = GOAL_STATUS.CONQUISTA;
@@ -241,7 +241,7 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     cards.push({
       id: 'albumina',
-      categoria: 'Força & Imunidade',
+      categoria: 'Força e Imunidade',
       subtitulo: 'Albumina (Nutrição)',
       valorFormatado: `${alb.toFixed(1).replace('.', ',')} g/dL`,
       faixaMeta: 'Meta: ≥ 3,8 g/dL',

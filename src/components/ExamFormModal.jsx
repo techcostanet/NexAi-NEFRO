@@ -729,7 +729,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
                       <option value="Cateter - Lúmen Venoso">Cateter Central - Lúmen Venoso</option>
                       <option value="Cateter - Lúmen Arterial">Cateter Central - Lúmen Arterial</option>
                       <option value="Cateter - Ambos Lúmens">Cateter Central - Ambos Lúmens</option>
-                      <option value="Punção de FAV / Prótese">Punção de FAV (Fístula) / Prótese</option>
+                      <option value="Punção de FAV / Prótese">Punção de FAV ou Prótese</option>
                       <option value="Veia Periférica">Veia Periférica (Braço sem FAV)</option>
                       <option value="Coleta Pareada (Cateter + Periférica)">Coleta Pareada (Cateter + Periférica)</option>
                     </select>
@@ -755,7 +755,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
                           <option value="Staphylococcus epidermidis (Coagulase Negativo)" />
                           <option value="Enterococcus faecalis" />
                           <option value="Pseudomonas aeruginosa" />
-                          <option value="Klebsiella pneumoniae (KPC / ESBL)" />
+                          <option value="Klebsiella pneumoniae (KPC)" />
                           <option value="Escherichia coli" />
                           <option value="Acinetobacter baumannii" />
                           <option value="Candida albicans" />
@@ -844,7 +844,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
             </button>
             <button type="submit" className="btn btn-primary" disabled={saving}>
               {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-              {saving ? 'Gravando...' : (examToEdit ? 'Atualizar Exame' : 'Salvar Exames')}
+              {saving ? 'Gravando...' : 'Salvar'}
             </button>
           </div>
         </form>

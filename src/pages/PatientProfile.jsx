@@ -501,7 +501,7 @@ export default function PatientProfile() {
     <div className="container" style={{ paddingBottom: '5rem', maxWidth: '1100px' }}>
       
       {/* ================= CABEÇALHO CLÍNICO DO PACIENTE ================= */}
-      <header className="glass-panel mt-3 mb-5" style={{ borderRadius: '20px', background: 'rgba(255, 255, 255, 0.95)', padding: '1.5rem 1.75rem', boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)' }}>
+      <header className="glass-panel mt-3 mb-6" style={{ borderRadius: '20px', background: 'rgba(255, 255, 255, 0.95)', padding: '1.5rem 1.75rem', boxShadow: '0 4px 20px -2px rgba(0, 0, 0, 0.05)', marginBottom: '1.5rem' }}>
         <div className="flex justify-between items-start flex-wrap gap-4">
           
           <div className="flex items-start gap-4">
@@ -670,7 +670,7 @@ export default function PatientProfile() {
               className="btn btn-outline" 
               onClick={() => setIsPatientModalOpen(true)}
               style={{ padding: '0.42rem 0.72rem', fontSize: '0.80rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#cbd5e1', background: '#f8fafc', color: '#334155' }}
-              title="Editar cadastro completo do paciente"
+              title="Editar cadastro do paciente"
             >
               <Edit size={14} color="#475569" />
               <span>Editar</span>
@@ -694,10 +694,10 @@ export default function PatientProfile() {
                 color: '#be123c',
                 transition: 'all 0.15s ease'
               }}
-              title="Registrar óbito e retirar paciente do sistema definitivamente"
+              title="Registrar óbito do paciente"
             >
               <UserX size={14} color="#e11d48" />
-              <span>Registrar Óbito</span>
+              <span>Óbito</span>
             </button>
 
             <button 
@@ -717,23 +717,23 @@ export default function PatientProfile() {
                 background: '#eff6ff', 
                 color: '#1d4ed8' 
               }}
-              title="Emitir ou renovar LME (Alto Custo SUS) com exames do paciente"
+              title="Emitir ou renovar LME"
             >
               <ClipboardList size={14} color="#2563eb" />
-              <span>LME (Alto Custo)</span>
+              <span>LME</span>
             </button>
 
             <button 
               className="btn btn-outline" 
               onClick={() => setIsWeightModalOpen(true)}
               style={{ padding: '0.42rem 0.72rem', fontSize: '0.80rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#a7f3d0', background: '#ecfdf5', color: '#065f46' }}
-              title="Registrar pesagem e acompanhar evolução"
+              title="Registrar pesagem"
             >
               <Scale size={14} color="#059669" />
-              <span>+ Peso</span>
+              <span>Peso</span>
             </button>
 
-            {/* Menu Unificado: Módulo de Transplante Renal (Tx) */}
+            {/* Menu Unificado: Módulo de Transplante Renal */}
             <div style={{ position: 'relative' }} ref={transplantMenuRef}>
               <button 
                 type="button"
@@ -754,10 +754,10 @@ export default function PatientProfile() {
                   boxShadow: isTransplantMenuOpen ? '0 0 0 2px rgba(124, 58, 237, 0.2)' : 'none',
                   transition: 'all 0.15s ease'
                 }}
-                title="Módulo de Transplante Renal: Checklist do SNT e Laudo Médico"
+                title="Módulo de Transplante Renal"
               >
                 <CheckSquare size={14} color={isTransplantMenuOpen ? "#5b21b6" : "#7c3aed"} />
-                <span>Transplante (Tx)</span>
+                <span>Transplante</span>
                 <ChevronDown 
                   size={13} 
                   color={isTransplantMenuOpen ? "#5b21b6" : "#6d28d9"}
@@ -814,10 +814,10 @@ export default function PatientProfile() {
                     </div>
                     <div>
                       <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b' }}>
-                        Checklist & Prontidão SNT
+                        Checklist SNT
                       </div>
                       <div style={{ fontSize: '0.70rem', color: '#64748b' }}>
-                        Sorologias, exames e status da fila
+                        Sorologias e exames da fila
                       </div>
                     </div>
                   </button>
@@ -851,10 +851,10 @@ export default function PatientProfile() {
                     </div>
                     <div>
                       <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b' }}>
-                        Laudo de Encaminhamento
+                        Encaminhamento
                       </div>
                       <div style={{ fontSize: '0.70rem', color: '#64748b' }}>
-                        Documento timbrado em PDF / impressão
+                        Laudo timbrado em PDF
                       </div>
                     </div>
                   </button>
@@ -866,17 +866,17 @@ export default function PatientProfile() {
               className="btn btn-outline" 
               onClick={() => setIsBulletinModalOpen(true)}
               style={{ padding: '0.42rem 0.72rem', fontSize: '0.80rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#fde68a', background: '#fffbeb', color: '#b45309' }}
-              title="Gerar e imprimir Boletim de Saúde & Conquistas para entregar ao paciente"
+              title="Gerar Boletim do paciente"
             >
               <Trophy size={14} color="#d97706" />
-              <span>Boletim do Paciente</span>
+              <span>Boletim</span>
             </button>
 
             <button 
               className="btn btn-outline" 
               onClick={handleOpenNewExam}
               style={{ padding: '0.42rem 0.72rem', fontSize: '0.80rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#86efac', background: '#f0fdf4', color: '#15803d' }}
-              title="Lançar novos exames laboratoriais e microbiologia"
+              title="Lançar novos exames"
             >
               <FlaskConical size={14} color="#16a34a" />
               <span>Exames</span>
@@ -886,13 +886,13 @@ export default function PatientProfile() {
               className="btn btn-outline" 
               onClick={() => setIsImportModalOpen(true)}
               style={{ padding: '0.42rem 0.72rem', fontSize: '0.80rem', fontWeight: '600', display: 'inline-flex', alignItems: 'center', gap: '5px', whiteSpace: 'nowrap', borderRadius: '10px', borderColor: '#bae6fd', background: '#f0f9ff', color: '#0369a1' }}
-              title="Importar laudo em PDF, Excel ou foto para este paciente"
+              title="Importar laudo ou foto de exames"
             >
               <UploadCloud size={14} color="#0284c7" />
               <span>Importar</span>
             </button>
 
-            {/* Menu Unificado: Prescrição & Receituário */}
+            {/* Menu Unificado: Prescrição */}
             <div style={{ position: 'relative' }} ref={prescriptionMenuRef}>
               <button 
                 type="button"
@@ -913,10 +913,10 @@ export default function PatientProfile() {
                   boxShadow: isPrescriptionMenuOpen ? '0 0 0 2px rgba(99, 102, 241, 0.2)' : 'none',
                   transition: 'all 0.15s ease'
                 }}
-                title="Prescrever medicamentos ou emitir receita médica"
+                title="Prescrever medicamentos ou emitir receita"
               >
                 <Pill size={14} color={isPrescriptionMenuOpen ? "#4f46e5" : "#ea580c"} />
-                <span>Prescrever / Receita</span>
+                <span>Prescrever</span>
                 <ChevronDown 
                   size={13} 
                   color={isPrescriptionMenuOpen ? "#4f46e5" : "#c2410c"}
@@ -973,10 +973,10 @@ export default function PatientProfile() {
                     </div>
                     <div>
                       <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b' }}>
-                        Emitir Receita Simples
+                        Receita Simples
                       </div>
                       <div style={{ fontSize: '0.70rem', color: '#64748b' }}>
-                        Receita timbrada / PDF p/ farmácia
+                        Receita timbrada PDF
                       </div>
                     </div>
                   </button>
@@ -1008,10 +1008,10 @@ export default function PatientProfile() {
                     </div>
                     <div>
                       <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b' }}>
-                        Receita Controle Especial
+                        Controle Especial
                       </div>
                       <div style={{ fontSize: '0.70rem', color: '#64748b' }}>
-                        Duas vias (antibióticos / controlados)
+                        Duas vias especiais
                       </div>
                     </div>
                   </button>
@@ -1045,10 +1045,10 @@ export default function PatientProfile() {
                     </div>
                     <div>
                       <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b' }}>
-                        Adicionar ao Prontuário
+                        Nova Medicação
                       </div>
                       <div style={{ fontSize: '0.70rem', color: '#64748b' }}>
-                        Medicamento contínuo / diálise
+                        Uso contínuo
                       </div>
                     </div>
                   </button>
@@ -1093,7 +1093,7 @@ export default function PatientProfile() {
                 <div className="flex items-center gap-2.5">
                   <AlertTriangle size={20} color="#dc2626" style={{ flexShrink: 0 }} />
                   <span style={{ lineHeight: '1.4' }}>
-                    <strong style={{ color: '#b91c1c' }}>⚠️ PROTOCOLO DE DIÁLISE SEM HEPARINA (S/H):</strong> {anticoagulacaoInfo.motivo ? `Motivo: ${anticoagulacaoInfo.motivo}. ` : 'Risco hemorrágico elevado. '}Realizar lavagens com SF 0,9% a cada 30 min. Não administrar heparina ou enoxaparina.
+                    <strong style={{ color: '#b91c1c' }}>⚠️ PROTOCOLO SEM HEPARINA:</strong> {anticoagulacaoInfo.motivo ? `Motivo: ${anticoagulacaoInfo.motivo}. ` : 'Risco hemorrágico elevado. '}Realizar lavagens com SF 0,9% a cada 30 min. Não administrar heparina ou enoxaparina.
                   </span>
                 </div>
                 <button 
@@ -1258,98 +1258,203 @@ export default function PatientProfile() {
         )}
       </header>
 
-      {/* ================= BARRA DE ABAS CLÍNICAS ================= */}
-      <div className="flex gap-2 mb-4 border-b pb-2 flex-wrap mobile-tabs-scroll" style={{ borderColor: 'var(--border)' }}>
+      {/* ================= BARRA DE ABAS CLÍNICAS (SEGMENTED PILL BAR) ================= */}
+      <nav 
+        className="mobile-tabs-scroll"
+        style={{ 
+          display: 'flex', 
+          alignItems: 'center',
+          gap: '6px', 
+          padding: '6px 8px', 
+          borderRadius: '16px', 
+          background: 'rgba(241, 245, 249, 0.90)', 
+          border: '1px solid rgba(203, 213, 225, 0.7)',
+          marginTop: '0.5rem',
+          marginBottom: '1.5rem',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.03)'
+        }}
+      >
         <button
-          className={`btn ${activeTab === 'overview' ? 'btn-primary' : 'btn-outline'}`}
+          type="button"
+          className="btn"
           onClick={() => setActiveTab('overview')}
-          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+          style={{ 
+            padding: '0.5rem 1.15rem', 
+            fontSize: '0.85rem', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            borderRadius: '12px',
+            fontWeight: activeTab === 'overview' ? '700' : '500',
+            background: activeTab === 'overview' ? '#2563eb' : 'transparent',
+            color: activeTab === 'overview' ? '#ffffff' : '#475569',
+            boxShadow: activeTab === 'overview' ? '0 2px 8px rgba(37, 99, 235, 0.25)' : 'none',
+            border: 'none',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap'
+          }}
         >
           <Activity size={16} />
           <span>Resumo</span>
         </button>
 
         <button
-          className={`btn ${activeTab === 'exams' ? 'btn-primary' : 'btn-outline'}`}
+          type="button"
+          className="btn"
           onClick={() => setActiveTab('exams')}
-          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+          style={{ 
+            padding: '0.5rem 1.15rem', 
+            fontSize: '0.85rem', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            borderRadius: '12px',
+            fontWeight: activeTab === 'exams' ? '700' : '500',
+            background: activeTab === 'exams' ? '#2563eb' : 'transparent',
+            color: activeTab === 'exams' ? '#ffffff' : '#475569',
+            boxShadow: activeTab === 'exams' ? '0 2px 8px rgba(37, 99, 235, 0.25)' : 'none',
+            border: 'none',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap'
+          }}
         >
           <FlaskConical size={16} />
           <span>Exames</span>
           {historicoExames.length > 0 && (
-            <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '10px', background: activeTab === 'exams' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'exams' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '0.7rem', padding: '1px 7px', borderRadius: '10px', background: activeTab === 'exams' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'exams' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
               {historicoExames.length}
             </span>
           )}
         </button>
 
         <button
-          className={`btn ${activeTab === 'medications' ? 'btn-primary' : 'btn-outline'}`}
+          type="button"
+          className="btn"
           onClick={() => setActiveTab('medications')}
-          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+          style={{ 
+            padding: '0.5rem 1.15rem', 
+            fontSize: '0.85rem', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            borderRadius: '12px',
+            fontWeight: activeTab === 'medications' ? '700' : '500',
+            background: activeTab === 'medications' ? '#2563eb' : 'transparent',
+            color: activeTab === 'medications' ? '#ffffff' : '#475569',
+            boxShadow: activeTab === 'medications' ? '0 2px 8px rgba(37, 99, 235, 0.25)' : 'none',
+            border: 'none',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap'
+          }}
         >
           <Pill size={16} />
           <span>Prescrições</span>
           {medicamentosList.length > 0 && (
-            <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '10px', background: activeTab === 'medications' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'medications' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '0.7rem', padding: '1px 7px', borderRadius: '10px', background: activeTab === 'medications' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'medications' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
               {medicamentosList.filter(m => m.ativo !== false).length}
             </span>
           )}
         </button>
 
         <button
-          className={`btn ${activeTab === 'evolucoes' ? 'btn-primary' : 'btn-outline'}`}
+          type="button"
+          className="btn"
           onClick={() => setActiveTab('evolucoes')}
-          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+          style={{ 
+            padding: '0.5rem 1.15rem', 
+            fontSize: '0.85rem', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            borderRadius: '12px',
+            fontWeight: activeTab === 'evolucoes' ? '700' : '500',
+            background: activeTab === 'evolucoes' ? '#2563eb' : 'transparent',
+            color: activeTab === 'evolucoes' ? '#ffffff' : '#475569',
+            boxShadow: activeTab === 'evolucoes' ? '0 2px 8px rgba(37, 99, 235, 0.25)' : 'none',
+            border: 'none',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap'
+          }}
         >
           <FileText size={16} />
           <span>Evoluções</span>
           {evolucoes.length > 0 && (
-            <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '10px', background: activeTab === 'evolucoes' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'evolucoes' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '0.7rem', padding: '1px 7px', borderRadius: '10px', background: activeTab === 'evolucoes' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'evolucoes' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
               {evolucoes.length}
             </span>
           )}
         </button>
 
         <button
-          className={`btn ${activeTab === 'receitas' ? 'btn-primary' : 'btn-outline'}`}
+          type="button"
+          className="btn"
           onClick={() => setActiveTab('receitas')}
-          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
-          title="Emissão e Histórico de Receituários Médicos (Simples, Controle Especial, Antimicrobianos)"
+          style={{ 
+            padding: '0.5rem 1.15rem', 
+            fontSize: '0.85rem', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            borderRadius: '12px',
+            fontWeight: activeTab === 'receitas' ? '700' : '500',
+            background: activeTab === 'receitas' ? '#2563eb' : 'transparent',
+            color: activeTab === 'receitas' ? '#ffffff' : '#475569',
+            boxShadow: activeTab === 'receitas' ? '0 2px 8px rgba(37, 99, 235, 0.25)' : 'none',
+            border: 'none',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap'
+          }}
+          title="Receituários emitidos"
         >
           <FileCheck size={16} />
           <span>Receituário</span>
           {receitas.length > 0 && (
-            <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '10px', background: activeTab === 'receitas' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'receitas' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '0.7rem', padding: '1px 7px', borderRadius: '10px', background: activeTab === 'receitas' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'receitas' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
               {receitas.length}
             </span>
           )}
         </button>
 
         <button
-          className={`btn ${activeTab === 'lme' ? 'btn-primary' : 'btn-outline'}`}
+          type="button"
+          className="btn"
           onClick={() => setActiveTab('lme')}
-          style={{ padding: '0.5rem 1.1rem', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
-          title="Gestão de LME e Medicamentos de Alto Custo (SUS / CEAF)"
+          style={{ 
+            padding: '0.5rem 1.15rem', 
+            fontSize: '0.85rem', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            borderRadius: '12px',
+            fontWeight: activeTab === 'lme' ? '700' : '500',
+            background: activeTab === 'lme' ? '#2563eb' : 'transparent',
+            color: activeTab === 'lme' ? '#ffffff' : '#475569',
+            boxShadow: activeTab === 'lme' ? '0 2px 8px rgba(37, 99, 235, 0.25)' : 'none',
+            border: 'none',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap'
+          }}
+          title="Gestão de LME"
         >
           <ClipboardList size={16} />
-          <span>LME (Alto Custo)</span>
+          <span>LME</span>
           {Array.isArray(patient?.lmes) && patient.lmes.length > 0 && (
-            <span style={{ fontSize: '0.7rem', padding: '1px 6px', borderRadius: '10px', background: activeTab === 'lme' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'lme' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '0.7rem', padding: '1px 7px', borderRadius: '10px', background: activeTab === 'lme' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'lme' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
               {patient.lmes.length}
             </span>
           )}
         </button>
-      </div>
+      </nav>
 
       {/* ================= ABA 1: VISÃO GERAL ================= */}
+      {/* ================= ABA 1: VISÃO GERAL (3 COLUNAS BALANCEADAS) ================= */}
       {activeTab === 'overview' && (
-        <div className="patient-overview-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))', gap: '1.25rem' }}>
+        <div className="patient-overview-grid">
           
-          {/* Coluna Esquerda: Acesso Vascular & Dados Vitais */}
+          {/* ================= COLUNA 1: ACESSO & DADOS CLÍNICOS ================= */}
           <div className="flex flex-col gap-4">
             
-            {/* Card Acesso Vascular & Parâmetros Dialíticos */}
+            {/* Card Acesso Vascular */}
             <section className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
               <div className="flex justify-between items-center mb-3">
                 <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
@@ -1363,23 +1468,23 @@ export default function PatientProfile() {
 
               <div className="flex flex-col gap-2 text-xs">
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Tipo de Acesso:</span>
+                  <span className="text-muted">Acesso:</span>
                   <strong className="text-slate-800 font-semibold">{acessoVascular.tipo || 'Não informado'}</strong>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Localização:</span>
+                  <span className="text-muted">Local:</span>
                   <strong className="text-slate-800 font-semibold">{acessoVascular.ladoMembro || '-'}</strong>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Fluxo de Sangue (Qb):</span>
+                  <span className="text-muted">Qb (Sangue):</span>
                   <strong className="text-slate-800 font-semibold">{acessoVascular.fluxoSangue ? `${acessoVascular.fluxoSangue} ml/min` : '-'}</strong>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Fluxo Dialisato (Qd):</span>
+                  <span className="text-muted">Qd (Dialisato):</span>
                   <strong className="text-slate-800 font-semibold">{acessoVascular.fluxoDialisato ? `${acessoVascular.fluxoDialisato} ml/min` : '-'}</strong>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Calibre da Agulha:</span>
+                  <span className="text-muted">Agulha:</span>
                   <strong className="text-slate-800 font-semibold">{acessoVascular.agulha || '-'}</strong>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
@@ -1390,7 +1495,7 @@ export default function PatientProfile() {
                 </div>
                 {anticoagulacaoInfo.observacoes && (
                   <div className="flex justify-between">
-                    <span className="text-muted">Conduta / Infusão:</span>
+                    <span className="text-muted">Conduta:</span>
                     <span className="text-slate-700 font-medium text-right text-xs max-w-[65%]">
                       {anticoagulacaoInfo.observacoes}
                     </span>
@@ -1399,7 +1504,7 @@ export default function PatientProfile() {
               </div>
             </section>
 
-            {/* Card Dados Cadastrais & Clínicos (100% Editável) */}
+            {/* Card Dados Clínicos */}
             <section className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
               <div className="flex justify-between items-center mb-3">
                 <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
@@ -1411,10 +1516,10 @@ export default function PatientProfile() {
                   onClick={() => setIsPatientModalOpen(true)}
                   className="btn btn-outline"
                   style={{ padding: '0.25rem 0.65rem', fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '4px', borderRadius: '8px' }}
-                  title="Editar todos os dados clínicos e identificação"
+                  title="Editar dados clínicos"
                 >
                   <Edit size={12} color="var(--primary)" />
-                  <span>Editar Dados</span>
+                  <span>Editar</span>
                 </button>
               </div>
 
@@ -1435,40 +1540,40 @@ export default function PatientProfile() {
                 )}
                 {patient.modalidade && (
                   <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                    <span className="text-muted">Modalidade Dialítica:</span>
+                    <span className="text-muted">Modalidade:</span>
                     <strong className="text-slate-800 font-semibold">{patient.modalidade} {patient.tipoPaciente ? `(${patient.tipoPaciente})` : ''}</strong>
                   </div>
                 )}
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Status Transplante:</span>
+                  <span className="text-muted">Transplante:</span>
                   <span style={{ fontSize: '0.72rem', padding: '1px 8px', borderRadius: '8px', background: transplantOpt.badgeBg, color: transplantOpt.color, border: `1px solid ${transplantOpt.border}`, fontWeight: 'bold' }}>
                     {transplantOpt.label}
                   </span>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Etiologia DRC:</span>
+                  <span className="text-muted">Etiologia:</span>
                   <strong className="text-slate-800 font-semibold">{patient.etiologiaDRC || 'Não informada'}</strong>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Peso Seco Alvo:</span>
+                  <span className="text-muted">Peso Seco:</span>
                   <strong className="text-slate-800 font-semibold">{patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}</strong>
                 </div>
                 {patient.dataInicioClinica && (
                   <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                    <span className="text-muted">Início nesta Clínica:</span>
+                    <span className="text-muted">Nesta Clínica:</span>
                     <strong className="text-slate-800 font-semibold">
                       {new Date(patient.dataInicioClinica + 'T12:00:00').toLocaleDateString('pt-BR')} {patient.tempoNaClinica ? `(${patient.tempoNaClinica})` : ''}
                     </strong>
                   </div>
                 )}
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">1º Tratamento / Início TRS:</span>
+                  <span className="text-muted">Início TRS:</span>
                   <strong className="text-slate-800 font-semibold">
                     {patient.dataInicioDialise ? new Date(patient.dataInicioDialise + 'T12:00:00').toLocaleDateString('pt-BR') : '-'} {patient.tempoTotalTratamento ? `(${patient.tempoTotalTratamento})` : ''}
                   </strong>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Hospital de Retaguarda:</span>
+                  <span className="text-muted">Hospital:</span>
                   <strong className="text-slate-800 font-semibold">{patient.hospital || 'Hospital Geral'}</strong>
                 </div>
                 <div className="flex justify-between items-start">
@@ -1487,8 +1592,61 @@ export default function PatientProfile() {
                 </div>
               </div>
             </section>
+          </div>
 
-            {/* Card Controle Ponderal & Histórico de Peso (Requisito 2 + Melhoria 1 + Melhoria 5) */}
+          {/* ================= COLUNA 2: TERAPÊUTICA & PESO ================= */}
+          <div className="flex flex-col gap-4">
+            
+            {/* Prescrições em Uso */}
+            <section className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
+                  <Pill size={16} color="#d97706" />
+                  <span>Prescrições ({medicamentosList.filter(m => m.ativo !== false).length})</span>
+                </h2>
+                <button 
+                  onClick={handleOpenNewMedication} 
+                  className="text-xs text-blue-600 hover:text-blue-800 font-semibold"
+                  style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                >
+                  + Prescrever
+                </button>
+              </div>
+
+              {medicamentosList.filter(m => m.ativo !== false).length === 0 ? (
+                <div className="text-center py-6 text-muted text-xs">
+                  Nenhuma medicação ativa no momento.
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {medicamentosList.filter(m => m.ativo !== false).slice(0, 4).map((med, idx) => {
+                    const st = getMedicationStatus(med);
+                    return (
+                      <div key={idx} className="p-2 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center text-xs">
+                        <div>
+                          <strong className="text-slate-800 block">{med.nome}</strong>
+                          <span className="text-muted">{med.dosagem} {med.via ? `• ${med.via}` : ''}</span>
+                        </div>
+                        <span style={{ fontSize: '0.68rem', padding: '2px 6px', borderRadius: '6px', background: st.badgeBg, color: st.color, fontWeight: 'bold' }}>
+                          {st.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                  {medicamentosList.filter(m => m.ativo !== false).length > 4 && (
+                    <button 
+                      onClick={() => setActiveTab('medications')}
+                      className="text-xs text-center text-blue-600 hover:underline pt-1 font-semibold"
+                      style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+                    >
+                      Ver todas ({medicamentosList.filter(m => m.ativo !== false).length}) →
+                    </button>
+                  )}
+                </div>
+              )}
+            </section>
+
+            {/* Card Controle Ponderal */}
             <section className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
               <div className="flex justify-between items-center mb-3">
                 <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
@@ -1500,10 +1658,10 @@ export default function PatientProfile() {
                   onClick={() => setIsWeightModalOpen(true)}
                   className="btn btn-outline"
                   style={{ padding: '0.25rem 0.65rem', fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '4px', borderRadius: '8px', color: '#059669', borderColor: '#a7f3d0', background: '#ecfdf5' }}
-                  title="Lançar novo peso do paciente"
+                  title="Lançar novo peso"
                 >
                   <Plus size={12} />
-                  <span>Registrar Peso</span>
+                  <span>+ Peso</span>
                 </button>
               </div>
 
@@ -1526,11 +1684,11 @@ export default function PatientProfile() {
                   className="p-2 rounded-xl text-center flex flex-col justify-center items-center"
                   style={{ background: '#f8fafc', border: '1px solid #e2e8f0', minHeight: '68px' }}
                 >
-                  <span className="text-muted block mb-0.5 font-medium" style={{ fontSize: '0.70rem', lineHeight: '1.2' }}>Meta Peso Seco</span>
+                  <span className="text-muted block mb-0.5 font-medium" style={{ fontSize: '0.70rem', lineHeight: '1.2' }}>Peso Seco</span>
                   <strong className="font-bold text-slate-700" style={{ fontSize: '0.90rem', lineHeight: '1.2' }}>
                     {patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}
                   </strong>
-                  <span className="text-slate-400 mt-0.5" style={{ fontSize: '0.65rem', lineHeight: '1.2' }}>Alvo nefrológico</span>
+                  <span className="text-slate-400 mt-0.5" style={{ fontSize: '0.65rem', lineHeight: '1.2' }}>Meta</span>
                 </div>
 
                 <div 
@@ -1555,12 +1713,12 @@ export default function PatientProfile() {
                 </div>
               </div>
 
-              {/* Mini gráfico visual de tendência ponderal (Melhoria 5) */}
+              {/* Mini gráfico visual de tendência ponderal */}
               {historicoPesos.length > 1 && (
                 <div className="mb-3 p-2 bg-slate-50 rounded-xl border border-slate-200">
                   <div className="flex justify-between items-center mb-1.5">
                     <span className="font-bold text-slate-500 uppercase flex items-center gap-1" style={{ fontSize: '0.65rem' }}>
-                      <TrendingUp size={11} color="var(--primary)" /> Tendência das Últimas Pesagens
+                      <TrendingUp size={11} color="var(--primary)" /> Tendência das Pesagens
                     </span>
                     <span className="text-muted" style={{ fontSize: '0.65rem' }}>Meta: {patient.pesoSeco || '-'}kg</span>
                   </div>
@@ -1598,8 +1756,8 @@ export default function PatientProfile() {
                   Nenhuma pesagem registrada.
                 </div>
               ) : (
-                <div className="flex flex-col gap-1.5 max-h-48 overflow-y-auto pr-1">
-                  {historicoPesos.map((rec) => (
+                <div className="flex flex-col gap-1.5 max-h-44 overflow-y-auto pr-1">
+                  {historicoPesos.slice(0, 6).map((rec) => (
                     <div 
                       key={rec.id} 
                       className="p-1.5 px-2 rounded-lg bg-slate-50 border border-slate-200 flex justify-between items-center text-xs"
@@ -1613,7 +1771,6 @@ export default function PatientProfile() {
                         </div>
                         <span className="text-muted" style={{ fontSize: '0.65rem' }}>
                           {new Date(rec.data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
-                          {rec.observacoes ? ` • ${rec.observacoes}` : ''}
                         </span>
                       </div>
 
@@ -1628,7 +1785,7 @@ export default function PatientProfile() {
                           onClick={() => handleDeleteWeight(rec.id)}
                           className="text-slate-400 hover:text-red-600 transition"
                           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}
-                          title="Excluir esta pesagem"
+                          title="Excluir pesagem"
                         >
                           <Trash2 size={12} />
                         </button>
@@ -1640,71 +1797,22 @@ export default function PatientProfile() {
             </section>
           </div>
 
-          {/* Coluna Direita: Prescrições Ativas & Resumo Laboratorial */}
+          {/* ================= COLUNA 3: LABORATÓRIO & TRANSPLANTE (PREENCHE O VAZIO!) ================= */}
           <div className="flex flex-col gap-4">
             
-            {/* Prescrições em Uso */}
+            {/* Card Laboratório */}
             <section className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
               <div className="flex justify-between items-center mb-3">
                 <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
-                  <Pill size={16} color="#d97706" />
-                  <span>Prescrições Ativas ({medicamentosList.filter(m => m.ativo !== false).length})</span>
-                </h2>
-                <button 
-                  onClick={handleOpenNewMedication} 
-                  className="text-xs text-blue-600 hover:text-blue-800 font-semibold"
-                  style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-                >
-                  + Prescrever
-                </button>
-              </div>
-
-              {medicamentosList.filter(m => m.ativo !== false).length === 0 ? (
-                <div className="text-center py-6 text-muted text-xs">
-                  Nenhuma medicação ativa no momento.
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  {medicamentosList.filter(m => m.ativo !== false).slice(0, 4).map((med, idx) => {
-                    const st = getMedicationStatus(med);
-                    return (
-                      <div key={idx} className="p-2 rounded-xl bg-slate-50 border border-slate-200 flex justify-between items-center text-xs">
-                        <div>
-                          <strong className="text-slate-800 block">{med.nome}</strong>
-                          <span className="text-muted">{med.dosagem} {med.via ? `• ${med.via}` : ''}</span>
-                        </div>
-                        <span style={{ fontSize: '0.68rem', padding: '2px 6px', borderRadius: '6px', background: st.badgeBg, color: st.color, fontWeight: 'bold' }}>
-                          {st.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-                  {medicamentosList.filter(m => m.ativo !== false).length > 4 && (
-                    <button 
-                      onClick={() => setActiveTab('medications')}
-                      className="text-xs text-center text-blue-600 hover:underline pt-1 font-semibold"
-                      style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-                    >
-                      Ver todas as {medicamentosList.filter(m => m.ativo !== false).length} prescrições →
-                    </button>
-                  )}
-                </div>
-              )}
-            </section>
-
-            {/* Resumo de Indicadores Laboratoriais Chave */}
-            <section className="glass-panel" style={{ padding: '1.35rem', borderRadius: '18px' }}>
-              <div className="flex justify-between items-center mb-3.5">
-                <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
                   <FlaskConical size={16} color="#059669" />
-                  <span>Resumo Laboratorial Mais Recente</span>
+                  <span>Laboratório</span>
                 </h2>
                 <button 
                   onClick={() => setActiveTab('exams')}
                   className="text-xs text-blue-600 hover:text-blue-800 font-semibold"
                   style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
                 >
-                  Painel Completo →
+                  Ver Exames →
                 </button>
               </div>
 
@@ -1717,30 +1825,29 @@ export default function PatientProfile() {
                 const albEval = evaluateExam('albumina', exames.albumina);
 
                 return (
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
                     <div 
                       style={{ 
                         display: 'flex', 
                         flexDirection: 'column', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
-                        padding: '0.85rem 0.6rem', 
-                        borderRadius: '14px', 
+                        padding: '0.65rem 0.4rem', 
+                        borderRadius: '12px', 
                         background: hbEval.bg, 
                         border: `1px solid ${hbEval.border}`,
                         textAlign: 'center',
-                        minHeight: '84px',
-                        transition: 'all 0.2s ease'
+                        minHeight: '74px'
                       }}
                     >
-                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                      <span style={{ fontSize: '0.70rem', color: '#64748b', fontWeight: '600', marginBottom: '2px' }}>
                         Hemoglobina
                       </span>
-                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: hbEval.color, lineHeight: 1.2 }}>
+                      <span style={{ fontSize: '1.15rem', fontWeight: '700', color: hbEval.color, lineHeight: 1.2 }}>
                         {exames.hb || '-'}
                       </span>
-                      <span style={{ fontSize: '0.68rem', color: hbEval.status === 'neutro' ? '#94a3b8' : hbEval.color, marginTop: '3px', fontWeight: hbEval.status === 'neutro' ? '500' : '600' }}>
-                        g/dL {hbEval.status !== 'neutro' ? `• ${hbEval.label}` : ''}
+                      <span style={{ fontSize: '0.62rem', color: hbEval.status === 'neutro' ? '#94a3b8' : hbEval.color, marginTop: '2px', fontWeight: '600' }}>
+                        {hbEval.status !== 'neutro' ? hbEval.label : 'g/dL'}
                       </span>
                     </div>
 
@@ -1750,23 +1857,22 @@ export default function PatientProfile() {
                         flexDirection: 'column', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
-                        padding: '0.85rem 0.6rem', 
-                        borderRadius: '14px', 
+                        padding: '0.65rem 0.4rem', 
+                        borderRadius: '12px', 
                         background: pthEval.bg, 
                         border: `1px solid ${pthEval.border}`,
                         textAlign: 'center',
-                        minHeight: '84px',
-                        transition: 'all 0.2s ease'
+                        minHeight: '74px'
                       }}
                     >
-                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
-                        PTH Intacto
+                      <span style={{ fontSize: '0.70rem', color: '#64748b', fontWeight: '600', marginBottom: '2px' }}>
+                        PTH
                       </span>
-                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: pthEval.color, lineHeight: 1.2 }}>
+                      <span style={{ fontSize: '1.15rem', fontWeight: '700', color: pthEval.color, lineHeight: 1.2 }}>
                         {exames.pth || '-'}
                       </span>
-                      <span style={{ fontSize: '0.68rem', color: pthEval.status === 'neutro' ? '#94a3b8' : pthEval.color, marginTop: '3px', fontWeight: pthEval.status === 'neutro' ? '500' : '600' }}>
-                        pg/mL {pthEval.status !== 'neutro' ? `• ${pthEval.label}` : ''}
+                      <span style={{ fontSize: '0.62rem', color: pthEval.status === 'neutro' ? '#94a3b8' : pthEval.color, marginTop: '2px', fontWeight: '600' }}>
+                        {pthEval.status !== 'neutro' ? pthEval.label : 'pg/mL'}
                       </span>
                     </div>
 
@@ -1776,23 +1882,22 @@ export default function PatientProfile() {
                         flexDirection: 'column', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
-                        padding: '0.85rem 0.6rem', 
-                        borderRadius: '14px', 
+                        padding: '0.65rem 0.4rem', 
+                        borderRadius: '12px', 
                         background: fosforoEval.bg, 
                         border: `1px solid ${fosforoEval.border}`,
                         textAlign: 'center',
-                        minHeight: '84px',
-                        transition: 'all 0.2s ease'
+                        minHeight: '74px'
                       }}
                     >
-                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                      <span style={{ fontSize: '0.70rem', color: '#64748b', fontWeight: '600', marginBottom: '2px' }}>
                         Fósforo
                       </span>
-                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: fosforoEval.color, lineHeight: 1.2 }}>
+                      <span style={{ fontSize: '1.15rem', fontWeight: '700', color: fosforoEval.color, lineHeight: 1.2 }}>
                         {exames.fosforo || '-'}
                       </span>
-                      <span style={{ fontSize: '0.68rem', color: fosforoEval.status === 'neutro' ? '#94a3b8' : fosforoEval.color, marginTop: '3px', fontWeight: fosforoEval.status === 'neutro' ? '500' : '600' }}>
-                        mg/dL {fosforoEval.status !== 'neutro' ? `• ${fosforoEval.label}` : ''}
+                      <span style={{ fontSize: '0.62rem', color: fosforoEval.status === 'neutro' ? '#94a3b8' : fosforoEval.color, marginTop: '2px', fontWeight: '600' }}>
+                        {fosforoEval.status !== 'neutro' ? fosforoEval.label : 'mg/dL'}
                       </span>
                     </div>
 
@@ -1802,23 +1907,22 @@ export default function PatientProfile() {
                         flexDirection: 'column', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
-                        padding: '0.85rem 0.6rem', 
-                        borderRadius: '14px', 
+                        padding: '0.65rem 0.4rem', 
+                        borderRadius: '12px', 
                         background: kEval.bg, 
                         border: `1px solid ${kEval.border}`,
                         textAlign: 'center',
-                        minHeight: '84px',
-                        transition: 'all 0.2s ease'
+                        minHeight: '74px'
                       }}
                     >
-                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
-                        Potássio (K⁺)
+                      <span style={{ fontSize: '0.70rem', color: '#64748b', fontWeight: '600', marginBottom: '2px' }}>
+                        Potássio
                       </span>
-                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: kEval.color, lineHeight: 1.2 }}>
+                      <span style={{ fontSize: '1.15rem', fontWeight: '700', color: kEval.color, lineHeight: 1.2 }}>
                         {exames.k || '-'}
                       </span>
-                      <span style={{ fontSize: '0.68rem', color: kEval.status === 'neutro' ? '#94a3b8' : kEval.color, marginTop: '3px', fontWeight: kEval.status === 'neutro' ? '500' : '600' }}>
-                        mEq/L {kEval.status !== 'neutro' ? `• ${kEval.label}` : ''}
+                      <span style={{ fontSize: '0.62rem', color: kEval.status === 'neutro' ? '#94a3b8' : kEval.color, marginTop: '2px', fontWeight: '600' }}>
+                        {kEval.status !== 'neutro' ? kEval.label : 'mEq/L'}
                       </span>
                     </div>
 
@@ -1828,23 +1932,22 @@ export default function PatientProfile() {
                         flexDirection: 'column', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
-                        padding: '0.85rem 0.6rem', 
-                        borderRadius: '14px', 
+                        padding: '0.65rem 0.4rem', 
+                        borderRadius: '12px', 
                         background: ktvEval.bg, 
                         border: `1px solid ${ktvEval.border}`,
                         textAlign: 'center',
-                        minHeight: '84px',
-                        transition: 'all 0.2s ease'
+                        minHeight: '74px'
                       }}
                     >
-                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                      <span style={{ fontSize: '0.70rem', color: '#64748b', fontWeight: '600', marginBottom: '2px' }}>
                         Kt/V
                       </span>
-                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: ktvEval.color, lineHeight: 1.2 }}>
+                      <span style={{ fontSize: '1.15rem', fontWeight: '700', color: ktvEval.color, lineHeight: 1.2 }}>
                         {exames.ktv || '-'}
                       </span>
-                      <span style={{ fontSize: '0.68rem', color: ktvEval.status === 'neutro' ? '#94a3b8' : ktvEval.color, marginTop: '3px', fontWeight: ktvEval.status === 'neutro' ? '500' : '600' }}>
-                        Meta ≥ 1.2 {ktvEval.status !== 'neutro' ? `• ${ktvEval.label}` : ''}
+                      <span style={{ fontSize: '0.62rem', color: ktvEval.status === 'neutro' ? '#94a3b8' : ktvEval.color, marginTop: '2px', fontWeight: '600' }}>
+                        {ktvEval.status !== 'neutro' ? ktvEval.label : '≥ 1.2'}
                       </span>
                     </div>
 
@@ -1854,28 +1957,109 @@ export default function PatientProfile() {
                         flexDirection: 'column', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
-                        padding: '0.85rem 0.6rem', 
-                        borderRadius: '14px', 
+                        padding: '0.65rem 0.4rem', 
+                        borderRadius: '12px', 
                         background: albEval.bg, 
                         border: `1px solid ${albEval.border}`,
                         textAlign: 'center',
-                        minHeight: '84px',
-                        transition: 'all 0.2s ease'
+                        minHeight: '74px'
                       }}
                     >
-                      <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '600', marginBottom: '4px' }}>
+                      <span style={{ fontSize: '0.70rem', color: '#64748b', fontWeight: '600', marginBottom: '2px' }}>
                         Albumina
                       </span>
-                      <span style={{ fontSize: '1.25rem', fontWeight: '700', color: albEval.color, lineHeight: 1.2 }}>
+                      <span style={{ fontSize: '1.15rem', fontWeight: '700', color: albEval.color, lineHeight: 1.2 }}>
                         {exames.albumina || '-'}
                       </span>
-                      <span style={{ fontSize: '0.68rem', color: albEval.status === 'neutro' ? '#94a3b8' : albEval.color, marginTop: '3px', fontWeight: albEval.status === 'neutro' ? '500' : '600' }}>
-                        g/dL {albEval.status !== 'neutro' ? `• ${albEval.label}` : ''}
+                      <span style={{ fontSize: '0.62rem', color: albEval.status === 'neutro' ? '#94a3b8' : albEval.color, marginTop: '2px', fontWeight: '600' }}>
+                        {albEval.status !== 'neutro' ? albEval.label : 'g/dL'}
                       </span>
                     </div>
                   </div>
                 );
               })()}
+            </section>
+
+            {/* Card Transplante Renal (Preenche perfeitamente a 3ª Coluna) */}
+            <section className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
+              <div className="flex justify-between items-center mb-3">
+                <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
+                  <HeartHandshake size={16} color="#7c3aed" />
+                  <span>Transplante</span>
+                </h2>
+                <span style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '8px', background: transplantOpt.badgeBg, color: transplantOpt.color, border: `1px solid ${transplantOpt.border}`, fontWeight: 'bold' }}>
+                  {transplantOpt.label}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-2.5 text-xs">
+                <div className="p-2.5 rounded-xl border" style={{ background: transplantOpt.badgeBg, borderColor: transplantOpt.border }}>
+                  <span className="font-semibold block mb-0.5" style={{ color: transplantOpt.color }}>
+                    Situação SNT: {transplantOpt.label}
+                  </span>
+                  <p className="text-slate-600" style={{ fontSize: '0.70rem', lineHeight: '1.3' }}>
+                    {patient.statusTransplante === 'Contraindicado Clínico'
+                      ? 'Paciente com contraindicação clínica atual para inscrição ativa no SNT.'
+                      : patient.statusTransplante === 'Inscrito / Ativo'
+                      ? 'Inscrito na lista única do SNT. Manter sorologias e exames semestrais vigentes.'
+                      : patient.statusTransplante === 'Em Preparo / Avaliação'
+                      ? 'Em fase de exames e pareceres com equipe de transplante renal.'
+                      : patient.statusTransplante === 'Transplantado'
+                      ? 'Transplante renal realizado. Acompanhamento ambulatorial.'
+                      : 'Avaliação pré-transplante pendente de protocolo inicial.'}
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-1.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsChecklistModalOpen(true)}
+                    className="btn btn-outline w-full"
+                    style={{ 
+                      padding: '0.45rem 0.75rem', 
+                      fontSize: '0.75rem', 
+                      fontWeight: '600', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between',
+                      borderRadius: '10px',
+                      borderColor: '#ddd6fe',
+                      background: '#f5f3ff',
+                      color: '#6d28d9'
+                    }}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <CheckSquare size={14} color="#7c3aed" />
+                      <span>Checklist SNT</span>
+                    </span>
+                    <ChevronRight size={13} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsTransplantReportOpen(true)}
+                    className="btn btn-outline w-full"
+                    style={{ 
+                      padding: '0.45rem 0.75rem', 
+                      fontSize: '0.75rem', 
+                      fontWeight: '600', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between',
+                      borderRadius: '10px',
+                      borderColor: '#bfdbfe',
+                      background: '#eff6ff',
+                      color: '#1d4ed8'
+                    }}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <Printer size={14} color="#2563eb" />
+                      <span>Encaminhamento</span>
+                    </span>
+                    <ChevronRight size={13} />
+                  </button>
+                </div>
+              </div>
             </section>
           </div>
 
@@ -1921,10 +2105,10 @@ export default function PatientProfile() {
                   color: '#b45309',
                   fontWeight: '600'
                 }}
-                title="Emitir e imprimir Boletim de Saúde & Conquistas para o paciente"
+                title="Boletim de Saúde"
               >
                 <Trophy size={14} color="#d97706" />
-                <span>Boletim do Paciente</span>
+                <span>Boletim</span>
               </button>
 
               <button 
@@ -1944,12 +2128,12 @@ export default function PatientProfile() {
                 title="Importar laudo em PDF, foto ou planilha para este paciente"
               >
                 <UploadCloud size={14} color="#2563eb" />
-                <span>Importar Laudo</span>
+                <span>Importar</span>
               </button>
 
               <button className="btn btn-primary" onClick={handleOpenNewExam} style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <Plus size={14} />
-                <span>Novo Registro de Exame</span>
+                <span>+ Exame</span>
               </button>
             </div>
           </div>
@@ -2154,11 +2338,11 @@ export default function PatientProfile() {
                       <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Hb</th>
                       <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>IST/Ferritina</th>
                       <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>PTH</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>P/Ca</th>
+                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>P Ca</th>
                       <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Potássio</th>
                       <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Kt/V</th>
                       <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Albumina</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Glic / TGP</th>
+                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Glic TGP</th>
                       <th style={{ padding: '0.65rem 0.8rem', textAlign: 'right', color: '#475569' }}>Ações</th>
                     </tr>
                   </thead>
@@ -2370,7 +2554,7 @@ export default function PatientProfile() {
             
             <button className="btn btn-primary" onClick={handleOpenNewMedication} style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
               <Plus size={14} />
-              <span>Nova Prescrição</span>
+              <span>+ Prescrição</span>
             </button>
           </div>
 
@@ -2547,7 +2731,7 @@ export default function PatientProfile() {
 
             <button className="btn btn-primary" onClick={handleOpenNewEvolution} style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
               <Plus size={14} />
-              <span>Registrar Evolução</span>
+              <span>+ Evolução</span>
             </button>
           </div>
 
@@ -2556,7 +2740,7 @@ export default function PatientProfile() {
               <FileText size={32} style={{ margin: '0 auto 0.5rem', opacity: 0.4 }} />
               <p className="text-sm">Nenhuma evolução registrada para este paciente.</p>
               <button className="btn btn-outline mt-3" onClick={handleOpenNewEvolution} style={{ fontSize: '0.8rem' }}>
-                Registrar Primeira Evolução
+                + Evolução
               </button>
             </div>
           ) : (
@@ -2659,7 +2843,7 @@ export default function PatientProfile() {
               style={{ padding: '0.5rem 1rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '5px' }}
             >
               <Plus size={14} />
-              <span>Nova Receita</span>
+              <span>+ Receita</span>
             </button>
           </div>
 
@@ -2673,7 +2857,7 @@ export default function PatientProfile() {
                 onClick={() => handleOpenNewPrescription('simples')}
                 style={{ fontSize: '0.8rem', padding: '0.4rem 1rem' }}
               >
-                Emitir Primeira Receita
+                + Receita
               </button>
             </div>
           ) : (
@@ -2695,11 +2879,11 @@ export default function PatientProfile() {
                 const badgeBorder = isEspecial ? '1px solid #e9d5ff' : (isAnti ? '1px solid #fde68a' : (isAltoCusto ? '1px solid #a7f3d0' : 'none'));
 
                 const tipoLabel = isEspecial 
-                  ? 'Controle Especial (2 Vias)' 
+                  ? 'Controle Especial' 
                   : (isAnti 
-                      ? 'Antimicrobianos (2 Vias)' 
+                      ? 'Antimicrobianos' 
                       : (isAltoCusto 
-                          ? 'Alto Custo (LME)' 
+                          ? 'LME' 
                           : 'Receituário Simples'));
 
                 return (
@@ -2929,7 +3113,7 @@ export default function PatientProfile() {
             <div className="flex justify-between items-center mb-4 border-b pb-3" style={{ borderColor: 'var(--border)' }}>
               <div className="flex items-center gap-2">
                 <Scale size={20} color="#059669" />
-                <h2 className="text-base font-bold">Registrar Pesagem do Paciente</h2>
+                <h2 className="text-base font-bold">Registrar Peso</h2>
               </div>
               <button 
                 type="button" 
@@ -3021,7 +3205,7 @@ export default function PatientProfile() {
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={savingWeight}>
                   {savingWeight ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-                  <span>{savingWeight ? 'Gravando...' : 'Salvar Pesagem'}</span>
+                  <span>{savingWeight ? 'Gravando...' : 'Salvar'}</span>
                 </button>
               </div>
             </form>
@@ -3068,7 +3252,7 @@ export default function PatientProfile() {
             <div className="flex justify-between items-center mb-6 pb-4 border-b no-print" style={{ borderColor: '#e2e8f0' }}>
               <div className="flex items-center gap-2">
                 <Printer size={20} color="#2563eb" />
-                <strong className="text-base">Laudo Médico de Encaminhamento ao Transplante Renal</strong>
+                <strong className="text-base">Laudo de Encaminhamento ao Transplante</strong>
               </div>
               <div className="flex items-center gap-2">
                 <button 
@@ -3277,11 +3461,11 @@ export default function PatientProfile() {
 
               <div className="flex flex-col gap-2">
                 {[
-                  { label: "Sorologia HIV 1 e 2 (Elisa / Quimioluminescência)", validade: "Semestral" },
-                  { label: "Sorologias Hepatite B (HBsAg, Anti-HBs, Anti-HBc total)", validade: "Semestral" },
+                  { label: "Sorologia HIV 1 e 2", validade: "Semestral" },
+                  { label: "Sorologias Hepatite B (HBsAg, Anti-HBs, Anti-HBc)", validade: "Semestral" },
                   { label: "Sorologia Hepatite C (Anti-HCV)", validade: "Semestral" },
-                  { label: "Sorologia Chagas (Doença de Chagas) e HTLV I/II", validade: "Anual" },
-                  { label: "Sorologia Citomegalovírus (CMV IgG e IgM)", validade: "Anual" },
+                  { label: "Sorologia Chagas e HTLV", validade: "Anual" },
+                  { label: "Sorologia Citomegalovírus (CMV)", validade: "Anual" },
                   { label: "Tipagem Sanguínea ABO e Fator Rh (Duas amostras independentes)", validade: "Definitiva" },
                   { label: "Painel Imunológico de Anticorpos Citotóxicos (PRA Classe I e II)", validade: "Trimestral" },
                   { label: "Eletrocardiograma (ECG) + Ecocardiograma Transtorácico (ECO)", validade: "Anual" },
@@ -3305,7 +3489,7 @@ export default function PatientProfile() {
                   className="btn btn-primary"
                   onClick={() => setIsChecklistModalOpen(false)}
                 >
-                  Concluir Conferência
+                  Concluir
                 </button>
               </div>
             </div>
@@ -3371,20 +3555,20 @@ export default function PatientProfile() {
 
               <div className="flex flex-col gap-2">
                 <div className="p-3 rounded-xl border bg-slate-50 flex flex-col gap-1">
-                  <strong className="text-slate-800 text-sm">Opção 1: Vancomicina + Heparina (Gram-positivos / MRSA)</strong>
+                  <strong className="text-slate-800 text-sm">Opção 1: Vancomicina e Heparina (Gram-positivos)</strong>
                   <span className="text-slate-600">• Vancomicina: Concentração final 5 mg/ml</span>
                   <span className="text-slate-600">• Heparina: 5.000 UI/ml (relação 1:1)</span>
                   <span className="text-muted text-xxs">Preparo: 0,5 ml de Vancomicina (50 mg/ml) + 0,5 ml de Heparina (5.000 UI/ml) + 4 ml de SF 0,9%.</span>
                 </div>
 
                 <div className="p-3 rounded-xl border bg-slate-50 flex flex-col gap-1">
-                  <strong className="text-slate-800 text-sm">Opção 2: Cefazolina + Heparina (MSSA sensível)</strong>
+                  <strong className="text-slate-800 text-sm">Opção 2: Cefazolina e Heparina (MSSA sensível)</strong>
                   <span className="text-slate-600">• Cefazolina: Concentração final 10 mg/ml</span>
                   <span className="text-slate-600">• Heparina: 5.000 UI/ml</span>
                 </div>
 
                 <div className="p-3 rounded-xl border bg-slate-50 flex flex-col gap-1">
-                  <strong className="text-slate-800 text-sm">Opção 3: Gentamicina + Heparina (Gram-negativos / Pseudomonas)</strong>
+                  <strong className="text-slate-800 text-sm">Opção 3: Gentamicina e Heparina (Gram-negativos)</strong>
                   <span className="text-slate-600">• Gentamicina: Concentração final 1 mg/ml</span>
                   <span className="text-slate-600">• Heparina: 2.500 a 5.000 UI/ml</span>
                 </div>
@@ -3395,7 +3579,7 @@ export default function PatientProfile() {
                   className="btn btn-primary"
                   onClick={() => setIsLockTherapyModalOpen(false)}
                 >
-                  Entendido
+                  Fechar
                 </button>
               </div>
             </div>

@@ -360,7 +360,7 @@ export default function DoctorProfile() {
             onClick={handleOpenAddLocation}
             style={{ padding: '0.45rem 0.95rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
           >
-            <Plus size={15} /> Adicionar Local
+            <Plus size={15} /> + Local
           </button>
         </div>
 
@@ -781,7 +781,7 @@ export default function DoctorProfile() {
                   }}
                 >
                   {isUpdatingPassword ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
-                  <span>{isUpdatingPassword ? 'Salvando...' : 'Salvar Nova Senha'}</span>
+                  <span>{isUpdatingPassword ? 'Salvando...' : 'Salvar'}</span>
                 </button>
               </div>
             </div>
@@ -794,7 +794,7 @@ export default function DoctorProfile() {
           </button>
           <button type="submit" className="btn btn-primary" disabled={saving}>
             {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-            {saving ? 'Salvando...' : 'Salvar Alterações'}
+            {saving ? 'Salvando...' : 'Salvar'}
           </button>
         </div>
       </form>
@@ -989,7 +989,7 @@ export default function DoctorProfile() {
                   Cancelar
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  {editingLocationId ? 'Salvar Alterações' : 'Adicionar Local'}
+                  Salvar
                 </button>
               </div>
             </form>

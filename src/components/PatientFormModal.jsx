@@ -15,19 +15,19 @@ const TIPOS_ACESSO_PADRAO = [
   { value: 'FAV', label: 'FAV (Fístula Arteriovenosa)' },
   { value: 'CDL', label: 'CDL (Cateter Duplo Lúmen)' },
   { value: 'Permcath', label: 'Permcath (Cateter Tunelizado)' },
-  { value: 'Prótese', label: 'Prótese / Enxerto Vascular' },
-  { value: 'Cateter Peritoneal', label: 'Cateter Peritoneal (Tenckhoff)' },
+  { value: 'Prótese', label: 'Prótese Vascular' },
+  { value: 'Cateter Peritoneal', label: 'Cateter Peritoneal' },
 ];
 
 export const ETIOLOGIAS_DRC_PADRAO = [
-  { value: 'Diabetes Mellitus / Nefropatia Diabética', label: 'Diabetes Mellitus / Nefropatia Diabética' },
-  { value: 'Hipertensão Arterial Sistêmica (HAS)', label: 'Hipertensão Arterial Sistêmica (HAS / Nefroesclerose)' },
-  { value: 'Glomerulonefrite Crônica (GNC)', label: 'Glomerulonefrite Crônica (GNC / Glomerulopatias)' },
-  { value: 'Doença Renal Policística Autossômica Dominante (DRPAD)', label: 'Doença Renal Policística Autossômica Dominante (DRPAD)' },
-  { value: 'Nefropatia Lúpica / Doenças Autoimunes', label: 'Nefropatia Lúpica / Doenças Autoimunes / Vasculites' },
-  { value: 'Uropatia Obstrutiva / Litíase Renal', label: 'Uropatia Obstrutiva / Litíase Renal' },
-  { value: 'Nefrite Túbulo-Intersticial Crônica (NTIC)', label: 'Nefrite Túbulo-Intersticial Crônica (NTIC)' },
-  { value: 'Doença Renal Indeterminada / Desconhecida', label: 'Doença Renal Indeterminada / Desconhecida' },
+  { value: 'Diabetes Mellitus / Nefropatia Diabética', label: 'Nefropatia Diabética' },
+  { value: 'Hipertensão Arterial Sistêmica (HAS)', label: 'Nefroesclerose Hipertensiva' },
+  { value: 'Glomerulonefrite Crônica (GNC)', label: 'Glomerulonefrite Crônica' },
+  { value: 'Doença Renal Policística Autossômica Dominante (DRPAD)', label: 'Doença Renal Policística' },
+  { value: 'Nefropatia Lúpica / Doenças Autoimunes', label: 'Nefrite Lúpica' },
+  { value: 'Uropatia Obstrutiva / Litíase Renal', label: 'Uropatia Obstrutiva' },
+  { value: 'Nefrite Túbulo-Intersticial Crônica (NTIC)', label: 'Nefrite Túbulo-Intersticial' },
+  { value: 'Doença Renal Indeterminada / Desconhecida', label: 'Causa Indeterminada' },
 ];
 
 const LOCALIZACOES_ACESSO_PADRAO = [
@@ -42,7 +42,7 @@ const LOCALIZACOES_ACESSO_PADRAO = [
   { value: 'Femoral Esquerda', label: 'Femoral Esquerda' },
   { value: 'MIE', label: 'MIE - Membro Inferior Esquerdo' },
   { value: 'MID', label: 'MID - Membro Inferior Direito' },
-  { value: 'Abdominal / Peritoneal', label: 'Abdominal / Peritoneal' },
+  { value: 'Abdominal / Peritoneal', label: 'Abdominal Peritoneal' },
 ];
 
 const EMPTY_LOCAIS = [];
@@ -330,7 +330,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
             <h3 className="font-bold text-sm text-muted uppercase tracking-wider mb-3">Identificação</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
               <div style={{ gridColumn: '1 / -1' }}>
-                <label className="text-sm font-semibold mb-1 block">Nome Completo *</label>
+                <label className="text-sm font-semibold mb-1 block">Nome *</label>
                 <input 
                   type="text" 
                   className="input-field" 
@@ -394,7 +394,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block">Unidade de Atendimento *</label>
+                <label className="text-sm font-semibold mb-1 block">Unidade *</label>
                 {locaisAtuacao && locaisAtuacao.length > 0 && !customClinic ? (
                   <div className="flex flex-col gap-1">
                     <select 
@@ -443,7 +443,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block">Hospital de Retaguarda</label>
+                <label className="text-sm font-semibold mb-1 block">Hospital</label>
                 <input 
                   type="text" 
                   className="input-field" 
@@ -809,7 +809,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                   }}
                 >
                   <AlertTriangle size={12} color="#b91c1c" />
-                  PROTOCOLO S/H ATIVO
+                  SEM HEPARINA
                 </span>
               )}
             </div>
@@ -970,7 +970,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                 <div style={{ gridColumn: '1 / -1' }} className="p-4 bg-red-50 border border-red-200 rounded-xl">
                   <label className="text-xs font-bold text-red-900 mb-1.5 flex items-center gap-1.5">
                     <AlertTriangle size={15} color="#dc2626" />
-                    <span>Motivo / Justificativa Clínica para Diálise SEM Heparina:</span>
+                    <span>Motivo Sem Heparina:</span>
                   </label>
                   <input
                     type="text"
@@ -989,7 +989,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               )}
 
               <div style={{ gridColumn: '1 / -1' }}>
-                <label className="text-sm font-semibold mb-1.5 block">Observações de Infusão / Conduta</label>
+                <label className="text-sm font-semibold mb-1.5 block">Observações de Conduta</label>
                 <input
                   type="text"
                   className="input-field"
@@ -1025,7 +1025,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                   title="Registrar óbito e retirar paciente do sistema permanentemente"
                 >
                   <UserX size={15} color="#e11d48" />
-                  <span>Registrar Óbito</span>
+                  <span>Óbito</span>
                 </button>
               )}
             </div>
@@ -1036,7 +1036,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </button>
               <button type="submit" className="btn btn-primary" disabled={saving}>
                 {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-                {saving ? 'Salvando...' : 'Salvar Paciente'}
+                {saving ? 'Salvando...' : 'Salvar'}
               </button>
             </div>
           </div>

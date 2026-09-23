@@ -575,7 +575,7 @@ export default function AdminDashboard() {
                 Super Admin
               </span>
             </div>
-            <p className="text-muted text-sm mt-0.5">Gestão de Licenças Médicas, Auditoria & Finanças</p>
+            <p className="text-muted text-sm mt-0.5">Gestão de Licenças e Finanças</p>
           </div>
         </div>
 
@@ -999,7 +999,7 @@ export default function AdminDashboard() {
               </p>
             </div>
             <span style={{ fontSize: '0.75rem', background: '#ede9fe', color: '#6d28d9', padding: '4px 10px', borderRadius: '10px', fontWeight: '600' }}>
-              LGPD & Segurança
+              Segurança LGPD
             </span>
           </div>
 
@@ -1219,13 +1219,13 @@ export default function AdminDashboard() {
                       </span>
                     </div>
                     <div className="text-xs text-muted">Chave: <strong>{gatewayConfig.pix?.chavePix || 'CNPJ Cadastrado'}</strong></div>
-                    <div className="text-xs text-muted">Banco: {gatewayConfig.pix?.banco || 'Cora / BB'}</div>
+                    <div className="text-xs text-muted">Banco: {gatewayConfig.pix?.banco || 'Cora ou BB'}</div>
                   </div>
 
                   {/* Card Cartão / Asaas */}
                   <div className="p-3.5 rounded-xl border border-indigo-200 bg-indigo-50/40">
                     <div className="flex justify-between items-center mb-1">
-                      <strong className="text-xs block text-indigo-900 font-bold">Cartão & Recorrência</strong>
+                      <strong className="text-xs block text-indigo-900 font-bold">Cartão Recorrente</strong>
                       <span style={{ fontSize: '0.7rem', background: '#e0e7ff', color: '#3730a3', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
                         {gatewayConfig.cartao?.provedor || 'Asaas'} ({gatewayConfig.cartao?.ambiente || 'sandbox'})
                       </span>
@@ -1237,7 +1237,7 @@ export default function AdminDashboard() {
                   {/* Card Regras de Inadimplência */}
                   <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
                     <div className="flex justify-between items-center mb-1">
-                      <strong className="text-xs block text-slate-800 font-bold">Inadimplência & Suspensão</strong>
+                      <strong className="text-xs block text-slate-800 font-bold">Inadimplência</strong>
                       <span style={{ fontSize: '0.7rem', background: '#dcfce7', color: '#15803d', padding: '2px 6px', borderRadius: '6px', fontWeight: 'bold' }}>
                         {gatewayConfig.regrasCobranca?.suspensaoAutomatica ? 'Automático' : 'Manual'}
                       </span>
@@ -1415,8 +1415,8 @@ export default function AdminDashboard() {
                           {plan.nome} — R$ {Number(plan.valor).toFixed(2)} ({plan.intervalo || 'mensal'})
                         </option>
                       ))}
-                      <option value="Personalizado">Plano Personalizado / Avulso</option>
-                      <option value="Demonstração">Plano Demonstração (Gratuito)</option>
+                      <option value="Personalizado">Plano Personalizado</option>
+                      <option value="Demonstração">Plano Demonstração</option>
                     </select>
                   </div>
 
@@ -1593,7 +1593,7 @@ export default function AdminDashboard() {
                       <option value="1">+1 Mês (R$ {monthlyRate.toFixed(2)})</option>
                       <option value="3">+3 Meses (R$ {(monthlyRate * 3).toFixed(2)})</option>
                       <option value="6">+6 Meses (R$ {(monthlyRate * 6).toFixed(2)})</option>
-                      <option value="12">+12 Meses / Anual com Bônus (R$ {annualRate.toFixed(2)})</option>
+                      <option value="12">+12 Meses (Anual com Bônus: R$ {annualRate.toFixed(2)})</option>
                     </select>
                   );
                 })()}

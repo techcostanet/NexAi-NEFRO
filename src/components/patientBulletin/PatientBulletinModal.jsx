@@ -121,7 +121,7 @@ export default function PatientBulletinModal({
     const batidas = filtered.filter(c => c.status === GOAL_STATUS.CONQUISTA).length;
     const taxa = total > 0 ? Math.round((batidas / total) * 100) : 100;
     
-    let text = `🎉 *Boletim de Saúde & Conquistas - Nex-Ai.NEFRO*\n`;
+    let text = `🎉 *Boletim de Saúde - Nex-Ai.NEFRO*\n`;
     text += `Olá, *${pacienteNome}*! Aqui está o resumo dos seus exames avaliados:\n\n`;
     text += `🏆 *Seu Desempenho:* ${batidas} de ${total} metas alcançadas (${taxa}% de Sucesso!)\n\n`;
     
@@ -248,7 +248,7 @@ export default function PatientBulletinModal({
               title="Baixar arquivo PDF nativo"
             >
               {isDownloadingPdf ? <Loader2 size={14} className="animate-spin" /> : <FileDown size={14} color="#2563eb" />}
-              <span>{isDownloadingPdf ? 'Gerando...' : 'Baixar PDF'}</span>
+              <span>{isDownloadingPdf ? 'Gerando...' : 'PDF'}</span>
             </button>
 
             <button 
@@ -259,7 +259,7 @@ export default function PatientBulletinModal({
               title="Imprimir folha A4"
             >
               <Printer size={14} />
-              <span>Imprimir A4</span>
+              <span>Imprimir</span>
             </button>
 
             <button 

@@ -132,8 +132,8 @@ export default function LandingPage() {
           <div className="hidden md:flex items-center gap-6" style={{ fontSize: '0.88rem', fontWeight: '600', color: '#475569' }}>
             <a href="#funcionalidades" className="hover:text-blue-600 transition" style={{ textDecoration: 'none', color: 'inherit' }}>Funcionalidades</a>
             <a href="#telas" className="hover:text-blue-600 transition" style={{ textDecoration: 'none', color: 'inherit' }}>Telas do Sistema</a>
-            <a href="#seguranca" className="hover:text-blue-600 transition" style={{ textDecoration: 'none', color: 'inherit' }}>Segurança & LGPD</a>
-            <a href="#planos" className="hover:text-blue-600 transition" style={{ textDecoration: 'none', color: 'inherit' }}>Planos & Preços</a>
+            <a href="#seguranca" className="hover:text-blue-600 transition" style={{ textDecoration: 'none', color: 'inherit' }}>Segurança LGPD</a>
+            <a href="#planos" className="hover:text-blue-600 transition" style={{ textDecoration: 'none', color: 'inherit' }}>Planos</a>
             <a href="#faq" className="hover:text-blue-600 transition" style={{ textDecoration: 'none', color: 'inherit' }}>Dúvidas</a>
           </div>
 
@@ -181,7 +181,7 @@ export default function LandingPage() {
             }}
           >
             <Sparkles size={14} color="#2563eb" />
-            <span>Desenvolvido exclusivamente para Nefrologistas & Clínicas de Diálise</span>
+            <span>Exclusivo para Nefrologistas e Clínicas de Diálise</span>
           </div>
 
           {/* Headline Principal */}
@@ -253,9 +253,9 @@ export default function LandingPage() {
 
           {/* Micro Prova Social */}
           <div className="flex justify-center items-center gap-6 mt-4 text-xs font-semibold text-slate-500 flex-wrap">
-            <span className="flex items-center gap-1.5"><CheckCircle2 size={15} color="#16a34a" /> Sem cartão de crédito</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 size={15} color="#16a34a" /> Ativação em 30 segundos</span>
-            <span className="flex items-center gap-1.5"><CheckCircle2 size={15} color="#16a34a" /> 100% Conforme LGPD & CFM</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 size={15} color="#16a34a" /> Sem cartão</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 size={15} color="#16a34a" /> Ativação Imediata</span>
+            <span className="flex items-center gap-1.5"><CheckCircle2 size={15} color="#16a34a" /> LGPD e CFM</span>
           </div>
 
           {/* Preview Hero / Mockup do Painel */}
@@ -435,11 +435,11 @@ export default function LandingPage() {
                 <Syringe size={22} />
               </div>
               <div className="flex items-center gap-2 mb-1.5">
-                <h3 className="font-bold text-base text-slate-900 m-0">Anticoagulação & Heparina</h3>
+                <h3 className="font-bold text-base text-slate-900 m-0">Heparina e Anticoagulação</h3>
                 <span style={{ fontSize: '0.68rem', background: '#dbeafe', color: '#1d4ed8', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>Exclusivo</span>
               </div>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Controle individual de ataque e manutenção, Enoxaparina 20/40mg e modo Sem Heparina com alertas visuais para prevenir coagulação de linhas e sangramentos em FAVs recentes.
+                Controle individual de ataque e manutenção, Enoxaparina e modo Sem Heparina com alertas visuais para prevenir coagulação de linhas e sangramentos.
               </p>
             </div>
 
@@ -449,7 +449,7 @@ export default function LandingPage() {
                 <FileCheck size={22} />
               </div>
               <div className="flex items-center gap-2 mb-1.5">
-                <h3 className="font-bold text-base text-slate-900 m-0">Receituário em 2 Vias & A4</h3>
+                <h3 className="font-bold text-base text-slate-900 m-0">Receituário Oficial em 2 Vias</h3>
                 <span style={{ fontSize: '0.68rem', background: '#ede9fe', color: '#6d28d9', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>Novo</span>
               </div>
               <p className="text-xs text-slate-600 leading-relaxed">
@@ -501,7 +501,7 @@ export default function LandingPage() {
               <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#dcfce7', color: '#15803d', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
                 <BarChart3 size={22} />
               </div>
-              <h3 className="font-bold text-base text-slate-900 mb-1.5">Painel Laboratorial & Distúrbio Ósseo</h3>
+              <h3 className="font-bold text-base text-slate-900 mb-1.5">Painel Laboratorial e DMO</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
                 Acompanhe a curva histórica de PTH, Fósforo, Cálcio, Ferritina, IST e Kt/V com indicadores visuais de adequação conforme as diretrizes da SBN e KDIGO.
               </p>
@@ -534,7 +534,7 @@ export default function LandingPage() {
               <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#ffedd5', color: '#c2410c', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
                 <Users size={22} />
               </div>
-              <h3 className="font-bold text-base text-slate-900 mb-1.5">Organização por Clínicas & Turnos</h3>
+              <h3 className="font-bold text-base text-slate-900 mb-1.5">Organização por Clínicas e Turnos</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
                 Filtre seus pacientes por unidade de atendimento (Clínica A, Clínica B, Hospital) e por turno (1º, 2º ou 3º turno), facilitando o plantão e a ronda.
               </p>
@@ -545,7 +545,7 @@ export default function LandingPage() {
               <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#ecfdf5', color: '#047857', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
                 <ShieldCheck size={22} />
               </div>
-              <h3 className="font-bold text-base text-slate-900 mb-1.5">Conformidade Legal & LGPD</h3>
+              <h3 className="font-bold text-base text-slate-900 mb-1.5">Conformidade LGPD</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
                 Garantia de sigilo médico absoluto: nenhum dado clínico é compartilhado e todos os registros são criptografados com Tecnologia Google e backup contínuo.
               </p>
@@ -618,7 +618,7 @@ export default function LandingPage() {
               className={`btn ${activeShowcaseTab === 'medicamentos' ? 'btn-primary' : 'btn-outline'}`}
               style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
             >
-              💊 Prescrições & Ciclos
+              💊 Prescrições
             </button>
             <button 
               type="button"
@@ -626,7 +626,7 @@ export default function LandingPage() {
               className={`btn ${activeShowcaseTab === 'prontuario' ? 'btn-primary' : 'btn-outline'}`}
               style={{ fontSize: '0.85rem', padding: '0.5rem 1rem', borderRadius: '12px' }}
             >
-              👤 Prontuário & Acessos
+              👤 Prontuário
             </button>
           </div>
 
@@ -713,11 +713,11 @@ export default function LandingPage() {
               <div>
                 <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                   <div>
-                    <h3 className="font-bold text-lg text-slate-900">Receituário Oficial & Controle Especial (2 Vias)</h3>
+                    <h3 className="font-bold text-lg text-slate-900">Receituário Oficial em 2 Vias</h3>
                     <p className="text-xs text-muted">Emissão rápida de receitas com retenção de farmácia, antimicrobianos e LME em folha timbrada A4 ou PDF</p>
                   </div>
                   <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#15803d', border: '1px solid #bbf7d0', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
-                    Portaria 344/98 & RDC 20/2011
+                    Portaria 344 e RDC 20
                   </span>
                 </div>
 
@@ -728,7 +728,7 @@ export default function LandingPage() {
                       <span className="text-[11px] text-slate-500">São Paulo - SP • Dr. Marcelo Ramos • CRM-SP 654321 • RQE 98765</span>
                     </div>
                     <span className="text-xs bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 rounded-md font-bold">
-                      1ª VIA (FARMÁCIA) / 2ª VIA (PACIENTE)
+                      1ª VIA FARMÁCIA • 2ª VIA PACIENTE
                     </span>
                   </div>
 
@@ -769,13 +769,13 @@ export default function LandingPage() {
                     <p className="text-xs text-muted">Relatório humanizado em linguagem leiga para melhorar a adesão à dieta, hidratação e diálise</p>
                   </div>
                   <span style={{ fontSize: '0.72rem', background: '#fef3c7', color: '#b45309', border: '1px solid #fde68a', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
-                    Adesão & Cuidado Humanizado
+                    Adesão do Paciente
                   </span>
                 </div>
 
                 <div className="p-4 bg-gradient-to-br from-blue-50 via-indigo-50 to-emerald-50 border border-blue-200 rounded-xl">
                   <div className="text-center pb-2 mb-3 border-b border-blue-200">
-                    <strong className="text-base text-slate-900 block font-bold">🌟 Boletim de Saúde & Conquistas de Amélia Silva</strong>
+                    <strong className="text-base text-slate-900 block font-bold">🌟 Boletim de Saúde de Amélia Silva</strong>
                     <span className="text-xs text-slate-600">Acompanhamento do seu tratamento de hemodiálise • Setembro de 2026</span>
                   </div>
 
@@ -814,11 +814,11 @@ export default function LandingPage() {
               <div>
                 <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                   <div>
-                    <h3 className="font-bold text-lg text-slate-900">Metabolismo Ósseo, Anemia & Cinética</h3>
+                    <h3 className="font-bold text-lg text-slate-900">Metabolismo Ósseo e Anemia</h3>
                     <p className="text-xs text-muted">Controle rigoroso dos principais biomarcadores da DRC estágio 5D</p>
                   </div>
                   <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#15803d', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
-                    Diretrizes SBN / KDIGO
+                    Diretrizes SBN KDIGO
                   </span>
                 </div>
 
@@ -839,7 +839,7 @@ export default function LandingPage() {
                     <span className="text-xs text-amber-600 block mt-0.5">Alvo: 150 - 600 pg/mL</span>
                   </div>
                   <div className="p-3 bg-purple-50 border border-purple-200 rounded-xl">
-                    <span className="text-xs text-purple-800 font-semibold block">Ferritina & IST</span>
+                    <span className="text-xs text-purple-800 font-semibold block">Ferritina e IST</span>
                     <strong className="text-xl text-purple-700">420 ng/mL • 28%</strong>
                     <span className="text-xs text-purple-600 block mt-0.5">Estoques de ferro OK</span>
                   </div>
@@ -851,7 +851,7 @@ export default function LandingPage() {
               <div>
                 <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                   <div>
-                    <h3 className="font-bold text-lg text-slate-900">Catálogo Nefrológico & Alertas de Ciclos</h3>
+                    <h3 className="font-bold text-lg text-slate-900">Catálogo Nefrológico</h3>
                     <p className="text-xs text-muted">Prescrição contínua e temporária com controle de ampolas e término</p>
                   </div>
                   <span style={{ fontSize: '0.72rem', background: '#f3e8ff', color: '#7c3aed', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
@@ -886,7 +886,7 @@ export default function LandingPage() {
               <div>
                 <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
                   <div>
-                    <h3 className="font-bold text-lg text-slate-900">Prontuário Especializado & Acesso Vascular</h3>
+                    <h3 className="font-bold text-lg text-slate-900">Prontuário e Acesso Vascular</h3>
                     <p className="text-xs text-muted">Histórico clínico focado na Doença Renal Crônica e Comorbidades</p>
                   </div>
                   <span style={{ fontSize: '0.72rem', background: '#fee2e2', color: '#dc2626', padding: '3px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
@@ -926,7 +926,7 @@ export default function LandingPage() {
           </div>
 
           <h2 className="text-3xl font-black text-slate-900" style={{ letterSpacing: '-0.02em' }}>
-            Segurança de Nível Bancário & Conformidade Médica Rigorosa
+            Segurança Avançada e Conformidade Médica
           </h2>
           <p className="text-muted text-sm max-w-xl mx-auto mt-2 mb-8">
             Desenvolvido para proteger os dados mais sensíveis da sua clínica e garantir conformidade jurídica irrestrita.
@@ -1217,15 +1217,15 @@ export default function LandingPage() {
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
-                    <strong>Controle de Heparina & Anticoagulação</strong>
+                    <strong>Heparina e Anticoagulação</strong>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
-                    <strong>Receituário em 2 Vias (Portaria 344/98)</strong>
+                    <strong>Receituário em 2 Vias</strong>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
-                    <strong>Boletim Educativo & Transplante Renal</strong>
+                    <strong>Boletim e Transplante Renal</strong>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#2563eb" style={{ flexShrink: 0 }} />
@@ -1326,11 +1326,11 @@ export default function LandingPage() {
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
-                    <span>Controle de Heparina & Anticoagulação</span>
+                    <span>Heparina e Anticoagulação</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
-                    <span>Receituário em 2 Vias & A4 Oficial</span>
+                    <span>Receituário Oficial em 2 Vias</span>
                   </li>
                   <li style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <Check size={18} color="#16a34a" style={{ flexShrink: 0 }} />
@@ -1540,13 +1540,13 @@ export default function LandingPage() {
         <div className="container" style={{ maxWidth: '1200px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div className="flex items-center gap-3">
             <BrandLogo size="sm" textColor="light" />
-            <span>• Plataforma Especializada em Nefrologia Clínica & Hemodiálise</span>
+            <span>• Nefrologia Clínica e Hemodiálise</span>
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-slate-400">Hospedado com Tecnologia Google</span>
+            <span className="text-slate-400">Tecnologia Google</span>
             <span>•</span>
-            <span className="text-slate-400">Conforme LGPD & CFM</span>
+            <span className="text-slate-400">LGPD e CFM</span>
             <span>•</span>
             <button 
               onClick={() => setIsChangelogOpen(true)}

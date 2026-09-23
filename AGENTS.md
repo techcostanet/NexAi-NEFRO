@@ -138,13 +138,22 @@ A cada alteração, melhoria de funcionalidade, ajuste de layout ou correção d
 
 ---
 
-## ⚡ Atalho de Execução
-Para executar todo esse fluxo automaticamente com um único comando:
-```bash
-npm run release "Descrição das mudanças realizadas"
-```
-ou
-```bash
-npm run deploy "Descrição das mudanças realizadas"
-```
+## 🎨 4. Diretriz de Design & Microcopy Conciso (Regra de Poucas Palavras)
+
+Toda criação, melhoria, modificação ou correção em qualquer tela, modal, componente ou relatório do **NexAi-NEFRO** DEVE seguir estritamente as regras de microcopy e design abaixo:
+
+1. **Regra de Poucas Palavras (Minimalismo Cognitivo)**:
+   - Botões de ação, itens de menu e abas devem conter preferencialmente **1 palavra** (ex: *Prescrever*, *Transplante*, *LME*, *Boletim*, *Exames*, *Importar*, *Editar*, *Óbito*, *Salvar*, *Cancelar*).
+   - Evitar frases longas ou explicativas em botões e títulos de seções.
+   - Nomes de campos e rótulos devem ser concisos e diretos (ex: *Acesso:*, *Local:*, *Agulha:*, *Hospital:*, *Convênio:*).
+
+2. **Proibição Terminante de Caracteres Duplos (`&` e `/`) em Rótulos de UI**:
+   - ❌ NUNCA utilizar `&` em botões, abas ou títulos de cards (ex: em vez de *Acesso Vascular & Parâmetros*, use *Acesso Vascular*).
+   - ❌ NUNCA utilizar `/` para fundir ações ou conceitos (ex: em vez de *Prescrever / Receita*, use *Prescrever*; em vez de *1º Tratamento / Início TRS*, use *Início TRS*).
+   - Exceção aceita: unidades de medida médica e laboratoriais formais (ex: `mg/dL`, `ml/min`, `UI/h`, `Seg/Qua/Sex`).
+
+3. **Arquitetura de Layout e Grids Balanceados (Zero Buracos)**:
+   - Em telas desktop e notebooks, grades multi-colunas devem ser preenchidas homogeneamente sem colunas órfãs ou áreas em branco vazias.
+   - Espaçamento hierárquico padrão: cabeçalhos mestres de pacientes e dashboards devem manter respiro mínimo de `1.5rem` (`24px`) em relação a abas e conteúdos inferiores.
+   - Barras de abas devem seguir o padrão de *Segmented Pill Control* com cantos arredondados, fundo suave e estados visuais ativos bem contrastados.
 

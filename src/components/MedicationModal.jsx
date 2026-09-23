@@ -570,7 +570,7 @@ export default function MedicationModal({
                 style={{ width: 16, height: 16, cursor: 'pointer' }}
               />
               <label htmlFor="med-ativo-toggle" className="text-sm font-semibold" style={{ cursor: 'pointer' }}>
-                Prescrição Ativa no Momento (desmarque para suspender / arquivar)
+                Prescrição Ativa
               </label>
             </div>
           )}
@@ -582,7 +582,7 @@ export default function MedicationModal({
             </button>
             <button type="submit" className="btn btn-primary" disabled={saving}>
               {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} />}
-              {saving ? 'Gravando...' : (medicationToEdit ? 'Atualizar Prescrição' : 'Prescrever Medicação')}
+              {saving ? 'Gravando...' : 'Salvar'}
             </button>
           </div>
 

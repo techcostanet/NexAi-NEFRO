@@ -9,7 +9,7 @@ export const DEFAULT_DOCTORS = [
   {
     id: "dr-marcelo",
     nome: "Dr. Marcelo Ramos",
-    titulo: "Médico Nefrologista & Intensivista",
+    titulo: "Médico Nefrologista e Intensivista",
     cpf: "348.912.756-82",
     crm: "654321",
     ufCrm: "SP",

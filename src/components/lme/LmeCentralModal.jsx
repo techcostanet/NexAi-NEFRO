@@ -121,7 +121,7 @@ export default function LmeCentralModal({
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-800 tracking-tight" style={{ margin: 0 }}>
-                Central de LMEs & Medicamentos de Alto Custo
+                Central de LMEs
               </h2>
               <p className="text-xs text-muted" style={{ margin: 0 }}>
                 Vigilância ativa de renovações semestrais e trimestrais da Farmácia de Minas / SES
@@ -336,8 +336,8 @@ export default function LmeCentralModal({
               <thead style={{ position: 'sticky', top: 0, background: '#f8fafc', zIndex: 10, borderBottom: '1.5px solid var(--border)' }}>
                 <tr>
                   <th style={{ padding: '0.65rem 0.85rem', color: '#475569' }}>Paciente</th>
-                  <th style={{ padding: '0.65rem 0.85rem', color: '#475569' }}>Medicamento & Concentração</th>
-                  <th style={{ padding: '0.65rem 0.85rem', color: '#475569' }}>Vigência / Vencimento</th>
+                  <th style={{ padding: '0.65rem 0.85rem', color: '#475569' }}>Medicamento</th>
+                  <th style={{ padding: '0.65rem 0.85rem', color: '#475569' }}>Vigência</th>
                   <th style={{ padding: '0.65rem 0.85rem', color: '#475569' }}>Status</th>
                   <th style={{ padding: '0.65rem 0.85rem', color: '#475569', textAlign: 'right' }}>Ações</th>
                 </tr>

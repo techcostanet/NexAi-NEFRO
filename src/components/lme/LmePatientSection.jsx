@@ -74,7 +74,7 @@ export default function LmePatientSection({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-slate-800" style={{ margin: 0 }}>
-                Medicamentos de Alto Custo (LME / CEAF SUS)
+                Medicamentos de Alto Custo (LME)
               </h3>
               <span style={{ fontSize: '0.70rem', background: '#f1f5f9', color: '#475569', padding: '1px 8px', borderRadius: '10px', fontWeight: 'bold' }}>
                 {lmes.length} cadastrada(s)
@@ -105,7 +105,7 @@ export default function LmePatientSection({
           title="Emitir nova LME com exames recentes do paciente"
         >
           <Plus size={15} />
-          <span>Emitir Nova LME</span>
+          <span>+ LME</span>
         </button>
       </div>
 
@@ -125,7 +125,7 @@ export default function LmePatientSection({
             onClick={onOpenNewLme}
             style={{ fontSize: '0.80rem', padding: '0.45rem 1rem' }}
           >
-            Emitir Primeira LME
+            + LME
           </button>
         </div>
       ) : (

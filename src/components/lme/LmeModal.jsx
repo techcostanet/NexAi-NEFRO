@@ -332,12 +332,12 @@ export default function LmeModal({
           <div style={{ background: '#f8fafc', border: '1px solid var(--border)', borderRadius: '14px', padding: '1rem' }}>
             <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-3">
               <Pill size={16} color="var(--primary)" />
-              <span>1. Medicamento Solicitado & Posologia</span>
+              <span>1. Medicamento Solicitado</span>
             </h3>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.85rem' }}>
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">Fármaco / Princípio Ativo</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Fármaco</label>
                 <select 
                   className="input-field" 
                   value={selectedMedId} 
@@ -353,7 +353,7 @@ export default function LmeModal({
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-700 block mb-1">Concentração / Apresentação</label>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Concentração</label>
                 <select 
                   className="input-field" 
                   value={selectedConcentracaoId} 
@@ -429,7 +429,7 @@ export default function LmeModal({
             <div className="flex justify-between items-center flex-wrap gap-2 mb-3">
               <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2" style={{ margin: 0 }}>
                 <Sparkles size={16} color="var(--primary)" />
-                <span>2. Auditor de Elegibilidade PCDT & Exames Recentes</span>
+                <span>2. Elegibilidade PCDT</span>
               </h3>
               <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
                 Conferência automática com base nos critérios do SUS
@@ -581,7 +581,7 @@ export default function LmeModal({
               title="Baixar Laudo LME e Relatório Circunstanciado em PDF vetorial"
             >
               {downloadingPdf ? <Loader2 className="animate-spin" size={15} /> : <Download size={15} color="#2563eb" />}
-              <span>{downloadingPdf ? 'Gerando...' : 'Baixar PDF Oficial'}</span>
+              <span>{downloadingPdf ? 'Gerando...' : 'PDF'}</span>
             </button>
 
             <button 
@@ -601,7 +601,7 @@ export default function LmeModal({
               }}
             >
               {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-              <span>{saving ? 'Gravando no Firestore...' : isRenovacao ? 'Concluir Renovação' : 'Salvar no Prontuário'}</span>
+              <span>{saving ? 'Gravando...' : isRenovacao ? 'Renovar' : 'Salvar'}</span>
             </button>
           </div>
         </div>

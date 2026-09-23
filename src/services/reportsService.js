@@ -84,7 +84,7 @@ export const REPORTS_CATALOG = [
   // ================= 2. ACESSOS VASCULARES & TERAPIA DIALÍTICA =================
   {
     id: 'acessos_vasculares',
-    title: 'Vigilância de Acessos Vasculares (FAV / Cateteres)',
+    title: 'Vigilância de Acessos Vasculares',
     category: 'acesso_dialise',
     description: 'Monitoramento detalhado de fístulas arteriovenosas, próteses e cateteres centrais de longa permanência.',
     columns: [
@@ -139,7 +139,7 @@ export const REPORTS_CATALOG = [
       { id: 'data', header: 'Data da Sessão', width: 14 },
       { id: 'nome', header: 'Paciente', width: 26 },
       { id: 'tipoIntercorrencia', header: 'Intercorrência Registrada', width: 26 },
-      { id: 'paPrePos', header: 'PA Pré / Pós', width: 16 },
+      { id: 'paPrePos', header: 'PA Pré e Pós', width: 16 },
       { id: 'ufRealizada', header: 'UF (ml)', width: 12 },
       { id: 'conduta', header: 'Conduta Médica Adotada', width: 32 },
       { id: 'medico', header: 'Médico Assistente', width: 22 }
@@ -1192,7 +1192,7 @@ export function generateReportData(reportId, filteredPatients = []) {
             rows.push({
               dataColeta: hc.dataColeta || 'N/I',
               nome: p.nome || 'Paciente',
-              sitio: hc.sitio || 'Acesso / Sangue Periférico',
+              sitio: hc.sitio || 'Acesso ou Periférico',
               status: hc.status || 'Pendente',
               patogeno: hc.patogeno || 'Sem crescimento',
               antibiograma: hc.antibiograma || 'Em análise',
@@ -1285,7 +1285,7 @@ export function generateReportData(reportId, filteredPatients = []) {
 
       const kpis = [
         { label: 'Ativos em Lista SNT', value: `${ativoLista} (${rows.length ? Math.round((ativoLista/rows.length)*100) : 0}%)` },
-        { label: 'Em Avaliação / Triagem', value: emAvaliacao },
+        { label: 'Em Avaliação e Triagem', value: emAvaliacao },
         { label: 'Já Transplantados', value: transplantados },
         { label: 'Total Mapeado', value: rows.length }
       ];

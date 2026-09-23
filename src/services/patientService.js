@@ -22,15 +22,15 @@ const METADATA_COLLECTION = "system_metadata";
 const ALLERGIES_DOC = "allergies_catalog";
 
 export const STATUS_TRANSPLANTE_OPTIONS = [
-  { value: 'Encaminhar / Em Triagem', label: 'Encaminhar / Em Triagem', badgeBg: '#fef3c7', color: '#b45309', border: '#fde68a' },
-  { value: 'Encaminhado / Em Avaliação', label: 'Encaminhado / Em Avaliação', badgeBg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
-  { value: 'Ativo em Lista de Espera', label: 'Ativo em Lista de Espera', badgeBg: '#dcfce7', color: '#15803d', border: '#bbf7d0' },
-  { value: 'Suspenso / Inativo em Lista', label: 'Suspenso / Inativo em Lista', badgeBg: '#ffedd5', color: '#c2410c', border: '#fed7aa' },
-  { value: 'Contraindicado Clínico', label: 'Contraindicado Clínico', badgeBg: '#fee2e2', color: '#b91c1c', border: '#fecaca' },
-  { value: 'Doador Vivo em Investigação', label: 'Doador Vivo em Investigação', badgeBg: '#ecfeff', color: '#0e7490', border: '#a5f3fc' },
-  { value: 'Já Transplantado', label: 'Já Transplantado', badgeBg: '#f3e8ff', color: '#7e22ce', border: '#e9d5ff' },
-  { value: 'Recusa do Paciente', label: 'Recusa do Paciente', badgeBg: '#f1f5f9', color: '#475569', border: '#cbd5e1' },
-  { value: 'Não Avaliado', label: 'Não Avaliado', badgeBg: '#f8fafc', color: '#64748b', border: '#e2e8f0' }
+  { value: 'Encaminhar / Em Triagem', label: 'Triagem', badgeBg: '#fef3c7', color: '#b45309', border: '#fde68a' },
+  { value: 'Encaminhado / Em Avaliação', label: 'Em Avaliação', badgeBg: '#e0f2fe', color: '#0369a1', border: '#bae6fd' },
+  { value: 'Ativo em Lista de Espera', label: 'Lista Ativa', badgeBg: '#dcfce7', color: '#15803d', border: '#bbf7d0' },
+  { value: 'Suspenso / Inativo em Lista', label: 'Suspenso', badgeBg: '#ffedd5', color: '#c2410c', border: '#fed7aa' },
+  { value: 'Contraindicado Clínico', label: 'Contraindicado', badgeBg: '#fee2e2', color: '#b91c1c', border: '#fecaca' },
+  { value: 'Doador Vivo em Investigação', label: 'Doador Vivo', badgeBg: '#ecfeff', color: '#0e7490', border: '#a5f3fc' },
+  { value: 'Já Transplantado', label: 'Transplantado', badgeBg: '#f3e8ff', color: '#7e22ce', border: '#e9d5ff' },
+  { value: 'Recusa do Paciente', label: 'Recusa', badgeBg: '#f1f5f9', color: '#475569', border: '#cbd5e1' },
+  { value: 'Não Avaliado', label: 'Pendente', badgeBg: '#f8fafc', color: '#64748b', border: '#e2e8f0' }
 ];
 
 export const ETIOLOGIAS_DRC_PADRAO = [
@@ -42,33 +42,33 @@ export const ETIOLOGIAS_DRC_PADRAO = [
   'Nefrite Lúpica',
   'Uropatia Obstrutiva',
   'Nefrite Tubulointersticial Crônica',
-  'Mieloma Múltiplo / Gamopatias',
-  'Indeterminada / Causa Desconhecida'
+  'Mieloma Múltiplo',
+  'Indeterminada'
 ];
 
 export const ALLERGIES_PADRAO = [
   'Dipirona',
-  'Penicilina / Amoxicilina',
-  'Sulfa / Sulfametoxazol',
-  'AINEs (Anti-inflamatórios)',
+  'Penicilinas',
+  'Sulfas',
+  'AINEs',
   'Contraste Iodado',
-  'Cefalosporinas / Cefazolina',
+  'Cefalosporinas',
   'Vancomicina',
   'Heparina (HIT)',
   'Látex',
-  'Fita Adesiva / Micropore',
-  'Ciprofloxacino / Quinolonas',
-  'Morfina / Codeína / Tramadol',
+  'Micropore',
+  'Quinolonas',
+  'Opioides',
   'Clorexidina',
-  'Polissulfona / Capilar Dialítico'
+  'Polissulfona'
 ];
 
 export const TIPOS_ANTICOAGULACAO = [
-  { value: 'heparina_padrao', label: 'Heparina Não Fracionada (Padrão)' },
-  { value: 'enoxaparina', label: 'Enoxaparina (HBPM / Clexane)' },
-  { value: 'sem_heparina', label: 'Sem Heparina (Lavagem c/ SF)' },
+  { value: 'heparina_padrao', label: 'Heparina Não Fracionada' },
+  { value: 'enoxaparina', label: 'Enoxaparina (HBPM)' },
+  { value: 'sem_heparina', label: 'Sem Heparina' },
   { value: 'citrato', label: 'Citrato Regional' },
-  { value: 'outra', label: 'Outra / Personalizada' }
+  { value: 'outra', label: 'Personalizada' }
 ];
 
 export const PRESETS_HEPARINA = [
@@ -145,7 +145,7 @@ export function getAnticoagulacaoInfo(patient) {
         tipo: 'sem_heparina',
         labelCurto: 'SEM HEPARINA',
         badgeText: 'SEM HEPARINA',
-        textoCompleto: 'Sem Heparina (Lavagem c/ SF)',
+        textoCompleto: 'Sem Heparina',
         isSemHeparina: true,
         bg: '#fee2e2',
         color: '#991b1b',
@@ -165,7 +165,7 @@ export function getAnticoagulacaoInfo(patient) {
       bg: '#fee2e2',
       color: '#991b1b',
       border: '#fecaca',
-      motivo: ac.motivoSemHeparina || 'Risco hemorrágico / sangramento',
+      motivo: ac.motivoSemHeparina || 'Risco hemorrágico',
       observacoes: ac.observacoes || 'Lavagem com SF 0,9% a cada 30 min.'
     };
   }

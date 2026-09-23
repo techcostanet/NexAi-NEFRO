@@ -123,8 +123,8 @@ export default function PrescriptionPrintDocument({
               <strong style={{ color: '#0f172a' }}>{patient.cpf || 'Não informado'}</strong>
             </div>
             <div>
-              <span style={{ color: '#64748b' }}>Idade / Sexo: </span>
-              <strong style={{ color: '#0f172a' }}>{patient.idade ? `${patient.idade} anos` : '--'} / {patient.sexo || '--'}</strong>
+              <span style={{ color: '#64748b' }}>Idade e Sexo: </span>
+              <strong style={{ color: '#0f172a' }}>{patient.idade ? `${patient.idade} anos` : '--'} • {patient.sexo || '--'}</strong>
             </div>
           </div>
           {patient.endereco && (
@@ -205,11 +205,11 @@ export default function PrescriptionPrintDocument({
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
               <div>
                 <div>Comprador: _____________________________________</div>
-                <div style={{ marginTop: '3px' }}>RG / Órgão: __________________ Tel: _____________</div>
+                <div style={{ marginTop: '3px' }}>RG e Órgão: __________________ Tel: _____________</div>
                 <div style={{ marginTop: '3px' }}>Endereço: ______________________________________</div>
               </div>
               <div>
-                <div>Farmacêutico(a): _______________________________</div>
+                <div>Farmacêutico: __________________________________</div>
                 <div style={{ marginTop: '3px' }}>CRF: ________________ Assinatura: _______________</div>
                 <div style={{ marginTop: '3px' }}>Data de Dispensação: _____ / _____ / 202___</div>
               </div>

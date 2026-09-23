@@ -466,7 +466,7 @@ export default function PrescriptionModal({
               />
             </div>
             <div>
-              <label className="text-xs text-muted block mb-0.5">CRM / UF</label>
+              <label className="text-xs text-muted block mb-0.5">CRM</label>
               <input 
                 type="text" 
                 className="input-field" 
@@ -483,7 +483,7 @@ export default function PrescriptionModal({
             </button>
             <button type="submit" className="btn btn-primary" disabled={saving}>
               {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-              <span>{saving ? 'Gravando...' : (prescriptionToEdit ? 'Salvar Alterações' : 'Salvar e Gerar Receita')}</span>
+              <span>{saving ? 'Gravando...' : 'Salvar'}</span>
             </button>
           </div>
         </form>

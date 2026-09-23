@@ -316,7 +316,7 @@ export default function EvolutionModal({
             </button>
             <button type="submit" className="btn btn-primary" disabled={saving}>
               {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-              {saving ? 'Salvando...' : 'Salvar Evolução'}
+              {saving ? 'Salvando...' : 'Salvar'}
             </button>
           </div>
         </form>

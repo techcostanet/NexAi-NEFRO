@@ -200,7 +200,7 @@ export default function ConfirmDeceasedModal({
             ) : (
               <>
                 <UserX size={16} />
-                <span>Confirmar Óbito e Remover</span>
+                <span>Confirmar Óbito</span>
               </>
             )}
           </button>

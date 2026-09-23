@@ -330,7 +330,7 @@ export default function DoctorDashboard() {
             title="Notas de versão do Nex-Ai.NEFRO"
           >
             <Sparkles size={14} color="#2563eb" />
-            <span>Notas de Versão</span>
+            <span>Versões</span>
           </button>
 
           <button 
@@ -375,7 +375,7 @@ export default function DoctorDashboard() {
             title="Central de Gestão e Renovação de LME (Medicamentos de Alto Custo SUS/CEAF)"
           >
             <ClipboardList size={15} color={lmeAlerts.totalAlerts > 0 ? '#ea580c' : '#16a34a'} />
-            <span>Central LME</span>
+            <span>LME</span>
             {lmeAlerts.totalAlerts > 0 && (
               <span style={{ 
                 fontSize: '0.72rem', 
@@ -404,7 +404,7 @@ export default function DoctorDashboard() {
             title="Dados e locais de atendimento"
           >
             <UserCog size={15} color="var(--primary)" />
-            <span>Meus Dados</span>
+            <span>Perfil</span>
           </button>
 
           <button 
@@ -443,7 +443,7 @@ export default function DoctorDashboard() {
             }}
           >
             <UserPlus size={15} />
-            <span>Novo Paciente</span>
+            <span>+ Paciente</span>
           </button>
 
           <button 
@@ -502,7 +502,7 @@ export default function DoctorDashboard() {
         <div className="flex items-center gap-2 flex-wrap">
           <div className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-blue-900 mr-1">
             <Building2 size={16} color="#2563eb" />
-            <span>Unidade de Trabalho:</span>
+            <span>Unidade:</span>
           </div>
 
           <div className="flex gap-1.5 flex-wrap mobile-scroll-row">
@@ -523,7 +523,7 @@ export default function DoctorDashboard() {
                 boxShadow: filterLocal === 'Todos' ? '0 2px 6px rgba(37,99,235,0.25)' : 'none'
               }}
             >
-              🏢 Todas as Unidades ({patients.length})
+              🏢 Todas ({patients.length})
             </button>
 
             {locaisList.filter(loc => loc.status !== 'Inativo' || filterLocal === loc.nome).map(loc => {
@@ -578,7 +578,7 @@ export default function DoctorDashboard() {
           style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
           title="Cadastrar novas clínicas ou hospitais"
         >
-          <span>Gerenciar Locais</span>
+          <span>Locais</span>
           <ChevronRight size={14} />
         </button>
       </div>
@@ -681,7 +681,7 @@ export default function DoctorDashboard() {
             value={filterTurno}
             onChange={(e) => setFilterTurno(e.target.value)}
           >
-            <option value="Todos">Todos os Turnos</option>
+            <option value="Todos">Turnos: Todos</option>
             <option value="1º Turno">1º Turno</option>
             <option value="2º Turno">2º Turno</option>
             <option value="3º Turno">3º Turno</option>
@@ -695,7 +695,7 @@ export default function DoctorDashboard() {
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
-            <option value="Todos">Status Tx: Todos</option>
+            <option value="Todos">Tx: Todos</option>
             {STATUS_TRANSPLANTE_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
@@ -724,7 +724,7 @@ export default function DoctorDashboard() {
             title="Mostrar apenas pacientes com ciclos de medicação a vencer ou expirados"
           >
             <Clock size={16} color={filterMedAlert ? '#b45309' : '#64748b'} />
-            <span>Ciclos a Vencer ({totalAlerts})</span>
+            <span>Alertas ({totalAlerts})</span>
           </button>
 
           <button 
@@ -772,7 +772,7 @@ export default function DoctorDashboard() {
             title="Filtrar pacientes com LMEs a vencer em até 30 dias ou já vencidas"
           >
             <ClipboardList size={15} color={filterLmeAlert ? '#ea580c' : '#64748b'} />
-            <span>LMEs a Vencer ({lmeAlerts.totalAlerts})</span>
+            <span>LME Vencendo ({lmeAlerts.totalAlerts})</span>
           </button>
         </div>
       </div>
@@ -810,7 +810,7 @@ export default function DoctorDashboard() {
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '0.6rem 1.25rem', borderRadius: '12px' }}
                 >
                   <UserPlus size={16} />
-                  <span>Novo Paciente</span>
+                  <span>+ Paciente</span>
                 </button>
               )}
             </div>
@@ -1226,7 +1226,7 @@ export default function DoctorDashboard() {
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.8rem' }}
                 >
                   <UserPlus size={14} />
-                  <span>Novo Paciente</span>
+                  <span>+ Paciente</span>
                 </button>
               )}
             </div>

@@ -648,7 +648,7 @@ export default function ReportsCenterModal({
                   {/* Filtro: Unidade / Clínica */}
                   <div>
                     <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
-                      Unidade / Clínica
+                      Unidade
                     </label>
                     <select
                       value={filters.unidade}
@@ -715,8 +715,8 @@ export default function ReportsCenterModal({
                       }}
                     >
                       <option value="todos">Todas as Escalas</option>
-                      <option value="Seg/Qua/Sex">Seg / Qua / Sex</option>
-                      <option value="Ter/Qui/Sáb">Ter / Qui / Sáb</option>
+                      <option value="Seg/Qua/Sex">Seg Qua Sex</option>
+                      <option value="Ter/Qui/Sáb">Ter Qui Sáb</option>
                     </select>
                   </div>
 
@@ -765,12 +765,12 @@ export default function ReportsCenterModal({
                       }}
                     >
                       <option value="todos">Todos os Status</option>
-                      <option value="Ativo em Lista de Espera">Ativo em Lista de Espera</option>
-                      <option value="Encaminhado / Em Avaliação">Em Avaliação Pré-Tx</option>
-                      <option value="Encaminhar / Em Triagem">Em Triagem</option>
+                      <option value="Ativo em Lista de Espera">Lista Ativa</option>
+                      <option value="Encaminhado / Em Avaliação">Em Avaliação</option>
+                      <option value="Encaminhar / Em Triagem">Triagem</option>
                       <option value="Doador Vivo em Investigação">Doador Vivo</option>
-                      <option value="Contraindicado Clínico">Contraindicado Clínico</option>
-                      <option value="Já Transplantado">Já Transplantado</option>
+                      <option value="Contraindicado Clínico">Contraindicado</option>
+                      <option value="Já Transplantado">Transplantado</option>
                     </select>
                   </div>
 
