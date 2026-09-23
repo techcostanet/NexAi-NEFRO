@@ -281,7 +281,7 @@ export default function LmeModal({
                   {isRenovacao ? 'Renovação de LME' : lmeToEdit ? 'Editar LME' : 'Emitir LME (Alto Custo SUS)'}
                 </h2>
                 <span style={{ fontSize: '0.70rem', background: '#dbeafe', color: '#1e40af', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
-                  CEAF / Farmácia de Minas
+                  Farmácia Estadual CEAF
                 </span>
               </div>
               <p className="text-xs text-muted" style={{ margin: 0 }}>

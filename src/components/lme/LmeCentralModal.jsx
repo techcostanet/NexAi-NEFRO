@@ -124,7 +124,7 @@ export default function LmeCentralModal({
                 Central de LMEs
               </h2>
               <p className="text-xs text-muted" style={{ margin: 0 }}>
-                Vigilância ativa de renovações semestrais e trimestrais da Farmácia de Minas / SES
+                Vigilância ativa de renovações semestrais e trimestrais da Farmácia de Minas e SES
               </p>
             </div>
           </div>

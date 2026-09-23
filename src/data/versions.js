@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.74",
+    "date": "23/09/2026",
+    "title": "\\ Refinamento de microcopy nos modais e secao de LME sem barras ou caracteres...",
+    "highlights": [
+      "✨ \\ Refinamento de microcopy nos modais e secao de LME sem barras ou caracteres compostos\\"
+    ]
+  },
+  {
     "version": "1.1.73",
     "date": "23/09/2026",
     "title": "\\ Design refinado: espacamento do paciente grid 3 colunas preenchido e regra ...",

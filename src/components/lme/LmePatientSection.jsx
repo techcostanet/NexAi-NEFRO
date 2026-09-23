@@ -81,7 +81,7 @@ export default function LmePatientSection({
               </span>
             </div>
             <p className="text-xs text-muted" style={{ margin: 0 }}>
-              Controle de vigência (3 a 6 meses), auditoria de exames e renovação para Farmácia de Minas / SES
+              Controle de vigência e renovação para Farmácia de Minas e SES
             </p>
           </div>
         </div>
