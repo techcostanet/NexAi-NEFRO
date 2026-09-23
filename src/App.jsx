@@ -9,6 +9,7 @@ import DoctorDashboard from './pages/DoctorDashboard';
 import DoctorProfile from './pages/DoctorProfile';
 import PatientProfile from './pages/PatientProfile';
 import ChangelogModal from './components/ChangelogModal';
+import InstallAppPrompt from './components/InstallAppPrompt';
 import BrandLogo from './components/BrandLogo';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { APP_VERSION } from './version';
@@ -91,6 +92,8 @@ function AppContent() {
           isOpen={isChangelogOpen}
           onClose={() => setIsChangelogOpen(false)}
         />
+
+        <InstallAppPrompt />
       </div>
     </Router>
   );

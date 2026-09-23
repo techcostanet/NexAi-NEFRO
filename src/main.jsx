@@ -8,3 +8,12 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
+
+// Registra Service Worker para suporte PWA em dispositivos móveis e desktop
+if ('serviceWorker' in navigator && !window.location.host.includes('localhost:5173')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((err) => {
+      console.warn('Registro do Service Worker ignorado:', err);
+    });
+  });
+}

@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.76] - 2026-09-23
+### Alterações
+- Suporte a PWA para instalacao no celular e tablet com icone oficial; Atualizacao do plano anual para R$ 590 com link direto do Asaas
+
 ## [1.1.75] - 2026-09-23
 ### Alterações
 - \ Substituicao da opcao obito pelo modulo de Desligamento de Paciente com catalogo de motivos de saida\

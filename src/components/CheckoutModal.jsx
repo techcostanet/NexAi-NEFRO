@@ -436,8 +436,31 @@ export default function CheckoutModal({ isOpen, onClose, selectedPlan, allPlans 
                 </div>
               </div>
             ) : (
-              /* Se for PLANO PAGO (Mensal R$ 99,90 ou Anual R$ 990,00) */
+              /* Se for PLANO PAGO (Mensal R$ 99,90 ou Anual R$ 590,00) */
               <div className="flex flex-col gap-4">
+                {currentPlan?.intervalo === 'anual' && (
+                  <div style={{ background: '#eff6ff', border: '1px solid #bfdbfe', borderRadius: '12px', padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                    <div style={{ textAlign: 'left' }}>
+                      <span style={{ fontSize: '0.8rem', color: '#1e40af', fontWeight: '700', display: 'block' }}>
+                        Link Direto Asaas
+                      </span>
+                      <span style={{ fontSize: '0.72rem', color: '#3b82f6' }}>
+                        Pague online via fatura oficial do Asaas (R$ 590,00)
+                      </span>
+                    </div>
+                    <a
+                      href="https://www.asaas.com/c/gsye7xf8m2lez8oi"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary"
+                      style={{ textDecoration: 'none', padding: '6px 12px', fontSize: '0.78rem', fontWeight: '700', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      <span>Abrir Asaas</span>
+                      <ArrowRight size={13} />
+                    </a>
+                  </div>
+                )}
+
                 {/* Abas de Pagamento */}
                 <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
                   <button

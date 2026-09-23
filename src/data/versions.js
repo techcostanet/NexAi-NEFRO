@@ -1,5 +1,14 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.76",
+    "date": "23/09/2026",
+    "title": "Suporte a PWA para instalacao no celular e tablet com icone oficial",
+    "highlights": [
+      "✨ Suporte a PWA para instalacao no celular e tablet com icone oficial",
+      "✨ Atualizacao do plano anual para R$ 590 com link direto do Asaas"
+    ]
+  },
+  {
     "version": "1.1.75",
     "date": "23/09/2026",
     "title": "\\ Substituicao da opcao obito pelo modulo de Desligamento de Paciente com cat...",

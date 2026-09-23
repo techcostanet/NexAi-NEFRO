@@ -31,10 +31,11 @@ export const DEFAULT_PLANS = [
   {
     id: "plano-anual",
     nome: "Plano Anual com Desconto",
-    descricao: "Cobrança anual única com 2 meses grátis (equivalente a R$ 82,50/mês)",
-    valor: 990.00,
+    descricao: "Cobrança anual única com 2 meses grátis (equivalente a R$ 49,17/mês)",
+    valor: 590.00,
     intervalo: "anual",
     destaque: true,
+    checkoutUrl: "https://www.asaas.com/c/gsye7xf8m2lez8oi",
     status: "Ativo",
     recursos: ["Todos os recursos do plano mensal", "2 meses grátis de economia (Pague 10, use 12)", "Treinamento e parametrização inicial", "Backup dedicado em nuvem"],
     ordem: 2,

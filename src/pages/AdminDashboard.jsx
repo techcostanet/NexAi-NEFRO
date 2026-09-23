@@ -148,7 +148,7 @@ export default function AdminDashboard() {
   const mrr = activeDoctors.reduce((acc, doc) => {
     const val = Number(doc.valorMensalidade) !== undefined && !isNaN(Number(doc.valorMensalidade))
       ? Number(doc.valorMensalidade) 
-      : (doc.plano?.toLowerCase().includes('anual') ? 82.50 : 99.90);
+      : (doc.plano?.toLowerCase().includes('anual') ? 49.17 : 99.90);
     return acc + val;
   }, 0);
 

@@ -1167,14 +1167,14 @@ export default function LandingPage() {
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
                     <span style={{ fontSize: '1.25rem', fontWeight: '700', color: '#2563eb' }}>R$</span>
                     <span style={{ fontSize: '2.5rem', fontWeight: '800', color: '#2563eb', lineHeight: 1, letterSpacing: '-0.03em' }}>
-                      {plans.find(p => p.intervalo === 'anual') ? plans.find(p => p.intervalo === 'anual').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '890,00'}
+                      {plans.find(p => p.intervalo === 'anual') ? plans.find(p => p.intervalo === 'anual').valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '590,00'}
                     </span>
                     <span style={{ fontSize: '0.9rem', color: '#64748b', fontWeight: '500' }}>/ano</span>
                   </div>
                   <div style={{ display: 'inline-block', fontSize: '0.78rem', fontWeight: '700', color: '#16a34a', background: '#dcfce7', padding: '4px 10px', borderRadius: '8px', marginTop: '0.5rem' }}>
                     {plans.find(p => p.intervalo === 'anual') 
                       ? `Equivalente a R$ ${(plans.find(p => p.intervalo === 'anual').valor / 12).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}/mês` 
-                      : 'Equivalente a R$ 74,17/mês'}
+                      : 'Equivalente a R$ 49,17/mês'}
                   </div>
                 </div>
 
@@ -1246,10 +1246,12 @@ export default function LandingPage() {
                 </ul>
               </div>
 
-              <button 
-                type="button" 
-                onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'anual') || { id: 'plano-anual', nome: 'Plano Anual com Desconto', valor: 0.00, intervalo: 'anual' })}
+              <a 
+                href="https://www.asaas.com/c/gsye7xf8m2lez8oi"
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{ 
+                  textDecoration: 'none',
                   width: '100%', 
                   padding: '0.95rem 1rem', 
                   fontSize: '0.98rem', 
@@ -1272,9 +1274,9 @@ export default function LandingPage() {
               >
                 <span>Assinar Plano Anual</span>
                 <span style={{ fontSize: '0.78rem', fontWeight: '600', color: '#dbeafe' }}>
-                  2 Meses Grátis + Migração VIP Inclusa 🎁
+                  2 Meses Grátis com Migração VIP Inclusa 🎁
                 </span>
-              </button>
+              </a>
             </div>
 
             {/* Card 3: Plano Mensal */}
@@ -1401,10 +1403,12 @@ export default function LandingPage() {
             </div>
 
             <div style={{ flexShrink: 0 }}>
-              <button
-                type="button"
-                onClick={() => handleOpenCheckout(plans.find(p => p.intervalo === 'anual') || { id: 'plano-anual', nome: 'Plano Anual com Desconto', valor: 0.00, intervalo: 'anual' })}
+              <a
+                href="https://www.asaas.com/c/gsye7xf8m2lez8oi"
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
+                  textDecoration: 'none',
                   padding: '1rem 1.75rem',
                   fontSize: '0.95rem',
                   fontWeight: '800',
@@ -1414,14 +1418,14 @@ export default function LandingPage() {
                   border: 'none',
                   cursor: 'pointer',
                   boxShadow: '0 8px 20px rgba(37, 99, 235, 0.3)',
-                  display: 'flex',
+                  display: 'inline-flex',
                   alignItems: 'center',
                   gap: '8px'
                 }}
               >
                 <span>Garantir Plano Anual com Migração Inclusa</span>
                 <ArrowRight size={18} />
-              </button>
+              </a>
             </div>
           </div>
 
