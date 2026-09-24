@@ -769,7 +769,8 @@ export default function ReportsCenterModal({
                       <option value="Encaminhado / Em Avaliação">Em Avaliação</option>
                       <option value="Encaminhar / Em Triagem">Triagem</option>
                       <option value="Doador Vivo em Investigação">Doador Vivo</option>
-                      <option value="Contraindicado Clínico">Contraindicado</option>
+                      <option value="Contraindicação Provisória">Contraindicação Provisória</option>
+                      <option value="Contraindicação Definitiva">Contraindicação Definitiva</option>
                       <option value="Já Transplantado">Transplantado</option>
                     </select>
                   </div>

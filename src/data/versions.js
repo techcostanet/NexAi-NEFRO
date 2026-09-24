@@ -1,5 +1,14 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.79",
+    "date": "24/09/2026",
+    "title": "Adicionado campo CNS ao cadastro médico e LME",
+    "highlights": [
+      "✨ Adicionado campo CNS ao cadastro médico e LME",
+      "✨ atualização dos status de transplante para Contraindicação Provisória e Definitiva"
+    ]
+  },
+  {
     "version": "1.1.78",
     "date": "23/09/2026",
     "title": "Adiciona link de checkout Asaas para o Plano Mensal",

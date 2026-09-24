@@ -2000,8 +2000,10 @@ export default function PatientProfile() {
                     Situação SNT: {transplantOpt.label}
                   </span>
                   <p className="text-slate-600" style={{ fontSize: '0.70rem', lineHeight: '1.3' }}>
-                    {patient.statusTransplante === 'Contraindicado Clínico'
-                      ? 'Paciente com contraindicação clínica atual para inscrição ativa no SNT.'
+                    {patient.statusTransplante === 'Contraindicação Provisória'
+                      ? 'Paciente com contraindicação clínica temporária/provisória para inscrição ativa no SNT.'
+                      : (patient.statusTransplante === 'Contraindicação Definitiva' || patient.statusTransplante === 'Contraindicado Clínico')
+                      ? 'Paciente com contraindicação clínica definitiva para transplante renal.'
                       : patient.statusTransplante === 'Inscrito / Ativo'
                       ? 'Inscrito na lista única do SNT. Manter sorologias e exames semestrais vigentes.'
                       : patient.statusTransplante === 'Em Preparo / Avaliação'

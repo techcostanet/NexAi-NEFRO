@@ -38,6 +38,7 @@ export default function CheckoutModal({ isOpen, onClose, selectedPlan, allPlans 
     ufCrm: 'SP',
     cpf: '',
     rqe: '',
+    cns: '',
     email: '',
     telefone: '',
     senha: '',
@@ -303,7 +304,7 @@ export default function CheckoutModal({ isOpen, onClose, selectedPlan, allPlans 
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '0.6rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.6rem' }}>
                 <div>
                   <label className="text-xs font-semibold text-slate-700 mb-1 block">CPF do Médico</label>
                   <input 
@@ -312,6 +313,17 @@ export default function CheckoutModal({ isOpen, onClose, selectedPlan, allPlans 
                     placeholder="000.000.000-00" 
                     value={formData.cpf}
                     onChange={(e) => setFormData(prev => ({ ...prev, cpf: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 mb-1 block">CNS (LME)</label>
+                  <input 
+                    type="text" 
+                    className="input-field" 
+                    placeholder="15 dígitos" 
+                    maxLength={15}
+                    value={formData.cns}
+                    onChange={(e) => setFormData(prev => ({ ...prev, cns: e.target.value.replace(/\D/g, '').slice(0, 15) }))}
                   />
                 </div>
                 <div>

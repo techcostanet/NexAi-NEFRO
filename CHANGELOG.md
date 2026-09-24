@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.79] - 2026-09-24
+### Alterações
+- Adicionado campo CNS ao cadastro médico e LME; atualização dos status de transplante para Contraindicação Provisória e Definitiva
+
 ## [1.1.78] - 2026-09-23
 ### Alterações
 - Adiciona link de checkout Asaas para o Plano Mensal

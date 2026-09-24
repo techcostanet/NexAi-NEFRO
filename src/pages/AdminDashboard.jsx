@@ -99,6 +99,7 @@ export default function AdminDashboard() {
     crm: '',
     ufCrm: 'SP',
     rqe: '',
+    cns: '',
     especialidade: 'Nefrologia Clínica e Hemodiálise',
     email: '',
     telefone: '',
@@ -268,6 +269,7 @@ export default function AdminDashboard() {
       crm: '',
       ufCrm: 'SP',
       rqe: '',
+      cns: '',
       especialidade: 'Nefrologia Clínica e Hemodiálise',
       email: '',
       telefone: '',
@@ -321,6 +323,7 @@ export default function AdminDashboard() {
       crm: doctor.crm || '',
       ufCrm: doctor.ufCrm || 'SP',
       rqe: doctor.rqe || '',
+      cns: doctor.cns || '',
       especialidade: doctor.especialidade || 'Nefrologia Clínica e Hemodiálise',
       email: doctor.email || '',
       telefone: doctor.telefone || '',
@@ -839,6 +842,7 @@ export default function AdminDashboard() {
                               CRM {docItem.crm}/{docItem.ufCrm}
                             </div>
                             {docItem.rqe && <div className="text-xs text-muted">RQE {docItem.rqe}</div>}
+                            {docItem.cns && <div className="text-xs text-indigo-600 font-medium">CNS: {docItem.cns}</div>}
                             <div className="text-xs text-muted">CPF: {docItem.cpf || 'Não informado'}</div>
                           </td>
 
@@ -1343,7 +1347,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1.5fr', gap: '0.6rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.6fr 1fr 1.4fr', gap: '0.6rem' }}>
                 <div>
                   <label className="text-xs font-semibold mb-1 block">CRM *</label>
                   <input 
@@ -1373,6 +1377,18 @@ export default function AdminDashboard() {
                     placeholder="Ex: 45890" 
                     value={doctorForm.rqe}
                     onChange={(e) => setDoctorForm(prev => ({ ...prev, rqe: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold mb-1 block">CNS (LME)</label>
+                  <input 
+                    type="text" 
+                    className="input-field" 
+                    placeholder="15 dígitos" 
+                    maxLength={15}
+                    value={doctorForm.cns || ''}
+                    onChange={(e) => setDoctorForm(prev => ({ ...prev, cns: e.target.value.replace(/\D/g, '').slice(0, 15) }))}
+                    title="Cartão Nacional de Saúde exigido na LME"
                   />
                 </div>
               </div>

@@ -555,7 +555,7 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
                   onChange={(e) => setFormData(prev => ({ ...prev, statusTransplante: e.target.value, status: e.target.value }))}
                   style={{ borderColor: '#93c5fd', background: '#f8fafc', color: '#1e3a8a' }}
                 >
-                  {STATUS_TRANSPLANTE_OPTIONS.map(opt => (
+                  {STATUS_TRANSPLANTE_OPTIONS.filter(opt => !opt.hidden).map(opt => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
                     </option>

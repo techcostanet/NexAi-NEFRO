@@ -38,6 +38,7 @@ O banco de dados do NexAi-NEFRO é organizado nas seguintes coleções principai
 - `id`: string
 - `nome`: string
 - `cpf`: string (CPF do médico responsável)
+- `cns`: string (Cartão Nacional de Saúde do médico, exigido em laudos LME / CEAF)
 - `titulo`: string (ex: 'Médico Nefrologista & Intensivista')
 - `crm`: string
 - `ufCrm`: string (ex: 'SP')

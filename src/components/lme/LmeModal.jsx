@@ -13,7 +13,8 @@ import {
   Sparkles, 
   Pill, 
   HelpCircle,
-  RotateCcw
+  RotateCcw,
+  Stethoscope
 } from 'lucide-react';
 import { 
   LME_MEDICAMENTOS, 
@@ -22,6 +23,7 @@ import {
   buildLmeClinicalReportText 
 } from '../../services/lmeService.js';
 import { savePatientLme } from '../../services/patientService.js';
+import { saveDoctorProfile } from '../../services/doctorService.js';
 import { downloadPdfDocument } from '../../services/pdfService.js';
 import LmeReportPdf from '../pdf/LmeReportPdf.jsx';
 
@@ -43,6 +45,7 @@ export default function LmeModal({
   const [dataValidade, setDataValidade] = useState('');
   const [exames, setExames] = useState({});
   const [clinicalText, setClinicalText] = useState('');
+  const [medicoCns, setMedicoCns] = useState(doctorInfo?.cns || lmeToEdit?.medicoSolicitante?.cns || '');
   const [saving, setSaving] = useState(false);
   const [downloadingPdf, setDownloadingPdf] = useState(false);
   const [error, setError] = useState('');
@@ -85,7 +88,10 @@ export default function LmeModal({
       d.setMonth(d.getMonth() + (currentMed.vigenciaPadraoMeses || 6));
       setDataValidade(d.toISOString().split('T')[0]);
     }
-  }, [lmeToEdit, isRenovacao, isOpen]);
+
+    // Carrega CNS do médico
+    setMedicoCns(lmeToEdit?.medicoSolicitante?.cns || doctorInfo?.cns || '');
+  }, [lmeToEdit, isRenovacao, isOpen, doctorInfo]);
 
   // Quando o médico troca de medicamento
   const handleMedChange = (newMedId) => {
@@ -174,8 +180,9 @@ export default function LmeModal({
       medicoSolicitante: {
         nome: doctorInfo?.nome || 'Médico Nefrologista',
         crm: doctorInfo?.crm || '',
-        ufCrm: doctorInfo?.ufCrm || 'MG',
-        cpf: doctorInfo?.cpf || ''
+        ufCrm: doctorInfo?.ufCrm || 'SP',
+        cpf: doctorInfo?.cpf || '',
+        cns: (medicoCns || doctorInfo?.cns || lmeToEdit?.medicoSolicitante?.cns || '').trim()
       },
       isRenovacao: !!isRenovacao
     };
@@ -190,6 +197,15 @@ export default function LmeModal({
       const payload = buildPayload();
       const targetId = isRenovacao ? null : lmeToEdit?.id;
       await savePatientLme(patient.id, payload, targetId);
+
+      // Sincroniza CNS no cadastro do médico se fornecido ou modificado
+      if (doctorInfo?.id && medicoCns && medicoCns !== doctorInfo.cns) {
+        try {
+          await saveDoctorProfile(doctorInfo.id, { ...doctorInfo, cns: medicoCns });
+        } catch (docErr) {
+          console.warn("Aviso ao salvar CNS no perfil do médico:", docErr);
+        }
+      }
 
       setSuccess('LME salva no prontuário com sucesso!');
       if (onSaveSuccess) onSaveSuccess();
@@ -213,10 +229,15 @@ export default function LmeModal({
       const safeMed = (currentMed.id || 'LME').toUpperCase();
       const fileName = `LME_${safeMed}_${safePatient}.pdf`;
 
+      const effectiveDoctorInfo = {
+        ...doctorInfo,
+        cns: payload.medicoSolicitante?.cns || doctorInfo?.cns || ''
+      };
+
       await downloadPdfDocument(
         <LmeReportPdf
           patient={patient}
-          doctorInfo={doctorInfo}
+          doctorInfo={effectiveDoctorInfo}
           lmeData={payload}
           clinicalReportText={clinicalText}
         />,
@@ -328,6 +349,56 @@ export default function LmeModal({
             gap: '1rem'
           }}
         >
+          {/* IDENTIFICAÇÃO DO MÉDICO SOLICITANTE & CNS (EXIGÊNCIA LME / SUS) */}
+          <div style={{ background: '#f8fafc', border: '1px solid var(--border)', borderRadius: '14px', padding: '0.85rem 1rem' }}>
+            <div className="flex justify-between items-center flex-wrap gap-2 mb-2">
+              <div className="flex items-center gap-2">
+                <Stethoscope size={16} color="var(--primary)" />
+                <span className="text-xs font-bold text-slate-800">Médico Solicitante (SUS / CEAF)</span>
+              </div>
+              <span style={{ fontSize: '0.68rem', color: '#64748b' }}>
+                Exigência obrigatória no formulário oficial da LME
+              </span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.75rem', alignItems: 'center' }}>
+              <div>
+                <span className="text-2xs text-muted block">Nome</span>
+                <strong className="text-xs text-slate-800 block truncate">{doctorInfo?.nome || 'Médico Nefrologista'}</strong>
+              </div>
+              <div>
+                <span className="text-2xs text-muted block">CRM / UF</span>
+                <span className="text-xs text-slate-700 font-semibold">{doctorInfo?.crm || '—'} / {doctorInfo?.ufCrm || 'SP'}</span>
+              </div>
+              <div>
+                <label className="text-2xs font-semibold text-slate-700 block mb-0.5">
+                  CNS do Médico *
+                </label>
+                <input 
+                  type="text"
+                  className="input-field"
+                  style={{ 
+                    padding: '0.35rem 0.6rem', 
+                    fontSize: '0.78rem', 
+                    borderColor: medicoCns ? '#cbd5e1' : '#f59e0b', 
+                    background: medicoCns ? '#ffffff' : '#fffbeb' 
+                  }}
+                  placeholder="Ex: 708401234567891"
+                  maxLength={15}
+                  value={medicoCns}
+                  onChange={(e) => setMedicoCns(e.target.value.replace(/\D/g, '').slice(0, 15))}
+                  title="Cartão Nacional de Saúde (15 dígitos) do médico solicitante"
+                />
+              </div>
+            </div>
+            {!medicoCns && (
+              <div className="flex items-center gap-1.5 mt-2 text-2xs text-amber-700 font-medium">
+                <AlertCircle size={12} />
+                <span>Informe o CNS do médico solicitante para inclusão no laudo impresso da LME do SUS.</span>
+              </div>
+            )}
+          </div>
+
           {/* SEÇÃO 1: MEDICAMENTO E POSOLOGIA */}
           <div style={{ background: '#f8fafc', border: '1px solid var(--border)', borderRadius: '14px', padding: '1rem' }}>
             <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2 mb-3">

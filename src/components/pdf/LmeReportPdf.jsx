@@ -411,17 +411,23 @@ export default function LmeReportPdf({
           <Text style={styles.sectionHeader}>5. Identificação e Assinatura do Médico Solicitante</Text>
           <View style={styles.sectionBody}>
             <View style={styles.row}>
-              <View style={[styles.col, { width: '50%' }]}>
+              <View style={[styles.col, { width: '36%' }]}>
                 <Text style={styles.label}>Nome do Médico(a)</Text>
-                <Text style={styles.value}>{doctorInfo?.nome || 'Dra. Camila Duque'}</Text>
+                <Text style={styles.value}>{doctorInfo?.nome || lmeData?.medicoSolicitante?.nome || 'Dr(a). Médico(a)'}</Text>
               </View>
-              <View style={[styles.col, { width: '25%' }]}>
+              <View style={[styles.col, { width: '20%' }]}>
                 <Text style={styles.label}>CRM / UF</Text>
-                <Text style={styles.value}>{doctorInfo?.crm || '12345'} / {doctorInfo?.ufCrm || 'MG'}</Text>
+                <Text style={styles.value}>
+                  {doctorInfo?.crm || lmeData?.medicoSolicitante?.crm || '—'} / {doctorInfo?.ufCrm || lmeData?.medicoSolicitante?.ufCrm || 'SP'}
+                </Text>
               </View>
-              <View style={[styles.col, { width: '25%' }]}>
+              <View style={[styles.col, { width: '24%' }]}>
+                <Text style={styles.label}>CNS do Médico (Cartão SUS)</Text>
+                <Text style={styles.value}>{lmeData?.medicoSolicitante?.cns || doctorInfo?.cns || '—'}</Text>
+              </View>
+              <View style={[styles.col, { width: '20%' }]}>
                 <Text style={styles.label}>CPF do Médico</Text>
-                <Text style={styles.value}>{doctorInfo?.cpf || '-'}</Text>
+                <Text style={styles.value}>{doctorInfo?.cpf || lmeData?.medicoSolicitante?.cpf || '-'}</Text>
               </View>
             </View>
 
@@ -431,9 +437,10 @@ export default function LmeReportPdf({
                 <Text style={styles.signatureSub}>Assinatura do Paciente ou Responsável Legal</Text>
               </View>
               <View style={styles.signatureBox}>
-                <Text style={styles.signatureName}>{doctorInfo?.nome || 'Médico Nefrologista'}</Text>
+                <Text style={styles.signatureName}>{doctorInfo?.nome || lmeData?.medicoSolicitante?.nome || 'Médico Nefrologista'}</Text>
                 <Text style={styles.signatureSub}>
-                  CRM {doctorInfo?.crm || ''}/{doctorInfo?.ufCrm || 'MG'} • Carimbo e Assinatura
+                  CRM {doctorInfo?.crm || lmeData?.medicoSolicitante?.crm || ''}/{doctorInfo?.ufCrm || lmeData?.medicoSolicitante?.ufCrm || 'SP'}
+                  {(lmeData?.medicoSolicitante?.cns || doctorInfo?.cns) ? ` • CNS ${lmeData?.medicoSolicitante?.cns || doctorInfo?.cns}` : ''} • Carimbo e Assinatura
                 </Text>
               </View>
             </View>
@@ -503,10 +510,11 @@ export default function LmeReportPdf({
           <View style={{ alignItems: 'flex-end' }}>
             <View style={{ width: '240px', borderTopWidth: 1, borderTopColor: '#0f172a', paddingTop: 4, textAlign: 'center' }}>
               <Text style={{ fontSize: 9, fontWeight: 'bold', color: '#0f172a' }}>
-                {doctorInfo?.nome || 'Dra. Camila Duque'}
+                {doctorInfo?.nome || lmeData?.medicoSolicitante?.nome || 'Dra. Camila Duque'}
               </Text>
               <Text style={{ fontSize: 7.5, color: '#64748b', marginTop: 1 }}>
-                CRM {doctorInfo?.crm || ''}/{doctorInfo?.ufCrm || 'MG'}
+                CRM {doctorInfo?.crm || lmeData?.medicoSolicitante?.crm || ''}/{doctorInfo?.ufCrm || lmeData?.medicoSolicitante?.ufCrm || 'SP'}
+                {(lmeData?.medicoSolicitante?.cns || doctorInfo?.cns) ? ` • CNS ${lmeData?.medicoSolicitante?.cns || doctorInfo?.cns}` : ''}
               </Text>
               <Text style={{ fontSize: 7, color: '#64748b' }}>
                 {doctorInfo?.titulo || 'Médico Nefrologista'}

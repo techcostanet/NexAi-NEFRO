@@ -51,6 +51,7 @@ export default function DoctorProfile() {
     crm: '',
     ufCrm: '',
     rqe: '',
+    cns: '',
     especialidade: '',
     email: '',
     telefone: '',
@@ -335,6 +336,11 @@ export default function DoctorProfile() {
                 RQE {profile.rqe}
               </span>
             )}
+            {profile.cns && (
+              <span style={{ fontSize: '0.75rem', background: 'rgba(99, 102, 241, 0.1)', color: '#4f46e5', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' }}>
+                CNS {profile.cns}
+              </span>
+            )}
             <span style={{ fontSize: '0.75rem', background: '#eff6ff', color: '#1d4ed8', padding: '2px 8px', borderRadius: '12px', fontWeight: '600' }}>
               {ativasCount} Unidades Ativas ({locaisList.length} total)
             </span>
@@ -535,6 +541,18 @@ export default function DoctorProfile() {
                 value={profile.rqe || ''} 
                 placeholder="Ex: 98765"
                 onChange={(e) => handleChange('rqe', e.target.value)} 
+              />
+            </div>
+            <div>
+              <label className="text-sm font-semibold mb-1 block">CNS</label>
+              <input 
+                type="text" 
+                className="input-field" 
+                value={profile.cns || ''} 
+                placeholder="Ex: 708401234567891"
+                maxLength={15}
+                onChange={(e) => handleChange('cns', e.target.value.replace(/\D/g, '').slice(0, 15))} 
+                title="Cartão Nacional de Saúde (15 dígitos) - Exigido para LME"
               />
             </div>
             <div>
