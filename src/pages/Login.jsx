@@ -7,11 +7,22 @@ import { Loader2 } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, currentUser, userRole } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Redireciona imediatamente se já houver uma sessão válida ativa
+  React.useEffect(() => {
+    if (currentUser && !isSubmitting) {
+      if (userRole === 'admin') {
+        navigate('/admin', { replace: true });
+      } else if (userRole === 'doctor') {
+        navigate('/doctor', { replace: true });
+      }
+    }
+  }, [currentUser, userRole, isSubmitting, navigate]);
 
   const handleLogin = async (e) => {
     e?.preventDefault();
@@ -20,10 +31,10 @@ export default function Login() {
 
     try {
       const authResult = await login(email, password);
-      if (authResult.role === 'admin') {
-        navigate('/admin');
+      if (authResult?.role === 'admin') {
+        navigate('/admin', { replace: true });
       } else {
-        navigate('/doctor');
+        navigate('/doctor', { replace: true });
       }
     } catch (err) {
       console.error("Erro no login:", err);

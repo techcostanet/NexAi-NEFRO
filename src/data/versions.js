@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.81",
+    "date": "24/09/2026",
+    "title": "\\ Telemetria SaaS com exclusao de dr-marcelo resolucao do double-login no adm...",
+    "highlights": [
+      "✨ \\ Telemetria SaaS com exclusao de dr-marcelo resolucao do double-login no admin parcelamento flexivel e notificacoes de release por email com periodicidade configuravel\\"
+    ]
+  },
+  {
     "version": "1.1.80",
     "date": "24/09/2026",
     "title": "Implementado seletor multi-visualização no Histórico de Coletas: Tabela padrã...",

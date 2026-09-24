@@ -76,12 +76,31 @@ export async function loginWithFirebaseAuth(email, password) {
       const userCredential = await signInWithEmailAndPassword(auth, cleanEmail, cleanPass);
       firebaseUser = userCredential.user;
     } catch (authErr) {
-      if (authErr.code === 'auth/user-not-found') {
+      if (
+        authErr.code === 'auth/user-not-found' ||
+        authErr.code === 'auth/invalid-credential' ||
+        authErr.code === 'auth/invalid-login-credentials'
+      ) {
         try {
           const newCred = await createUserWithEmailAndPassword(auth, cleanEmail, cleanPass);
           firebaseUser = newCred.user;
-        } catch (e) {
-          // Continua para validação em nuvem via Firestore
+        } catch (createErr) {
+          if (createErr.code === 'auth/email-already-in-use') {
+            const sysAcc = SYSTEM_ACCOUNTS.find(acc => acc.email === cleanEmail);
+            if (sysAcc && Array.isArray(sysAcc.passwords)) {
+              for (const p of sysAcc.passwords) {
+                if (p === cleanPass) continue;
+                try {
+                  const fallbackCred = await signInWithEmailAndPassword(auth, cleanEmail, p);
+                  firebaseUser = fallbackCred.user;
+                  try {
+                    await updatePassword(firebaseUser, cleanPass);
+                  } catch (e) {}
+                  break;
+                } catch (e) {}
+              }
+            }
+          }
         }
       }
       // Se for auth/configuration-not-found ou erro de provedor, segue para validação no Firestore
@@ -226,7 +245,12 @@ export function subscribeToAuthState(callback) {
           };
           notifySubscribers(userObj);
         } else {
-          notifySubscribers(null);
+          // Se não há usuário no Firebase Auth nativo, só notifica null se
+          // NÃO houver uma sessão válida ativa em memória recém-autenticada.
+          // Isso impede o race condition que forçava o administrador a logar 2x!
+          if (!currentSessionUser) {
+            notifySubscribers(null);
+          }
         }
       });
     } catch (e) {

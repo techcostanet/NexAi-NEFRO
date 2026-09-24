@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.81] - 2026-09-24
+### Alterações
+- \ Telemetria SaaS com exclusao de dr-marcelo resolucao do double-login no admin parcelamento flexivel e notificacoes de release por email com periodicidade configuravel\
+
 ## [1.1.80] - 2026-09-24
 ### Alterações
 - Implementado seletor multi-visualização no Histórico de Coletas: Tabela padrão, Tendência gráfica, Cards em timeline e Matriz de Metas

@@ -456,3 +456,95 @@ export async function deleteDoctor(doctorId, adminEmail = "admin@nefroapp.com") 
 
   return true;
 }
+
+/**
+ * Atualiza o status de uma parcela ou pagamento no histórico do médico no Firestore
+ * @param {string} doctorId 
+ * @param {string} paymentId 
+ * @param {string} newStatus - 'Pago' | 'Pendente' | 'Cancelado'
+ * @param {string} adminEmail 
+ */
+export async function updateDoctorPaymentStatus(doctorId, paymentId, newStatus = 'Pago', adminEmail = 'admin@nefroapp.com') {
+  if (!db) throw new Error("Firestore não inicializado");
+  const docRef = doc(db, DOCTORS_COLLECTION, doctorId);
+  const snap = await getDoc(docRef);
+
+  if (!snap.exists()) throw new Error("Médico não encontrado");
+  const docData = snap.data();
+
+  const historico = Array.isArray(docData.historicoPagamentos) ? [...docData.historicoPagamentos] : [];
+  let updatedPayment = null;
+
+  const novoHistorico = historico.map(p => {
+    if (p.id === paymentId) {
+      updatedPayment = {
+        ...p,
+        status: newStatus,
+        dataPagamento: newStatus === 'Pago' ? new Date().toISOString() : p.dataPagamento
+      };
+      return updatedPayment;
+    }
+    return p;
+  });
+
+  await updateDoc(docRef, {
+    historicoPagamentos: novoHistorico,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  await logAuditEvent({
+    tipoAcao: 'PAYMENT_STATUS_UPDATED',
+    descricao: `Status do pagamento/parcela (${updatedPayment?.referencia || paymentId}) de ${docData.nome} alterado para '${newStatus}'`,
+    targetDoctorId: doctorId,
+    targetDoctorName: docData.nome,
+    adminEmail,
+    detalhes: { paymentId, newStatus, updatedPayment }
+  });
+
+  return novoHistorico;
+}
+
+/**
+ * Adiciona um lançamento ou parcela ao histórico de pagamentos do médico
+ * @param {string} doctorId 
+ * @param {Object} paymentData 
+ * @param {string} adminEmail 
+ */
+export async function addDoctorPaymentRecord(doctorId, paymentData, adminEmail = 'admin@nefroapp.com') {
+  if (!db) throw new Error("Firestore não inicializado");
+  const docRef = doc(db, DOCTORS_COLLECTION, doctorId);
+  const snap = await getDoc(docRef);
+
+  if (!snap.exists()) throw new Error("Médico não encontrado");
+  const docData = snap.data();
+
+  const historico = Array.isArray(docData.historicoPagamentos) ? [...docData.historicoPagamentos] : [];
+  const newRecord = {
+    id: `pag-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    data: paymentData.data || new Date().toISOString(),
+    valor: Number(paymentData.valor) || 0,
+    plano: paymentData.plano || docData.plano || 'Plano Médico',
+    status: paymentData.status || 'Pago',
+    metodo: paymentData.metodo || 'PIX',
+    referencia: paymentData.referencia || 'Pagamento / Parcela'
+  };
+
+  historico.unshift(newRecord);
+
+  await updateDoc(docRef, {
+    historicoPagamentos: historico,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  await logAuditEvent({
+    tipoAcao: 'PAYMENT_RECORD_ADDED',
+    descricao: `Lançamento financeiro adicionado para ${docData.nome}: ${newRecord.referencia} - R$ ${newRecord.valor.toFixed(2)} (${newRecord.status})`,
+    targetDoctorId: doctorId,
+    targetDoctorName: docData.nome,
+    adminEmail,
+    detalhes: { paymentRecord: newRecord }
+  });
+
+  return historico;
+}
+
