@@ -73,6 +73,7 @@ import ConfirmDeceasedModal from '../components/ConfirmDeceasedModal';
 import PatientDischargeModal from '../components/PatientDischargeModal';
 import LmeModal from '../components/lme/LmeModal';
 import LmePatientSection from '../components/lme/LmePatientSection';
+import ExamHistorySection from '../components/patient/ExamHistorySection';
 import TransplantReportPdf from '../components/pdf/TransplantReportPdf';
 import { downloadPdfDocument } from '../services/pdfService';
 import { printElement } from '../utils/printUtils';
@@ -2309,116 +2310,13 @@ export default function PatientProfile() {
             </div>
           </div>
 
-          {/* Histórico Cronológico de Coletas */}
-          <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
-            <div className="flex justify-between items-center mb-3 flex-wrap gap-2">
-              <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
-                <Calendar size={16} color="var(--primary)" />
-                <span>Histórico Cronológico de Coletas ({historicoExames.length})</span>
-              </h3>
-              <div className="flex items-center gap-1.5 flex-wrap" style={{ fontSize: '0.70rem' }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#15803d', background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
-                  🟢 Na Meta
-                </span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#b45309', background: '#fffbeb', border: '1px solid #fde68a', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
-                  🟡 Atenção
-                </span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#dc2626', background: '#fef2f2', border: '1px solid #fecaca', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold' }}>
-                  🔴 Crítico
-                </span>
-              </div>
-            </div>
-
-            {historicoExames.length === 0 ? (
-              <div className="text-center py-8 text-muted text-xs">
-                Nenhum exame histórico detalhado registrado para este paciente.
-              </div>
-            ) : (
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem', textAlign: 'left' }}>
-                  <thead>
-                    <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Data</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Hb</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>IST/Ferritina</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>PTH</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>P Ca</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Potássio</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Kt/V</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Albumina</th>
-                      <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Glic TGP</th>
-                      <th style={{ padding: '0.65rem 0.8rem', textAlign: 'right', color: '#475569' }}>Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sortedHistoricoExames.map((item, idx) => (
-                      <tr key={idx} style={{ borderBottom: '1px solid var(--border)' }}>
-                        <td style={{ padding: '0.65rem 0.8rem', fontWeight: 'bold', color: '#1e293b', whiteSpace: 'nowrap' }}>
-                          {item.dataExame ? new Date(item.dataExame + 'T12:00:00').toLocaleDateString('pt-BR') : '-'}
-                        </td>
-                        <td style={{ padding: '0.65rem 0.8rem' }}>
-                          <ExamBadge examKey="hb" value={item.hb} />
-                        </td>
-                        <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <ExamBadge examKey="ist" value={item.ist} suffix="%" />
-                            <span style={{ color: '#cbd5e1' }}>/</span>
-                            <ExamBadge examKey="ferritina" value={item.ferritina} />
-                          </div>
-                        </td>
-                        <td style={{ padding: '0.65rem 0.8rem' }}>
-                          <ExamBadge examKey="pth" value={item.pth} />
-                        </td>
-                        <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <ExamBadge examKey="fosforo" value={item.fosforo} />
-                            <span style={{ color: '#cbd5e1' }}>/</span>
-                            <ExamBadge examKey="ca" value={item.ca} />
-                          </div>
-                        </td>
-                        <td style={{ padding: '0.65rem 0.8rem' }}>
-                          <ExamBadge examKey="k" value={item.k} />
-                        </td>
-                        <td style={{ padding: '0.65rem 0.8rem' }}>
-                          <ExamBadge examKey="ktv" value={item.ktv} />
-                        </td>
-                        <td style={{ padding: '0.65rem 0.8rem' }}>
-                          <ExamBadge examKey="albumina" value={item.albumina} suffix=" g/dL" />
-                        </td>
-                        <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                            <ExamBadge examKey="glicemia" value={item.glicemia} />
-                            <span style={{ color: '#cbd5e1' }}>/</span>
-                            <ExamBadge examKey="tgp" value={item.tgp} suffix=" U/L" />
-                          </div>
-                        </td>
-                        <td style={{ padding: '0.65rem 0.8rem', textAlign: 'right' }}>
-                          <div className="flex justify-end gap-1">
-                            <button 
-                              className="btn btn-outline" 
-                              onClick={() => handleEditExam(item, item._originalIndex)}
-                              style={{ padding: '0.25rem 0.45rem', fontSize: '0.7rem' }}
-                              title="Editar este exame"
-                            >
-                              <Edit size={12} color="var(--primary)" />
-                            </button>
-                            <button 
-                              className="btn btn-outline" 
-                              onClick={() => handleDeleteExam(item._originalIndex)}
-                              style={{ padding: '0.25rem 0.45rem', fontSize: '0.7rem' }}
-                              title="Excluir este exame"
-                            >
-                              <Trash2 size={12} color="var(--danger)" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+          {/* Histórico Cronológico de Coletas (Multi-Visualização: Tabela Padrão, Tendência, Cards e Metas) */}
+          <ExamHistorySection
+            historicoExames={historicoExames}
+            sortedHistoricoExames={sortedHistoricoExames}
+            onEditExam={(item, originalIndex) => handleEditExam(item, originalIndex)}
+            onDeleteExam={(originalIndex) => handleDeleteExam(originalIndex)}
+          />
 
           {/* Módulo de Vigilância Microbiológica & Hemoculturas do Acesso (Requisito 6 + Melhoria 4) */}
           <div className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px', background: '#fffbeb', border: '1px solid #fde68a' }}>

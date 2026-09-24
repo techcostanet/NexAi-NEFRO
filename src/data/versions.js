@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.80",
+    "date": "24/09/2026",
+    "title": "Implementado seletor multi-visualização no Histórico de Coletas: Tabela padrã...",
+    "highlights": [
+      "✨ Implementado seletor multi-visualização no Histórico de Coletas: Tabela padrão, Tendência gráfica, Cards em timeline e Matriz de Metas"
+    ]
+  },
+  {
     "version": "1.1.79",
     "date": "24/09/2026",
     "title": "Adicionado campo CNS ao cadastro médico e LME",

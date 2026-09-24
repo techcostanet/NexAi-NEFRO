@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.80] - 2026-09-24
+### Alterações
+- Implementado seletor multi-visualização no Histórico de Coletas: Tabela padrão, Tendência gráfica, Cards em timeline e Matriz de Metas
+
 ## [1.1.79] - 2026-09-24
 ### Alterações
 - Adicionado campo CNS ao cadastro médico e LME; atualização dos status de transplante para Contraindicação Provisória e Definitiva
