@@ -12,9 +12,11 @@ import {
   FileText,
   ShieldAlert,
   Bug,
-  TestTube
+  TestTube,
+  Sparkles
 } from 'lucide-react';
 import { savePatientExam, savePatientBloodCulture } from '../services/patientService';
+import { calculateURR } from '../utils/examRanges';
 
 export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, examIndex, onSaved }) {
   const [formData, setFormData] = useState({
@@ -464,10 +466,10 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
             </div>
           </div>
 
-          {/* 3. Eletrólitos & Equilíbrio Ácido-Básico */}
+          {/* 3. Eletrólitos & Gasometria */}
           <div className="card-pastel-blue" style={{ padding: '1.25rem', borderRadius: '14px' }}>
             <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#1d4ed8' }}>
-              <Zap size={16} /> Eletrólitos
+              <Zap size={16} /> Eletrólitos & Gasometria
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem' }}>
               <div>
@@ -514,11 +516,36 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
             </div>
           </div>
 
-          {/* 4. Adequação da Diálise, Cinética de Ureia & Nutrição */}
+          {/* 4. Adequação da Diálise & Cinética de Ureia */}
           <div className="card-pastel-emerald" style={{ padding: '1.25rem', borderRadius: '14px' }}>
-            <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#047857' }}>
-              <Droplet size={16} /> Adequação Dialítica
-            </h3>
+            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+              <h3 className="font-bold text-sm flex items-center gap-2" style={{ color: '#047857' }}>
+                <Droplet size={16} /> Adequação Dialítica
+              </h3>
+              {(() => {
+                const urr = calculateURR(formData.ureiaPre, formData.ureiaPos);
+                if (urr !== null) {
+                  const isOk = urr >= 65;
+                  return (
+                    <span 
+                      style={{ 
+                        fontSize: '0.72rem', 
+                        padding: '2px 8px', 
+                        borderRadius: '10px', 
+                        background: isOk ? '#dcfce7' : '#fee2e2', 
+                        color: isOk ? '#15803d' : '#b91c1c', 
+                        fontWeight: 'bold',
+                        border: `1px solid ${isOk ? '#86efac' : '#fca5a5'}`
+                      }}
+                    >
+                      UR Calculada: {urr}% (Meta &ge; 65%)
+                    </span>
+                  );
+                }
+                return null;
+              })()}
+            </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.85rem' }}>
               <div>
                 <label className="text-xs font-semibold mb-1 block" style={{ color: '#064e3b' }}>
@@ -561,23 +588,17 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
                 />
                 <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Pós-diálise</span>
               </div>
+            </div>
+          </div>
 
+          {/* 5. Nutrição & Marcadores Inflamatórios (Síndrome MIA) */}
+          <div className="card-pastel-purple" style={{ padding: '1.25rem', borderRadius: '14px', background: '#faf5ff', border: '1px solid #e9d5ff' }}>
+            <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#6d28d9' }}>
+              <Sparkles size={16} /> Nutrição & Inflamação
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem' }}>
               <div>
-                <label className="text-xs font-semibold mb-1 block" style={{ color: '#064e3b' }}>
-                  Creatinina
-                </label>
-                <input 
-                  type="text" 
-                  className="input-field" 
-                  placeholder="mg/dL (Ex: 8.5)"
-                  value={formData.creatinina}
-                  onChange={(e) => setFormData(prev => ({ ...prev, creatinina: e.target.value }))}
-                />
-                <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Massa Muscular</span>
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold mb-1 block" style={{ color: '#064e3b' }}>
+                <label className="text-xs font-semibold mb-1 block" style={{ color: '#581c87' }}>
                   Albumina Sérica
                 </label>
                 <input 
@@ -589,17 +610,9 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
                 />
                 <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: &ge; 3.8 g/dL</span>
               </div>
-            </div>
-          </div>
 
-          {/* 5. Inflamação & Controle Glicêmico */}
-          <div className="card-pastel-purple" style={{ padding: '1.25rem', borderRadius: '14px' }}>
-            <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#6d28d9' }}>
-              <ShieldAlert size={16} /> Inflamação e Glicemia
-            </h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem' }}>
               <div>
-                <label className="text-xs font-semibold mb-1 block" style={{ color: '#4c1d95' }}>
+                <label className="text-xs font-semibold mb-1 block" style={{ color: '#581c87' }}>
                   PCR (Prot. C Reativa)
                 </label>
                 <input 
@@ -613,7 +626,29 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
               </div>
 
               <div>
-                <label className="text-xs font-semibold mb-1 block" style={{ color: '#4c1d95' }}>
+                <label className="text-xs font-semibold mb-1 block" style={{ color: '#581c87' }}>
+                  Creatinina
+                </label>
+                <input 
+                  type="text" 
+                  className="input-field" 
+                  placeholder="mg/dL (Ex: 8.5)"
+                  value={formData.creatinina}
+                  onChange={(e) => setFormData(prev => ({ ...prev, creatinina: e.target.value }))}
+                />
+                <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Massa Muscular</span>
+              </div>
+            </div>
+          </div>
+
+          {/* 6. Controle Glicêmico & Metabolismo */}
+          <div className="card-pastel-teal" style={{ padding: '1.25rem', borderRadius: '14px', background: '#f0fdfa', border: '1px solid #99f6e4' }}>
+            <h3 className="font-bold text-sm mb-3 flex items-center gap-2" style={{ color: '#0f766e' }}>
+              <ShieldAlert size={16} /> Controle Glicêmico
+            </h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.85rem' }}>
+              <div>
+                <label className="text-xs font-semibold mb-1 block" style={{ color: '#134e4a' }}>
                   Glicemia de Jejum
                 </label>
                 <input 
@@ -623,12 +658,12 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
                   value={formData.glicemia}
                   onChange={(e) => setFormData(prev => ({ ...prev, glicemia: e.target.value }))}
                 />
-                <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: 70 - 100</span>
+                <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta: 70 - 130</span>
               </div>
 
               <div>
-                <label className="text-xs font-semibold mb-1 block" style={{ color: '#4c1d95' }}>
-                  HbA1c (%)
+                <label className="text-xs font-semibold mb-1 block" style={{ color: '#134e4a' }}>
+                  HbA1c Glicada (%)
                 </label>
                 <input 
                   type="text" 
@@ -637,7 +672,7 @@ export default function ExamFormModal({ isOpen, onClose, patientId, examToEdit, 
                   value={formData.hba1c}
                   onChange={(e) => setFormData(prev => ({ ...prev, hba1c: e.target.value }))}
                 />
-                <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta DM: &lt; 7 - 8%</span>
+                <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>Meta DM: &lt; 7.0 - 8.0%</span>
               </div>
             </div>
           </div>

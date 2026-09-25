@@ -16,7 +16,7 @@ import {
   Activity,
   Droplet
 } from 'lucide-react';
-import { evaluateExam, parseExamNumber } from '../../utils/examRanges.js';
+import { evaluateExam, parseExamNumber, calculateURR } from '../../utils/examRanges.js';
 
 /**
  * Metadados dos biomarcadores para gráficos e matriz de metas
@@ -24,14 +24,18 @@ import { evaluateExam, parseExamNumber } from '../../utils/examRanges.js';
 const BIOMARKERS_CONFIG = [
   { key: 'hb', label: 'Hemoglobina', shortLabel: 'Hb', unit: 'g/dL', targetMin: 10.0, targetMax: 12.0, targetText: '10.0 a 12.0 g/dL' },
   { key: 'pth', label: 'PTH Intacto', shortLabel: 'PTH', unit: 'pg/mL', targetMin: 150, targetMax: 600, targetText: '150 a 600 pg/mL' },
+  { key: 'fa', label: 'Fosfatase Alcalina', shortLabel: 'FA', unit: 'U/L', targetMin: 40, targetMax: 130, targetText: '40 a 130 U/L' },
   { key: 'fosforo', label: 'Fósforo', shortLabel: 'Fósforo', unit: 'mg/dL', targetMin: 3.5, targetMax: 5.5, targetText: '3.5 a 5.5 mg/dL' },
+  { key: 'ca', label: 'Cálcio Total', shortLabel: 'Cálcio', unit: 'mg/dL', targetMin: 8.5, targetMax: 10.2, targetText: '8.5 a 10.2 mg/dL' },
   { key: 'k', label: 'Potássio', shortLabel: 'Potássio', unit: 'mEq/L', targetMin: 3.5, targetMax: 5.5, targetText: '3.5 a 5.5 mEq/L' },
+  { key: 'hco3', label: 'Bicarbonato', shortLabel: 'HCO₃⁻', unit: 'mEq/L', targetMin: 22, targetMax: 26, targetText: '22 a 26 mEq/L' },
   { key: 'ktv', label: 'Kt/V Daugirdas', shortLabel: 'Kt/V', unit: '', targetMin: 1.20, targetMax: 2.20, targetText: '≥ 1.20' },
+  { key: 'albumina', label: 'Albumina', shortLabel: 'Albumina', unit: 'g/dL', targetMin: 3.8, targetMax: 5.0, targetText: '≥ 3.8 g/dL' },
+  { key: 'pcr', label: 'Proteína C Reativa', shortLabel: 'PCR', unit: 'mg/L', targetMin: 0, targetMax: 5.0, targetText: '< 5.0 mg/L' },
+  { key: 'glicemia', label: 'Glicemia', shortLabel: 'Glicemia', unit: 'mg/dL', targetMin: 70, targetMax: 130, targetText: '70 a 130 mg/dL' },
+  { key: 'hba1c', label: 'Hemoglobina Glicada', shortLabel: 'HbA1c', unit: '%', targetMin: 4.5, targetMax: 7.0, targetText: '< 7.0%' },
   { key: 'ferritina', label: 'Ferritina', shortLabel: 'Ferritina', unit: 'ng/mL', targetMin: 200, targetMax: 800, targetText: '200 a 800 ng/mL' },
   { key: 'ist', label: 'IST', shortLabel: 'IST', unit: '%', targetMin: 20, targetMax: 50, targetText: '20% a 50%' },
-  { key: 'ca', label: 'Cálcio Total', shortLabel: 'Cálcio', unit: 'mg/dL', targetMin: 8.5, targetMax: 10.2, targetText: '8.5 a 10.2 mg/dL' },
-  { key: 'albumina', label: 'Albumina', shortLabel: 'Albumina', unit: 'g/dL', targetMin: 3.8, targetMax: 5.0, targetText: '≥ 3.8 g/dL' },
-  { key: 'glicemia', label: 'Glicemia', shortLabel: 'Glicemia', unit: 'mg/dL', targetMin: 70, targetMax: 130, targetText: '70 a 130 mg/dL' },
   { key: 'tgp', label: 'TGP (ALT)', shortLabel: 'TGP', unit: 'U/L', targetMin: 0, targetMax: 45, targetText: '< 45 U/L' }
 ];
 
@@ -296,13 +300,13 @@ export default function ExamHistorySection({
                   <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
                     <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Data</th>
                     <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Hb</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>IST/Ferritina</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>PTH</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>P Ca</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Potássio</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Kt/V</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Albumina</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Glic TGP</th>
+                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>IST / Ferritina</th>
+                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>PTH / FA</th>
+                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>P / Ca</th>
+                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>K⁺ / HCO₃⁻</th>
+                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Kt/V • UR%</th>
+                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Alb / PCR</th>
+                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Glic / HbA1c</th>
                     <th style={{ padding: '0.65rem 0.8rem', textAlign: 'right', color: '#475569' }}>Ações</th>
                   </tr>
                 </thead>
@@ -322,8 +326,16 @@ export default function ExamHistorySection({
                           <ExamBadge examKey="ferritina" value={item.ferritina} />
                         </div>
                       </td>
-                      <td style={{ padding: '0.65rem 0.8rem' }}>
-                        <ExamBadge examKey="pth" value={item.pth} />
+                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <ExamBadge examKey="pth" value={item.pth} />
+                          {item.fa && (
+                            <>
+                              <span style={{ color: '#cbd5e1' }}>/</span>
+                              <ExamBadge examKey="fa" value={item.fa} title="Fosfatase Alcalina (U/L)" />
+                            </>
+                          )}
+                        </div>
                       </td>
                       <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
                         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
@@ -332,20 +344,57 @@ export default function ExamHistorySection({
                           <ExamBadge examKey="ca" value={item.ca} />
                         </div>
                       </td>
-                      <td style={{ padding: '0.65rem 0.8rem' }}>
-                        <ExamBadge examKey="k" value={item.k} />
+                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <ExamBadge examKey="k" value={item.k} />
+                          {item.hco3 && (
+                            <>
+                              <span style={{ color: '#cbd5e1' }}>/</span>
+                              <ExamBadge examKey="hco3" value={item.hco3} title="Bicarbonato (mEq/L)" />
+                            </>
+                          )}
+                        </div>
                       </td>
-                      <td style={{ padding: '0.65rem 0.8rem' }}>
-                        <ExamBadge examKey="ktv" value={item.ktv} />
+                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+                        {(() => {
+                          const urr = calculateURR(item.ureiaPre, item.ureiaPos) || (item.ur ? parseExamNumber(item.ur) : null);
+                          return (
+                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              <ExamBadge examKey="ktv" value={item.ktv} title="Kt/V Dialítico (≥1.2)" />
+                              {urr !== null && (
+                                <>
+                                  <span style={{ color: '#cbd5e1' }}>/</span>
+                                  <ExamBadge 
+                                    examKey="ur" 
+                                    value={`${urr}%`} 
+                                    title={`Taxa de Redução de Ureia (UR%): Pré ${item.ureiaPre || '-'} | Pós ${item.ureiaPos || '-'}`} 
+                                  />
+                                </>
+                              )}
+                            </div>
+                          );
+                        })()}
                       </td>
-                      <td style={{ padding: '0.65rem 0.8rem' }}>
-                        <ExamBadge examKey="albumina" value={item.albumina} suffix=" g/dL" />
+                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <ExamBadge examKey="albumina" value={item.albumina} suffix=" g/dL" />
+                          {item.pcr !== undefined && item.pcr !== null && item.pcr !== '' && (
+                            <>
+                              <span style={{ color: '#cbd5e1' }}>/</span>
+                              <ExamBadge examKey="pcr" value={item.pcr} title="PCR (mg/L)" />
+                            </>
+                          )}
+                        </div>
                       </td>
                       <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
                         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                           <ExamBadge examKey="glicemia" value={item.glicemia} />
-                          <span style={{ color: '#cbd5e1' }}>/</span>
-                          <ExamBadge examKey="tgp" value={item.tgp} suffix=" U/L" />
+                          {item.hba1c && (
+                            <>
+                              <span style={{ color: '#cbd5e1' }}>/</span>
+                              <ExamBadge examKey="hba1c" value={`${item.hba1c}%`} title="Hemoglobina Glicada" />
+                            </>
+                          )}
                         </div>
                       </td>
                       <td style={{ padding: '0.65rem 0.8rem', textAlign: 'right' }}>

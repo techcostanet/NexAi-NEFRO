@@ -1,5 +1,17 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.82",
+    "date": "25/09/2026",
+    "title": "Reorganização clínica dos exames laboratoriais (DMO com FA e Cálcio Corrigido, Adequação com Kt/V e Ureia, Gasometria e HbA1c)",
+    "highlights": [
+      "✨ Reorganização dos exames em 6 blocos clínicos especializados (Anemia, DMO, Adequação Dialítica, Eletrólitos & Gasometria, Nutrição & Inflamação e Glicemia/Hepático)",
+      "✨ Fosfatase Alcalina (FA) e cálculo do Cálcio Corrigido pela Albumina no painel de Distúrbio Mineral Ósseo (DMO)",
+      "✨ Adequação Dialítica com Kt/V, Ureia Pré/Pós e cálculo automático da Taxa de Redução de Ureia (UR%)",
+      "✨ Retirada de PCR de adequação dialítica e criação de bloco dedicado de Nutrição & Inflamação",
+      "✨ Destaque clínico para Hemoglobina Glicada (HbA1c) no controle de pacientes nefropatas diabéticos"
+    ]
+  },
+  {
     "version": "1.1.81",
     "date": "24/09/2026",
     "title": "\\ Telemetria SaaS com exclusao de dr-marcelo resolucao do double-login no adm...",

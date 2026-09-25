@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.82] - 2026-09-25
+### Alterações
+- Reorganização clínica dos exames laboratoriais: DMO com Fosfatase Alcalina e cálculo de Cálcio Corrigido pela Albumina, Gasometria/Equilíbrio Ácido-Básico, Adequação Dialítica com Kt/V, Ureia Pré/Pós e UR%, Nutrição & Inflamação com Albumina e PCR, e destaque à Hemoglobina Glicada (HbA1c).
+
 ## [1.1.81] - 2026-09-24
 ### Alterações
 - \ Telemetria SaaS com exclusao de dr-marcelo resolucao do double-login no admin parcelamento flexivel e notificacoes de release por email com periodicidade configuravel\

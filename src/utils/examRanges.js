@@ -228,7 +228,91 @@ export function evaluateExam(examKey, rawValue) {
       return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
     }
 
+    // Fosfatase Alcalina / FA (Meta: 40 a 130 U/L)
+    case 'fa':
+    case 'fosfatasealcalina': {
+      if (num >= 40 && num <= 130) {
+        return { ...EXAM_STATUS_STYLES.bom, numValue: num };
+      }
+      if ((num >= 30 && num < 40) || (num > 130 && num <= 180)) {
+        return { ...EXAM_STATUS_STYLES.medio, numValue: num };
+      }
+      return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
+    }
+
+    // Hemoglobina Glicada / HbA1c (Meta na DRC: ≤ 7.0%)
+    case 'hba1c':
+    case 'glicada': {
+      if (num <= 7.0) {
+        return { ...EXAM_STATUS_STYLES.bom, numValue: num };
+      }
+      if (num > 7.0 && num <= 8.5) {
+        return { ...EXAM_STATUS_STYLES.medio, numValue: num };
+      }
+      return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
+    }
+
+    // Taxa de Redução de Ureia / UR% / PRU (Meta SBN/KDIGO: ≥ 65%)
+    case 'ur':
+    case 'pru':
+    case 'taxareducaoureia': {
+      if (num >= 65) {
+        return { ...EXAM_STATUS_STYLES.bom, numValue: num };
+      }
+      if (num >= 60 && num < 65) {
+        return { ...EXAM_STATUS_STYLES.medio, numValue: num };
+      }
+      return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
+    }
+
+    // Ureia Pré-HD (Meta usual pré-diálise: 60 a 160 mg/dL)
+    case 'ureiapre': {
+      if (num >= 60 && num <= 160) {
+        return { ...EXAM_STATUS_STYLES.bom, numValue: num };
+      }
+      if ((num >= 40 && num < 60) || (num > 160 && num <= 200)) {
+        return { ...EXAM_STATUS_STYLES.medio, numValue: num };
+      }
+      return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
+    }
+
+    // Ureia Pós-HD (Meta de depuração: ≤ 50 mg/dL)
+    case 'ureiapos': {
+      if (num <= 50) {
+        return { ...EXAM_STATUS_STYLES.bom, numValue: num };
+      }
+      if (num > 50 && num <= 70) {
+        return { ...EXAM_STATUS_STYLES.medio, numValue: num };
+      }
+      return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
+    }
+
     default:
       return { ...EXAM_STATUS_STYLES.neutro, numValue: num };
   }
 }
+
+/**
+ * Calcula o Cálcio Corrigido pela Albumina
+ * Fórmula: Cálcio Total + 0.8 * (4.0 - Albumina)
+ */
+export function calculateCorrectedCalcium(ca, albumina) {
+  const caNum = parseExamNumber(ca);
+  const albNum = parseExamNumber(albumina);
+  if (caNum === null || albNum === null) return null;
+  const corrected = caNum + 0.8 * (4.0 - albNum);
+  return parseFloat(corrected.toFixed(2));
+}
+
+/**
+ * Calcula a Taxa de Redução de Ureia (UR% / PRU)
+ * Fórmula: ((Ureia Pré - Ureia Pós) / Ureia Pré) * 100
+ */
+export function calculateURR(ureiaPre, ureiaPos) {
+  const pre = parseExamNumber(ureiaPre);
+  const pos = parseExamNumber(ureiaPos);
+  if (!pre || !pos || pre <= 0) return null;
+  const urr = ((pre - pos) / pre) * 100;
+  return parseFloat(urr.toFixed(1));
+}
+

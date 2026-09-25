@@ -78,7 +78,7 @@ import TransplantReportPdf from '../components/pdf/TransplantReportPdf';
 import { downloadPdfDocument } from '../services/pdfService';
 import { printElement } from '../utils/printUtils';
 import { safeFormatDate } from '../utils/dateUtils';
-import { evaluateExam, parseExamNumber } from '../utils/examRanges';
+import { evaluateExam, parseExamNumber, calculateCorrectedCalcium, calculateURR } from '../utils/examRanges';
 
 /**
  * Componente de Badge Clínico em formato de quadradinho compacto
@@ -2202,9 +2202,27 @@ export default function PatientProfile() {
                   </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
-                  <span className="text-muted">Cálcio:</span>
+                  <span className="text-muted">Cálcio Total:</span>
                   <strong style={{ color: evaluateExam('ca', exames.ca).color, fontWeight: 'bold' }}>
                     {exames.ca ? `${exames.ca} mg/dL` : '-'} <span className="text-muted font-normal text-2xs">(8.5-10.2)</span>
+                  </strong>
+                </div>
+                {(() => {
+                  const caCorr = calculateCorrectedCalcium(exames.ca, exames.albumina);
+                  if (caCorr === null) return null;
+                  return (
+                    <div className="flex justify-between items-center p-1.5 rounded-lg bg-amber-50/70 border border-amber-200/60" title="Cálcio Corrigido pela Albumina: Ca + 0.8 * (4.0 - Alb)">
+                      <span className="text-amber-900 font-medium" style={{ fontSize: '0.72rem' }}>Ca Corrigido (Alb):</span>
+                      <strong style={{ color: evaluateExam('ca', caCorr).color, fontWeight: 'bold' }}>
+                        {caCorr} mg/dL <span className="text-muted font-normal text-2xs">(8.5-10.2)</span>
+                      </strong>
+                    </div>
+                  );
+                })()}
+                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                  <span className="text-muted">Fosf. Alcalina:</span>
+                  <strong style={{ color: evaluateExam('fa', exames.fa).color, fontWeight: 'bold' }}>
+                    {exames.fa ? `${exames.fa} U/L` : '-'} <span className="text-muted font-normal text-2xs">(40-130)</span>
                   </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
@@ -2214,38 +2232,7 @@ export default function PatientProfile() {
               </div>
             </div>
 
-            {/* 3. Eletrólitos & Gasometria */}
-            <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
-              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-blue-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <HeartPulse size={15} color="#2563eb" style={{ flexShrink: 0 }} />
-                <span>Eletrólitos</span>
-              </div>
-              
-              <div className="flex flex-col gap-1.5 text-xs">
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
-                  <span className="text-muted">Potássio (K⁺):</span>
-                  <strong style={{ color: evaluateExam('k', exames.k).color, fontWeight: 'bold' }}>
-                    {exames.k ? `${exames.k} mEq/L` : '-'} <span className="text-muted font-normal text-2xs">(3.5-5.5)</span>
-                  </strong>
-                </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
-                  <span className="text-muted">Sódio (Na⁺):</span>
-                  <strong className="text-slate-800">{exames.na ? `${exames.na} mEq/L` : '-'}</strong>
-                </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
-                  <span className="text-muted">Bicarbonato:</span>
-                  <strong style={{ color: evaluateExam('hco3', exames.hco3).color, fontWeight: 'bold' }}>
-                    {exames.hco3 ? `${exames.hco3} mEq/L` : '-'} <span className="text-muted font-normal text-2xs">(22-26)</span>
-                  </strong>
-                </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
-                  <span className="text-muted">Fosf. Alcalina:</span>
-                  <strong className="text-slate-800">{exames.fa ? `${exames.fa} U/L` : '-'}</strong>
-                </div>
-              </div>
-            </div>
-
-            {/* 4. Adequação Dialítica, Nutrição & Inflamação */}
+            {/* 3. Adequação Dialítica & Cinética de Ureia */}
             <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
               <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-emerald-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <ShieldCheck size={15} color="#059669" style={{ flexShrink: 0 }} />
@@ -2260,25 +2247,89 @@ export default function PatientProfile() {
                   </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
-                  <span className="text-muted">Albumina:</span>
+                  <span className="text-muted">Ureia Pré-HD:</span>
+                  <strong style={{ color: evaluateExam('ureiapre', exames.ureiaPre).color, fontWeight: 'bold' }}>
+                    {exames.ureiaPre ? `${exames.ureiaPre} mg/dL` : '-'}
+                  </strong>
+                </div>
+                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                  <span className="text-muted">Ureia Pós-HD:</span>
+                  <strong style={{ color: evaluateExam('ureiapos', exames.ureiaPos).color, fontWeight: 'bold' }}>
+                    {exames.ureiaPos ? `${exames.ureiaPos} mg/dL` : '-'}
+                  </strong>
+                </div>
+                {(() => {
+                  const urr = calculateURR(exames.ureiaPre, exames.ureiaPos) || (exames.ur ? parseExamNumber(exames.ur) : null);
+                  const urrEval = evaluateExam('ur', urr);
+                  return (
+                    <div className="flex justify-between items-center p-1.5 rounded-lg bg-emerald-50/70 border border-emerald-200/60" title="Taxa de Redução de Ureia (UR% / PRU): ((Pré - Pós) / Pré) * 100">
+                      <span className="text-emerald-900 font-medium" style={{ fontSize: '0.72rem' }}>Redução Ureia (UR%):</span>
+                      <strong style={{ color: urrEval.color, fontWeight: 'bold' }}>
+                        {urr !== null ? `${urr}%` : '-'} <span className="text-muted font-normal text-2xs">(&ge;65%)</span>
+                      </strong>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+
+            {/* 4. Eletrólitos & Gasometria */}
+            <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
+              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-blue-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <HeartPulse size={15} color="#2563eb" style={{ flexShrink: 0 }} />
+                <span>Eletrólitos & Gasometria</span>
+              </div>
+              
+              <div className="flex flex-col gap-1.5 text-xs">
+                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                  <span className="text-muted">Potássio (K⁺):</span>
+                  <strong style={{ color: evaluateExam('k', exames.k).color, fontWeight: 'bold' }}>
+                    {exames.k ? `${exames.k} mEq/L` : '-'} <span className="text-muted font-normal text-2xs">(3.5-5.5)</span>
+                  </strong>
+                </div>
+                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                  <span className="text-muted">Sódio (Na⁺):</span>
+                  <strong className="text-slate-800">
+                    {exames.na ? `${exames.na} mEq/L` : '-'} <span className="text-muted font-normal text-2xs">(135-145)</span>
+                  </strong>
+                </div>
+                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                  <span className="text-muted">Bicarbonato (HCO₃⁻):</span>
+                  <strong style={{ color: evaluateExam('hco3', exames.hco3).color, fontWeight: 'bold' }}>
+                    {exames.hco3 ? `${exames.hco3} mEq/L` : '-'} <span className="text-muted font-normal text-2xs">(22-26)</span>
+                  </strong>
+                </div>
+              </div>
+            </div>
+
+            {/* 5. Nutrição & Marcadores Inflamatórios (Síndrome MIA) */}
+            <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
+              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-purple-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Sparkles size={15} color="#7c3aed" style={{ flexShrink: 0 }} />
+                <span>Nutrição & Inflamação</span>
+              </div>
+              
+              <div className="flex flex-col gap-1.5 text-xs">
+                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                  <span className="text-muted">Albumina Sérica:</span>
                   <strong style={{ color: evaluateExam('albumina', exames.albumina).color, fontWeight: 'bold' }}>
                     {exames.albumina ? `${exames.albumina} g/dL` : '-'} <span className="text-muted font-normal text-2xs">(&ge;3.8)</span>
                   </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
-                  <span className="text-muted">PCR:</span>
+                  <span className="text-muted">PCR (Prot. C Reativa):</span>
                   <strong style={{ color: evaluateExam('pcr', exames.pcr).color, fontWeight: 'bold' }}>
                     {exames.pcr ? `${exames.pcr} mg/L` : '-'} <span className="text-muted font-normal text-2xs">(&lt;5.0)</span>
                   </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
-                  <span className="text-muted">Creatinina:</span>
+                  <span className="text-muted">Creatinina (Massa):</span>
                   <strong className="text-slate-800">{exames.creatinina ? `${exames.creatinina} mg/dL` : '-'}</strong>
                 </div>
               </div>
             </div>
 
-            {/* 5. Glicemia & Função Hepática (TGP / TGO) */}
+            {/* 6. Glicemia & Função Hepática (TGP / TGO) */}
             <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
               <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-teal-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <Activity size={15} color="#0d9488" style={{ flexShrink: 0 }} />
@@ -2292,9 +2343,11 @@ export default function PatientProfile() {
                     {exames.glicemia ? `${exames.glicemia} mg/dL` : '-'} <span className="text-muted font-normal text-2xs">(70-130)</span>
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
-                  <span className="text-muted">HbA1c (%):</span>
-                  <strong className="text-slate-800">{exames.hba1c ? `${exames.hba1c}%` : '-'} <span className="text-muted font-normal text-2xs">(&lt;7.0%)</span></strong>
+                <div className="flex justify-between items-center p-1.5 rounded-lg bg-teal-50/70 border border-teal-200/60">
+                  <span className="text-teal-900 font-medium" style={{ fontSize: '0.72rem' }}>HbA1c Glicada (%):</span>
+                  <strong style={{ color: evaluateExam('hba1c', exames.hba1c).color, fontWeight: 'bold' }}>
+                    {exames.hba1c ? `${exames.hba1c}%` : '-'} <span className="text-muted font-normal text-2xs">(&lt;7.0%)</span>
+                  </strong>
                 </div>
                 <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
                   <span className="text-muted">TGP (ALT):</span>
