@@ -19,7 +19,7 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
   const cards = [];
 
   // ================= 1. HEMOGLOBINA / ANEMIA (ENERGIA & SANGUE FORTE) =================
-  if (exames.hb !== null && exames.hb !== undefined) {
+  if (exames.hb !== null && exames.hb !== undefined && exames.hb !== '') {
     const hb = Number(exames.hb);
     let status = GOAL_STATUS.CONQUISTA;
     let mensagem = '';
@@ -58,7 +58,7 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
   }
 
   // ================= 2. FÓSFORO (OSSOS FIRMES E PROTEÇÃO DAS ARTÉRIAS) =================
-  if (exames.fosforo !== null && exames.fosforo !== undefined) {
+  if (exames.fosforo !== null && exames.fosforo !== undefined && exames.fosforo !== '') {
     const p = Number(exames.fosforo);
     let status = GOAL_STATUS.CONQUISTA;
     let mensagem = '';
@@ -97,7 +97,7 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
   }
 
   // ================= 3. POTÁSSIO (RITMO SEGURO DO CORAÇÃO) =================
-  if (exames.k !== null && exames.k !== undefined) {
+  if (exames.k !== null && exames.k !== undefined && exames.k !== '') {
     const k = Number(exames.k);
     let status = GOAL_STATUS.CONQUISTA;
     let mensagem = '';
@@ -135,8 +135,8 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
     });
   }
 
-  // ================= 4. CÁLCIO & PTH (PROTEÇÃO ÓSSEA & ARTICULAR) =================
-  if (exames.ca !== null && exames.ca !== undefined) {
+  // ================= 4. CÁLCIO TOTAL (SAÚDE DOS OSSOS) =================
+  if (exames.ca !== null && exames.ca !== undefined && exames.ca !== '') {
     const ca = Number(exames.ca);
     let status = GOAL_STATUS.CONQUISTA;
     let mensagem = '';
@@ -170,8 +170,156 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
     });
   }
 
-  // ================= 5. KT/V OU CINÉTICA DE UREIA (LIMPEZA DO SANGUE) =================
-  if (exames.ktv !== null && exames.ktv !== undefined) {
+  // ================= 5. PTH (METABOLISMO ÓSSEO) =================
+  if (exames.pth !== null && exames.pth !== undefined && exames.pth !== '') {
+    const pth = Number(exames.pth);
+    let status = GOAL_STATUS.CONQUISTA;
+    let mensagem = '';
+    let dica = '';
+
+    if (pth >= 150 && pth <= 300) {
+      status = GOAL_STATUS.CONQUISTA;
+      mensagem = 'Hormônio ósseo em equilíbrio total! Seus ossos estão protegidos.';
+      dica = 'Continue tomando seus remédios de suporte ósseo nos horários certos.';
+    } else if (pth > 300 && pth <= 600) {
+      status = GOAL_STATUS.QUASE_LA;
+      mensagem = 'Hormônio ósseo um pouco elevado. Vamos calibrar os remédios protetores.';
+      dica = 'Mantenha o fósforo bem controlado nas refeições para ajudar seu PTH.';
+    } else if (pth > 600) {
+      status = GOAL_STATUS.ATENCAO;
+      mensagem = 'Atenção com os ossos: PTH elevado pede reforço no tratamento.';
+      dica = 'Não deixe de tomar os medicamentos para tireoide/ossos prescritos pelo nefrologista.';
+    } else { // pth < 150
+      status = GOAL_STATUS.QUASE_LA;
+      mensagem = 'PTH reduzido. A equipe médica irá adequar os remédios para estimular seus ossos.';
+      dica = 'Converse com o médico sobre o ajuste de cálcio e vitamina D.';
+    }
+
+    cards.push({
+      id: 'pth',
+      categoria: 'Metabolismo Ósseo',
+      subtitulo: 'Paratormônio (PTH)',
+      valorFormatado: `${Math.round(pth)} pg/mL`,
+      faixaMeta: 'Meta: 150 a 300 pg/mL',
+      status,
+      mensagem,
+      dica,
+      icone: 'Activity',
+      corPrimaria: '#8b5cf6'
+    });
+  }
+
+  // ================= 6. VITAMINA D (IMUNIDADE E OSSOS) =================
+  if (exames.vitD !== null && exames.vitD !== undefined && exames.vitD !== '') {
+    const vitD = Number(exames.vitD);
+    let status = GOAL_STATUS.CONQUISTA;
+    let mensagem = '';
+    let dica = '';
+
+    if (vitD >= 30) {
+      status = GOAL_STATUS.CONQUISTA;
+      mensagem = 'Vitamina do sol protegendo seus ossos e turbinando sua imunidade!';
+      dica = 'Mantenha as doses de vitamina D prescritas na sua rotina.';
+    } else if (vitD >= 20 && vitD < 30) {
+      status = GOAL_STATUS.QUASE_LA;
+      mensagem = 'Vitamina D um pouco abaixo. Vamos repor para proteger sua imunidade.';
+      dica = 'Tome as gotinhas ou cápsulas de vitamina D recomendadas pela equipe.';
+    } else {
+      status = GOAL_STATUS.ATENCAO;
+      mensagem = 'Vitamina D baixa. Seu corpo precisa de reposição para fortalecer os ossos.';
+      dica = 'Tome sol moderado pela manhã e siga rigorosamente a suplementação prescrita.';
+    }
+
+    cards.push({
+      id: 'vitD',
+      categoria: 'Imunidade e Sol',
+      subtitulo: 'Vitamina D (25-OH)',
+      valorFormatado: `${vitD.toFixed(1).replace('.', ',')} ng/mL`,
+      faixaMeta: 'Meta: ≥ 30 ng/mL',
+      status,
+      mensagem,
+      dica,
+      icone: 'ShieldCheck',
+      corPrimaria: '#eab308'
+    });
+  }
+
+  // ================= 7. FERRITINA (ESTOQUE DE FERRO) =================
+  if (exames.ferritina !== null && exames.ferritina !== undefined && exames.ferritina !== '') {
+    const fer = Number(exames.ferritina);
+    let status = GOAL_STATUS.CONQUISTA;
+    let mensagem = '';
+    let dica = '';
+
+    if (fer >= 200 && fer <= 500) {
+      status = GOAL_STATUS.CONQUISTA;
+      mensagem = 'Seu estoque de ferro está perfeito para produzir sangue de qualidade!';
+      dica = 'Suas aplicações de ferro na diálise estão surtindo ótimo efeito.';
+    } else if (fer > 500 && fer <= 800) {
+      status = GOAL_STATUS.CONQUISTA;
+      mensagem = 'Bom estoque de ferro acumulado para sustentar sua energia.';
+      dica = 'A equipe acompanhará o momento ideal de pausar ou manter o ferro na máquina.';
+    } else if (fer < 200) {
+      status = GOAL_STATUS.ATENCAO;
+      mensagem = 'Estoque de ferro baixo. Precisamos abastecer suas reservas de energia.';
+      dica = 'Garanta a aplicação de ferro endovenoso na máquina sem faltar às sessões.';
+    } else { // fer > 800
+      status = GOAL_STATUS.QUASE_LA;
+      mensagem = 'Ferro muito acumulado. Vamos dar uma pausa nas aplicações da máquina.';
+      dica = 'A equipe médica ajustará o ciclo de ferro conforme seus exames.';
+    }
+
+    cards.push({
+      id: 'ferritina',
+      categoria: 'Reserva de Ferro',
+      subtitulo: 'Ferritina Sérica',
+      valorFormatado: `${Math.round(fer)} ng/mL`,
+      faixaMeta: 'Meta: 200 a 500 ng/mL',
+      status,
+      mensagem,
+      dica,
+      icone: 'Droplet',
+      corPrimaria: '#c026d3'
+    });
+  }
+
+  // ================= 8. IST (SATURAÇÃO DE TRANSFERRINA) =================
+  if (exames.ist !== null && exames.ist !== undefined && exames.ist !== '') {
+    const ist = Number(exames.ist);
+    let status = GOAL_STATUS.CONQUISTA;
+    let mensagem = '';
+    let dica = '';
+
+    if (ist >= 20 && ist <= 50) {
+      status = GOAL_STATUS.CONQUISTA;
+      mensagem = 'O ferro está chegando rápido onde o sangue precisa!';
+      dica = 'Seu organismo está aproveitando perfeitamente o ferro recebido.';
+    } else if (ist < 20) {
+      status = GOAL_STATUS.ATENCAO;
+      mensagem = 'Pouco ferro em circulação. Risco de cansaço e falta de ar.';
+      dica = 'A equipe médica irá programar reforço de ferro durante a diálise.';
+    } else { // ist > 50
+      status = GOAL_STATUS.QUASE_LA;
+      mensagem = 'Ferro em circulação abundante. Vamos dosar as próximas aplicações.';
+      dica = 'Aguarde a liberação da equipe antes de novas ampolas de ferro.';
+    }
+
+    cards.push({
+      id: 'ist',
+      categoria: 'Uso do Ferro',
+      subtitulo: 'Saturação de Transferrina (IST)',
+      valorFormatado: `${Math.round(ist)}%`,
+      faixaMeta: 'Meta: 20 a 50%',
+      status,
+      mensagem,
+      dica,
+      icone: 'Zap',
+      corPrimaria: '#ea580c'
+    });
+  }
+
+  // ================= 9. KT/V OU CINÉTICA DE UREIA (LIMPEZA DO SANGUE) =================
+  if (exames.ktv !== null && exames.ktv !== undefined && exames.ktv !== '') {
     const ktv = Number(exames.ktv);
     let status = GOAL_STATUS.CONQUISTA;
     let mensagem = '';
@@ -200,30 +348,31 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
       corPrimaria: '#059669'
     });
   } else if (exames.ureiaPre && exames.ureiaPos) {
-    // Estimativa por Ureia se não tiver Kt/V direto
     const urPre = Number(exames.ureiaPre);
     const urPos = Number(exames.ureiaPos);
-    const urReducao = ((urPre - urPos) / urPre) * 100;
-    const status = urReducao >= 65 ? GOAL_STATUS.CONQUISTA : GOAL_STATUS.QUASE_LA;
+    if (urPre > 0) {
+      const urReducao = ((urPre - urPos) / urPre) * 100;
+      const status = urReducao >= 65 ? GOAL_STATUS.CONQUISTA : GOAL_STATUS.QUASE_LA;
 
-    cards.push({
-      id: 'ureia',
-      categoria: 'Filtração e Limpeza',
-      subtitulo: 'Redução de Ureia na Máquina',
-      valorFormatado: `${Math.round(urReducao)}% depurada`,
-      faixaMeta: 'Meta: ≥ 65% de redução',
-      status,
-      mensagem: status === GOAL_STATUS.CONQUISTA 
-        ? 'Excelente limpeza! A diálise retirou as impurezas com grande eficácia.'
-        : 'Podemos filtrar mais impurezas completando sempre todo o horário da sessão.',
-      dica: 'Não reduza o tempo de diálise e mantenha a circulação da fístula livre sem apertos.',
-      icone: 'Zap',
-      corPrimaria: '#059669'
-    });
+      cards.push({
+        id: 'ureia',
+        categoria: 'Filtração e Limpeza',
+        subtitulo: 'Redução de Ureia na Máquina',
+        valorFormatado: `${Math.round(urReducao)}% depurada`,
+        faixaMeta: 'Meta: ≥ 65% de redução',
+        status,
+        mensagem: status === GOAL_STATUS.CONQUISTA 
+          ? 'Excelente limpeza! A diálise retirou as impurezas com grande eficácia.'
+          : 'Podemos filtrar mais impurezas completando sempre todo o horário da sessão.',
+        dica: 'Não reduza o tempo de diálise e mantenha a circulação da fístula livre sem apertos.',
+        icone: 'Zap',
+        corPrimaria: '#059669'
+      });
+    }
   }
 
-  // ================= 6. ALBUMINA (NUTRIÇÃO, MÚSCULOS E IMUNIDADE) =================
-  if (exames.albumina !== null && exames.albumina !== undefined) {
+  // ================= 10. ALBUMINA (NUTRIÇÃO, MÚSCULOS E IMUNIDADE) =================
+  if (exames.albumina !== null && exames.albumina !== undefined && exames.albumina !== '') {
     const alb = Number(exames.albumina);
     let status = GOAL_STATUS.CONQUISTA;
     let mensagem = '';
@@ -241,8 +390,8 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
     cards.push({
       id: 'albumina',
-      categoria: 'Força e Imunidade',
-      subtitulo: 'Albumina (Nutrição)',
+      categoria: 'Força e Nutrição',
+      subtitulo: 'Albumina Sérica',
       valorFormatado: `${alb.toFixed(1).replace('.', ',')} g/dL`,
       faixaMeta: 'Meta: ≥ 3,8 g/dL',
       status,
@@ -253,8 +402,78 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
     });
   }
 
-  // ================= 7. GLICEMIA (CONTROLE METABÓLICO) =================
-  if (exames.glicemia !== null && exames.glicemia !== undefined) {
+  // ================= 11. SÓDIO (EQUILÍBRIO DE ÁGUA E SEDE) =================
+  if (exames.na !== null && exames.na !== undefined && exames.na !== '') {
+    const na = Number(exames.na);
+    let status = GOAL_STATUS.CONQUISTA;
+    let mensagem = '';
+    let dica = '';
+
+    if (na >= 135 && na <= 145) {
+      status = GOAL_STATUS.CONQUISTA;
+      mensagem = 'Equilíbrio perfeito de sal e água! Menos sede e pressão sob controle.';
+      dica = 'Continue moderando no sal da comida e evitando temperos prontos.';
+    } else if (na > 145) {
+      status = GOAL_STATUS.ATENCAO;
+      mensagem = 'Sódio elevado provoca muita sede e ganho de peso excessivo entre diálises.';
+      dica = 'Corte embutidos e salgadinhos. Tempere com ervas naturais (orégano, alho e louro).';
+    } else { // na < 135
+      status = GOAL_STATUS.QUASE_LA;
+      mensagem = 'Sódio um pouco baixo. Vamos cuidar para evitar fraqueza ou câimbras.';
+      dica = 'Siga as orientações de líquidos e dieta prescritas pela nutricionista.';
+    }
+
+    cards.push({
+      id: 'na',
+      categoria: 'Equilíbrio e Sede',
+      subtitulo: 'Sódio Sérico',
+      valorFormatado: `${Math.round(na)} mEq/L`,
+      faixaMeta: 'Meta: 135 a 145 mEq/L',
+      status,
+      mensagem,
+      dica,
+      icone: 'Droplet',
+      corPrimaria: '#0284c7'
+    });
+  }
+
+  // ================= 12. BICARBONATO (EQUILÍBRIO ÁCIDO DO SANGUE) =================
+  if (exames.hco3 !== null && exames.hco3 !== undefined && exames.hco3 !== '') {
+    const hco3 = Number(exames.hco3);
+    let status = GOAL_STATUS.CONQUISTA;
+    let mensagem = '';
+    let dica = '';
+
+    if (hco3 >= 22 && hco3 <= 26) {
+      status = GOAL_STATUS.CONQUISTA;
+      mensagem = 'Sangue livre de acidez! Seus músculos e ossos estão protegidos.';
+      dica = 'Tome o bicarbonato prescrito se indicado pela equipe médica.';
+    } else if (hco3 < 22) {
+      status = GOAL_STATUS.QUASE_LA;
+      mensagem = 'Sangue com leve acidez. Pode causar perda muscular e cansaço.';
+      dica = 'Tome os comprimidos de bicarbonato prescritos pela equipe médica.';
+    } else { // hco3 > 26
+      status = GOAL_STATUS.QUASE_LA;
+      mensagem = 'Bicarbonato elevado. Vamos acompanhar com a equipe.';
+      dica = 'Avise a equipe médica para calibrar o banho da diálise.';
+    }
+
+    cards.push({
+      id: 'hco3',
+      categoria: 'Acidez do Sangue',
+      subtitulo: 'Bicarbonato (HCO3)',
+      valorFormatado: `${hco3.toFixed(1).replace('.', ',')} mEq/L`,
+      faixaMeta: 'Meta: 22 a 26 mEq/L',
+      status,
+      mensagem,
+      dica,
+      icone: 'ShieldCheck',
+      corPrimaria: '#0d9488'
+    });
+  }
+
+  // ================= 13. GLICEMIA (CONTROLE METABÓLICO) =================
+  if (exames.glicemia !== null && exames.glicemia !== undefined && exames.glicemia !== '') {
     const gli = Number(exames.glicemia);
     let status = GOAL_STATUS.CONQUISTA;
     let mensagem = '';
@@ -292,15 +511,50 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
     });
   }
 
-  // ================= 8. FUNÇÃO HEPÁTICA (TGP / ALT) =================
-  if (exames.tgp !== null && exames.tgp !== undefined) {
+  // ================= 14. PCR (PROTEÇÃO CONTRA INFLAMAÇÃO) =================
+  if (exames.pcr !== null && exames.pcr !== undefined && exames.pcr !== '') {
+    const pcr = Number(exames.pcr);
+    let status = GOAL_STATUS.CONQUISTA;
+    let mensagem = '';
+    let dica = '';
+
+    if (pcr <= 5.0) {
+      status = GOAL_STATUS.CONQUISTA;
+      mensagem = 'Corpo sereno e sem inflamação! Seu acesso vascular está saudável.';
+      dica = 'Mantenha os cuidados diários de higiene com sua fístula ou cateter.';
+    } else if (pcr > 5.0 && pcr <= 10.0) {
+      status = GOAL_STATUS.QUASE_LA;
+      mensagem = 'Leve inflamação detectada. Vamos investigar para proteger sua saúde.';
+      dica = 'Avise a equipe se tiver febre, dor no acesso ou dor de dente.';
+    } else {
+      status = GOAL_STATUS.ATENCAO;
+      mensagem = 'Inflamação ativa no sangue. A equipe médica dará atenção imediata.';
+      dica = 'Comunique imediatamente qualquer secreção ou dor no cateter/fístula.';
+    }
+
+    cards.push({
+      id: 'pcr',
+      categoria: 'Proteção e Defesa',
+      subtitulo: 'PCR (Inflamação)',
+      valorFormatado: `${pcr.toFixed(1).replace('.', ',')} mg/L`,
+      faixaMeta: 'Meta: Até 5,0 mg/L',
+      status,
+      mensagem,
+      dica,
+      icone: 'ShieldCheck',
+      corPrimaria: '#e11d48'
+    });
+  }
+
+  // ================= 15. FUNÇÃO HEPÁTICA (TGP / ALT) =================
+  if (exames.tgp !== null && exames.tgp !== undefined && exames.tgp !== '') {
     const tgp = Number(exames.tgp);
     const status = tgp <= 45 ? GOAL_STATUS.CONQUISTA : GOAL_STATUS.QUASE_LA;
 
     cards.push({
       id: 'tgp',
       categoria: 'Saúde do Fígado',
-      subtitulo: 'TGP (Função do Fígado)',
+      subtitulo: 'TGP (Enzimas Hepáticas)',
       valorFormatado: `${Math.round(tgp)} U/L`,
       faixaMeta: 'Meta: Até 45 U/L',
       status,
@@ -321,7 +575,7 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
   let tituloPlacar = 'Show de Dedicação!';
   let mensagemGeral = '';
-  let nivelTrofeu = 'OURO'; // 'OURO' | 'PRATA' | 'INCENTIVO'
+  let nivelTrofeu = 'OURO';
 
   if (taxaSucesso >= 75) {
     nivelTrofeu = 'OURO';

@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.84",
+    "date": "26/09/2026",
+    "title": "Boletim de Saude Personalizado: expansao do catalogo nefrologico completo, di...",
+    "highlights": [
+      "✨ Boletim de Saude Personalizado: expansao do catalogo nefrologico completo, dicas customizadas por exame, orientacao medica em branco por padrao com textos rapidos e visualizacao dinamica em tempo real"
+    ]
+  },
+  {
     "version": "1.1.83",
     "date": "26/09/2026",
     "title": "Alinhamento e correcao do Boletim de Saude: eliminacao de sobreposicao de tex...",

@@ -12,7 +12,9 @@ import {
   CheckSquare, 
   Square, 
   Stethoscope, 
-  Eraser 
+  Eraser,
+  Lightbulb,
+  Edit3
 } from 'lucide-react';
 import PatientBulletinPrintDocument from './PatientBulletinPrintDocument';
 import PatientBulletinPdf from '../pdf/PatientBulletinPdf';
@@ -21,12 +23,12 @@ import { printElement } from '../../utils/printUtils';
 import { evaluatePatientExamsForBulletin, GOAL_STATUS } from '../../services/patientEducationService';
 
 const QUICK_PRESETS = [
-  { label: '🍌 Cuidado c/ Potássio (Frutas)', text: 'Atenção com frutas ricas em potássio (banana, água de coco, abacate e molho de tomate).' },
+  { label: '🍌 Potássio / Frutas', text: 'Atenção com frutas ricas em potássio (banana, água de coco, abacate e molho de tomate).' },
   { label: '💊 Quelante nas Refeições', text: 'Tome o quelante de fósforo mastigado junto com a comida para proteger seus ossos e artérias.' },
-  { label: '🩸 Reforçar Ferro na Máquina', text: 'Mantenha em dia as aplicações de ferro e eritropoietina na máquina para tratar a anemia.' },
-  { label: '💧 Controle de Líquidos e Sal', text: 'Cuidado com o ganho de peso entre as diálises. Modere o consumo de líquidos e sal no dia a dia.' },
-  { label: '⏰ Horário Integral da Diálise', text: 'Cumpra sempre as 4 horas completas de sessão na máquina para garantir máxima limpeza do sangue.' },
-  { label: '👏 Parabéns pelas Metas!', text: 'Parabéns pela dedicação e disciplina! Seus resultados mostram sua grande vitória este mês.' }
+  { label: '🩸 Ferro na Máquina', text: 'Mantenha em dia as aplicações de ferro e eritropoietina na máquina para tratar a anemia.' },
+  { label: '💧 Líquidos e Sal', text: 'Cuidado com o ganho de peso entre as diálises. Modere o consumo de líquidos e sal no dia a dia.' },
+  { label: '⏰ Horário Integral', text: 'Cumpra sempre as 4 horas completas de sessão na máquina para garantir máxima limpeza do sangue.' },
+  { label: '👏 Parabéns pelas Metas', text: 'Parabéns pela dedicação e disciplina! Seus resultados mostram sua grande vitória este mês.' }
 ];
 
 export default function PatientBulletinModal({
@@ -37,7 +39,10 @@ export default function PatientBulletinModal({
 }) {
   const [selectedExamIndex, setSelectedExamIndex] = useState(0);
   const [selectedCardIds, setSelectedCardIds] = useState(null);
-  const [showTips, setShowTips] = useState(false);
+  const [showTips, setShowTips] = useState(true);
+  const [customTips, setCustomTips] = useState({});
+  const [disabledTips, setDisabledTips] = useState({});
+  const [editingTipCardId, setEditingTipCardId] = useState(null);
   const [customNote, setCustomNote] = useState('');
   const [copied, setCopied] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
@@ -66,11 +71,12 @@ export default function PatientBulletinModal({
     return evaluatePatientExamsForBulletin(patient, exameSelecionado, dataRef);
   }, [patient, exameSelecionado, dataRef]);
 
-  // Lista de IDs ativos (se null, seleciona todos os disponíveis inicialmente)
+  // Lista de todos os IDs de cartões gerados para o exame
   const allCardIds = useMemo(() => {
     return bulletinData?.cards?.map(c => c.id) || [];
   }, [bulletinData]);
 
+  // IDs ativos: se null, seleciona todos inicialmente. Se array (inclusive vazio []), respeita estritamente
   const activeCardIds = useMemo(() => {
     if (selectedCardIds === null) return allCardIds;
     return selectedCardIds;
@@ -82,12 +88,13 @@ export default function PatientBulletinModal({
   const toggleCard = (id) => {
     if (activeCardIds.includes(id)) {
       setSelectedCardIds(activeCardIds.filter(x => x !== id));
+      if (editingTipCardId === id) setEditingTipCardId(null);
     } else {
       setSelectedCardIds([...activeCardIds, id]);
     }
   };
 
-  // Selecionar apenas metas que precisam de atenção (não conquistadas)
+  // Selecionar apenas metas críticas / quase lá
   const handleSelectCritical = () => {
     if (!bulletinData?.cards) return;
     const critical = bulletinData.cards
@@ -102,6 +109,7 @@ export default function PatientBulletinModal({
 
   const handleClearSelection = () => {
     setSelectedCardIds([]);
+    setEditingTipCardId(null);
   };
 
   const handleAddPreset = (text) => {
@@ -146,32 +154,39 @@ export default function PatientBulletinModal({
     text += `👨‍⚕️ *Resp:* ${doctorName} (${doctorCrm})\n`;
     text += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
-    text += `🏆 *${tituloPlacar}*\n`;
-    text += `🌟 *${batidas} de ${total} Metas Batidas (${taxa}% de Sucesso)*\n`;
-    text += `"${mensagemGeral}"\n\n`;
-    text += `━━━━━━━━━━━━━━━━━━━━━\n`;
-    text += `*METAS DE SAÚDE AVALIADAS:*\n\n`;
+    if (total > 0) {
+      text += `🏆 *${tituloPlacar}*\n`;
+      text += `🌟 *${batidas} de ${total} Metas Batidas (${taxa}% de Sucesso)*\n`;
+      text += `"${mensagemGeral}"\n\n`;
+      text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      text += `*METAS DE SAÚDE AVALIADAS:*\n\n`;
 
-    filtered.forEach(c => {
-      const isConquista = c.status === GOAL_STATUS.CONQUISTA;
-      const isQuaseLa = c.status === GOAL_STATUS.QUASE_LA;
-      const statusBadge = isConquista ? '🟢 Conquista!' : isQuaseLa ? '🟡 Quase Lá!' : '🔴 Atenção';
+      filtered.forEach(c => {
+        const isConquista = c.status === GOAL_STATUS.CONQUISTA;
+        const isQuaseLa = c.status === GOAL_STATUS.QUASE_LA;
+        const statusBadge = isConquista ? '🟢 Conquista!' : isQuaseLa ? '🟡 Quase Lá!' : '🔴 Atenção';
 
-      const metaLimpa = c.faixaMeta ? (c.faixaMeta.startsWith('Meta:') ? c.faixaMeta : `Meta: ${c.faixaMeta}`) : '';
+        const metaLimpa = c.faixaMeta ? (c.faixaMeta.startsWith('Meta:') ? c.faixaMeta : `Meta: ${c.faixaMeta}`) : '';
 
-      text += `${statusBadge} *${c.categoria}*\n`;
-      if (c.subtitulo) text += `📌 _${c.subtitulo}_\n`;
-      text += `📊 *Resultado:* ${c.valorFormatado} | _${metaLimpa}_\n`;
-      text += `💬 "${c.mensagem}"\n`;
-      if (showTips && c.dica) {
-        text += `💡 _Dica: ${c.dica}_\n`;
-      }
-      text += `\n`;
-    });
+        text += `${statusBadge} *${c.categoria}*\n`;
+        if (c.subtitulo) text += `📌 _${c.subtitulo}_\n`;
+        text += `📊 *Resultado:* ${c.valorFormatado} | _${metaLimpa}_\n`;
+        text += `💬 "${c.mensagem}"\n`;
 
-    text += `━━━━━━━━━━━━━━━━━━━━━\n`;
-    text += `💚🩺 *Orientação do Médico para este Mês:*\n`;
-    text += `"${customNote || 'Atenção com frutas ricas em potássio (banana, água de coco, abacate e molho de tomate). Tome o quelante de fósforo mastigado junto com a comida para proteger seus ossos e artérias.'}"\n\n`;
+        const isTipDisabled = disabledTips[c.id] === true;
+        const tipContent = customTips[c.id] !== undefined ? customTips[c.id] : c.dica;
+        if (showTips && !isTipDisabled && tipContent && tipContent.trim()) {
+          text += `💡 _Dica: ${tipContent}_\n`;
+        }
+        text += `\n`;
+      });
+    }
+
+    if (customNote && customNote.trim()) {
+      text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      text += `💚🩺 *Orientação do Médico para este Mês:*\n`;
+      text += `"${customNote.trim()}"\n\n`;
+    }
 
     text += `━━━━━━━━━━━━━━━━━━━━━\n`;
     text += `✨ _Nex-Ai.NEFRO • Cuidando de você e da sua saúde a cada sessão!_`;
@@ -193,6 +208,8 @@ export default function PatientBulletinModal({
           customNote={customNote}
           selectedCardIds={activeCardIds}
           showTips={showTips}
+          customTips={customTips}
+          disabledTips={disabledTips}
         />,
         fileName
       );
@@ -222,7 +239,7 @@ export default function PatientBulletinModal({
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
-        zIndex: 99999,
+        zIndex: 99999, 
         padding: '0.75rem'
       }}
       onClick={onClose}
@@ -234,11 +251,11 @@ export default function PatientBulletinModal({
           width: '96vw', 
           maxWidth: '1240px', 
           height: '92vh', 
-          display: 'flex',
-          flexDirection: 'column',
+          display: 'flex', 
+          flexDirection: 'column', 
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)', 
-          borderRadius: '16px',
-          overflow: 'hidden'
+          borderRadius: '16px', 
+          overflow: 'hidden' 
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -317,8 +334,8 @@ export default function PatientBulletinModal({
           <div 
             className="no-print"
             style={{
-              width: '370px',
-              minWidth: '340px',
+              width: '390px',
+              minWidth: '350px',
               borderRight: '1px solid #e2e8f0',
               background: '#f8fafc',
               overflowY: 'auto',
@@ -391,8 +408,8 @@ export default function PatientBulletinModal({
                 </button>
               </div>
 
-              {/* Lista de Checkboxes dos Cards */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', maxHeight: '210px', overflowY: 'auto' }}>
+              {/* Lista de Checkboxes dos Cards com Gaveta de Dica Customizada */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', maxHeight: '250px', overflowY: 'auto' }}>
                 {(bulletinData?.cards || []).map(card => {
                   const isChecked = activeCardIds.includes(card.id);
                   const isConquista = card.status === GOAL_STATUS.CONQUISTA;
@@ -402,48 +419,147 @@ export default function PatientBulletinModal({
                   const badgeBg = isConquista ? '#ecfdf5' : (isAtenção ? '#fef2f2' : '#fef3c7');
                   const badgeText = isConquista ? '🟢 Ok' : (isAtenção ? '🔴 Atenção' : '🟡 Quase');
 
+                  const isEditingThisTip = editingTipCardId === card.id;
+                  const hasCustomTip = customTips[card.id] !== undefined && customTips[card.id] !== card.dica;
+                  const isTipDisabled = disabledTips[card.id] === true;
+
                   return (
-                    <div
-                      key={card.id}
-                      onClick={() => toggleCard(card.id)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '5px 8px',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        background: isChecked ? '#f0fdf4' : '#ffffff',
-                        border: isChecked ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
-                        transition: 'all 0.15s ease'
-                      }}
-                    >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                        {isChecked ? (
-                          <CheckSquare size={14} color="#16a34a" />
-                        ) : (
-                          <Square size={14} color="#94a3b8" />
-                        )}
-                        <span style={{ fontSize: '0.75rem', fontWeight: isChecked ? '700' : '500', color: isChecked ? '#0f172a' : '#64748b' }}>
-                          {card.subtitulo || card.categoria}
-                        </span>
+                    <div key={card.id} style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                      <div
+                        onClick={() => toggleCard(card.id)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '5px 8px',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          background: isChecked ? '#f0fdf4' : '#ffffff',
+                          border: isChecked ? '1px solid #bbf7d0' : '1px solid #e2e8f0',
+                          transition: 'all 0.15s ease'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '7px', flex: 1, minWidth: 0 }}>
+                          {isChecked ? (
+                            <CheckSquare size={14} color="#16a34a" />
+                          ) : (
+                            <Square size={14} color="#94a3b8" />
+                          )}
+                          <span style={{ fontSize: '0.75rem', fontWeight: isChecked ? '700' : '500', color: isChecked ? '#0f172a' : '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {card.subtitulo || card.categoria}
+                          </span>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
+                          <span style={{ fontSize: '0.72rem', fontWeight: 'bold', color: '#1e293b' }}>
+                            {card.valorFormatado}
+                          </span>
+                          <span style={{ fontSize: '0.65rem', fontWeight: '700', padding: '1px 5px', borderRadius: '4px', background: badgeBg, color: badgeColor }}>
+                            {badgeText}
+                          </span>
+
+                          {/* Botão de personalização da dica da meta */}
+                          {isChecked && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingTipCardId(isEditingThisTip ? null : card.id);
+                              }}
+                              style={{
+                                padding: '2px 5px',
+                                borderRadius: '4px',
+                                border: '1px solid #cbd5e1',
+                                background: isEditingThisTip ? '#eff6ff' : (hasCustomTip ? '#fef3c7' : '#f8fafc'),
+                                cursor: 'pointer',
+                                fontSize: '0.65rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '3px',
+                                color: isTipDisabled ? '#94a3b8' : (hasCustomTip ? '#b45309' : '#475569')
+                              }}
+                              title={isTipDisabled ? 'Dica oculta' : (hasCustomTip ? 'Dica personalizada pelo médico' : 'Personalizar dica deste exame')}
+                            >
+                              <Lightbulb size={11} color={isTipDisabled ? '#94a3b8' : (hasCustomTip ? '#d97706' : '#2563eb')} />
+                              <span>{hasCustomTip ? 'Editada' : 'Dica'}</span>
+                            </button>
+                          )}
+                        </div>
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontSize: '0.72rem', fontWeight: 'bold', color: '#1e293b' }}>
-                          {card.valorFormatado}
-                        </span>
-                        <span style={{ fontSize: '0.65rem', fontWeight: '700', padding: '1px 5px', borderRadius: '4px', background: badgeBg, color: badgeColor }}>
-                          {badgeText}
-                        </span>
-                      </div>
+                      {/* Gaveta de edição da dica da meta */}
+                      {isChecked && isEditingThisTip && (
+                        <div style={{
+                          background: '#f8fafc',
+                          border: '1px solid #cbd5e1',
+                          borderRadius: '6px',
+                          padding: '6px 8px',
+                          marginLeft: '12px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '5px'
+                        }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontSize: '0.68rem', fontWeight: 'bold', color: '#334155' }}>
+                              Dica de Hábito • {card.subtitulo}:
+                            </span>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '0.65rem', color: '#64748b' }}>
+                              <input
+                                type="checkbox"
+                                checked={!isTipDisabled}
+                                onChange={(e) => {
+                                  setDisabledTips({ ...disabledTips, [card.id]: !e.target.checked });
+                                }}
+                              />
+                              Exibir
+                            </label>
+                          </div>
+
+                          {!isTipDisabled && (
+                            <>
+                              <textarea
+                                className="input-field w-full"
+                                rows={2}
+                                style={{ fontSize: '0.72rem', padding: '4px 6px' }}
+                                placeholder={`Dica padrão: ${card.dica}`}
+                                value={customTips[card.id] !== undefined ? customTips[card.id] : card.dica}
+                                onChange={(e) => {
+                                  setCustomTips({ ...customTips, [card.id]: e.target.value });
+                                }}
+                              />
+                              {hasCustomTip && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const updated = { ...customTips };
+                                    delete updated[card.id];
+                                    setCustomTips(updated);
+                                  }}
+                                  style={{
+                                    alignSelf: 'flex-start',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#2563eb',
+                                    fontSize: '0.65rem',
+                                    cursor: 'pointer',
+                                    textDecoration: 'underline',
+                                    padding: 0
+                                  }}
+                                >
+                                  Restaurar dica padrão do sistema
+                                </button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* Controle de Dicas Automáticas dos Cartões */}
+            {/* Controle Mestre de Dicas dos Cartões */}
             <div style={{ background: '#ffffff', padding: '0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
               <label 
                 style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: 'pointer' }}
@@ -459,7 +575,7 @@ export default function PatientBulletinModal({
               </label>
             </div>
 
-            {/* Observação / Conduta Médica do Mês */}
+            {/* Observação / Conduta Médica do Mês (Inicia em Branco por Padrão) */}
             <div style={{ background: '#ffffff', padding: '0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0', flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div className="flex justify-between items-center mb-1.5">
                 <div className="flex items-center gap-1.5">
@@ -471,14 +587,14 @@ export default function PatientBulletinModal({
                     type="button"
                     onClick={() => setCustomNote('')}
                     className="text-xxs text-red-600 hover:underline flex items-center gap-0.5"
-                    title="Limpar observação"
+                    title="Limpar recomendação médica"
                   >
                     <Eraser size={11} /> Limpar
                   </button>
                 )}
               </div>
 
-              {/* Textarea para observação médica */}
+              {/* Textarea para recomendação médica */}
               <textarea
                 className="input-field w-full mb-2"
                 rows={3}
@@ -519,7 +635,7 @@ export default function PatientBulletinModal({
 
           </div>
 
-          {/* ----- COLUNA DIREITA: LIVE PREVIEW DA FOLHA A4 EM TEMPO REAL ----- */}
+          {/* ----- COLUNA DIREITA: LIVE PREVIEW DA FOLHA A4 EM TEMPO REAL ("O QUE MARCAR, APARECE") ----- */}
           <div 
             style={{
               flex: 1,
@@ -550,6 +666,8 @@ export default function PatientBulletinModal({
                 customNote={customNote}
                 selectedCardIds={activeCardIds}
                 showTips={showTips}
+                customTips={customTips}
+                disabledTips={disabledTips}
               />
             </div>
           </div>

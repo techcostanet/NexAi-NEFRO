@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.84] - 2026-09-26
+### Alterações
+- Boletim de Saude Personalizado: expansao do catalogo nefrologico completo, dicas customizadas por exame, orientacao medica em branco por padrao com textos rapidos e visualizacao dinamica em tempo real
+
 ## [1.1.83] - 2026-09-26
 ### Alterações
 - Alinhamento e correcao do Boletim de Saude: eliminacao de sobreposicao de texto no PDF, correcao de glifo de trofeu com SVGs vetoriais nativos, remocao de Meta: Meta: duplicado e padronizacao visual identica entre tela, impresso, PDF e WhatsApp

@@ -173,7 +173,6 @@ const styles = StyleSheet.create({
     color: '#0f172a',
     backgroundColor: '#ffffff'
   },
-  // Cabeçalho Principal
   header: {
     borderBottomWidth: 1.5,
     borderBottomColor: '#e2e8f0',
@@ -241,7 +240,6 @@ const styles = StyleSheet.create({
     marginTop: 0.5
   },
 
-  // Placar / Banner de Destaque
   bannerCard: {
     backgroundColor: '#eff6ff',
     borderWidth: 1,
@@ -293,7 +291,6 @@ const styles = StyleSheet.create({
     marginTop: 3
   },
 
-  // Grade de Metas / Cards
   cardsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -383,7 +380,6 @@ const styles = StyleSheet.create({
     lineHeight: 1.2
   },
 
-  // Box de Orientação Médica (Verde idêntico à tela)
   orientationBox: {
     backgroundColor: '#f0fdf4',
     borderWidth: 1.5,
@@ -410,7 +406,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
 
-  // Rodapé Oficial Institucional
   footerSection: {
     borderTopWidth: 1,
     borderTopColor: '#cbd5e1',
@@ -454,7 +449,9 @@ export default function PatientBulletinPdf({
   doctorInfo,
   customNote = '',
   selectedCardIds = null,
-  showTips = true
+  showTips = true,
+  customTips = {},
+  disabledTips = {}
 }) {
   if (!bulletinData) return null;
 
@@ -466,8 +463,8 @@ export default function PatientBulletinPdf({
     cards = []
   } = bulletinData;
 
-  // Filtra cartões conforme seleção do médico no painel
-  const displayCards = Array.isArray(selectedCardIds) && selectedCardIds.length > 0
+  // Filtra cartões conforme seleção estrita do médico
+  const displayCards = Array.isArray(selectedCardIds)
     ? cards.filter(c => selectedCardIds.includes(c.id))
     : cards;
 
@@ -487,10 +484,8 @@ export default function PatientBulletinPdf({
   const mesCapitalizado = mesFormatado.charAt(0).toUpperCase() + mesFormatado.slice(1);
   const dataHoje = new Date().toLocaleDateString('pt-BR');
 
-  // Higieniza título do placar retirando emojis para evitar glifos quebrados (<Æ)
   const cleanTitle = cleanPdfText(tituloPlacar) || 'Desempenho Campeão!';
 
-  // Mensagem calculada dinamicamente conforme os cartões selecionados
   let cleanMsg = cleanPdfText(mensagemGeral);
   if (totalMetas > 0) {
     if (taxaSucesso >= 75) {
@@ -505,6 +500,8 @@ export default function PatientBulletinPdf({
   const badgeBg = taxaSucesso >= 70 ? '#dcfce7' : '#fef3c7';
   const badgeBorder = taxaSucesso >= 70 ? '#bbf7d0' : '#fde68a';
   const badgeColor = taxaSucesso >= 70 ? '#15803d' : '#b45309';
+
+  const hasCustomNote = customNote && customNote.trim() !== '';
 
   return (
     <Document title={`Boletim_Saude_${cleanPdfText(pacienteNome).replace(/\s+/g, '_')}`}>
@@ -534,107 +531,121 @@ export default function PatientBulletinPdf({
           </View>
         </View>
 
-        {/* ================= 2. BANNER DE CONQUISTAS (ZERO SOBREPOSIÇÃO) ================= */}
-        <View style={styles.bannerCard}>
-          {/* Círculo do Troféu com Ícone Vetorial SVG */}
-          <View style={styles.trophyCircle}>
-            <TrophyIcon size={18} color="#ffffff" />
-          </View>
-
-          {/* Área de Informações */}
-          <View style={styles.bannerContent}>
-            <View style={styles.bannerTopRow}>
-              <Text style={styles.bannerTitle}>{cleanTitle}</Text>
-              <View style={[styles.goalsBadge, { backgroundColor: badgeBg, borderColor: badgeBorder }]}>
-                <StarIcon size={8.5} color={badgeColor} />
-                <Text style={[styles.goalsBadgeText, { color: badgeColor, marginLeft: 3 }]}>
-                  {metasBatidas} de {totalMetas} Metas Batidas ({taxaSucesso}%)
-                </Text>
-              </View>
+        {/* ================= 2. BANNER DE CONQUISTAS ================= */}
+        {totalMetas > 0 ? (
+          <View style={styles.bannerCard}>
+            <View style={styles.trophyCircle}>
+              <TrophyIcon size={18} color="#ffffff" />
             </View>
-            <Text style={styles.bannerMessage}>{cleanMsg}</Text>
+
+            <View style={styles.bannerContent}>
+              <View style={styles.bannerTopRow}>
+                <Text style={styles.bannerTitle}>{cleanTitle}</Text>
+                <View style={[styles.goalsBadge, { backgroundColor: badgeBg, borderColor: badgeBorder }]}>
+                  <StarIcon size={8.5} color={badgeColor} />
+                  <Text style={[styles.goalsBadgeText, { color: badgeColor, marginLeft: 3 }]}>
+                    {metasBatidas} de {totalMetas} Metas Batidas ({taxaSucesso}%)
+                  </Text>
+                </View>
+              </View>
+              <Text style={styles.bannerMessage}>{cleanMsg}</Text>
+            </View>
           </View>
-        </View>
+        ) : (
+          <View style={[styles.bannerCard, { backgroundColor: '#f8fafc', borderColor: '#cbd5e1', justifyContent: 'center' }]}>
+            <Text style={{ fontSize: 9, color: '#64748b', textAlign: 'center' }}>
+              Nenhum exame selecionado para o boletim.
+            </Text>
+          </View>
+        )}
 
         {/* ================= 3. GRADE DE METAS CLÍNICAS ================= */}
-        <View style={styles.cardsGrid}>
-          {displayCards.map((card, idx) => {
-            const isConquista = card.status === 'CONQUISTA' || card.statusId === 'otimo';
-            const isQuaseLa = card.status === 'QUASE_LA' || card.statusId === 'atencao';
+        {totalMetas > 0 && (
+          <View style={styles.cardsGrid}>
+            {displayCards.map((card, idx) => {
+              const isConquista = card.status === 'CONQUISTA' || card.statusId === 'otimo';
+              const isQuaseLa = card.status === 'QUASE_LA' || card.statusId === 'atencao';
 
-            const bgCard = isConquista ? '#f8fafc' : (isQuaseLa ? '#fffbeb' : '#fef2f2');
-            const borderCard = isConquista ? '#e2e8f0' : (isQuaseLa ? '#fde68a' : '#fecaca');
-            const statusBg = isConquista ? '#ecfdf5' : (isQuaseLa ? '#fef3c7' : '#fee2e2');
-            const statusColor = isConquista ? '#166534' : (isQuaseLa ? '#92400e' : '#991b1b');
-            const statusText = isConquista ? 'Conquista!' : (isQuaseLa ? 'Quase Lá!' : 'Atenção');
-            const dotColor = isConquista ? '#16a34a' : (isQuaseLa ? '#d97706' : '#dc2626');
+              const bgCard = isConquista ? '#f8fafc' : (isQuaseLa ? '#fffbeb' : '#fef2f2');
+              const borderCard = isConquista ? '#e2e8f0' : (isQuaseLa ? '#fde68a' : '#fecaca');
+              const statusBg = isConquista ? '#ecfdf5' : (isQuaseLa ? '#fef3c7' : '#fee2e2');
+              const statusColor = isConquista ? '#166534' : (isQuaseLa ? '#92400e' : '#991b1b');
+              const statusText = isConquista ? 'Conquista!' : (isQuaseLa ? 'Quase Lá!' : 'Atenção');
+              const dotColor = isConquista ? '#16a34a' : (isQuaseLa ? '#d97706' : '#dc2626');
 
-            return (
-              <View 
-                key={idx} 
-                style={[
-                  styles.card, 
-                  { 
-                    width: cardWidth, 
-                    backgroundColor: bgCard, 
-                    borderColor: borderCard 
-                  }
-                ]}
-              >
-                {/* Linha 1: Ícone Categoria + Títulos + Badge de Status */}
-                <View style={styles.cardTitleRow}>
-                  <View style={styles.cardLeftHeader}>
-                    {renderPdfIcon(card.icone, card.corPrimaria || '#2563eb')}
-                    <View style={styles.cardTitleBlock}>
-                      <Text style={styles.cardCategoryName}>{cleanPdfText(card.categoria || card.nome)}</Text>
-                      <Text style={styles.cardSubtitleName}>{cleanPdfText(card.subtitulo)}</Text>
+              const isTipDisabledForCard = disabledTips[card.id] === true;
+              const tipContent = customTips[card.id] !== undefined ? customTips[card.id] : card.dica;
+              const showCardTip = showTips && !isTipDisabledForCard && Boolean(tipContent && tipContent.trim());
+
+              return (
+                <View 
+                  key={idx} 
+                  style={[
+                    styles.card, 
+                    { 
+                      width: cardWidth, 
+                      backgroundColor: bgCard, 
+                      borderColor: borderCard 
+                    }
+                  ]}
+                >
+                  {/* Linha 1: Ícone Categoria + Títulos + Badge de Status */}
+                  <View style={styles.cardTitleRow}>
+                    <View style={styles.cardLeftHeader}>
+                      {renderPdfIcon(card.icone, card.corPrimaria || '#2563eb')}
+                      <View style={styles.cardTitleBlock}>
+                        <Text style={styles.cardCategoryName}>{cleanPdfText(card.categoria || card.nome)}</Text>
+                        <Text style={styles.cardSubtitleName}>{cleanPdfText(card.subtitulo)}</Text>
+                      </View>
+                    </View>
+
+                    <View style={[styles.statusBadge, { backgroundColor: statusBg }]}>
+                      <StatusDot color={dotColor} size={5} />
+                      <Text style={[styles.statusBadgeText, { color: statusColor }]}>{statusText}</Text>
                     </View>
                   </View>
 
-                  <View style={[styles.statusBadge, { backgroundColor: statusBg }]}>
-                    <StatusDot color={dotColor} size={5} />
-                    <Text style={[styles.statusBadgeText, { color: statusColor }]}>{statusText}</Text>
-                  </View>
-                </View>
-
-                {/* Linha 2: Resultado e Meta (Sem "Meta: Meta:") */}
-                <View style={styles.cardValueRow}>
-                  <Text style={[styles.cardValueText, { color: isConquista ? '#0f172a' : '#b45309' }]}>
-                    Resultado: {cleanPdfText(card.valorFormatado)}
-                  </Text>
-                  <Text style={styles.cardTargetText}>
-                    {cleanMetaText(card.faixaMeta || card.alvoTexto)}
-                  </Text>
-                </View>
-
-                {/* Linha 3: Frase de Feedback Acolhedor */}
-                <Text style={styles.cardMessage}>
-                  "{cleanPdfText(card.mensagem || card.feedbackTexto)}"
-                </Text>
-
-                {/* Linha 4: Dica Prática (se habilitada) */}
-                {showTips && (card.dica || card.dicaPratica) ? (
-                  <View style={styles.cardTipBox}>
-                    <Text style={styles.cardTipText}>
-                      Dica: {cleanPdfText(card.dica || card.dicaPratica)}
+                  {/* Linha 2: Resultado e Meta */}
+                  <View style={styles.cardValueRow}>
+                    <Text style={[styles.cardValueText, { color: isConquista ? '#0f172a' : '#b45309' }]}>
+                      Resultado: {cleanPdfText(card.valorFormatado)}
+                    </Text>
+                    <Text style={styles.cardTargetText}>
+                      {cleanMetaText(card.faixaMeta || card.alvoTexto)}
                     </Text>
                   </View>
-                ) : null}
-              </View>
-            );
-          })}
-        </View>
 
-        {/* ================= 4. ORIENTAÇÃO DO MÉDICO (VERDE IDÊNTICO À TELA) ================= */}
-        <View style={styles.orientationBox}>
-          <View style={styles.orientationHeader}>
-            <StethoscopeIcon size={13} color="#16a34a" />
-            <Text style={styles.orientationTitle}>Orientação do Médico para este Mês:</Text>
+                  {/* Linha 3: Frase de Feedback Acolhedor */}
+                  <Text style={styles.cardMessage}>
+                    "{cleanPdfText(card.mensagem || card.feedbackTexto)}"
+                  </Text>
+
+                  {/* Linha 4: Dica Prática do Médico ou Sistema */}
+                  {showCardTip && (
+                    <View style={styles.cardTipBox}>
+                      <Text style={styles.cardTipText}>
+                        Dica: {cleanPdfText(tipContent)}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              );
+            })}
           </View>
-          <Text style={styles.orientationText}>
-            {cleanPdfText(customNote) || `Atenção com frutas ricas em potássio (banana, água de coco, abacate e molho de tomate). Tome o quelante de fósforo mastigado junto com a comida para proteger seus ossos e artérias.`}
-          </Text>
-        </View>
+        )}
+
+        {/* ================= 4. ORIENTAÇÃO DO MÉDICO (SÓ EXIBE SE PREENCHIDO) ================= */}
+        {hasCustomNote && (
+          <View style={styles.orientationBox}>
+            <View style={styles.orientationHeader}>
+              <StethoscopeIcon size={13} color="#16a34a" />
+              <Text style={styles.orientationTitle}>Orientação do Médico para este Mês:</Text>
+            </View>
+            <Text style={styles.orientationText}>
+              {cleanPdfText(customNote)}
+            </Text>
+          </View>
+        )}
 
         {/* ================= 5. RODAPÉ INSTITUCIONAL ================= */}
         <View style={styles.footerSection}>
