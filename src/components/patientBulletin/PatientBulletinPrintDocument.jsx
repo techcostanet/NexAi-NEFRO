@@ -15,6 +15,12 @@ import { GOAL_STATUS } from '../../services/patientEducationService';
  * 📄 DOCUMENTO IMPRESSO OFICIAL: BOLETIM DE CONQUISTAS & METAS DE SAÚDE DO PACIENTE
  * Calibrado com precisão para 1 ÚNICA FOLHA A4 COLORIDA, legível para todas as idades.
  */
+function cleanMetaText(meta) {
+  if (!meta) return '';
+  const cleaned = String(meta).replace(/^Meta:\s*/i, '').trim();
+  return `Meta: ${cleaned}`;
+}
+
 export default function PatientBulletinPrintDocument({
   bulletinData,
   doctorInfo,
@@ -40,6 +46,18 @@ export default function PatientBulletinPrintDocument({
   const totalMetas = displayCards.length;
   const metasBatidas = displayCards.filter(c => c.status === GOAL_STATUS.CONQUISTA).length;
   const taxaSucesso = totalMetas > 0 ? Math.round((metasBatidas / totalMetas) * 100) : 100;
+
+  // Mensagem dinâmica coerente com os cartões selecionados
+  let mensagemFinal = mensagemGeral;
+  if (totalMetas > 0) {
+    if (taxaSucesso >= 75) {
+      mensagemFinal = `Sensacional! Você atingiu ${metasBatidas} de ${totalMetas} metas de saúde com louvor neste mês. Seu esforço e disciplina nas sessões de diálise estão transformando sua qualidade de vida!`;
+    } else if (taxaSucesso >= 45) {
+      mensagemFinal = `Muito bem! Você conquistou vitórias importantes neste mês (${metasBatidas} metas batidas). Com pequenos ajustes na rotina e nas dicas da equipe, no próximo mês chegaremos ainda mais longe!`;
+    } else {
+      mensagemFinal = `Cada mês é uma nova oportunidade de recomeço e vitória. Toda a nossa equipe de Nefrologia está de mãos dadas com você para alcançarmos o melhor bem-estar possível!`;
+    }
+  }
 
   // Ajusta densidade visual se houver poucas metas (1 a 4) para maximizar legibilidade
   const isSpacious = totalMetas <= 4;
@@ -161,7 +179,7 @@ export default function PatientBulletinPrintDocument({
               </span>
             </div>
             <p style={{ margin: '2px 0 0 0', fontSize: isSpacious ? '11px' : '10px', color: '#334155', lineHeight: '1.35' }}>
-              {mensagemGeral}
+              {mensagemFinal}
             </p>
           </div>
         </div>
@@ -239,7 +257,7 @@ export default function PatientBulletinPrintDocument({
                     Resultado: {card.valorFormatado}
                   </span>
                   <span style={{ fontSize: isSpacious ? '9.5px' : '8.5px', color: '#64748b', fontStyle: 'italic' }}>
-                    {card.faixaMeta}
+                    {cleanMetaText(card.faixaMeta)}
                   </span>
                 </div>
 
@@ -270,27 +288,26 @@ export default function PatientBulletinPrintDocument({
 
         {/* ================= RECOMENDAÇÃO / CONDUTA MÉDICA ================= */}
         <div style={{
-          background: customNote ? '#f0fdf4' : '#f8fafc',
-          border: customNote ? '1.5px solid #86efac' : '1px solid #cbd5e1',
+          background: '#f0fdf4',
+          border: '1.5px solid #86efac',
           borderRadius: '8px',
           padding: isSpacious ? '10px 14px' : '7px 11px',
           marginBottom: '8px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '3px' }}>
-            <HeartHandshake size={isSpacious ? 16 : 14} color={customNote ? '#16a34a' : '#2563eb'} />
-            <strong style={{ fontSize: isSpacious ? '12px' : '10.5px', color: customNote ? '#166534' : '#1e40af' }}>
-              {customNote ? '🩺 Orientação do Médico para este Mês:' : 'Recadinho da Sua Equipe de Nefrologia:'}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+            <span style={{ fontSize: isSpacious ? '15px' : '13px', lineHeight: 1 }}>💚🩺</span>
+            <strong style={{ fontSize: isSpacious ? '12px' : '10.5px', color: '#166534' }}>
+              Orientação do Médico para este Mês:
             </strong>
           </div>
           <p style={{
             margin: '0',
             fontSize: isSpacious ? '11px' : '9.5px',
-            color: customNote ? '#14532d' : '#334155',
+            color: '#14532d',
             lineHeight: '1.35',
-            fontWeight: customNote ? '600' : 'normal',
-            fontStyle: customNote ? 'normal' : 'italic'
+            fontWeight: '600'
           }}>
-            {customNote || `"${pacienteNome.split(' ')[0]}, cada pequeno cuidado no seu dia a dia faz uma enorme diferença na sua qualidade de vida. Conte sempre com a gente!"`}
+            {customNote || `Atenção com frutas ricas em potássio (banana, água de coco, abacate e molho de tomate). Tome o quelante de fósforo mastigado junto com a comida para proteger seus ossos e artérias.`}
           </p>
         </div>
 

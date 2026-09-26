@@ -86,11 +86,11 @@ export function printElement(elementOrId, documentTitle = 'Nex-Ai.NEFRO - Docume
               display: none !important;
             }
             .print-isolated-wrapper,
-            .printable-prescription-area {
+            .printable-prescription-area,
+            .printable-patient-bulletin-area {
               width: 100% !important;
-              height: 100% !important;
-              display: flex !important;
-              flex-direction: column !important;
+              max-width: 100% !important;
+              height: auto !important;
               margin: 0 !important;
               padding: 0 !important;
             }
@@ -106,6 +106,14 @@ export function printElement(elementOrId, documentTitle = 'Nex-Ai.NEFRO - Docume
               justify-content: space-between !important;
               padding: 14px 24px !important;
               margin: 0 !important;
+              page-break-inside: avoid !important;
+              break-inside: avoid !important;
+            }
+            .patient-bulletin-a4-sheet {
+              width: 100% !important;
+              max-width: 100% !important;
+              margin: 0 auto !important;
+              box-sizing: border-box !important;
               page-break-inside: avoid !important;
               break-inside: avoid !important;
             }

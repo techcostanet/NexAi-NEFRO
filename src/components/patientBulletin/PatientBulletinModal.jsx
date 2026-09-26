@@ -115,30 +115,66 @@ export default function PatientBulletinModal({
 
   const handleCopyWhatsApp = () => {
     if (!bulletinData) return;
-    const { pacienteNome, cards } = bulletinData;
+    const { pacienteNome, cards, dataReferencia } = bulletinData;
     const filtered = cards.filter(c => activeCardIds.includes(c.id));
     const total = filtered.length;
     const batidas = filtered.filter(c => c.status === GOAL_STATUS.CONQUISTA).length;
     const taxa = total > 0 ? Math.round((batidas / total) * 100) : 100;
-    
-    let text = `🎉 *Boletim de Saúde - Nex-Ai.NEFRO*\n`;
-    text += `Olá, *${pacienteNome}*! Aqui está o resumo dos seus exames avaliados:\n\n`;
-    text += `🏆 *Seu Desempenho:* ${batidas} de ${total} metas alcançadas (${taxa}% de Sucesso!)\n\n`;
-    
+
+    const clinica = doctorInfo?.clinicaPrincipal || 'CLÍNICA RENALIS';
+    const doctorName = doctorInfo?.nome || 'Dr. Marcelo Ramos';
+    const doctorCrm = doctorInfo?.crm ? `CRM-${doctorInfo?.ufCrm || 'SP'} ${doctorInfo?.crm}` : 'CRM-SP 654321';
+
+    const dataObj = dataReferencia ? new Date(dataReferencia + 'T12:00:00') : new Date();
+    const mesFormatado = dataObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+    const mesCapitalizado = mesFormatado.charAt(0).toUpperCase() + mesFormatado.slice(1);
+
+    let tituloPlacar = 'Desempenho Campeão! 🏆';
+    let mensagemGeral = `Sensacional! Você atingiu ${batidas} de ${total} metas de saúde com louvor neste mês. Seu esforço e disciplina nas sessões de diálise estão transformando sua qualidade de vida!`;
+    if (taxa < 75 && taxa >= 45) {
+      tituloPlacar = 'Grandes Conquistas! 🌟';
+      mensagemGeral = `Muito bem! Você conquistou vitórias importantes neste mês (${batidas} metas batidas). Com pequenos ajustes na rotina e nas dicas da equipe, no próximo mês chegaremos ainda mais longe!`;
+    } else if (taxa < 45) {
+      tituloPlacar = 'Estamos Juntos nessa Jornada! 💪';
+      mensagemGeral = `Cada mês é uma nova oportunidade de recomeço e vitória. Toda a nossa equipe de Nefrologia está de mãos dadas com você para alcançarmos o melhor bem-estar possível!`;
+    }
+
+    let text = `🏥 *${clinica.toUpperCase()}* • _Boletim Nefrológico_\n`;
+    text += `📋 *Boletim de Saúde*\n`;
+    text += `👤 *Paciente:* ${pacienteNome}\n`;
+    text += `📅 *Referência:* ${mesCapitalizado}\n`;
+    text += `👨‍⚕️ *Resp:* ${doctorName} (${doctorCrm})\n`;
+    text += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
+
+    text += `🏆 *${tituloPlacar}*\n`;
+    text += `🌟 *${batidas} de ${total} Metas Batidas (${taxa}% de Sucesso)*\n`;
+    text += `"${mensagemGeral}"\n\n`;
+    text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+    text += `*METAS DE SAÚDE AVALIADAS:*\n\n`;
+
     filtered.forEach(c => {
-      const emoji = c.status === GOAL_STATUS.CONQUISTA ? '🟢' : c.status === GOAL_STATUS.QUASE_LA ? '🟡' : '🔴';
-      text += `${emoji} *${c.categoria || c.subtitulo}:* ${c.valorFormatado} (Meta: ${c.faixaMeta})\n"${c.mensagem}"\n`;
+      const isConquista = c.status === GOAL_STATUS.CONQUISTA;
+      const isQuaseLa = c.status === GOAL_STATUS.QUASE_LA;
+      const statusBadge = isConquista ? '🟢 Conquista!' : isQuaseLa ? '🟡 Quase Lá!' : '🔴 Atenção';
+
+      const metaLimpa = c.faixaMeta ? (c.faixaMeta.startsWith('Meta:') ? c.faixaMeta : `Meta: ${c.faixaMeta}`) : '';
+
+      text += `${statusBadge} *${c.categoria}*\n`;
+      if (c.subtitulo) text += `📌 _${c.subtitulo}_\n`;
+      text += `📊 *Resultado:* ${c.valorFormatado} | _${metaLimpa}_\n`;
+      text += `💬 "${c.mensagem}"\n`;
       if (showTips && c.dica) {
         text += `💡 _Dica: ${c.dica}_\n`;
       }
       text += `\n`;
     });
 
-    if (customNote) {
-      text += `🩺 *Orientação da Equipe Médica:*\n"${customNote}"\n\n`;
-    }
+    text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+    text += `💚🩺 *Orientação do Médico para este Mês:*\n`;
+    text += `"${customNote || 'Atenção com frutas ricas em potássio (banana, água de coco, abacate e molho de tomate). Tome o quelante de fósforo mastigado junto com a comida para proteger seus ossos e artérias.'}"\n\n`;
 
-    text += `🏥 _${doctorInfo?.clinicaPrincipal || 'Centro Nefrológico'} • Cuidando de você a cada sessão!_`;
+    text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+    text += `✨ _Nex-Ai.NEFRO • Cuidando de você e da sua saúde a cada sessão!_`;
 
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -236,7 +272,7 @@ export default function PatientBulletinModal({
               title="Copiar texto formatado para enviar no WhatsApp"
             >
               {copied ? <Check size={14} color="#16a34a" /> : <Share2 size={14} />}
-              <span>{copied ? 'Copiado p/ WhatsApp!' : 'WhatsApp'}</span>
+              <span>{copied ? 'Copiado!' : 'WhatsApp'}</span>
             </button>
 
             <button 

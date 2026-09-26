@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.83",
+    "date": "26/09/2026",
+    "title": "Alinhamento e correcao do Boletim de Saude: eliminacao de sobreposicao de tex...",
+    "highlights": [
+      "✨ Alinhamento e correcao do Boletim de Saude: eliminacao de sobreposicao de texto no PDF, correcao de glifo de trofeu com SVGs vetoriais nativos, remocao de Meta: Meta: duplicado e padronizacao visual identica entre tela, impresso, PDF e WhatsApp"
+    ]
+  },
+  {
     "version": "1.1.82",
     "date": "25/09/2026",
     "title": "Reorganização clínica dos exames laboratoriais (DMO com FA e Cálcio Corrigido, Adequação com Kt/V e Ureia, Gasometria e HbA1c)",

@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.83] - 2026-09-26
+### Alterações
+- Alinhamento e correcao do Boletim de Saude: eliminacao de sobreposicao de texto no PDF, correcao de glifo de trofeu com SVGs vetoriais nativos, remocao de Meta: Meta: duplicado e padronizacao visual identica entre tela, impresso, PDF e WhatsApp
+
 ## [1.1.82] - 2026-09-25
 ### Alterações
 - Reorganização clínica dos exames laboratoriais: DMO com Fosfatase Alcalina e cálculo de Cálcio Corrigido pela Albumina, Gasometria/Equilíbrio Ácido-Básico, Adequação Dialítica com Kt/V, Ureia Pré/Pós e UR%, Nutrição & Inflamação com Albumina e PCR, e destaque à Hemoglobina Glicada (HbA1c).
