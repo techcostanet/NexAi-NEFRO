@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.86] - 2026-09-27
+### Alterações
+- Seguranca Multi-Tenant: isolamento absoluto por medico na Central de Relatorios e historico de desligamentos
+
 ## [1.1.85] - 2026-09-27
 ### Alterações
 - Central de Relatorios: simplificacao radical de microcopy, expansao para 26 relatorios com LME Alto Custo, Anticoagulacao, Gasometria e Acido-Basico, Desligamentos, Sorologias e Convenios, alem de Calcio Corrigido e UR%

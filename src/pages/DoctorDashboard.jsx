@@ -1541,6 +1541,7 @@ export default function DoctorDashboard() {
         onClose={() => setIsReportsModalOpen(false)}
         patients={patients}
         doctor={doctor}
+        doctorId={currentDoctorId}
         locaisList={doctor.locaisAtuacao || []}
       />
 

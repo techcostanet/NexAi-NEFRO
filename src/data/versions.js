@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.86",
+    "date": "27/09/2026",
+    "title": "Seguranca Multi-Tenant: isolamento absoluto por medico na Central de Relatori...",
+    "highlights": [
+      "✨ Seguranca Multi-Tenant: isolamento absoluto por medico na Central de Relatorios e historico de desligamentos"
+    ]
+  },
+  {
     "version": "1.1.85",
     "date": "27/09/2026",
     "title": "Central de Relatorios: simplificacao radical de microcopy, expansao para 26 r...",

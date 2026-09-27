@@ -51,11 +51,12 @@ export async function logAuditEvent({
 }
 
 /**
- * Escuta em tempo real a trilha de auditoria do sistema
+ * Escuta em tempo real a trilha de auditoria do sistema com isolamento multi-tenant
  * @param {Function} callback - Recebe o array de logs ordenados do mais recente para o mais antigo
  * @param {number} maxRecords - Quantidade máxima de registros recentes
+ * @param {string|null} [targetDoctorId=null] - ID do médico para filtrar estritamente logs pertinentes
  */
-export function subscribeAuditLogs(callback, maxRecords = 40) {
+export function subscribeAuditLogs(callback, maxRecords = 40, targetDoctorId = null) {
   if (!db) {
     if (callback) callback([]);
     return () => {};
@@ -63,19 +64,26 @@ export function subscribeAuditLogs(callback, maxRecords = 40) {
 
   try {
     const colRef = collection(db, AUDIT_COLLECTION);
-    const q = query(colRef, orderBy("timestamp", "desc"), limit(maxRecords));
+    const fetchLimit = targetDoctorId ? Math.max(maxRecords * 3, 100) : maxRecords;
+    const q = query(colRef, orderBy("timestamp", "desc"), limit(fetchLimit));
 
     return onSnapshot(
       q,
       (snapshot) => {
-        const logs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        if (callback) callback(logs);
+        let logs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        if (targetDoctorId) {
+          logs = logs.filter(l => l.targetDoctorId === targetDoctorId);
+        }
+        if (callback) callback(logs.slice(0, maxRecords));
       },
       (err) => {
         console.warn("Erro ao escutar audit_logs no Firestore:", err);
         // Fallback sem ordenação caso índice composto ainda esteja criando
         const simpleUnsub = onSnapshot(colRef, (simpleSnap) => {
-          const simpleLogs = simpleSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          let simpleLogs = simpleSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+          if (targetDoctorId) {
+            simpleLogs = simpleLogs.filter(l => l.targetDoctorId === targetDoctorId);
+          }
           simpleLogs.sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
           if (callback) callback(simpleLogs.slice(0, maxRecords));
         });
@@ -88,3 +96,4 @@ export function subscribeAuditLogs(callback, maxRecords = 40) {
     return () => {};
   }
 }
+

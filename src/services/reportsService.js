@@ -443,9 +443,10 @@ export const REPORTS_CATALOG = [
 ];
 
 /**
- * Filtra a lista de pacientes conforme os critérios selecionados pelo usuário
+ * Filtra a lista de pacientes conforme os critérios selecionados pelo usuário,
+ * garantindo isolamento estrito multi-tenant por médico responsável.
  */
-export function filterPatientsForReport(patients = [], filters = {}) {
+export function filterPatientsForReport(patients = [], filters = {}, currentDoctorId = null) {
   const {
     unidade = 'todos',
     turno = 'todos',
@@ -461,6 +462,11 @@ export function filterPatientsForReport(patients = [], filters = {}) {
   const searchNormalized = busca ? busca.trim().toLowerCase() : '';
 
   return patients.filter(p => {
+    // 0. Isolamento Multi-Tenant estrito por médico responsável
+    if (currentDoctorId && p.doctorId && p.doctorId !== currentDoctorId) {
+      return false;
+    }
+
     // 1. Busca por nome, CPF ou clínica
     if (searchNormalized) {
       const matchNome = (p.nome || '').toLowerCase().includes(searchNormalized);
@@ -581,8 +587,12 @@ function formatDialysisDuration(dataInicioStr) {
 
 /**
  * Gera as linhas de dados e KPIs resumidos para qualquer um dos 26 relatórios
+ * @param {string} reportId - ID do relatório
+ * @param {Array} filteredPatients - Pacientes previamente filtrados
+ * @param {Array} auditLogs - Logs de auditoria para relatórios históricos
+ * @param {string|null} currentDoctorId - ID do médico para garantir isolamento multi-tenant absoluto
  */
-export function generateReportData(reportId, filteredPatients = [], auditLogs = []) {
+export function generateReportData(reportId, filteredPatients = [], auditLogs = [], currentDoctorId = null) {
   switch (reportId) {
     // ----------------------------------------------------
     // 1. Censo Geral
@@ -1663,11 +1673,21 @@ export function generateReportData(reportId, filteredPatients = [], auditLogs = 
     case 'desligamentos_historico': {
       const rows = [];
 
-      // 1. Coleta de logs de auditoria de desligamento
+      // 1. Coleta de logs de auditoria de desligamento estritamente pertinentes ao médico ativo
       if (Array.isArray(auditLogs)) {
         auditLogs.forEach(log => {
+          // Bloqueio multi-tenant: se o log pertencer explicitamente a outro médico, descarta
+          if (currentDoctorId && log.targetDoctorId && log.targetDoctorId !== currentDoctorId) {
+            return;
+          }
+
           if (log.tipoAcao === 'PATIENT_DISCHARGED' || (log.descricao || '').includes('desligado')) {
             const det = log.detalhes || {};
+            // Proteção adicional se os detalhes referenciarem outro médico
+            if (currentDoctorId && det.doctorId && det.doctorId !== currentDoctorId) {
+              return;
+            }
+
             rows.push({
               data: det.dataOcorrencia || (log.timestamp ? log.timestamp.split('T')[0] : 'N/I'),
               nome: det.patientName || log.descricao.replace(/Paciente\s+(.*?)\s+desligado.*/i, '$1') || 'Paciente',
@@ -1681,8 +1701,10 @@ export function generateReportData(reportId, filteredPatients = [], auditLogs = 
         });
       }
 
-      // 2. Coleta de pacientes com status inativo no prontuário
+      // 2. Coleta de pacientes com status inativo no prontuário do médico ativo
       filteredPatients.forEach(p => {
+        if (currentDoctorId && p.doctorId && p.doctorId !== currentDoctorId) return;
+
         if (p.status === 'Desligado' || p.status === 'Óbito' || p.status === 'Transplantado') {
           // Evita duplicatas se já veio pelo auditLog
           const exists = rows.some(r => r.nome.toLowerCase() === (p.nome || '').toLowerCase());

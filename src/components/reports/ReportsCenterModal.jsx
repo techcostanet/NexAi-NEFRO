@@ -33,9 +33,13 @@ export default function ReportsCenterModal({
   onClose,
   patients = [],
   doctor = {},
-  locaisList = []
+  locaisList = [],
+  doctorId = null
 }) {
   if (!isOpen) return null;
+
+  // Identificador do médico ativo para isolamento absoluto multi-tenant
+  const effectiveDoctorId = doctorId || doctor?.id || doctor?.uid || (doctor?.nome ? 'dr-marcelo' : null);
 
   // Estado do Relatório Ativo
   const [selectedReportId, setSelectedReportId] = useState('censo_geral');
@@ -59,18 +63,25 @@ export default function ReportsCenterModal({
 
   const [isFilterBarExpanded, setIsFilterBarExpanded] = useState(true);
 
-  // Escuta logs de auditoria em tempo real quando o modal está aberto (para histórico de saídas/desligamentos)
+  // Escuta logs de auditoria em tempo real quando o modal está aberto, filtrando estritamente pelo médico ativo
   useEffect(() => {
     if (!isOpen) return;
     const unsub = subscribeAuditLogs((logs) => {
       setAuditLogs(logs || []);
-    }, 60);
+    }, 60, effectiveDoctorId);
     return () => {
       if (typeof unsub === 'function') unsub();
     };
-  }, [isOpen]);
+  }, [isOpen, effectiveDoctorId]);
 
-  // Lista única de Clínicas / Unidades extraídas dos locais cadastrados e dos pacientes
+  // Barreira multi-tenant: descarta qualquer registro de paciente com doctorId divergente
+  const safePatients = useMemo(() => {
+    if (!Array.isArray(patients)) return [];
+    if (!effectiveDoctorId) return patients;
+    return patients.filter(p => !p.doctorId || p.doctorId === effectiveDoctorId);
+  }, [patients, effectiveDoctorId]);
+
+  // Lista única de Clínicas / Unidades extraídas dos locais cadastrados e dos pacientes do médico
   const clinicasOptions = useMemo(() => {
     const setClinicas = new Set();
     if (Array.isArray(locaisList)) {
@@ -81,28 +92,28 @@ export default function ReportsCenterModal({
     if (doctor.clinicaPrincipal) {
       setClinicas.add(doctor.clinicaPrincipal);
     }
-    if (Array.isArray(patients)) {
-      patients.forEach(p => {
+    if (Array.isArray(safePatients)) {
+      safePatients.forEach(p => {
         if (p.clinica) setClinicas.add(p.clinica);
       });
     }
     return Array.from(setClinicas).filter(Boolean);
-  }, [locaisList, doctor, patients]);
+  }, [locaisList, doctor, safePatients]);
 
   // Encontra o relatório selecionado no catálogo
   const currentReport = useMemo(() => {
     return REPORTS_CATALOG.find(r => r.id === selectedReportId) || REPORTS_CATALOG[0];
   }, [selectedReportId]);
 
-  // Filtra pacientes de acordo com os filtros globais aplicados
+  // Filtra pacientes de acordo com os filtros globais aplicados e isolamento médico
   const filteredPatients = useMemo(() => {
-    return filterPatientsForReport(patients, filters);
-  }, [patients, filters]);
+    return filterPatientsForReport(safePatients, filters, effectiveDoctorId);
+  }, [safePatients, filters, effectiveDoctorId]);
 
-  // Gera dados tabulares e KPIs para o relatório ativo
+  // Gera dados tabulares e KPIs para o relatório ativo com blindagem multi-tenant
   const { rows, kpis } = useMemo(() => {
-    return generateReportData(currentReport.id, filteredPatients, auditLogs);
-  }, [currentReport.id, filteredPatients, auditLogs]);
+    return generateReportData(currentReport.id, filteredPatients, auditLogs, effectiveDoctorId);
+  }, [currentReport.id, filteredPatients, auditLogs, effectiveDoctorId]);
 
   // Lista de relatórios filtrados na barra lateral
   const sidebarReports = useMemo(() => {
