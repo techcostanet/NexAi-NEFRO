@@ -1,15 +1,12 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   X,
-  Download,
   Printer,
   Search,
   Filter,
   RotateCcw,
   FileSpreadsheet,
   FileText,
-  CheckCircle2,
-  AlertTriangle,
   Users,
   Activity,
   FlaskConical,
@@ -27,6 +24,7 @@ import {
   generateReportData,
   exportReportToExcel
 } from '../../services/reportsService.js';
+import { subscribeAuditLogs } from '../../services/auditService.js';
 import ReportPrintDocument from './ReportPrintDocument.jsx';
 import { printElement } from '../../utils/printUtils.js';
 
@@ -44,19 +42,33 @@ export default function ReportsCenterModal({
   const [reportSearchQuery, setReportSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [viewMode, setViewMode] = useState('table'); // 'table' | 'print_preview'
+  const [auditLogs, setAuditLogs] = useState([]);
 
-  // Estados dos Filtros Clínicos / Operacionais
+  // Estados dos Filtros
   const [filters, setFilters] = useState({
     unidade: 'todos',
     turno: 'todos',
     diaSemana: 'todos',
     tipoAcesso: 'todos',
     statusTransplante: 'todos',
+    anticoagulacao: 'todos',
+    convenio: 'todos',
     comAlertaApenas: false,
     busca: ''
   });
 
   const [isFilterBarExpanded, setIsFilterBarExpanded] = useState(true);
+
+  // Escuta logs de auditoria em tempo real quando o modal está aberto (para histórico de saídas/desligamentos)
+  useEffect(() => {
+    if (!isOpen) return;
+    const unsub = subscribeAuditLogs((logs) => {
+      setAuditLogs(logs || []);
+    }, 60);
+    return () => {
+      if (typeof unsub === 'function') unsub();
+    };
+  }, [isOpen]);
 
   // Lista única de Clínicas / Unidades extraídas dos locais cadastrados e dos pacientes
   const clinicasOptions = useMemo(() => {
@@ -89,8 +101,8 @@ export default function ReportsCenterModal({
 
   // Gera dados tabulares e KPIs para o relatório ativo
   const { rows, kpis } = useMemo(() => {
-    return generateReportData(currentReport.id, filteredPatients);
-  }, [currentReport.id, filteredPatients]);
+    return generateReportData(currentReport.id, filteredPatients, auditLogs);
+  }, [currentReport.id, filteredPatients, auditLogs]);
 
   // Lista de relatórios filtrados na barra lateral
   const sidebarReports = useMemo(() => {
@@ -120,6 +132,8 @@ export default function ReportsCenterModal({
       diaSemana: 'todos',
       tipoAcesso: 'todos',
       statusTransplante: 'todos',
+      anticoagulacao: 'todos',
+      convenio: 'todos',
       comAlertaApenas: false,
       busca: ''
     });
@@ -132,6 +146,8 @@ export default function ReportsCenterModal({
       filters.diaSemana !== 'todos' ||
       filters.tipoAcesso !== 'todos' ||
       filters.statusTransplante !== 'todos' ||
+      filters.anticoagulacao !== 'todos' ||
+      filters.convenio !== 'todos' ||
       filters.comAlertaApenas ||
       filters.busca.trim() !== ''
     );
@@ -144,10 +160,12 @@ export default function ReportsCenterModal({
     if (filters.turno !== 'todos') descParts.push(`Turno: ${filters.turno}`);
     if (filters.diaSemana !== 'todos') descParts.push(`Escala: ${filters.diaSemana}`);
     if (filters.tipoAcesso !== 'todos') descParts.push(`Acesso: ${filters.tipoAcesso}`);
-    if (filters.comAlertaApenas) descParts.push('Apenas c/ Alertas');
+    if (filters.anticoagulacao !== 'todos') descParts.push(`Anticoagulação: ${filters.anticoagulacao}`);
+    if (filters.convenio !== 'todos') descParts.push(`Convênio: ${filters.convenio}`);
+    if (filters.comAlertaApenas) descParts.push('Com Alertas');
     if (filters.busca) descParts.push(`Busca: "${filters.busca}"`);
 
-    const filtersDesc = descParts.length > 0 ? descParts.join(' | ') : 'Todos os registros do serviço';
+    const filtersDesc = descParts.length > 0 ? descParts.join(' • ') : 'Todos os registros';
 
     exportReportToExcel(currentReport, rows, kpis, {
       doctorName: doctor.nome,
@@ -168,12 +186,13 @@ export default function ReportsCenterModal({
 
   const getCategoryIcon = (catId) => {
     switch (catId) {
-      case 'populacao': return <Users size={16} color="#0284c7" />;
-      case 'acesso_dialise': return <Activity size={16} color="#0d9488" />;
-      case 'laboratorio': return <FlaskConical size={16} color="#7c3aed" />;
-      case 'farmacia_infeccao': return <Pill size={16} color="#e11d48" />;
-      case 'qualidade_transplante': return <Award size={16} color="#d97706" />;
-      default: return <FileText size={16} color="#64748b" />;
+      case 'populacao': return <Users size={15} color="#0284c7" />;
+      case 'acesso_dialise': return <Activity size={15} color="#0d9488" />;
+      case 'laboratorio': return <FlaskConical size={15} color="#7c3aed" />;
+      case 'farmacia_infeccao': return <Pill size={15} color="#e11d48" />;
+      case 'qualidade_transplante': return <Award size={15} color="#d97706" />;
+      case 'gestao': return <FileText size={15} color="#059669" />;
+      default: return <FileText size={15} color="#64748b" />;
     }
   };
 
@@ -204,7 +223,7 @@ export default function ReportsCenterModal({
           maxWidth: '1440px',
           height: '92vh',
           maxHeight: '94vh',
-          borderRadius: '20px',
+          borderRadius: '16px',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
@@ -213,47 +232,47 @@ export default function ReportsCenterModal({
         }}
         onClick={e => e.stopPropagation()}
       >
-        {/* ================= MODAL HEADER ================= */}
+        {/* ================= MODAL HEADER (MINIMALISTA) ================= */}
         <div style={{
-          padding: '1.1rem 1.5rem',
+          padding: '0.85rem 1.25rem',
           borderBottom: '1px solid #e2e8f0',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          background: 'linear-gradient(to right, #f8fafc, #f1f5f9)'
+          background: '#f8fafc'
         }}>
           <div className="flex items-center gap-3">
             <div style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '12px',
+              width: '38px',
+              height: '38px',
+              borderRadius: '10px',
               background: 'linear-gradient(135deg, #0284c7, #2563eb)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
+              boxShadow: '0 3px 10px rgba(37, 99, 235, 0.2)'
             }}>
-              <FileSpreadsheet size={22} />
+              <FileSpreadsheet size={20} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', margin: 0, letterSpacing: '-0.3px' }}>
-                  Central de Relatórios Clínicos
+                <h2 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#0f172a', margin: 0, letterSpacing: '-0.2px' }}>
+                  Central de Relatórios
                 </h2>
                 <span style={{
-                  fontSize: '0.75rem',
+                  fontSize: '0.7rem',
                   fontWeight: '700',
                   background: '#e0f2fe',
                   color: '#0369a1',
-                  padding: '2px 8px',
-                  borderRadius: '12px'
+                  padding: '2px 7px',
+                  borderRadius: '10px'
                 }}>
-                  20 Relatórios Especializados
+                  {REPORTS_CATALOG.length}
                 </span>
               </div>
-              <p style={{ margin: '2px 0 0 0', fontSize: '0.80rem', color: '#64748b' }}>
-                Metas KDIGO/SBN, vigilância dialítica e transplante.
+              <p style={{ margin: '1px 0 0 0', fontSize: '0.75rem', color: '#64748b' }}>
+                Vigilância clínica e indicadores nefrológicos.
               </p>
             </div>
           </div>
@@ -263,51 +282,51 @@ export default function ReportsCenterModal({
             <div style={{
               display: 'flex',
               background: '#e2e8f0',
-              padding: '3px',
-              borderRadius: '10px',
+              padding: '2px',
+              borderRadius: '8px',
               gap: '2px'
             }}>
               <button
                 type="button"
                 onClick={() => setViewMode('table')}
                 style={{
-                  padding: '5px 12px',
-                  fontSize: '0.78rem',
+                  padding: '4px 10px',
+                  fontSize: '0.75rem',
                   fontWeight: '600',
-                  borderRadius: '8px',
+                  borderRadius: '6px',
                   border: 'none',
                   cursor: 'pointer',
                   background: viewMode === 'table' ? '#ffffff' : 'transparent',
                   color: viewMode === 'table' ? '#0f172a' : '#64748b',
-                  boxShadow: viewMode === 'table' ? '0 2px 5px rgba(0,0,0,0.08)' : 'none',
+                  boxShadow: viewMode === 'table' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '5px'
+                  gap: '4px'
                 }}
               >
-                <SlidersHorizontal size={14} />
-                <span>Modo Tabela</span>
+                <SlidersHorizontal size={13} />
+                <span>Tabela</span>
               </button>
               <button
                 type="button"
                 onClick={() => setViewMode('print_preview')}
                 style={{
-                  padding: '5px 12px',
-                  fontSize: '0.78rem',
+                  padding: '4px 10px',
+                  fontSize: '0.75rem',
                   fontWeight: '600',
-                  borderRadius: '8px',
+                  borderRadius: '6px',
                   border: 'none',
                   cursor: 'pointer',
                   background: viewMode === 'print_preview' ? '#ffffff' : 'transparent',
                   color: viewMode === 'print_preview' ? '#0f172a' : '#64748b',
-                  boxShadow: viewMode === 'print_preview' ? '0 2px 5px rgba(0,0,0,0.08)' : 'none',
+                  boxShadow: viewMode === 'print_preview' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '5px'
+                  gap: '4px'
                 }}
               >
-                <Eye size={14} />
-                <span>Prévia Impressa</span>
+                <Eye size={13} />
+                <span>Impresso</span>
               </button>
             </div>
 
@@ -334,19 +353,19 @@ export default function ReportsCenterModal({
 
         {/* ================= CORPO PRINCIPAL DO MODAL ================= */}
         <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-          {/* ---------------- BARRA LATERAL (CATÁLOGO DOS 20 RELATÓRIOS) ---------------- */}
+          {/* ---------------- BARRA LATERAL (CATÁLOGO DOS 26 RELATÓRIOS) ---------------- */}
           <div style={{
-            width: '320px',
+            width: '280px',
             borderRight: '1px solid #e2e8f0',
             display: 'flex',
             flexDirection: 'column',
             background: '#fafafa',
             flexShrink: 0
           }}>
-            {/* Campo de Busca Rápida de Relatórios */}
-            <div style={{ padding: '12px', borderBottom: '1px solid #e2e8f0' }}>
+            {/* Campo de Busca Rápida */}
+            <div style={{ padding: '10px', borderBottom: '1px solid #e2e8f0' }}>
               <div style={{ position: 'relative' }}>
-                <Search size={14} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '10px' }} />
+                <Search size={14} color="#94a3b8" style={{ position: 'absolute', left: '9px', top: '9px' }} />
                 <input
                   type="text"
                   placeholder="Buscar relatório..."
@@ -354,33 +373,34 @@ export default function ReportsCenterModal({
                   onChange={e => setReportSearchQuery(e.target.value)}
                   style={{
                     width: '100%',
-                    padding: '8px 10px 8px 32px',
-                    borderRadius: '8px',
+                    padding: '7px 8px 7px 30px',
+                    borderRadius: '6px',
                     border: '1px solid #cbd5e1',
-                    fontSize: '0.8rem',
+                    fontSize: '0.78rem',
                     background: '#ffffff',
                     outline: 'none'
                   }}
                 />
               </div>
 
-              {/* Filtro por Categoria */}
-              <div style={{ display: 'flex', gap: '4px', marginTop: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+              {/* Filtro por Categoria (Pills Limpos) */}
+              <div style={{ display: 'flex', gap: '4px', marginTop: '8px', overflowX: 'auto', paddingBottom: '3px' }}>
                 <button
                   type="button"
                   onClick={() => setSelectedCategory('todos')}
                   style={{
-                    padding: '3px 8px',
-                    fontSize: '0.7rem',
+                    padding: '3px 7px',
+                    fontSize: '0.68rem',
                     borderRadius: '6px',
                     border: 'none',
                     cursor: 'pointer',
                     background: selectedCategory === 'todos' ? '#0f172a' : '#e2e8f0',
                     color: selectedCategory === 'todos' ? '#ffffff' : '#475569',
-                    whiteSpace: 'nowrap'
+                    whiteSpace: 'nowrap',
+                    fontWeight: '600'
                   }}
                 >
-                  Todos (20)
+                  Todos
                 </button>
                 {REPORT_CATEGORIES.map(cat => (
                   <button
@@ -388,56 +408,57 @@ export default function ReportsCenterModal({
                     type="button"
                     onClick={() => setSelectedCategory(cat.id)}
                     style={{
-                      padding: '3px 8px',
-                      fontSize: '0.7rem',
+                      padding: '3px 7px',
+                      fontSize: '0.68rem',
                       borderRadius: '6px',
                       border: 'none',
                       cursor: 'pointer',
                       background: selectedCategory === cat.id ? '#0284c7' : '#e2e8f0',
                       color: selectedCategory === cat.id ? '#ffffff' : '#475569',
-                      whiteSpace: 'nowrap'
+                      whiteSpace: 'nowrap',
+                      fontWeight: '600'
                     }}
                   >
-                    {cat.name.split(' ')[0]}
+                    {cat.name}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Lista dos Relatórios Rolável */}
-            <div style={{ flex: 1, overflowY: 'auto', padding: '8px' }}>
+            {/* Lista dos Relatórios Rolável (Livre de poluição visual) */}
+            <div style={{ flex: 1, overflowY: 'auto', padding: '6px 8px' }}>
               {REPORT_CATEGORIES.map(cat => {
                 const catReports = sidebarReports.filter(r => r.category === cat.id);
                 if (catReports.length === 0) return null;
 
                 return (
-                  <div key={cat.id} style={{ marginBottom: '12px' }}>
+                  <div key={cat.id} style={{ marginBottom: '10px' }}>
                     <div style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px',
-                      padding: '4px 8px',
-                      fontSize: '0.72rem',
+                      gap: '5px',
+                      padding: '3px 6px',
+                      fontSize: '0.68rem',
                       fontWeight: '700',
                       textTransform: 'uppercase',
                       color: cat.color,
-                      letterSpacing: '0.4px'
+                      letterSpacing: '0.3px'
                     }}>
                       {getCategoryIcon(cat.id)}
                       <span>{cat.name}</span>
                       <span style={{
                         marginLeft: 'auto',
                         background: '#f1f5f9',
-                        padding: '1px 6px',
-                        borderRadius: '10px',
-                        fontSize: '0.65rem',
+                        padding: '1px 5px',
+                        borderRadius: '8px',
+                        fontSize: '0.62rem',
                         color: '#64748b'
                       }}>
                         {catReports.length}
                       </span>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', marginTop: '4px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '2px' }}>
                       {catReports.map(rep => {
                         const isSelected = rep.id === selectedReportId;
                         return (
@@ -447,40 +468,29 @@ export default function ReportsCenterModal({
                             onClick={() => setSelectedReportId(rep.id)}
                             style={{
                               textAlign: 'left',
-                              padding: '8px 10px',
-                              borderRadius: '8px',
+                              padding: '7px 9px',
+                              borderRadius: '6px',
                               border: isSelected ? '1px solid #bae6fd' : '1px solid transparent',
                               background: isSelected ? '#e0f2fe' : 'transparent',
                               cursor: 'pointer',
-                              transition: 'all 0.15s ease',
+                              transition: 'all 0.12s ease',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'space-between',
-                              gap: '8px'
+                              gap: '6px'
                             }}
                           >
-                            <div style={{ overflow: 'hidden' }}>
-                              <div style={{
-                                fontSize: '0.8rem',
-                                fontWeight: isSelected ? '700' : '500',
-                                color: isSelected ? '#0369a1' : '#1e293b',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                              }}>
-                                {rep.title}
-                              </div>
-                              <div style={{
-                                fontSize: '0.68rem',
-                                color: isSelected ? '#0284c7' : '#64748b',
-                                whiteSpace: 'nowrap',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis'
-                              }}>
-                                {rep.columns.length} colunas • {rep.description.slice(0, 38)}...
-                              </div>
-                            </div>
-                            {isSelected && <ChevronRight size={14} color="#0369a1" />}
+                            <span style={{
+                              fontSize: '0.78rem',
+                              fontWeight: isSelected ? '700' : '500',
+                              color: isSelected ? '#0369a1' : '#1e293b',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}>
+                              {rep.title}
+                            </span>
+                            {isSelected && <ChevronRight size={13} color="#0369a1" />}
                           </button>
                         );
                       })}
@@ -493,64 +503,64 @@ export default function ReportsCenterModal({
 
           {/* ---------------- CONTEÚDO PRINCIPAL (RELATÓRIO ATIVO) ---------------- */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#ffffff' }}>
-            {/* Topo do Relatório: Título e Botões de Exportação */}
+            {/* Topo do Relatório: Título e Botões de Exportação (Ultra-direto) */}
             <div style={{
-              padding: '1rem 1.5rem',
+              padding: '0.85rem 1.25rem',
               borderBottom: '1px solid #e2e8f0',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
               flexWrap: 'wrap',
-              gap: '12px',
+              gap: '10px',
               background: '#ffffff'
             }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{
-                    fontSize: '0.72rem',
+                    fontSize: '0.68rem',
                     fontWeight: '700',
                     textTransform: 'uppercase',
-                    padding: '2px 8px',
-                    borderRadius: '6px',
+                    padding: '1px 6px',
+                    borderRadius: '4px',
                     background: '#f1f5f9',
                     color: '#475569'
                   }}>
                     {REPORT_CATEGORIES.find(c => c.id === currentReport.category)?.name}
                   </span>
-                  <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>•</span>
-                  <span style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: '600' }}>
-                    {rows.length} {rows.length === 1 ? 'registro encontrado' : 'registros encontrados'}
+                  <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>•</span>
+                  <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '600' }}>
+                    {rows.length} {rows.length === 1 ? 'paciente' : 'pacientes'}
                   </span>
                 </div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: '#0f172a', margin: '4px 0 2px 0' }}>
+                <h3 style={{ fontSize: '1.15rem', fontWeight: '800', color: '#0f172a', margin: '3px 0 1px 0' }}>
                   {currentReport.title}
                 </h3>
-                <p style={{ margin: 0, fontSize: '0.8rem', color: '#64748b' }}>
+                <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>
                   {currentReport.description}
                 </p>
               </div>
 
-              {/* Botões de Ação de Exportação */}
+              {/* Botões de Ação de Exportação (Regra de Poucas Palavras) */}
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={handleExportExcel}
                   className="btn"
                   style={{
-                    padding: '0.55rem 1rem',
-                    fontSize: '0.84rem',
+                    padding: '0.45rem 0.85rem',
+                    fontSize: '0.8rem',
                     background: '#107c41',
                     color: '#ffffff',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '6px',
-                    borderRadius: '10px',
-                    boxShadow: '0 4px 12px rgba(16, 124, 65, 0.2)'
+                    gap: '5px',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 6px rgba(16, 124, 65, 0.2)'
                   }}
-                  title="Exportar planilha Excel estruturada com colunas e cabeçalhos oficiais (.xlsx)"
+                  title="Exportar planilha Excel (.xlsx)"
                 >
-                  <FileSpreadsheet size={16} />
-                  <span>Exportar XLS (.xlsx)</span>
+                  <FileSpreadsheet size={15} />
+                  <span>Excel</span>
                 </button>
 
                 <button
@@ -558,44 +568,44 @@ export default function ReportsCenterModal({
                   onClick={handlePrintPdf}
                   className="btn btn-primary"
                   style={{
-                    padding: '0.55rem 1.1rem',
-                    fontSize: '0.84rem',
+                    padding: '0.45rem 0.95rem',
+                    fontSize: '0.8rem',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '6px',
-                    borderRadius: '10px'
+                    gap: '5px',
+                    borderRadius: '8px'
                   }}
-                  title="Gerar visualização em folha timbrada para imprimir ou salvar como PDF"
+                  title="Imprimir ou salvar PDF"
                 >
-                  <Printer size={16} />
-                  <span>Imprimir Relatório</span>
+                  <Printer size={15} />
+                  <span>Imprimir</span>
                 </button>
               </div>
             </div>
 
-            {/* BARRA DE FILTROS CLÍNICOS E OPERACIONAIS */}
+            {/* BARRA DE FILTROS OBJETIVA */}
             <div style={{
-              padding: '0.75rem 1.5rem',
+              padding: '0.65rem 1.25rem',
               background: '#f8fafc',
               borderBottom: '1px solid #e2e8f0'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isFilterBarExpanded ? '10px' : '0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isFilterBarExpanded ? '8px' : '0' }}>
                 <div className="flex items-center gap-2">
-                  <Filter size={15} color="#0284c7" />
-                  <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#0f172a' }}>
-                    Filtros Clínicos
+                  <Filter size={14} color="#0284c7" />
+                  <span style={{ fontSize: '0.78rem', fontWeight: '700', color: '#0f172a' }}>
+                    Filtros
                   </span>
                   {hasActiveFilters && (
                     <span style={{
-                      fontSize: '0.68rem',
+                      fontSize: '0.65rem',
                       fontWeight: '700',
                       background: '#fef3c7',
                       color: '#b45309',
-                      padding: '1px 6px',
-                      borderRadius: '8px',
+                      padding: '1px 5px',
+                      borderRadius: '6px',
                       border: '1px solid #fde68a'
                     }}>
-                      Filtros Ativos
+                      Ativos
                     </span>
                   )}
                 </div>
@@ -609,16 +619,16 @@ export default function ReportsCenterModal({
                         background: 'transparent',
                         border: 'none',
                         color: '#ef4444',
-                        fontSize: '0.75rem',
+                        fontSize: '0.72rem',
                         fontWeight: '600',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '4px'
+                        gap: '3px'
                       }}
                     >
-                      <RotateCcw size={12} />
-                      <span>Limpar Filtros</span>
+                      <RotateCcw size={11} />
+                      <span>Limpar</span>
                     </button>
                   )}
                   <button
@@ -628,7 +638,7 @@ export default function ReportsCenterModal({
                       background: 'transparent',
                       border: 'none',
                       color: '#64748b',
-                      fontSize: '0.75rem',
+                      fontSize: '0.72rem',
                       cursor: 'pointer',
                       fontWeight: '500'
                     }}
@@ -641,13 +651,13 @@ export default function ReportsCenterModal({
               {isFilterBarExpanded && (
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
-                  gap: '8px',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+                  gap: '6px',
                   alignItems: 'center'
                 }}>
-                  {/* Filtro: Unidade / Clínica */}
+                  {/* Filtro: Unidade */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
+                    <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
                       Unidade
                     </label>
                     <select
@@ -655,15 +665,15 @@ export default function ReportsCenterModal({
                       onChange={e => handleFilterChange('unidade', e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '6px 8px',
-                        borderRadius: '6px',
+                        padding: '5px 7px',
+                        borderRadius: '5px',
                         border: '1px solid #cbd5e1',
-                        fontSize: '0.75rem',
+                        fontSize: '0.72rem',
                         background: '#ffffff',
                         outline: 'none'
                       }}
                     >
-                      <option value="todos">Todas as Unidades</option>
+                      <option value="todos">Todas</option>
                       {clinicasOptions.map(c => (
                         <option key={c} value={c}>{c}</option>
                       ))}
@@ -672,23 +682,23 @@ export default function ReportsCenterModal({
 
                   {/* Filtro: Turno */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
-                      Turno de Diálise
+                    <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
+                      Turno
                     </label>
                     <select
                       value={filters.turno}
                       onChange={e => handleFilterChange('turno', e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '6px 8px',
-                        borderRadius: '6px',
+                        padding: '5px 7px',
+                        borderRadius: '5px',
                         border: '1px solid #cbd5e1',
-                        fontSize: '0.75rem',
+                        fontSize: '0.72rem',
                         background: '#ffffff',
                         outline: 'none'
                       }}
                     >
-                      <option value="todos">Todos os Turnos</option>
+                      <option value="todos">Todos</option>
                       <option value="1º Turno">1º Turno</option>
                       <option value="2º Turno">2º Turno</option>
                       <option value="3º Turno">3º Turno</option>
@@ -696,75 +706,75 @@ export default function ReportsCenterModal({
                     </select>
                   </div>
 
-                  {/* Filtro: Escala Semanal */}
+                  {/* Filtro: Escala */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
-                      Escala Semanal
+                    <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
+                      Escala
                     </label>
                     <select
                       value={filters.diaSemana}
                       onChange={e => handleFilterChange('diaSemana', e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '6px 8px',
-                        borderRadius: '6px',
+                        padding: '5px 7px',
+                        borderRadius: '5px',
                         border: '1px solid #cbd5e1',
-                        fontSize: '0.75rem',
+                        fontSize: '0.72rem',
                         background: '#ffffff',
                         outline: 'none'
                       }}
                     >
-                      <option value="todos">Todas as Escalas</option>
+                      <option value="todos">Todas</option>
                       <option value="Seg/Qua/Sex">Seg Qua Sex</option>
                       <option value="Ter/Qui/Sáb">Ter Qui Sáb</option>
                     </select>
                   </div>
 
-                  {/* Filtro: Tipo de Acesso */}
+                  {/* Filtro: Acesso */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
-                      Acesso Vascular
+                    <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
+                      Acesso
                     </label>
                     <select
                       value={filters.tipoAcesso}
                       onChange={e => handleFilterChange('tipoAcesso', e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '6px 8px',
-                        borderRadius: '6px',
+                        padding: '5px 7px',
+                        borderRadius: '5px',
                         border: '1px solid #cbd5e1',
-                        fontSize: '0.75rem',
+                        fontSize: '0.72rem',
                         background: '#ffffff',
                         outline: 'none'
                       }}
                     >
-                      <option value="todos">Todos os Acessos</option>
-                      <option value="fav">FAV (Fístula Arteriovenosa)</option>
-                      <option value="permcath">Permcath (Longa Permanência)</option>
-                      <option value="duplo lúmen">CDL (Duplo Lúmen)</option>
-                      <option value="prótese">Prótese Vascular</option>
+                      <option value="todos">Todos</option>
+                      <option value="fav">FAV</option>
+                      <option value="permcath">Permcath</option>
+                      <option value="duplo lúmen">CDL Provisório</option>
+                      <option value="prótese">Prótese</option>
                     </select>
                   </div>
 
-                  {/* Filtro: Status Transplante */}
+                  {/* Filtro: Transplante */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
-                      Transplante Renal
+                    <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
+                      Transplante
                     </label>
                     <select
                       value={filters.statusTransplante}
                       onChange={e => handleFilterChange('statusTransplante', e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '6px 8px',
-                        borderRadius: '6px',
+                        padding: '5px 7px',
+                        borderRadius: '5px',
                         border: '1px solid #cbd5e1',
-                        fontSize: '0.75rem',
+                        fontSize: '0.72rem',
                         background: '#ffffff',
                         outline: 'none'
                       }}
                     >
-                      <option value="todos">Todos os Status</option>
+                      <option value="todos">Todos</option>
                       <option value="Ativo em Lista de Espera">Lista Ativa</option>
                       <option value="Encaminhado / Em Avaliação">Em Avaliação</option>
                       <option value="Encaminhar / Em Triagem">Triagem</option>
@@ -775,10 +785,59 @@ export default function ReportsCenterModal({
                     </select>
                   </div>
 
-                  {/* Filtro: Busca Livre */}
+                  {/* Filtro: Anticoagulação */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '0.68rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
-                      Busca Rápida
+                    <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
+                      Anticoagulação
+                    </label>
+                    <select
+                      value={filters.anticoagulacao}
+                      onChange={e => handleFilterChange('anticoagulacao', e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '5px 7px',
+                        borderRadius: '5px',
+                        border: '1px solid #cbd5e1',
+                        fontSize: '0.72rem',
+                        background: '#ffffff',
+                        outline: 'none'
+                      }}
+                    >
+                      <option value="todos">Todas</option>
+                      <option value="heparina_padrao">HNF Padrão</option>
+                      <option value="enoxaparina">Enoxaparina</option>
+                      <option value="sem_heparina">Sem Heparina</option>
+                    </select>
+                  </div>
+
+                  {/* Filtro: Convênio */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
+                      Convênio
+                    </label>
+                    <select
+                      value={filters.convenio}
+                      onChange={e => handleFilterChange('convenio', e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '5px 7px',
+                        borderRadius: '5px',
+                        border: '1px solid #cbd5e1',
+                        fontSize: '0.72rem',
+                        background: '#ffffff',
+                        outline: 'none'
+                      }}
+                    >
+                      <option value="todos">Todos</option>
+                      <option value="sus">SUS</option>
+                      <option value="convenio">Saúde Suplementar</option>
+                    </select>
+                  </div>
+
+                  {/* Filtro: Busca */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: '600', color: '#475569', marginBottom: '2px' }}>
+                      Busca
                     </label>
                     <input
                       type="text"
@@ -787,39 +846,39 @@ export default function ReportsCenterModal({
                       onChange={e => handleFilterChange('busca', e.target.value)}
                       style={{
                         width: '100%',
-                        padding: '6px 8px',
-                        borderRadius: '6px',
+                        padding: '5px 7px',
+                        borderRadius: '5px',
                         border: '1px solid #cbd5e1',
-                        fontSize: '0.75rem',
+                        fontSize: '0.72rem',
                         background: '#ffffff',
                         outline: 'none'
                       }}
                     />
                   </div>
 
-                  {/* Filtro Checkbox: Apenas c/ Alertas */}
-                  <div style={{ display: 'flex', alignItems: 'center', height: '100%', paddingTop: '16px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: '600', color: '#b91c1c' }}>
+                  {/* Filtro Checkbox: Alertas */}
+                  <div style={{ display: 'flex', alignItems: 'center', height: '100%', paddingTop: '12px' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', fontSize: '0.72rem', fontWeight: '600', color: '#b91c1c' }}>
                       <input
                         type="checkbox"
                         checked={filters.comAlertaApenas}
                         onChange={e => handleFilterChange('comAlertaApenas', e.target.checked)}
                         style={{ cursor: 'pointer' }}
                       />
-                      <span>Apenas c/ Alertas Críticos</span>
+                      <span>Alertas</span>
                     </label>
                   </div>
                 </div>
               )}
             </div>
 
-            {/* INDICADORES EXECUTIVOS / KPIS */}
+            {/* INDICADORES KPIS (RESUMO EXECUTIVO) */}
             {kpis && kpis.length > 0 && (
               <div style={{
-                padding: '0.75rem 1.5rem',
+                padding: '0.6rem 1.25rem',
                 display: 'grid',
                 gridTemplateColumns: `repeat(${Math.min(kpis.length, 4)}, 1fr)`,
-                gap: '12px',
+                gap: '8px',
                 background: '#ffffff',
                 borderBottom: '1px solid #f1f5f9'
               }}>
@@ -827,8 +886,8 @@ export default function ReportsCenterModal({
                   <div
                     key={idx}
                     style={{
-                      padding: '8px 12px',
-                      borderRadius: '10px',
+                      padding: '6px 10px',
+                      borderRadius: '8px',
                       background: 'rgba(239, 246, 255, 0.65)',
                       border: '1px solid #bfdbfe',
                       display: 'flex',
@@ -836,10 +895,10 @@ export default function ReportsCenterModal({
                       justifyContent: 'center'
                     }}
                   >
-                    <span style={{ fontSize: '0.68rem', fontWeight: '700', textTransform: 'uppercase', color: '#1e40af', letterSpacing: '0.3px' }}>
+                    <span style={{ fontSize: '0.65rem', fontWeight: '700', textTransform: 'uppercase', color: '#1e40af', letterSpacing: '0.2px' }}>
                       {kpi.label}
                     </span>
-                    <span style={{ fontSize: '1.2rem', fontWeight: '800', color: '#1e3a8a', marginTop: '2px' }}>
+                    <span style={{ fontSize: '1.1rem', fontWeight: '800', color: '#1e3a8a', marginTop: '1px' }}>
                       {kpi.value}
                     </span>
                   </div>
@@ -848,17 +907,17 @@ export default function ReportsCenterModal({
             )}
 
             {/* ÁREA DE VISUALIZAÇÃO: TABELA INTERATIVA OU PRÉVIA DE IMPRESSÃO */}
-            <div style={{ flex: 1, overflowY: 'auto', background: viewMode === 'table' ? '#ffffff' : '#e2e8f0', padding: viewMode === 'table' ? '0' : '20px' }}>
+            <div style={{ flex: 1, overflowY: 'auto', background: viewMode === 'table' ? '#ffffff' : '#e2e8f0', padding: viewMode === 'table' ? '0' : '16px' }}>
               {viewMode === 'table' ? (
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem' }}>
                   <thead style={{ position: 'sticky', top: 0, background: '#f8fafc', zIndex: 10, borderBottom: '2px solid #cbd5e1' }}>
                     <tr>
-                      <th style={{ padding: '8px 12px', textAlign: 'center', width: '40px', color: '#64748b', fontWeight: '700' }}>#</th>
+                      <th style={{ padding: '7px 10px', textAlign: 'center', width: '35px', color: '#64748b', fontWeight: '700' }}>#</th>
                       {currentReport.columns.map(col => (
                         <th
                           key={col.id}
                           style={{
-                            padding: '8px 12px',
+                            padding: '7px 10px',
                             textAlign: 'left',
                             color: '#334155',
                             fontWeight: '700',
@@ -874,10 +933,10 @@ export default function ReportsCenterModal({
                     {rows.length === 0 ? (
                       <tr>
                         <td colSpan={currentReport.columns.length + 1} style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
-                          <Info size={32} color="#94a3b8" style={{ margin: '0 auto 8px auto' }} />
-                          <p style={{ margin: 0, fontWeight: '600' }}>Nenhum paciente ou dado encontrado para os filtros selecionados.</p>
-                          <p style={{ margin: '4px 0 0 0', fontSize: '0.75rem', color: '#94a3b8' }}>
-                            Tente ajustar ou limpar os filtros de unidade, turno ou status.
+                          <Info size={28} color="#94a3b8" style={{ margin: '0 auto 6px auto' }} />
+                          <p style={{ margin: 0, fontWeight: '600' }}>Nenhum dado encontrado para os filtros selecionados.</p>
+                          <p style={{ margin: '3px 0 0 0', fontSize: '0.72rem', color: '#94a3b8' }}>
+                            Ajuste os filtros de unidade, turno ou busca.
                           </p>
                         </td>
                       </tr>
@@ -888,12 +947,12 @@ export default function ReportsCenterModal({
                           style={{
                             background: idx % 2 === 0 ? '#ffffff' : '#f8fafc',
                             borderBottom: '1px solid #f1f5f9',
-                            transition: 'background 0.15s'
+                            transition: 'background 0.1s'
                           }}
                           onMouseEnter={e => e.currentTarget.style.background = '#f0f9ff'}
                           onMouseLeave={e => e.currentTarget.style.background = idx % 2 === 0 ? '#ffffff' : '#f8fafc'}
                         >
-                          <td style={{ padding: '8px 12px', textAlign: 'center', color: '#94a3b8', fontWeight: '600' }}>
+                          <td style={{ padding: '7px 10px', textAlign: 'center', color: '#94a3b8', fontWeight: '600' }}>
                             {idx + 1}
                           </td>
                           {currentReport.columns.map(col => {
@@ -905,7 +964,7 @@ export default function ReportsCenterModal({
                               <td
                                 key={col.id}
                                 style={{
-                                  padding: '8px 12px',
+                                  padding: '7px 10px',
                                   color: isAlert ? '#b91c1c' : isSuccess ? '#15803d' : '#1e293b',
                                   fontWeight: isAlert ? '700' : isSuccess ? '600' : 'normal',
                                   borderRight: '1px solid #f8fafc'
@@ -929,7 +988,7 @@ export default function ReportsCenterModal({
                     maxWidth: '1100px',
                     margin: '0 auto',
                     background: '#ffffff',
-                    boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
+                    boxShadow: '0 6px 24px rgba(0,0,0,0.1)',
                     borderRadius: '8px',
                     overflow: 'visible'
                   }}

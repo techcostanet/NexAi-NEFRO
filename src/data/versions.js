@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.85",
+    "date": "27/09/2026",
+    "title": "Central de Relatorios: simplificacao radical de microcopy, expansao para 26 r...",
+    "highlights": [
+      "✨ Central de Relatorios: simplificacao radical de microcopy, expansao para 26 relatorios com LME Alto Custo, Anticoagulacao, Gasometria e Acido-Basico, Desligamentos, Sorologias e Convenios, alem de Calcio Corrigido e UR%"
+    ]
+  },
+  {
     "version": "1.1.84",
     "date": "26/09/2026",
     "title": "Boletim de Saude Personalizado: expansao do catalogo nefrologico completo, di...",

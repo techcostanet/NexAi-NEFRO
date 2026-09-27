@@ -2,7 +2,7 @@ import React from 'react';
 
 /**
  * Componente de Documento Impresso / PDF para Relatórios Clínicos e Gerenciais
- * Formatado para papel A4 em modo paisagem ou retrato conforme o volume de colunas.
+ * Formatado para papel A4 em modo paisagem.
  */
 export default function ReportPrintDocument({
   report,
@@ -34,10 +34,12 @@ export default function ReportPrintDocument({
   if (filters.diaSemana && filters.diaSemana !== 'todos') filterParts.push(`Escala: ${filters.diaSemana}`);
   if (filters.tipoAcesso && filters.tipoAcesso !== 'todos') filterParts.push(`Acesso: ${filters.tipoAcesso}`);
   if (filters.statusTransplante && filters.statusTransplante !== 'todos') filterParts.push(`Transplante: ${filters.statusTransplante}`);
-  if (filters.comAlertaApenas) filterParts.push(`Somente c/ Alertas Críticos`);
+  if (filters.anticoagulacao && filters.anticoagulacao !== 'todos') filterParts.push(`Anticoagulação: ${filters.anticoagulacao}`);
+  if (filters.convenio && filters.convenio !== 'todos') filterParts.push(`Convênio: ${filters.convenio}`);
+  if (filters.comAlertaApenas) filterParts.push(`Com Alertas`);
   if (filters.busca) filterParts.push(`Busca: "${filters.busca}"`);
 
-  const filtersSummary = filterParts.length > 0 ? filterParts.join(' • ') : 'Todos os registros do serviço';
+  const filtersSummary = filterParts.length > 0 ? filterParts.join(' • ') : 'Todos os registros';
 
   return (
     <div className="report-print-container" style={{
@@ -53,7 +55,7 @@ export default function ReportPrintDocument({
         @media print {
           @page {
             size: A4 landscape;
-            margin: 12mm 10mm;
+            margin: 10mm 8mm;
           }
           body {
             background: #ffffff !important;
@@ -89,8 +91,8 @@ export default function ReportPrintDocument({
         justifyContent: 'space-between',
         alignItems: 'flex-start',
         borderBottom: '2px solid #0284c7',
-        paddingBottom: '12px',
-        marginBottom: '14px'
+        paddingBottom: '10px',
+        marginBottom: '12px'
       }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -106,11 +108,11 @@ export default function ReportPrintDocument({
               borderRadius: '4px',
               textTransform: 'uppercase'
             }}>
-              Relatório Clínico Oficial
+              Relatório Clínico
             </span>
           </div>
-          <p style={{ margin: '3px 0 0 0', fontSize: '10px', color: '#64748b' }}>
-            Sistema Especializado em Nefrologia, Hemodiálise e Vigilância Clínica em Nuvem
+          <p style={{ margin: '2px 0 0 0', fontSize: '10px', color: '#64748b' }}>
+            Vigilância Nefrológica e Hemodiálise em Nuvem
           </p>
           <p style={{ margin: '2px 0 0 0', fontSize: '10px', color: '#334155', fontWeight: '600' }}>
             {clinicaNome}
@@ -125,29 +127,29 @@ export default function ReportPrintDocument({
       </div>
 
       {/* ================= TÍTULO DO RELATÓRIO E FILTROS ================= */}
-      <div style={{ marginBottom: '14px' }}>
+      <div style={{ marginBottom: '12px' }}>
         <h1 style={{
           fontSize: '15px',
           fontWeight: '700',
           color: '#0f172a',
-          margin: '0 0 4px 0',
+          margin: '0 0 3px 0',
           textTransform: 'uppercase',
           letterSpacing: '0.2px'
         }}>
           {report.title}
         </h1>
-        <p style={{ margin: '0 0 6px 0', fontSize: '10px', color: '#475569' }}>
+        <p style={{ margin: '0 0 5px 0', fontSize: '10px', color: '#475569' }}>
           {report.description}
         </p>
         <div style={{
           background: '#f8fafc',
           border: '1px solid #e2e8f0',
           borderRadius: '6px',
-          padding: '6px 10px',
-          fontSize: '9.5px',
+          padding: '5px 8px',
+          fontSize: '9px',
           color: '#334155'
         }}>
-          <strong>Parâmetros e Filtros Aplicados:</strong> {filtersSummary}
+          <strong>Filtros:</strong> {filtersSummary}
         </div>
       </div>
 
@@ -156,20 +158,20 @@ export default function ReportPrintDocument({
         <div style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${Math.min(kpis.length, 4)}, 1fr)`,
-          gap: '10px',
-          marginBottom: '14px'
+          gap: '8px',
+          marginBottom: '12px'
         }}>
           {kpis.map((kpi, idx) => (
             <div key={idx} style={{
               background: '#f0fdf4',
               border: '1px solid #bbf7d0',
               borderRadius: '6px',
-              padding: '6px 10px'
+              padding: '5px 8px'
             }}>
-              <div style={{ fontSize: '9px', textTransform: 'uppercase', color: '#15803d', fontWeight: '600' }}>
+              <div style={{ fontSize: '8.5px', textTransform: 'uppercase', color: '#15803d', fontWeight: '700' }}>
                 {kpi.label}
               </div>
-              <div style={{ fontSize: '14px', fontWeight: '700', color: '#166534', marginTop: '2px' }}>
+              <div style={{ fontSize: '13px', fontWeight: '800', color: '#166534', marginTop: '1px' }}>
                 {kpi.value}
               </div>
             </div>
@@ -181,15 +183,15 @@ export default function ReportPrintDocument({
       <table style={{
         width: '100%',
         borderCollapse: 'collapse',
-        fontSize: '9.5px',
-        marginBottom: '20px'
+        fontSize: '9px',
+        marginBottom: '18px'
       }}>
         <thead>
           <tr style={{ background: '#f1f5f9', borderBottom: '2px solid #cbd5e1' }}>
-            <th style={{ padding: '6px 8px', textAlign: 'center', width: '30px', color: '#475569', fontWeight: '700' }}>#</th>
+            <th style={{ padding: '5px 6px', textAlign: 'center', width: '28px', color: '#475569', fontWeight: '700' }}>#</th>
             {report.columns.map(col => (
               <th key={col.id} style={{
-                padding: '6px 8px',
+                padding: '5px 6px',
                 textAlign: 'left',
                 color: '#334155',
                 fontWeight: '700',
@@ -203,8 +205,8 @@ export default function ReportPrintDocument({
         <tbody>
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={report.columns.length + 1} style={{ padding: '24px', textAlign: 'center', color: '#64748b' }}>
-                Nenhum paciente ou registro encontrado com os filtros selecionados.
+              <td colSpan={report.columns.length + 1} style={{ padding: '20px', textAlign: 'center', color: '#64748b' }}>
+                Nenhum registro encontrado para os filtros selecionados.
               </td>
             </tr>
           ) : (
@@ -213,7 +215,7 @@ export default function ReportPrintDocument({
                 background: idx % 2 === 0 ? '#ffffff' : '#f8fafc',
                 borderBottom: '1px solid #e2e8f0'
               }}>
-                <td style={{ padding: '5px 8px', textAlign: 'center', color: '#94a3b8', fontWeight: '600' }}>
+                <td style={{ padding: '4px 6px', textAlign: 'center', color: '#94a3b8', fontWeight: '600' }}>
                   {idx + 1}
                 </td>
                 {report.columns.map(col => {
@@ -223,7 +225,7 @@ export default function ReportPrintDocument({
 
                   return (
                     <td key={col.id} style={{
-                      padding: '5px 8px',
+                      padding: '4px 6px',
                       color: isAlert ? '#b91c1c' : isSuccess ? '#15803d' : '#1e293b',
                       fontWeight: isAlert ? '700' : isSuccess ? '600' : 'normal',
                       borderRight: '1px solid #f1f5f9'
@@ -240,26 +242,26 @@ export default function ReportPrintDocument({
 
       {/* ================= RODAPÉ E ASSINATURA ================= */}
       <div style={{
-        marginTop: '24px',
-        paddingTop: '12px',
+        marginTop: '20px',
+        paddingTop: '10px',
         borderTop: '1px solid #cbd5e1',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
-        fontSize: '9px',
+        fontSize: '8.5px',
         color: '#64748b'
       }}>
         <div>
-          <div><strong>Total de registros impressos:</strong> {rows.length}</div>
-          <div>Documento gerado eletronicamente em {emissionDate} pela plataforma Nex-Ai.NEFRO.</div>
+          <div><strong>Total de registros:</strong> {rows.length}</div>
+          <div>Gerado eletronicamente em {emissionDate} pela plataforma Nex-Ai.NEFRO.</div>
           <div style={{ color: '#94a3b8', fontSize: '8px' }}>Autenticidade rastreada no Cloud Firestore • Uso exclusivo institucional</div>
         </div>
 
-        <div style={{ textAlign: 'center', minWidth: '220px' }}>
+        <div style={{ textAlign: 'center', minWidth: '200px' }}>
           <div style={{ borderBottom: '1px solid #0f172a', width: '100%', marginBottom: '4px' }}></div>
-          <strong style={{ display: 'block', fontSize: '10.5px', color: '#0f172a' }}>{doctorName}</strong>
-          <span style={{ display: 'block', fontSize: '9px', color: '#475569' }}>{doctorEspecialidade}</span>
-          <span style={{ display: 'block', fontSize: '9px', color: '#64748b' }}>{doctorCrm}</span>
+          <strong style={{ display: 'block', fontSize: '10px', color: '#0f172a' }}>{doctorName}</strong>
+          <span style={{ display: 'block', fontSize: '8.5px', color: '#475569' }}>{doctorEspecialidade}</span>
+          <span style={{ display: 'block', fontSize: '8.5px', color: '#64748b' }}>{doctorCrm}</span>
         </div>
       </div>
     </div>

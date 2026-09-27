@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.85] - 2026-09-27
+### Alterações
+- Central de Relatorios: simplificacao radical de microcopy, expansao para 26 relatorios com LME Alto Custo, Anticoagulacao, Gasometria e Acido-Basico, Desligamentos, Sorologias e Convenios, alem de Calcio Corrigido e UR%
+
 ## [1.1.84] - 2026-09-26
 ### Alterações
 - Boletim de Saude Personalizado: expansao do catalogo nefrologico completo, dicas customizadas por exame, orientacao medica em branco por padrao com textos rapidos e visualizacao dinamica em tempo real

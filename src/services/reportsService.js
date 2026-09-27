@@ -1,50 +1,53 @@
 import * as XLSX from 'xlsx';
+import { getAnticoagulacaoInfo } from './patientService.js';
+import { getLmeExpirationStatus } from './lmeService.js';
 
 /**
- * Categorias dos Relatórios Clínicos e Gerenciais
+ * Categorias dos Relatórios Clínicos e Gerenciais (Regra de Poucas Palavras)
  */
 export const REPORT_CATEGORIES = [
-  { id: 'populacao', name: 'Censo Populacional', icon: 'Users', color: '#0284c7' },
-  { id: 'acesso_dialise', name: 'Acessos Vasculares', icon: 'Activity', color: '#0d9488' },
-  { id: 'laboratorio', name: 'Painel Laboratorial', icon: 'FlaskConical', color: '#7c3aed' },
-  { id: 'farmacia_infeccao', name: 'Farmacoterapia', icon: 'Pill', color: '#e11d48' },
-  { id: 'qualidade_transplante', name: 'Transplante Renal', icon: 'Award', color: '#d97706' }
+  { id: 'populacao', name: 'Censo', icon: 'Users', color: '#0284c7' },
+  { id: 'acesso_dialise', name: 'Diálise', icon: 'Activity', color: '#0d9488' },
+  { id: 'laboratorio', name: 'Exames', icon: 'FlaskConical', color: '#7c3aed' },
+  { id: 'farmacia_infeccao', name: 'Farmácia', icon: 'Pill', color: '#e11d48' },
+  { id: 'qualidade_transplante', name: 'Transplante', icon: 'Award', color: '#d97706' },
+  { id: 'gestao', name: 'Gestão', icon: 'FileText', color: '#059669' }
 ];
 
 /**
- * Catálogo Completo dos 20 Relatórios Especializados do Nex-Ai.NEFRO
+ * Catálogo Completo dos 26 Relatórios Especializados do Nex-Ai.NEFRO
  */
 export const REPORTS_CATALOG = [
-  // ================= 1. GESTÃO POPULACIONAL & CENSO =================
+  // ================= 1. CENSO =================
   {
     id: 'censo_geral',
-    title: 'Censo Geral de Pacientes em Hemodiálise',
+    title: 'Censo Geral',
     category: 'populacao',
-    description: 'Relação cadastral completa com status ativo, unidade, turno, escala e tempo de tratamento.',
+    description: 'Relação cadastral ativa, unidade, turno, escala e tempo de tratamento.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 28 },
       { id: 'cpf', header: 'CPF', width: 16 },
       { id: 'idade', header: 'Idade', width: 10 },
       { id: 'sexo', header: 'Sexo', width: 8 },
-      { id: 'clinica', header: 'Clínica', width: 24 },
+      { id: 'clinica', header: 'Unidade', width: 24 },
       { id: 'turno', header: 'Turno', width: 14 },
-      { id: 'diaSemana', header: 'Escala Semanal', width: 16 },
-      { id: 'tipoAcesso', header: 'Acesso Vascular', width: 20 },
-      { id: 'statusTransplante', header: 'Status Transplante', width: 22 },
+      { id: 'diaSemana', header: 'Escala', width: 16 },
+      { id: 'tipoAcesso', header: 'Acesso', width: 20 },
+      { id: 'statusTransplante', header: 'Transplante', width: 22 },
       { id: 'tempoDialise', header: 'Tempo em HD', width: 16 }
     ]
   },
   {
     id: 'demografia_faixa_etaria',
-    title: 'Perfil Demográfico e Faixas Etárias',
+    title: 'Demografia',
     category: 'populacao',
-    description: 'Estratificação populacional por idade, sexo, tempo em diálise e dados sociodemográficos.',
+    description: 'Estratificação por faixas de idade, sexo e meses em hemodiálise.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 28 },
-      { id: 'idade', header: 'Idade (anos)', width: 12 },
+      { id: 'idade', header: 'Idade', width: 10 },
       { id: 'faixaEtaria', header: 'Faixa Etária', width: 18 },
       { id: 'sexo', header: 'Sexo', width: 10 },
-      { id: 'dataNascimento', header: 'Data Nasc.', width: 14 },
+      { id: 'dataNascimento', header: 'Nascimento', width: 14 },
       { id: 'telefone', header: 'Telefone', width: 18 },
       { id: 'clinica', header: 'Unidade', width: 24 },
       { id: 'tempoDialiseMeses', header: 'Meses em HD', width: 14 }
@@ -52,294 +55,389 @@ export const REPORTS_CATALOG = [
   },
   {
     id: 'escala_turnos',
-    title: 'Distribuição de Turnos, Cadeiras e Escalas',
+    title: 'Turnos e Escalas',
     category: 'populacao',
-    description: 'Mapeamento operacional de alocação de pacientes por turno e escala (Seg/Qua/Sex ou Ter/Qui/Sáb).',
+    description: 'Mapeamento operacional de alocação por turno e dias da semana.',
     columns: [
-      { id: 'clinica', header: 'Clínica', width: 24 },
+      { id: 'clinica', header: 'Unidade', width: 24 },
       { id: 'turno', header: 'Turno', width: 14 },
-      { id: 'diaSemana', header: 'Dias da Semana', width: 16 },
+      { id: 'diaSemana', header: 'Escala', width: 16 },
       { id: 'nome', header: 'Paciente', width: 28 },
       { id: 'tipoAcesso', header: 'Acesso', width: 20 },
-      { id: 'pesoSeco', header: 'Peso Seco (kg)', width: 14 },
-      { id: 'fluxoSangue', header: 'Qb Prescrito', width: 14 }
+      { id: 'pesoSeco', header: 'Peso Seco', width: 14 },
+      { id: 'fluxoSangue', header: 'Qb', width: 14 }
     ]
   },
   {
     id: 'etiologias_drc',
-    title: 'Distribuição de Etiologias da DRC',
+    title: 'Etiologias DRC',
     category: 'populacao',
-    description: 'Incidência de causas primárias de Doença Renal Crônica (DM, HAS, Glomerulopatias, DRPAD, etc.).',
+    description: 'Causas primárias da doença renal crônica e comorbidades associadas.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 28 },
-      { id: 'etiologiaDRC', header: 'Etiologia Primária', width: 28 },
+      { id: 'etiologiaDRC', header: 'Etiologia', width: 28 },
       { id: 'idade', header: 'Idade', width: 10 },
       { id: 'sexo', header: 'Sexo', width: 8 },
       { id: 'tempoDialise', header: 'Tempo em HD', width: 16 },
-      { id: 'clinica', header: 'Clínica', width: 24 },
+      { id: 'clinica', header: 'Unidade', width: 24 },
       { id: 'comorbidades', header: 'Comorbidades', width: 26 }
     ]
   },
 
-  // ================= 2. ACESSOS VASCULARES & TERAPIA DIALÍTICA =================
+  // ================= 2. DIÁLISE =================
   {
     id: 'acessos_vasculares',
-    title: 'Vigilância de Acessos Vasculares',
+    title: 'Acessos Vasculares',
     category: 'acesso_dialise',
-    description: 'Monitoramento detalhado de fístulas arteriovenosas, próteses e cateteres centrais de longa permanência.',
+    description: 'Vigilância de fístulas arteriovenosas, próteses e cateteres centrais.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
-      { id: 'tipoAcesso', header: 'Tipo de Acesso', width: 22 },
-      { id: 'ladoMembro', header: 'Topografia', width: 20 },
-      { id: 'dataConfeccao', header: 'Data Implante/Confecção', width: 18 },
-      { id: 'fluxoSangue', header: 'Qb Médio (ml/min)', width: 16 },
-      { id: 'agulha', header: 'Calibre Agulha', width: 14 },
-      { id: 'alertaAcesso', header: 'Alerta de Risco', width: 20 },
-      { id: 'clinica', header: 'Clínica', width: 22 }
+      { id: 'tipoAcesso', header: 'Acesso', width: 22 },
+      { id: 'ladoMembro', header: 'Local', width: 18 },
+      { id: 'dataConfeccao', header: 'Data Implante', width: 16 },
+      { id: 'fluxoSangue', header: 'Qb Prescrito', width: 14 },
+      { id: 'agulha', header: 'Agulha', width: 12 },
+      { id: 'alertaAcesso', header: 'Condição', width: 22 },
+      { id: 'clinica', header: 'Unidade', width: 22 }
     ]
   },
   {
     id: 'prescricoes_hd',
-    title: 'Prescrições e Parâmetros Dialíticos Ativos',
+    title: 'Prescrições HD',
     category: 'acesso_dialise',
-    description: 'Parâmetros operacionais da hemodiálise: dialisador, fluxos Qb/Qd, heparina e tempo de tratamento.',
+    description: 'Parâmetros dialíticos ativos: capilar, fluxos Qb/Qd, tempo e peso seco.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
       { id: 'capilar', header: 'Dialisador', width: 20 },
-      { id: 'fluxoSangue', header: 'Qb (ml/min)', width: 14 },
-      { id: 'fluxoDialisato', header: 'Qd (ml/min)', width: 14 },
-      { id: 'pesoSeco', header: 'Peso Seco (kg)', width: 14 },
-      { id: 'duracaoSessao', header: 'Duração HD', width: 14 },
-      { id: 'anticoagulacao', header: 'Anticoagulação', width: 18 },
+      { id: 'fluxoSangue', header: 'Qb', width: 14 },
+      { id: 'fluxoDialisato', header: 'Qd', width: 14 },
+      { id: 'pesoSeco', header: 'Peso Seco', width: 14 },
+      { id: 'duracaoSessao', header: 'Duração', width: 14 },
+      { id: 'anticoagulacao', header: 'Anticoagulação', width: 20 },
       { id: 'turno', header: 'Turno', width: 14 }
     ]
   },
   {
-    id: 'balanco_volemico',
-    title: 'Balanço Volêmico e Ganho Interdialítico (PIDG)',
+    id: 'anticoagulacao_hd',
+    title: 'Anticoagulação',
     category: 'acesso_dialise',
-    description: 'Vigilância de hipervolemia e percentual de ganho de peso entre sessões (PIDG > 4.0% e > 5.0%).',
+    description: 'Protocolos de heparina padrão, enoxaparina e segurança sem heparina.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
-      { id: 'pesoSeco', header: 'Peso Seco (kg)', width: 14 },
-      { id: 'ultimoPeso', header: 'Último Peso Pré (kg)', width: 16 },
+      { id: 'protocolo', header: 'Protocolo', width: 20 },
+      { id: 'doseAtaque', header: 'Ataque', width: 14 },
+      { id: 'doseManutencao', header: 'Manutenção', width: 16 },
+      { id: 'statusSeguranca', header: 'Segurança', width: 22 },
+      { id: 'motivo', header: 'Justificativa Clínica', width: 28 },
+      { id: 'clinica', header: 'Unidade', width: 20 }
+    ]
+  },
+  {
+    id: 'balanco_volemico',
+    title: 'Balanço Volêmico',
+    category: 'acesso_dialise',
+    description: 'Monitoramento de peso interdialítico e percentual de ganho volêmico.',
+    columns: [
+      { id: 'nome', header: 'Paciente', width: 26 },
+      { id: 'pesoSeco', header: 'Peso Seco', width: 14 },
+      { id: 'ultimoPeso', header: 'Último Peso', width: 14 },
       { id: 'variacaoKg', header: 'Ganho (kg)', width: 12 },
-      { id: 'percentualGanho', header: '% Ganho (PIDG)', width: 16 },
-      { id: 'statusVolemico', header: 'Classificação Volêmica', width: 22 },
-      { id: 'dataAfericao', header: 'Data Última Pesagem', width: 16 },
+      { id: 'percentualGanho', header: '% Ganho', width: 14 },
+      { id: 'statusVolemico', header: 'Classificação', width: 22 },
+      { id: 'dataAfericao', header: 'Data Pesagem', width: 14 },
       { id: 'clinica', header: 'Unidade', width: 20 }
     ]
   },
   {
     id: 'intercorrencias_hd',
-    title: 'Histórico de Intercorrências em Sessões de Hemodiálise',
+    title: 'Intercorrências',
     category: 'acesso_dialise',
-    description: 'Registro de episódios de hipotensão sintomática, câimbras, calafrios, cefaleia e hipertensão em sessão.',
+    description: 'Histórico de eventos clínicos e hipotensões durante sessões de hemodiálise.',
     columns: [
-      { id: 'data', header: 'Data da Sessão', width: 14 },
+      { id: 'data', header: 'Data', width: 14 },
       { id: 'nome', header: 'Paciente', width: 26 },
-      { id: 'tipoIntercorrencia', header: 'Intercorrência Registrada', width: 26 },
+      { id: 'tipoIntercorrencia', header: 'Intercorrência', width: 24 },
       { id: 'paPrePos', header: 'PA Pré e Pós', width: 16 },
-      { id: 'ufRealizada', header: 'UF (ml)', width: 12 },
-      { id: 'conduta', header: 'Conduta Médica Adotada', width: 32 },
-      { id: 'medico', header: 'Médico Assistente', width: 22 }
+      { id: 'ufRealizada', header: 'UF Retirada', width: 14 },
+      { id: 'conduta', header: 'Conduta Adotada', width: 30 },
+      { id: 'medico', header: 'Médico', width: 22 }
     ]
   },
 
-  // ================= 3. PAINEL LABORATORIAL & METAS CLÍNICAS =================
+  // ================= 3. EXAMES =================
   {
     id: 'alertas_laboratoriais',
-    title: 'Painel Geral de Alertas Laboratoriais Críticos',
+    title: 'Alertas Laboratoriais',
     category: 'laboratorio',
-    description: 'Pacientes com resultados críticos que demandam intervenção imediata (K > 5.5, Hb < 10, P > 5.5, PTH > 600).',
+    description: 'Resultados críticos fora da faixa de segurança clínica.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
-      { id: 'clinica', header: 'Clínica', width: 20 },
+      { id: 'clinica', header: 'Unidade', width: 20 },
       { id: 'turno', header: 'Turno', width: 12 },
-      { id: 'alertasAtivos', header: 'Alertas Críticos Identificados', width: 34 },
+      { id: 'alertasAtivos', header: 'Alertas Críticos', width: 34 },
       { id: 'k', header: 'K (mEq/L)', width: 12 },
       { id: 'hb', header: 'Hb (g/dL)', width: 12 },
-      { id: 'fosforo', header: 'Fósforo (mg/dL)', width: 14 },
+      { id: 'fosforo', header: 'P (mg/dL)', width: 12 },
       { id: 'pth', header: 'PTH (pg/mL)', width: 14 },
       { id: 'ktv', header: 'Kt/V', width: 10 }
     ]
   },
   {
     id: 'perfil_anemia',
-    title: 'Perfil de Anemia e Cinética do Ferro (KDIGO/SBN)',
+    title: 'Anemia e Ferro',
     category: 'laboratorio',
-    description: 'Avaliação da resposta eritropoiética, saturação de transferrina (IST), ferritina e uso de Alfaepoetina/Ferro.',
+    description: 'Avaliação de hemoglobina, saturação de transferrina e ferritina.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
       { id: 'hb', header: 'Hb (g/dL)', width: 12 },
       { id: 'ht', header: 'Ht (%)', width: 10 },
-      { id: 'ferritina', header: 'Ferritina (ng/mL)', width: 16 },
+      { id: 'ferritina', header: 'Ferritina', width: 14 },
       { id: 'ist', header: 'IST (%)', width: 10 },
-      { id: 'metaAnemia', header: 'Status Meta Hb', width: 18 },
-      { id: 'reservaFerro', header: 'Estoque de Ferro', width: 20 },
-      { id: 'epoEmUso', header: 'Alfaepoetina (EPO)', width: 18 },
-      { id: 'ferroEmUso', header: 'Ferro IV (Noripurum)', width: 18 }
+      { id: 'metaAnemia', header: 'Meta Hb', width: 16 },
+      { id: 'reservaFerro', header: 'Estoque Ferro', width: 20 },
+      { id: 'epoEmUso', header: 'Alfaepoetina', width: 16 },
+      { id: 'ferroEmUso', header: 'Ferro IV', width: 16 }
     ]
   },
   {
     id: 'metabolismo_osseo',
-    title: 'Distúrbio Mineral e Ósseo na DRC (DMO-DRC)',
+    title: 'Metabolismo Ósseo',
     category: 'laboratorio',
-    description: 'Controle de Cálcio, Fósforo sérico, Produto Ca x P, PTH intacto, Fosfatase Alcalina e 25-OH Vitamina D.',
+    description: 'Controle de cálcio, cálcio corrigido pela albumina, fósforo, PTH e FA.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
-      { id: 'ca', header: 'Cálcio (mg/dL)', width: 14 },
-      { id: 'fosforo', header: 'Fósforo (mg/dL)', width: 14 },
-      { id: 'produtoCaP', header: 'Produto Ca x P', width: 14 },
-      { id: 'pth', header: 'PTH (pg/mL)', width: 14 },
-      { id: 'vitD', header: 'Vit D (ng/mL)', width: 12 },
-      { id: 'fa', header: 'Fosfatase Alc.', width: 14 },
-      { id: 'statusDMO', header: 'Avaliação DMO', width: 22 },
-      { id: 'quelanteEmUso', header: 'Quelante de Fósforo', width: 22 }
+      { id: 'ca', header: 'Cálcio', width: 12 },
+      { id: 'caCorrigido', header: 'Ca Corrigido', width: 14 },
+      { id: 'fosforo', header: 'Fósforo', width: 12 },
+      { id: 'produtoCaP', header: 'Ca x P', width: 12 },
+      { id: 'pth', header: 'PTH', width: 14 },
+      { id: 'fa', header: 'FA (U/L)', width: 12 },
+      { id: 'vitD', header: 'Vit D', width: 12 },
+      { id: 'statusDMO', header: 'Avaliação DMO', width: 20 },
+      { id: 'quelanteEmUso', header: 'Quelante', width: 20 }
     ]
   },
   {
     id: 'adequacao_dialitica',
-    title: 'Adequação Dialítica e Depuração (Kt/V e UR%)',
+    title: 'Adequação Dialítica',
     category: 'laboratorio',
-    description: 'Dose de diálise fornecida, Kt/V Daugirdas II (alvo >= 1.20), Ureia Pré/Pós e Taxa de Redução de Ureia.',
+    description: 'Depuração fornecida: Kt/V Daugirdas II, ureia pré e pós, e taxa de redução UR%.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
       { id: 'ktv', header: 'Kt/V Único', width: 12 },
-      { id: 'metaKtv', header: 'Meta Kt/V (≥1.2)', width: 16 },
-      { id: 'ureiaPre', header: 'Ureia Pré (mg/dL)', width: 16 },
-      { id: 'ureiaPos', header: 'Ureia Pós (mg/dL)', width: 16 },
+      { id: 'metaKtv', header: 'Meta Kt/V', width: 16 },
+      { id: 'ureiaPre', header: 'Ureia Pré', width: 14 },
+      { id: 'ureiaPos', header: 'Ureia Pós', width: 14 },
       { id: 'taxaReducaoUreia', header: 'UR (%)', width: 12 },
       { id: 'creatinina', header: 'Creatinina', width: 12 },
       { id: 'clinica', header: 'Unidade', width: 20 }
     ]
   },
   {
-    id: 'nutricao_inflamacao',
-    title: 'Estado Nutricional e Marcadores Inflamatórios',
+    id: 'gasometria_acido_basico',
+    title: 'Equilíbrio Ácido-Básico',
     category: 'laboratorio',
-    description: 'Vigilância de desnutrição proteico-energética e inflamação crônica (Albumina, PCR, Peso Seco, IMC).',
+    description: 'Bicarbonato sérico, pH e vigilância de acidose metabólica crônica.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
-      { id: 'albumina', header: 'Albumina (g/dL)', width: 14 },
-      { id: 'pcr', header: 'PCR (mg/L)', width: 12 },
-      { id: 'pesoSeco', header: 'Peso Seco (kg)', width: 14 },
-      { id: 'imc', header: 'IMC (kg/m²)', width: 12 },
-      { id: 'statusNutricional', header: 'Estado Nutricional', width: 20 },
-      { id: 'glicemia', header: 'Glicemia (mg/dL)', width: 14 },
+      { id: 'hco3', header: 'Bicarbonato (mEq/L)', width: 18 },
+      { id: 'classificacao', header: 'Status Ácido-Básico', width: 22 },
+      { id: 'ph', header: 'pH Sérico', width: 12 },
+      { id: 'condutaBanho', header: 'Conduta no Banho', width: 22 },
+      { id: 'reposicaoOral', header: 'Reposição Oral', width: 22 },
+      { id: 'clinica', header: 'Unidade', width: 20 }
+    ]
+  },
+  {
+    id: 'nutricao_inflamacao',
+    title: 'Nutrição e Inflamação',
+    category: 'laboratorio',
+    description: 'Vigilância de desnutrição proteico-energética, PCR e controle glicêmico.',
+    columns: [
+      { id: 'nome', header: 'Paciente', width: 26 },
+      { id: 'albumina', header: 'Albumina (g/dL)', width: 16 },
+      { id: 'pcr', header: 'PCR (mg/L)', width: 14 },
+      { id: 'pesoSeco', header: 'Peso Seco', width: 14 },
+      { id: 'imc', header: 'IMC (kg/m²)', width: 14 },
+      { id: 'statusNutricional', header: 'Nutrição', width: 20 },
+      { id: 'glicemia', header: 'Glicemia', width: 14 },
       { id: 'hba1c', header: 'HbA1c (%)', width: 12 }
     ]
   },
 
-  // ================= 4. FARMACOTERAPIA, CICLOS & CONTROLE INFECCIOSO =================
+  // ================= 4. FARMÁCIA =================
   {
     id: 'mapa_medicamentos',
-    title: 'Mapa Farmacoterapêutico Geral de Medicamentos',
+    title: 'Mapa Farmacológico',
     category: 'farmacia_infeccao',
-    description: 'Relação de todas as medicações em uso ativo por paciente, agrupadas por categoria terapêutica.',
+    description: 'Prescrições farmacológicas ativas, doses e vias de administração.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
       { id: 'medicamento', header: 'Medicamento', width: 26 },
-      { id: 'categoria', header: 'Categoria Farmacológica', width: 22 },
-      { id: 'dosagem', header: 'Dosagem Prescrita', width: 18 },
-      { id: 'posologia', header: 'Posologia', width: 22 },
-      { id: 'via', header: 'Via Adm.', width: 12 },
-      { id: 'tipo', header: 'Tipo Ciclo', width: 14 }
+      { id: 'categoria', header: 'Categoria', width: 20 },
+      { id: 'dosagem', header: 'Dosagem', width: 16 },
+      { id: 'posologia', header: 'Posologia', width: 20 },
+      { id: 'via', header: 'Via', width: 10 },
+      { id: 'tipo', header: 'Tipo', width: 14 }
     ]
   },
   {
-    id: 'ciclos_medicamentos',
-    title: 'Vigilância de Ciclos Medicamentosos a Vencer e Vencidos',
+    id: 'ciclos_medicamentosos',
+    title: 'Ciclos Medicamentosos',
     category: 'farmacia_infeccao',
-    description: 'Controle de ciclos temporários (antibioticoterapia, reposições de ferro, pulsoterapias) e datas limites.',
+    description: 'Prazos de tratamentos temporários a vencer e ciclos vencidos.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
-      { id: 'medicamento', header: 'Fármaco em Ciclo', width: 24 },
+      { id: 'medicamento', header: 'Fármaco', width: 24 },
       { id: 'dosagem', header: 'Dose', width: 14 },
-      { id: 'dataInicio', header: 'Início Ciclo', width: 14 },
-      { id: 'dataFim', header: 'Término Previsto', width: 14 },
-      { id: 'diasRestantes', header: 'Prazo Restante', width: 16 },
-      { id: 'statusCiclo', header: 'Status Alerta', width: 18 }
+      { id: 'dataInicio', header: 'Início', width: 14 },
+      { id: 'dataFim', header: 'Término', width: 14 },
+      { id: 'diasRestantes', header: 'Prazo', width: 16 },
+      { id: 'statusCiclo', header: 'Status', width: 18 }
     ]
   },
   {
     id: 'antibioticoterapia',
-    title: 'Controle de Antimicrobianos em Curso na Hemodiálise',
+    title: 'Antimicrobianos',
     category: 'farmacia_infeccao',
-    description: 'Relação rigorosa de antibióticos e antifúngicos em uso, dias de tratamento e indicação clínica.',
+    description: 'Antibióticos em curso, vias pós-HD e indicação clínica.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
       { id: 'antibiotico', header: 'Antimicrobiano', width: 24 },
-      { id: 'dosagem', header: 'Dose Prescrita', width: 16 },
+      { id: 'dosagem', header: 'Dose', width: 14 },
       { id: 'via', header: 'Via', width: 10 },
-      { id: 'dataInicio', header: 'Data Início', width: 14 },
-      { id: 'dataFim', header: 'Data Término', width: 14 },
-      { id: 'observacao', header: 'Indicação Clínica', width: 28 },
-      { id: 'tipoAcesso', header: 'Acesso Atual', width: 18 }
+      { id: 'dataInicio', header: 'Início', width: 14 },
+      { id: 'dataFim', header: 'Término', width: 14 },
+      { id: 'observacao', header: 'Indicação', width: 28 },
+      { id: 'tipoAcesso', header: 'Acesso', width: 18 }
     ]
   },
   {
     id: 'hemoculturas_lock',
-    title: 'Hemoculturas e Protocolos de Lock Therapy',
+    title: 'Hemoculturas e Lock',
     category: 'farmacia_infeccao',
-    description: 'Acompanhamento microbiológico de bacteremias associadas a cateter, patógenos e selos antimicrobianos.',
+    description: 'Culturas microbiológicas, patógenos isolados e selos antimicrobianos.',
     columns: [
       { id: 'dataColeta', header: 'Data Coleta', width: 14 },
       { id: 'nome', header: 'Paciente', width: 26 },
-      { id: 'sitio', header: 'Sítio de Coleta', width: 20 },
-      { id: 'status', header: 'Resultado Cultura', width: 18 },
+      { id: 'sitio', header: 'Sítio Coleta', width: 18 },
+      { id: 'status', header: 'Resultado', width: 16 },
       { id: 'patogeno', header: 'Patógeno Isolado', width: 28 },
       { id: 'antibiograma', header: 'Sensibilidade', width: 28 },
-      { id: 'tipoAcesso', header: 'Acesso Vascular', width: 18 }
+      { id: 'tipoAcesso', header: 'Acesso', width: 18 }
     ]
   },
   {
     id: 'historico_receitas',
-    title: 'Histórico e Rastreabilidade de Receituários Emitidos',
+    title: 'Histórico de Receitas',
     category: 'farmacia_infeccao',
-    description: 'Auditoria de receitas simples e de controle especial emitidas através da plataforma Nex-Ai.NEFRO.',
+    description: 'Auditoria de receitas simples e controle especial emitidas pelo sistema.',
     columns: [
       { id: 'dataEmissao', header: 'Data Emissão', width: 14 },
       { id: 'numeroReceita', header: 'Nº Receita', width: 16 },
       { id: 'nome', header: 'Paciente', width: 26 },
       { id: 'tipoReceita', header: 'Tipo Receita', width: 18 },
-      { id: 'totalItens', header: 'Qtd Itens', width: 12 },
+      { id: 'totalItens', header: 'Itens', width: 10 },
       { id: 'resumoMedicamentos', header: 'Medicamentos Prescritos', width: 34 },
-      { id: 'medico', header: 'Médico Emissor', width: 22 }
+      { id: 'medico', header: 'Médico', width: 22 }
     ]
   },
 
-  // ================= 5. TRANSPLANTE & INDICADORES SBN/KDQI =================
+  // ================= 5. TRANSPLANTE =================
   {
     id: 'fila_transplante',
-    title: 'Prontidão e Gestão de Fila de Transplante Renal',
+    title: 'Fila de Transplante',
     category: 'qualidade_transplante',
-    description: 'Estratificação da elegibilidade para transplante: ativos em lista SNT, em avaliação, doador vivo e recusas.',
+    description: 'Elegibilidade no SNT, pacientes em avaliação e contraindicações.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
       { id: 'statusTransplante', header: 'Classificação Transplante', width: 24 },
       { id: 'idade', header: 'Idade', width: 10 },
       { id: 'tempoDialise', header: 'Tempo em HD', width: 16 },
-      { id: 'tipoAcesso', header: 'Acesso Atual', width: 18 },
-      { id: 'clinica', header: 'Clínica', width: 20 },
-      { id: 'observacoes', header: 'Centro Transplantador', width: 30 }
+      { id: 'tipoAcesso', header: 'Acesso', width: 18 },
+      { id: 'clinica', header: 'Unidade', width: 20 },
+      { id: 'observacoes', header: 'Centro Transplantador', width: 28 }
     ]
   },
   {
     id: 'panorama_consolidado',
-    title: 'Panorama Clínico Consolidado e Metas de Qualidade SBN/KDQI',
+    title: 'Metas Clínicas',
     category: 'qualidade_transplante',
-    description: 'Score integral de conformidade clínica por paciente: metas de Hb (10-12), P (3.5-5.5), K (≤5.5), Kt/V (≥1.2) e FAV definitiva.',
+    description: 'Score de metas KDIGO e SBN: Hb, fósforo, potássio, Kt/V e FAV definitiva.',
     columns: [
       { id: 'nome', header: 'Paciente', width: 26 },
-      { id: 'scoreConformidade', header: 'Score Metas (% Alvos)', width: 20 },
-      { id: 'statusGeral', header: 'Status Geral', width: 16 },
-      { id: 'metaHb', header: 'Meta Hb', width: 12 },
-      { id: 'metaFosforo', header: 'Meta P', width: 12 },
-      { id: 'metaPotassio', header: 'Meta K', width: 12 },
-      { id: 'metaKtv', header: 'Meta Kt/V', width: 12 },
-      { id: 'acessoDefinitivo', header: 'Acesso Definitivo', width: 16 },
+      { id: 'scoreConformidade', header: 'Score Metas', width: 18 },
+      { id: 'statusGeral', header: 'Status Geral', width: 18 },
+      { id: 'metaHb', header: 'Hb', width: 10 },
+      { id: 'metaFosforo', header: 'P', width: 10 },
+      { id: 'metaPotassio', header: 'K', width: 10 },
+      { id: 'metaKtv', header: 'Kt/V', width: 10 },
+      { id: 'acessoDefinitivo', header: 'Acesso', width: 14 },
       { id: 'clinica', header: 'Unidade', width: 20 }
+    ]
+  },
+
+  // ================= 6. GESTÃO =================
+  {
+    id: 'lme_altocusto',
+    title: 'LME e Alto Custo',
+    category: 'gestao',
+    description: 'Gestão de laudos LME e medicamentos CEAF (Epoetina, Noripurum, Sevelamer).',
+    columns: [
+      { id: 'nome', header: 'Paciente', width: 26 },
+      { id: 'medicamento', header: 'Medicamento CEAF', width: 26 },
+      { id: 'dataSolicitacao', header: 'Data Laudo', width: 14 },
+      { id: 'dataValidade', header: 'Validade LME', width: 14 },
+      { id: 'diasRestantes', header: 'Prazo', width: 14 },
+      { id: 'statusLme', header: 'Status LME', width: 20 },
+      { id: 'cnsPaciente', header: 'CNS Paciente', width: 18 },
+      { id: 'clinica', header: 'Unidade', width: 20 }
+    ]
+  },
+  {
+    id: 'desligamentos_historico',
+    title: 'Desligamentos e Saídas',
+    category: 'gestao',
+    description: 'Histórico de saídas do programa: óbitos, transplantes e transferências.',
+    columns: [
+      { id: 'data', header: 'Data Saída', width: 14 },
+      { id: 'nome', header: 'Paciente', width: 26 },
+      { id: 'motivo', header: 'Motivo Desligamento', width: 22 },
+      { id: 'tempoHD', header: 'Tempo em TRS', width: 16 },
+      { id: 'observacoes', header: 'Anotações Clínicas', width: 28 },
+      { id: 'clinica', header: 'Unidade', width: 20 },
+      { id: 'medico', header: 'Responsável', width: 20 }
+    ]
+  },
+  {
+    id: 'vigilancia_sorologias',
+    title: 'Vigilância Sorológica',
+    category: 'gestao',
+    description: 'Rastreio sanitário (RDC 11 Anvisa): Hepatite B, Hepatite C e HIV.',
+    columns: [
+      { id: 'nome', header: 'Paciente', width: 26 },
+      { id: 'hbsag', header: 'HBsAg', width: 14 },
+      { id: 'antiHbs', header: 'Anti-HBs', width: 14 },
+      { id: 'antiHcv', header: 'Anti-HCV', width: 14 },
+      { id: 'hiv', header: 'HIV', width: 12 },
+      { id: 'statusVacinal', header: 'Imunidade Hep B', width: 20 },
+      { id: 'alocacaoSala', header: 'Isolamento Sanitário', width: 22 },
+      { id: 'clinica', header: 'Unidade', width: 20 }
+    ]
+  },
+  {
+    id: 'convenios_operadoras',
+    title: 'Convênios e Operadoras',
+    category: 'gestao',
+    description: 'Distribuição dos pacientes por operadoras de saúde, planos e SUS.',
+    columns: [
+      { id: 'nome', header: 'Paciente', width: 28 },
+      { id: 'convenio', header: 'Convênio / Operadora', width: 24 },
+      { id: 'numeroCarteira', header: 'Nº Carteira / CNS', width: 20 },
+      { id: 'cpf', header: 'CPF', width: 16 },
+      { id: 'turno', header: 'Turno', width: 14 },
+      { id: 'diaSemana', header: 'Escala', width: 16 },
+      { id: 'clinica', header: 'Unidade', width: 22 }
     ]
   }
 ];
@@ -354,6 +452,8 @@ export function filterPatientsForReport(patients = [], filters = {}) {
     diaSemana = 'todos',
     tipoAcesso = 'todos',
     statusTransplante = 'todos',
+    anticoagulacao = 'todos',
+    convenio = 'todos',
     comAlertaApenas = false,
     busca = ''
   } = filters;
@@ -396,7 +496,22 @@ export function filterPatientsForReport(patients = [], filters = {}) {
       if (pStatusTx !== statusTransplante) return false;
     }
 
-    // 7. Apenas com Alertas
+    // 7. Anticoagulação
+    if (anticoagulacao && anticoagulacao !== 'todos') {
+      const acInfo = getAnticoagulacaoInfo(p);
+      if (anticoagulacao === 'sem_heparina' && !acInfo.isSemHeparina) return false;
+      if (anticoagulacao === 'enoxaparina' && acInfo.tipo !== 'enoxaparina') return false;
+      if (anticoagulacao === 'heparina_padrao' && (acInfo.isSemHeparina || acInfo.tipo === 'enoxaparina')) return false;
+    }
+
+    // 8. Convênio / Operadora
+    if (convenio && convenio !== 'todos') {
+      const pConv = (p.convenio || p.planoSaude || 'SUS').toLowerCase();
+      if (convenio === 'sus' && !pConv.includes('sus')) return false;
+      if (convenio === 'convenio' && pConv.includes('sus')) return false;
+    }
+
+    // 9. Apenas com Alertas
     if (comAlertaApenas) {
       const hasAlert = checkPatientHasAlerts(p);
       if (!hasAlert) return false;
@@ -420,6 +535,19 @@ export function checkPatientHasAlerts(patient) {
   // Cateter duplo lúmen temporário é alerta de risco infeccioso
   const tipoAcesso = (patient.acessoVascular?.tipo || patient.tipoAcesso || '').toLowerCase();
   if (tipoAcesso.includes('duplo lúmen') || tipoAcesso.includes('cdl') || tipoAcesso.includes('provisório')) return true;
+
+  // Protocolo sem heparina é alerta de alto risco
+  const acInfo = getAnticoagulacaoInfo(patient);
+  if (acInfo.isSemHeparina) return true;
+
+  // LME vencendo ou vencida
+  if (Array.isArray(patient.lmes)) {
+    const hasLmeAlert = patient.lmes.some(lme => {
+      const st = getLmeExpirationStatus(lme);
+      return st.status === 'vencido' || st.status === 'a_vencer';
+    });
+    if (hasLmeAlert) return true;
+  }
 
   // Medicamentos vencendo ou vencidos
   if (Array.isArray(patient.medicamentos)) {
@@ -452,9 +580,9 @@ function formatDialysisDuration(dataInicioStr) {
 }
 
 /**
- * Gera as linhas de dados e KPIs resumidos para qualquer um dos 20 relatórios
+ * Gera as linhas de dados e KPIs resumidos para qualquer um dos 26 relatórios
  */
-export function generateReportData(reportId, filteredPatients = []) {
+export function generateReportData(reportId, filteredPatients = [], auditLogs = []) {
   switch (reportId) {
     // ----------------------------------------------------
     // 1. Censo Geral
@@ -474,17 +602,17 @@ export function generateReportData(reportId, filteredPatients = []) {
       }));
 
       const kpis = [
-        { label: 'Total de Pacientes', value: rows.length },
+        { label: 'Total', value: rows.length },
         { label: 'Fístulas (FAV)', value: rows.filter(r => r.tipoAcesso.toLowerCase().includes('fav') || r.tipoAcesso.toLowerCase().includes('fístula')).length },
-        { label: 'Cateteres Centrais', value: rows.filter(r => r.tipoAcesso.toLowerCase().includes('cath') || r.tipoAcesso.toLowerCase().includes('cateter') || r.tipoAcesso.toLowerCase().includes('cdl')).length },
-        { label: 'Ativos em Lista Tx', value: rows.filter(r => r.statusTransplante.toLowerCase().includes('lista')).length }
+        { label: 'Cateteres', value: rows.filter(r => r.tipoAcesso.toLowerCase().includes('cath') || r.tipoAcesso.toLowerCase().includes('cateter') || r.tipoAcesso.toLowerCase().includes('cdl')).length },
+        { label: 'Lista Tx', value: rows.filter(r => r.statusTransplante.toLowerCase().includes('lista')).length }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 2. Demografia & Faixa Etária
+    // 2. Demografia
     // ----------------------------------------------------
     case 'demografia_faixa_etaria': {
       let menor40 = 0, de40a59 = 0, de60a74 = 0, maior75 = 0;
@@ -496,7 +624,7 @@ export function generateReportData(reportId, filteredPatients = []) {
           if (age < 40) { faixa = '< 40 anos'; menor40++; }
           else if (age <= 59) { faixa = '40 a 59 anos'; de40a59++; }
           else if (age <= 74) { faixa = '60 a 74 anos'; de60a74++; }
-          else { faixa = '≥ 75 anos (Idoso frágil)'; maior75++; }
+          else { faixa = '≥ 75 anos'; maior75++; }
         }
 
         let mesesHd = 'N/I';
@@ -521,8 +649,8 @@ export function generateReportData(reportId, filteredPatients = []) {
       });
 
       const kpis = [
-        { label: 'Total Avaliado', value: rows.length },
-        { label: 'Idosos (≥60 anos)', value: `${de60a74 + maior75} (${rows.length ? Math.round(((de60a74 + maior75)/rows.length)*100) : 0}%)` },
+        { label: 'Avaliados', value: rows.length },
+        { label: 'Idosos (≥60)', value: `${de60a74 + maior75} (${rows.length ? Math.round(((de60a74 + maior75)/rows.length)*100) : 0}%)` },
         { label: 'Adultos (40-59)', value: de40a59 },
         { label: 'Jovens (<40)', value: menor40 }
       ];
@@ -531,7 +659,7 @@ export function generateReportData(reportId, filteredPatients = []) {
     }
 
     // ----------------------------------------------------
-    // 3. Distribuição de Turnos & Escalas
+    // 3. Turnos e Escalas
     // ----------------------------------------------------
     case 'escala_turnos': {
       const rows = filteredPatients.map(p => ({
@@ -544,29 +672,28 @@ export function generateReportData(reportId, filteredPatients = []) {
         fluxoSangue: p.acessoVascular?.fluxoSangue ? `${p.acessoVascular.fluxoSangue} ml/min` : 'N/I'
       }));
 
-      // Ordenar por clínica, diaSemana, turno
       rows.sort((a, b) => a.diaSemana.localeCompare(b.diaSemana) || a.turno.localeCompare(b.turno) || a.nome.localeCompare(b.nome));
 
       const segQuaSex = rows.filter(r => r.diaSemana.includes('Seg')).length;
       const terQuiSab = rows.filter(r => r.diaSemana.includes('Ter')).length;
 
       const kpis = [
-        { label: 'Total em Escala', value: rows.length },
-        { label: 'Escala Seg/Qua/Sex', value: segQuaSex },
-        { label: 'Escala Ter/Qui/Sáb', value: terQuiSab },
-        { label: 'Unidades Ativas', value: new Set(rows.map(r => r.clinica)).size }
+        { label: 'Total', value: rows.length },
+        { label: 'Seg Qua Sex', value: segQuaSex },
+        { label: 'Ter Qui Sáb', value: terQuiSab },
+        { label: 'Unidades', value: new Set(rows.map(r => r.clinica)).size }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 4. Etiologias da DRC
+    // 4. Etiologias DRC
     // ----------------------------------------------------
     case 'etiologias_drc': {
       const counts = {};
       const rows = filteredPatients.map(p => {
-        const etio = p.etiologiaDRC || 'Indeterminada / Causa Desconhecida';
+        const etio = p.etiologiaDRC || 'Indeterminada';
         counts[etio] = (counts[etio] || 0) + 1;
         return {
           nome: p.nome || 'Paciente',
@@ -585,10 +712,10 @@ export function generateReportData(reportId, filteredPatients = []) {
       const hasCount = counts['Nefroesclerose Hipertensiva'] || counts['Hipertensão Arterial Sistêmica (HAS)'] || 0;
 
       const kpis = [
-        { label: 'Total de Pacientes', value: rows.length },
-        { label: 'Nefropatia Diabética', value: `${dmCount} (${rows.length ? Math.round((dmCount/rows.length)*100) : 0}%)` },
-        { label: 'Hipertensão (HAS)', value: `${hasCount} (${rows.length ? Math.round((hasCount/rows.length)*100) : 0}%)` },
-        { label: 'Outras Etiologias', value: rows.length - dmCount - hasCount }
+        { label: 'Total', value: rows.length },
+        { label: 'Diabetes', value: `${dmCount} (${rows.length ? Math.round((dmCount/rows.length)*100) : 0}%)` },
+        { label: 'Hipertensão', value: `${hasCount} (${rows.length ? Math.round((hasCount/rows.length)*100) : 0}%)` },
+        { label: 'Outras Causas', value: rows.length - dmCount - hasCount }
       ];
 
       return { rows, kpis };
@@ -607,13 +734,13 @@ export function generateReportData(reportId, filteredPatients = []) {
 
         let alerta = 'Adequado';
         if (tipoLower.includes('duplo lúmen') || tipoLower.includes('cdl') || tipoLower.includes('provisório')) {
-          alerta = '⚠️ CDL Provisório (Alto Risco)';
+          alerta = '⚠️ CDL Provisório';
           cdlCount++;
         } else if (tipoLower.includes('permcath') || tipoLower.includes('longa')) {
-          alerta = 'Permcath (Vigilância Infecciosa)';
+          alerta = 'Permcath';
           permCount++;
         } else if (tipoLower.includes('fav') || tipoLower.includes('fístula')) {
-          alerta = '✓ FAV Pérvia (Padrão Ouro)';
+          alerta = '✓ FAV Pérvia';
           favCount++;
         } else {
           alerta = 'Em acompanhamento';
@@ -634,29 +761,31 @@ export function generateReportData(reportId, filteredPatients = []) {
       const taxaFav = rows.length ? Math.round((favCount / rows.length) * 100) : 0;
 
       const kpis = [
-        { label: 'Taxa de FAV (Padrão Ouro)', value: `${taxaFav}% (${favCount}/${rows.length})` },
-        { label: 'Permcath de Longa', value: permCount },
-        { label: 'Cateter Duplo Lúmen (CDL)', value: cdlCount },
-        { label: 'Meta SBN (> 80% FAV)', value: taxaFav >= 80 ? '✓ Atingida' : '⚠️ Abaixo da Meta' }
+        { label: 'Taxa FAV', value: `${taxaFav}% (${favCount}/${rows.length})` },
+        { label: 'Permcath', value: permCount },
+        { label: 'CDL Temporário', value: cdlCount },
+        { label: 'Meta SBN (≥80% FAV)', value: taxaFav >= 80 ? '✓ Atingida' : '⚠️ Abaixo' }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 6. Prescrições Dialíticas
+    // 6. Prescrições HD
     // ----------------------------------------------------
     case 'prescricoes_hd': {
       const rows = filteredPatients.map(p => {
         const av = p.acessoVascular || {};
+        const acInfo = getAnticoagulacaoInfo(p);
+
         return {
           nome: p.nome || 'Paciente',
           capilar: p.capilar || p.prescricaoDialise?.capilar || 'Polissulfona 1.8m²',
           fluxoSangue: av.fluxoSangue ? `${av.fluxoSangue} ml/min` : '350 ml/min',
           fluxoDialisato: av.fluxoDialisato ? `${av.fluxoDialisato} ml/min` : '500 ml/min',
           pesoSeco: p.pesoSeco ? `${p.pesoSeco} kg` : 'N/I',
-          duracaoSessao: p.tempoSessao || '4 horas (240 min)',
-          anticoagulacao: p.heparina || 'Heparina Não Fracionada',
+          duracaoSessao: p.tempoSessao || '4 horas',
+          anticoagulacao: acInfo.labelCurto,
           turno: p.turno || '1º Turno'
         };
       });
@@ -665,14 +794,66 @@ export function generateReportData(reportId, filteredPatients = []) {
         { label: 'Prescrições Ativas', value: rows.length },
         { label: 'Qb Médio', value: '350 ml/min' },
         { label: 'Qd Padrão', value: '500 ml/min' },
-        { label: 'Tempo Padrão', value: '4h / 3x sem' }
+        { label: 'Tempo Médio', value: '4 horas' }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 7. Balanço Volêmico & Ganho Interdialítico
+    // 7. Anticoagulação (NOVO)
+    // ----------------------------------------------------
+    case 'anticoagulacao_hd': {
+      let semHeparinaCount = 0, enoxaCount = 0, hnfCount = 0;
+
+      const rows = filteredPatients.map(p => {
+        const acInfo = getAnticoagulacaoInfo(p);
+        let proto = 'HNF Padrão';
+        let doseAtq = `${acInfo.doseAtaque || 1000} UI`;
+        let doseManut = `${acInfo.doseManutencao || 500} UI/h`;
+        let status = 'Regular';
+        let just = acInfo.observacoes || 'Manutenção habitual de patência do circuito';
+
+        if (acInfo.isSemHeparina) {
+          proto = 'SEM HEPARINA';
+          doseAtq = '-';
+          doseManut = '-';
+          status = '🚨 Risco Hemorrágico';
+          just = acInfo.motivo || 'Risco de sangramento ativo ou pós-operatório';
+          semHeparinaCount++;
+        } else if (acInfo.tipo === 'enoxaparina') {
+          proto = 'Enoxaparina (HBPM)';
+          doseAtq = `${acInfo.doseEnoxaparina || 40} mg`;
+          doseManut = 'Dose única';
+          status = '✓ HBPM Ativa';
+          enoxaCount++;
+        } else {
+          hnfCount++;
+        }
+
+        return {
+          nome: p.nome || 'Paciente',
+          protocolo: proto,
+          doseAtaque: doseAtq,
+          doseManutencao: doseManut,
+          statusSeguranca: status,
+          motivo: just,
+          clinica: p.clinica || 'N/I'
+        };
+      });
+
+      const kpis = [
+        { label: 'Total', value: rows.length },
+        { label: 'HNF Padrão', value: hnfCount },
+        { label: 'Enoxaparina', value: enoxaCount },
+        { label: 'Sem Heparina', value: semHeparinaCount }
+      ];
+
+      return { rows, kpis };
+    }
+
+    // ----------------------------------------------------
+    // 8. Balanço Volêmico
     // ----------------------------------------------------
     case 'balanco_volemico': {
       let alertaGrave = 0, alertaModerado = 0, noAlvo = 0;
@@ -687,7 +868,7 @@ export function generateReportData(reportId, filteredPatients = []) {
 
         let varKg = 'N/I';
         let pidg = 'N/I';
-        let status = 'Sem pesagem recente';
+        let status = 'Sem aferição recente';
 
         if (pesoSeco && pesoPre) {
           const diff = Number((pesoPre - pesoSeco).toFixed(2));
@@ -702,10 +883,10 @@ export function generateReportData(reportId, filteredPatients = []) {
             status = '⚠️ Ganho Elevado (4-5%)';
             alertaModerado++;
           } else if (pct >= 0) {
-            status = '✓ No Alvo Volêmico (<4%)';
+            status = '✓ No Alvo (<4%)';
             noAlvo++;
           } else {
-            status = 'Abaixo do Peso Seco';
+            status = 'Abaixo do Seco';
           }
         }
 
@@ -722,17 +903,17 @@ export function generateReportData(reportId, filteredPatients = []) {
       });
 
       const kpis = [
-        { label: 'Total com Pesagem', value: rows.filter(r => r.percentualGanho !== 'N/I').length },
-        { label: 'No Alvo (<4% PIDG)', value: noAlvo },
+        { label: 'Com Pesagem', value: rows.filter(r => r.percentualGanho !== 'N/I').length },
+        { label: 'No Alvo (<4%)', value: noAlvo },
         { label: 'Ganho Elevado (4-5%)', value: alertaModerado },
-        { label: 'Sobrecarga Grave (>5%)', value: alertaGrave }
+        { label: 'Grave (>5%)', value: alertaGrave }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 8. Histórico de Intercorrências em Sessão
+    // 9. Intercorrências
     // ----------------------------------------------------
     case 'intercorrencias_hd': {
       const rows = [];
@@ -748,23 +929,22 @@ export function generateReportData(reportId, filteredPatients = []) {
                 paPrePos: `${evo.paPre || 'N/I'} / ${evo.paPos || 'N/I'}`,
                 ufRealizada: evo.ufRetirada ? `${evo.ufRetirada} ml` : 'N/I',
                 conduta: evo.condutaClinica || 'Ajuste de conduta realizado',
-                medico: evo.medicoNome || 'Nefrologista Responsável'
+                medico: evo.medicoNome || 'Nefrologista'
               });
             }
           });
         }
       });
 
-      // Ordenar por data decrescente
       rows.sort((a, b) => b.data.localeCompare(a.data));
 
       const hipotensao = rows.filter(r => r.tipoIntercorrencia.toLowerCase().includes('hipotens')).length;
       const caimbra = rows.filter(r => r.tipoIntercorrencia.toLowerCase().includes('câimbra') || r.tipoIntercorrencia.toLowerCase().includes('caimbra')).length;
 
       const kpis = [
-        { label: 'Total Intercorrências', value: rows.length },
-        { label: 'Hipotensão Sintomática', value: hipotensao },
-        { label: 'Câimbras Musculares', value: caimbra },
+        { label: 'Total Registros', value: rows.length },
+        { label: 'Hipotensão', value: hipotensao },
+        { label: 'Câimbras', value: caimbra },
         { label: 'Outros Eventos', value: rows.length - hipotensao - caimbra }
       ];
 
@@ -772,7 +952,7 @@ export function generateReportData(reportId, filteredPatients = []) {
     }
 
     // ----------------------------------------------------
-    // 9. Painel Geral de Alertas Laboratoriais Críticos
+    // 10. Alertas Laboratoriais
     // ----------------------------------------------------
     case 'alertas_laboratoriais': {
       const rows = [];
@@ -782,22 +962,22 @@ export function generateReportData(reportId, filteredPatients = []) {
         const alertas = [];
 
         if (ex.k) {
-          if (Number(ex.k) > 5.5) alertas.push(`🚨 Hipercalemia (${ex.k} mEq/L)`);
-          else if (Number(ex.k) < 3.5) alertas.push(`⚠️ Hipocalemia (${ex.k} mEq/L)`);
+          if (Number(ex.k) > 5.5) alertas.push(`🚨 K ${ex.k}`);
+          else if (Number(ex.k) < 3.5) alertas.push(`⚠️ K baixo ${ex.k}`);
         }
         if (ex.hb) {
-          if (Number(ex.hb) < 10.0) alertas.push(`🚨 Anemia Crítica (${ex.hb} g/dL)`);
-          else if (Number(ex.hb) > 13.0) alertas.push(`⚠️ Hb Elevada (${ex.hb} g/dL)`);
+          if (Number(ex.hb) < 10.0) alertas.push(`🚨 Hb ${ex.hb}`);
+          else if (Number(ex.hb) > 13.0) alertas.push(`⚠️ Hb ${ex.hb}`);
         }
         if (ex.fosforo && Number(ex.fosforo) > 5.5) {
-          alertas.push(`⚠️ Hiperfosfatemia (${ex.fosforo} mg/dL)`);
+          alertas.push(`⚠️ P ${ex.fosforo}`);
         }
         if (ex.pth) {
-          if (Number(ex.pth) > 600) alertas.push(`🚨 HPTS Grave (${ex.pth} pg/mL)`);
-          else if (Number(ex.pth) < 100) alertas.push(`⚠️ Doença Óssea Adinâmica (${ex.pth} pg/mL)`);
+          if (Number(ex.pth) > 600) alertas.push(`🚨 PTH ${ex.pth}`);
+          else if (Number(ex.pth) < 100) alertas.push(`⚠️ PTH baixo ${ex.pth}`);
         }
         if (ex.ktv && Number(ex.ktv) < 1.2) {
-          alertas.push(`⚠️ Subdiálise (Kt/V ${ex.ktv})`);
+          alertas.push(`⚠️ Kt/V ${ex.ktv}`);
         }
 
         if (alertas.length > 0) {
@@ -816,17 +996,17 @@ export function generateReportData(reportId, filteredPatients = []) {
       });
 
       const kpis = [
-        { label: 'Pacientes com Alertas', value: rows.length },
-        { label: 'Alertas de Potássio (K)', value: rows.filter(r => r.alertasAtivos.includes('Hipercalemia') || r.alertasAtivos.includes('Hipocalemia')).length },
-        { label: 'Alertas de Anemia (Hb)', value: rows.filter(r => r.alertasAtivos.includes('Anemia')).length },
-        { label: 'Alertas de Fósforo (P)', value: rows.filter(r => r.alertasAtivos.includes('Hiperfosfatemia')).length }
+        { label: 'Com Alertas', value: rows.length },
+        { label: 'Potássio (K)', value: rows.filter(r => r.alertasAtivos.includes('K')).length },
+        { label: 'Anemia (Hb)', value: rows.filter(r => r.alertasAtivos.includes('Hb')).length },
+        { label: 'Fósforo (P)', value: rows.filter(r => r.alertasAtivos.includes('P ')).length }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 10. Perfil de Anemia & Cinética do Ferro
+    // 11. Anemia e Ferro
     // ----------------------------------------------------
     case 'perfil_anemia': {
       let noAlvoHb = 0, subAlvoHb = 0, acimaAlvoHb = 0;
@@ -837,16 +1017,16 @@ export function generateReportData(reportId, filteredPatients = []) {
         const ist = Number(ex.ist) || null;
         const ferritina = Number(ex.ferritina) || null;
 
-        let metaHb = 'Sem exame recente';
+        let metaHb = 'Sem exame';
         if (hb) {
           if (hb >= 10.0 && hb <= 12.0) {
-            metaHb = '✓ No Alvo (10-12)';
+            metaHb = '✓ No Alvo';
             noAlvoHb++;
           } else if (hb < 10.0) {
-            metaHb = '🚨 Sub-alvo (< 10.0)';
+            metaHb = '🚨 Sub-alvo';
             subAlvoHb++;
           } else {
-            metaHb = '⚠️ Elevado (> 12.0)';
+            metaHb = '⚠️ Elevado';
             acimaAlvoHb++;
           }
         }
@@ -854,11 +1034,11 @@ export function generateReportData(reportId, filteredPatients = []) {
         let reserva = 'Não avaliada';
         if (ist && ferritina) {
           if (ist < 20 || ferritina < 200) {
-            reserva = '🚨 Ferropenia (IST<20% ou Fer<200)';
+            reserva = '🚨 Ferropenia';
           } else if (ferritina > 800) {
-            reserva = '⚠️ Sobrecarga de Ferro';
+            reserva = '⚠️ Sobrecarga';
           } else {
-            reserva = '✓ Reserva Adequada';
+            reserva = '✓ Adequado';
           }
         }
 
@@ -883,17 +1063,17 @@ export function generateReportData(reportId, filteredPatients = []) {
       const pctNoAlvo = totalAvaliados ? Math.round((noAlvoHb / totalAvaliados) * 100) : 0;
 
       const kpis = [
-        { label: 'Conformidade Hb (10-12)', value: `${pctNoAlvo}% (${noAlvoHb}/${totalAvaliados})` },
-        { label: 'Hb Crítica (<10 g/dL)', value: subAlvoHb },
+        { label: 'Conformidade Hb', value: `${pctNoAlvo}% (${noAlvoHb}/${totalAvaliados})` },
+        { label: 'Hb < 10 g/dL', value: subAlvoHb },
         { label: 'Hb > 12 g/dL', value: acimaAlvoHb },
-        { label: 'Meta KDIGO/SBN', value: pctNoAlvo >= 70 ? '✓ Padrão Excelência' : '⚠️ Oportunidade Melhoria' }
+        { label: 'Meta KDIGO', value: pctNoAlvo >= 70 ? '✓ Excelente' : '⚠️ Regular' }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 11. Metabolismo Ósseo e Mineral (DMO-DRC)
+    // 12. Metabolismo Ósseo (Com Ca Corrigido e FA)
     // ----------------------------------------------------
     case 'metabolismo_osseo': {
       let pNoAlvo = 0, pAlto = 0;
@@ -901,15 +1081,25 @@ export function generateReportData(reportId, filteredPatients = []) {
       const rows = filteredPatients.map(p => {
         const ex = p.exames || {};
         const ca = Number(ex.ca) || null;
+        const alb = Number(ex.albumina) || null;
         const pVal = Number(ex.fosforo) || null;
         const pth = Number(ex.pth) || null;
+
+        // Cálculo de Cálcio Corrigido pela Albumina: Ca + 0.8 * (4 - Alb)
+        let caCorrigidoStr = 'N/I';
+        if (ca && alb) {
+          const calcCorr = ca + 0.8 * (4.0 - alb);
+          caCorrigidoStr = `${calcCorr.toFixed(1)} mg/dL`;
+        } else if (ca) {
+          caCorrigidoStr = `${ca} mg/dL`;
+        }
 
         let prodCaP = 'N/I';
         if (ca && pVal) {
           prodCaP = (ca * pVal).toFixed(1);
         }
 
-        let statusDmo = 'Acompanhamento de rotina';
+        let statusDmo = 'Rotina';
         if (pVal) {
           if (pVal >= 3.5 && pVal <= 5.5) {
             pNoAlvo++;
@@ -919,7 +1109,7 @@ export function generateReportData(reportId, filteredPatients = []) {
           }
         }
         if (pth && pth > 600) {
-          statusDmo = '🚨 HPTS Severo (PTH > 600)';
+          statusDmo = '🚨 HPTS Severo';
         }
 
         const meds = Array.isArray(p.medicamentos) ? p.medicamentos : [];
@@ -934,11 +1124,12 @@ export function generateReportData(reportId, filteredPatients = []) {
         return {
           nome: p.nome || 'Paciente',
           ca: ca ? `${ca} mg/dL` : 'N/I',
+          caCorrigido: caCorrigidoStr,
           fosforo: pVal ? `${pVal} mg/dL` : 'N/I',
           produtoCaP: prodCaP !== 'N/I' ? prodCaP : 'N/I',
           pth: pth ? `${pth} pg/mL` : 'N/I',
-          vitD: ex.vitD ? `${ex.vitD} ng/mL` : 'N/I',
           fa: ex.fa ? `${ex.fa} U/L` : 'N/I',
+          vitD: ex.vitD ? `${ex.vitD} ng/mL` : 'N/I',
           statusDMO: statusDmo,
           quelanteEmUso: quelante ? `${quelante.nome} (${quelante.dosagem || ''})` : 'Nenhum'
         };
@@ -946,17 +1137,17 @@ export function generateReportData(reportId, filteredPatients = []) {
 
       const totalP = pNoAlvo + pAlto;
       const kpis = [
-        { label: 'Fósforo no Alvo (3.5-5.5)', value: `${totalP ? Math.round((pNoAlvo / totalP) * 100) : 0}% (${pNoAlvo}/${totalP})` },
-        { label: 'Hiperfosfatemia (P > 5.5)', value: pAlto },
-        { label: 'PTH Crítico (>600)', value: rows.filter(r => r.statusDMO.includes('HPTS')).length },
-        { label: 'Pacientes c/ Quelante', value: rows.filter(r => r.quelanteEmUso !== 'Nenhum').length }
+        { label: 'Fósforo no Alvo', value: `${totalP ? Math.round((pNoAlvo / totalP) * 100) : 0}% (${pNoAlvo}/${totalP})` },
+        { label: 'Fósforo > 5.5', value: pAlto },
+        { label: 'PTH > 600', value: rows.filter(r => r.statusDMO.includes('HPTS')).length },
+        { label: 'Com Quelante', value: rows.filter(r => r.quelanteEmUso !== 'Nenhum').length }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 12. Adequação Dialítica (Kt/V e UR%)
+    // 13. Adequação Dialítica (Com Kt/V e UR%)
     // ----------------------------------------------------
     case 'adequacao_dialitica': {
       let ktvAdequado = 0, ktvInadequado = 0;
@@ -967,13 +1158,13 @@ export function generateReportData(reportId, filteredPatients = []) {
         const pre = Number(ex.ureiaPre) || null;
         const pos = Number(ex.ureiaPos) || null;
 
-        let meta = 'Sem Kt/V recente';
+        let meta = 'Sem exame';
         if (ktv) {
           if (ktv >= 1.20) {
-            meta = '✓ Adequado (≥ 1.20)';
+            meta = '✓ Adequado (≥1.2)';
             ktvAdequado++;
           } else {
-            meta = '🚨 Inadequado (< 1.20)';
+            meta = '🚨 Inadequado (<1.2)';
             ktvInadequado++;
           }
         }
@@ -999,17 +1190,70 @@ export function generateReportData(reportId, filteredPatients = []) {
       const pctKtv = totalKtv ? Math.round((ktvAdequado / totalKtv) * 100) : 0;
 
       const kpis = [
-        { label: 'Adequação Kt/V (≥1.20)', value: `${pctKtv}% (${ktvAdequado}/${totalKtv})` },
-        { label: 'Subdiálise (Kt/V < 1.20)', value: ktvInadequado },
+        { label: 'Adequação Kt/V', value: `${pctKtv}% (${ktvAdequado}/${totalKtv})` },
+        { label: 'Subdiálise (<1.2)', value: ktvInadequado },
         { label: 'Kt/V Médio', value: totalKtv ? (rows.filter(r => r.ktv !== 'N/I').reduce((acc, r) => acc + parseFloat(r.ktv), 0) / totalKtv).toFixed(2) : 'N/I' },
-        { label: 'Meta SBN / KDQI', value: pctKtv >= 85 ? '✓ Meta Superada' : '⚠️ Atenção Clínica' }
+        { label: 'Meta SBN', value: pctKtv >= 85 ? '✓ Atingida' : '⚠️ Atenção' }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 13. Estado Nutricional & Marcadores Inflamatórios
+    // 14. Equilíbrio Ácido-Básico (NOVO)
+    // ----------------------------------------------------
+    case 'gasometria_acido_basico': {
+      let noAlvoHco3 = 0, acidoseCount = 0, alcaloseCount = 0;
+
+      const rows = filteredPatients.map(p => {
+        const ex = p.exames || {};
+        const hco3Val = Number(ex.hco3 || ex.bicarbonato) || null;
+        const phVal = Number(ex.ph) || null;
+
+        let statusAb = 'Sem gasometria';
+        let banho = 'Padrão (32 mEq/L)';
+        let reposicao = 'Não necessária';
+
+        if (hco3Val) {
+          if (hco3Val >= 22.0 && hco3Val <= 26.0) {
+            statusAb = '✓ Normal (22-26)';
+            noAlvoHco3++;
+          } else if (hco3Val < 22.0) {
+            statusAb = '🚨 Acidose Metabólica';
+            banho = 'Elevar Banho (35-38 mEq/L)';
+            reposicao = hco3Val < 20 ? 'Bicarbonato 500mg VO' : 'Monitorar pré-HD';
+            acidoseCount++;
+          } else {
+            statusAb = '⚠️ Alcalose Metabólica';
+            banho = 'Reduzir Banho (30 mEq/L)';
+            alcaloseCount++;
+          }
+        }
+
+        return {
+          nome: p.nome || 'Paciente',
+          hco3: hco3Val ? `${hco3Val} mEq/L` : 'N/I',
+          classificacao: statusAb,
+          ph: phVal ? `${phVal}` : 'N/I',
+          condutaBanho: banho,
+          reposicaoOral: reposicao,
+          clinica: p.clinica || 'N/I'
+        };
+      });
+
+      const totalHco3 = noAlvoHco3 + acidoseCount + alcaloseCount;
+      const kpis = [
+        { label: 'No Alvo (22-26)', value: `${totalHco3 ? Math.round((noAlvoHco3 / totalHco3) * 100) : 0}% (${noAlvoHco3}/${totalHco3})` },
+        { label: 'Acidose (<22)', value: acidoseCount },
+        { label: 'Alcalose (>26)', value: alcaloseCount },
+        { label: 'Avaliados', value: totalHco3 }
+      ];
+
+      return { rows, kpis };
+    }
+
+    // ----------------------------------------------------
+    // 15. Nutrição e Inflamação
     // ----------------------------------------------------
     case 'nutricao_inflamacao': {
       let hipoalbumina = 0, inflamado = 0;
@@ -1029,10 +1273,10 @@ export function generateReportData(reportId, filteredPatients = []) {
         let statusNutri = 'Eutrófico';
         if (alb) {
           if (alb < 3.8) {
-            statusNutri = '🚨 Hipoalbuminemia (< 3.8)';
+            statusNutri = '🚨 Hipoalbuminemia';
             hipoalbumina++;
           } else if (alb >= 4.0) {
-            statusNutri = '✓ Nutrição Excelente (≥ 4.0)';
+            statusNutri = '✓ Eutrófico (≥4.0)';
           }
         }
         if (pcr && pcr > 5.0) {
@@ -1052,17 +1296,17 @@ export function generateReportData(reportId, filteredPatients = []) {
       });
 
       const kpis = [
-        { label: 'Hipoalbuminemia (<3.8 g/dL)', value: hipoalbumina },
-        { label: 'Inflamação Ativa (PCR > 5)', value: inflamado },
-        { label: 'Pacientes Avaliados', value: rows.length },
-        { label: 'Meta Albumina (≥4.0)', value: rows.filter(r => r.statusNutricional.includes('Excelente')).length }
+        { label: 'Hipoalbuminemia', value: hipoalbumina },
+        { label: 'PCR Elevada (>5)', value: inflamado },
+        { label: 'Albumina ≥ 4.0', value: rows.filter(r => r.statusNutricional.includes('Eutrófico')).length },
+        { label: 'Avaliados', value: rows.length }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 14. Mapa Geral de Farmacoterapia
+    // 16. Mapa Farmacológico
     // ----------------------------------------------------
     case 'mapa_medicamentos': {
       const rows = [];
@@ -1074,10 +1318,10 @@ export function generateReportData(reportId, filteredPatients = []) {
             nome: p.nome || 'Paciente',
             medicamento: m.nome || 'Medicamento',
             categoria: m.categoria || 'Geral',
-            dosagem: m.dosagem || 'Conforme prescrição',
+            dosagem: m.dosagem || 'Conforme receita',
             posologia: m.frequencia || 'Uso contínuo',
             via: m.via || 'VO',
-            tipo: m.tipo === 'temporario' ? 'Temporário (Ciclo)' : 'Uso Contínuo'
+            tipo: m.tipo === 'temporario' ? 'Temporário' : 'Contínuo'
           });
         });
       });
@@ -1085,19 +1329,19 @@ export function generateReportData(reportId, filteredPatients = []) {
       rows.sort((a, b) => a.nome.localeCompare(b.nome) || a.medicamento.localeCompare(b.medicamento));
 
       const kpis = [
-        { label: 'Total Itens Prescritos', value: rows.length },
-        { label: 'Pacientes com Fármacos', value: new Set(rows.map(r => r.nome)).size },
-        { label: 'Uso Contínuo', value: rows.filter(r => r.tipo.includes('Contínuo')).length },
-        { label: 'Ciclos Temporários', value: rows.filter(r => r.tipo.includes('Temporário')).length }
+        { label: 'Total Itens', value: rows.length },
+        { label: 'Pacientes', value: new Set(rows.map(r => r.nome)).size },
+        { label: 'Uso Contínuo', value: rows.filter(r => r.tipo === 'Contínuo').length },
+        { label: 'Temporários', value: rows.filter(r => r.tipo === 'Temporário').length }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 15. Vigilância de Ciclos a Vencer e Vencidos
+    // 17. Ciclos Medicamentosos
     // ----------------------------------------------------
-    case 'ciclos_medicamentos': {
+    case 'ciclos_medicamentosos': {
       const rows = [];
       const today = new Date().toISOString().split('T')[0];
 
@@ -1105,13 +1349,13 @@ export function generateReportData(reportId, filteredPatients = []) {
         const meds = Array.isArray(p.medicamentos) ? p.medicamentos.filter(m => m.ativo && m.dataFim) : [];
         meds.forEach(m => {
           const diffDays = Math.ceil((new Date(m.dataFim) - new Date(today)) / (1000 * 60 * 60 * 24));
-          let status = 'No prazo';
+          let status = 'Vigente';
           if (diffDays < 0) {
-            status = `🚨 Vencido há ${Math.abs(diffDays)} dias`;
+            status = `🚨 Vencido há ${Math.abs(diffDays)}d`;
           } else if (diffDays === 0) {
-            status = '🚨 Vence HOJE';
+            status = '🚨 Vence hoje';
           } else if (diffDays <= 7) {
-            status = `⚠️ Vence em ${diffDays} dias`;
+            status = `⚠️ Vence em ${diffDays}d`;
           }
 
           rows.push({
@@ -1132,17 +1376,17 @@ export function generateReportData(reportId, filteredPatients = []) {
       const prestesAVencer = rows.filter(r => r.statusCiclo.includes('Vence')).length;
 
       const kpis = [
-        { label: 'Total Ciclos Temporários', value: rows.length },
-        { label: 'Ciclos Já Vencidos', value: vencidos },
-        { label: 'Vencendo nos Próx. 7 Dias', value: prestesAVencer },
-        { label: 'Ciclos Regulares', value: rows.length - vencidos - prestesAVencer }
+        { label: 'Total Ciclos', value: rows.length },
+        { label: 'Vencidos', value: vencidos },
+        { label: 'Vencendo em 7d', value: prestesAVencer },
+        { label: 'Regulares', value: rows.length - vencidos - prestesAVencer }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 16. Controle de Antimicrobianos em Curso
+    // 18. Antimicrobianos
     // ----------------------------------------------------
     case 'antibioticoterapia': {
       const rows = [];
@@ -1162,8 +1406,8 @@ export function generateReportData(reportId, filteredPatients = []) {
               dosagem: m.dosagem || 'N/I',
               via: m.via || 'EV pós-HD',
               dataInicio: m.dataInicio || 'N/I',
-              dataFim: m.dataFim || 'Em acompanhamento',
-              observacao: m.observacao || 'Tratamento de infecção associada à hemodiálise',
+              dataFim: m.dataFim || 'Em curso',
+              observacao: m.observacao || 'Infecção em hemodiálise',
               tipoAcesso: p.acessoVascular?.tipo || p.tipoAcesso || 'N/I'
             });
           }
@@ -1171,17 +1415,17 @@ export function generateReportData(reportId, filteredPatients = []) {
       });
 
       const kpis = [
-        { label: 'Pacientes em Uso de ATB', value: new Set(rows.map(r => r.nome)).size },
+        { label: 'Pacientes em Uso', value: new Set(rows.map(r => r.nome)).size },
         { label: 'Tratamentos Ativos', value: rows.length },
-        { label: 'Uso em Cateter (Permcath/CDL)', value: rows.filter(r => r.tipoAcesso.toLowerCase().includes('cat')).length },
-        { label: 'Vigilância CCIH', value: 'Monitoramento Contínuo' }
+        { label: 'Em Cateter', value: rows.filter(r => r.tipoAcesso.toLowerCase().includes('cat')).length },
+        { label: 'Em Fístula', value: rows.filter(r => r.tipoAcesso.toLowerCase().includes('fav')).length }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 17. Hemoculturas & Protocolos de Lock Therapy
+    // 19. Hemoculturas e Lock
     // ----------------------------------------------------
     case 'hemoculturas_lock': {
       const rows = [];
@@ -1192,7 +1436,7 @@ export function generateReportData(reportId, filteredPatients = []) {
             rows.push({
               dataColeta: hc.dataColeta || 'N/I',
               nome: p.nome || 'Paciente',
-              sitio: hc.sitio || 'Acesso ou Periférico',
+              sitio: hc.sitio || 'Acesso',
               status: hc.status || 'Pendente',
               patogeno: hc.patogeno || 'Sem crescimento',
               antibiograma: hc.antibiograma || 'Em análise',
@@ -1207,17 +1451,17 @@ export function generateReportData(reportId, filteredPatients = []) {
       const positivas = rows.filter(r => (r.status || '').toLowerCase().includes('positiv') || (r.patogeno && !r.patogeno.toLowerCase().includes('nenhum') && !r.patogeno.toLowerCase().includes('sem crescimento'))).length;
 
       const kpis = [
-        { label: 'Total Coletas Registradas', value: rows.length },
-        { label: 'Culturas Positivas', value: positivas },
-        { label: 'Culturas Negativas', value: rows.length - positivas },
-        { label: 'Protocolo Lock Ativo', value: 'Conforme CCIH' }
+        { label: 'Coletas', value: rows.length },
+        { label: 'Positivas', value: positivas },
+        { label: 'Negativas', value: rows.length - positivas },
+        { label: 'Em Análise', value: rows.filter(r => (r.status || '').includes('Pendente')).length }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 18. Histórico de Receituários Emitidos
+    // 20. Histórico de Receitas
     // ----------------------------------------------------
     case 'historico_receitas': {
       const rows = [];
@@ -1227,16 +1471,16 @@ export function generateReportData(reportId, filteredPatients = []) {
           p.receitas.forEach(rec => {
             const medicamentosStr = Array.isArray(rec.itens)
               ? rec.itens.map(it => `${it.medicamentoNome || it.nome} (${it.posologia || it.quantidade})`).join('; ')
-              : 'Nenhum medicamento listado';
+              : 'Nenhum medicamento';
 
             rows.push({
               dataEmissao: rec.dataEmissao || 'N/I',
               numeroReceita: rec.numeroReceita || rec.id?.slice(-8).toUpperCase() || 'N/I',
               nome: p.nome || 'Paciente',
-              tipoReceita: rec.tipoReceita === 'controle_especial' ? 'Controle Especial (2 Vias)' : 'Receita Simples (Ambulatorial)',
+              tipoReceita: rec.tipoReceita === 'controle_especial' ? 'Controle Especial' : 'Simples',
               totalItens: Array.isArray(rec.itens) ? rec.itens.length : 0,
               resumoMedicamentos: medicamentosStr,
-              medico: rec.medicoNome || 'Médico Nefrologista'
+              medico: rec.medicoNome || 'Nefrologista'
             });
           });
         }
@@ -1244,20 +1488,20 @@ export function generateReportData(reportId, filteredPatients = []) {
 
       rows.sort((a, b) => b.dataEmissao.localeCompare(a.dataEmissao));
 
-      const especiais = rows.filter(r => r.tipoReceita.includes('Controle Especial')).length;
+      const especiais = rows.filter(r => r.tipoReceita === 'Controle Especial').length;
 
       const kpis = [
-        { label: 'Total Receitas Emitidas', value: rows.length },
-        { label: 'Receitas Simples', value: rows.length - especiais },
+        { label: 'Receitas Emitidas', value: rows.length },
+        { label: 'Simples', value: rows.length - especiais },
         { label: 'Controle Especial', value: especiais },
-        { label: 'Pacientes Prescritos', value: new Set(rows.map(r => r.nome)).size }
+        { label: 'Pacientes', value: new Set(rows.map(r => r.nome)).size }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 19. Prontidão & Fila de Transplante Renal
+    // 21. Fila de Transplante
     // ----------------------------------------------------
     case 'fila_transplante': {
       const counts = {};
@@ -1273,7 +1517,7 @@ export function generateReportData(reportId, filteredPatients = []) {
           tempoDialise: formatDialysisDuration(p.dataInicioDialise),
           tipoAcesso: p.acessoVascular?.tipo || p.tipoAcesso || 'N/I',
           clinica: p.clinica || 'N/I',
-          observacoes: p.observacoesClinicas || 'Sem anotações de transplante'
+          observacoes: p.observacoesClinicas || 'Sem anotações'
         };
       });
 
@@ -1281,23 +1525,22 @@ export function generateReportData(reportId, filteredPatients = []) {
 
       const ativoLista = counts['Ativo em Lista de Espera'] || 0;
       const emAvaliacao = (counts['Encaminhado / Em Avaliação'] || 0) + (counts['Encaminhar / Em Triagem'] || 0);
-      const transplantados = counts['Já Transplantado'] || 0;
+      const contraindicado = (counts['Contraindicação Provisória'] || 0) + (counts['Contraindicação Definitiva'] || 0);
 
       const kpis = [
-        { label: 'Ativos em Lista SNT', value: `${ativoLista} (${rows.length ? Math.round((ativoLista/rows.length)*100) : 0}%)` },
-        { label: 'Em Avaliação e Triagem', value: emAvaliacao },
-        { label: 'Já Transplantados', value: transplantados },
-        { label: 'Total Mapeado', value: rows.length }
+        { label: 'Lista Ativa', value: `${ativoLista} (${rows.length ? Math.round((ativoLista/rows.length)*100) : 0}%)` },
+        { label: 'Em Avaliação', value: emAvaliacao },
+        { label: 'Contraindicação', value: contraindicado },
+        { label: 'Total', value: rows.length }
       ];
 
       return { rows, kpis };
     }
 
     // ----------------------------------------------------
-    // 20. Panorama Consolidado & Indicadores SBN/KDQI
+    // 22. Metas Clínicas (Panorama Consolidado)
     // ----------------------------------------------------
-    case 'panorama_consolidado':
-    default: {
+    case 'panorama_consolidado': {
       let highPerformers = 0;
 
       const rows = filteredPatients.map(p => {
@@ -1315,7 +1558,7 @@ export function generateReportData(reportId, filteredPatients = []) {
         const metaP = (pVal >= 3.5 && pVal <= 5.5);
         if (metaP) metasAtingidas++;
 
-        // 3. Potássio <= 5.5 e >= 3.5
+        // 3. Potássio entre 3.5 e 5.5
         const kVal = Number(ex.k);
         const metaK = (kVal >= 3.5 && kVal <= 5.5);
         if (metaK) metasAtingidas++;
@@ -1333,10 +1576,10 @@ export function generateReportData(reportId, filteredPatients = []) {
         const scorePct = Math.round((metasAtingidas / totalMetas) * 100);
         if (scorePct >= 80) highPerformers++;
 
-        let status = 'Atenção Clínica';
-        if (scorePct >= 80) status = '✓ Meta Excelente (≥80%)';
-        else if (scorePct >= 60) status = 'Bom Controle (60-79%)';
-        else status = '🚨 Fora de Metas (<60%)';
+        let status = 'Regular';
+        if (scorePct >= 80) status = '✓ Excelente (≥80%)';
+        else if (scorePct >= 60) status = 'Bom (60-79%)';
+        else status = '🚨 Fora (<60%)';
 
         return {
           nome: p.nome || 'Paciente',
@@ -1356,13 +1599,218 @@ export function generateReportData(reportId, filteredPatients = []) {
       const pctExcelencia = rows.length ? Math.round((highPerformers / rows.length) * 100) : 0;
 
       const kpis = [
-        { label: 'Pacientes em Excelência (≥80%)', value: `${pctExcelencia}% (${highPerformers}/${rows.length})` },
-        { label: 'Metas SBN Monitoradas', value: 'Hb, P, K, Kt/V, Acesso' },
-        { label: 'Total de Pacientes', value: rows.length },
-        { label: 'Índice Geral de Qualidade', value: pctExcelencia >= 75 ? 'Excelente' : 'Regular' }
+        { label: 'Excelência (≥80%)', value: `${pctExcelencia}% (${highPerformers}/${rows.length})` },
+        { label: 'Metas Avaliadas', value: 'Hb, P, K, Kt/V, FAV' },
+        { label: 'Total', value: rows.length },
+        { label: 'Índice de Qualidade', value: pctExcelencia >= 75 ? 'Excelente' : 'Regular' }
       ];
 
       return { rows, kpis };
+    }
+
+    // ----------------------------------------------------
+    // 23. LME e Alto Custo (NOVO)
+    // ----------------------------------------------------
+    case 'lme_altocusto': {
+      const rows = [];
+      let vigentes = 0, aVencer = 0, vencidos = 0;
+
+      filteredPatients.forEach(p => {
+        const lmes = Array.isArray(p.lmes) ? p.lmes : [];
+        if (lmes.length > 0) {
+          lmes.forEach(lme => {
+            const exp = getLmeExpirationStatus(lme);
+            let statusLabel = '✓ Válido';
+            if (exp.status === 'vencido') {
+              statusLabel = `🚨 Vencido (${exp.diasVencido || 0}d)`;
+              vencidos++;
+            } else if (exp.status === 'a_vencer') {
+              statusLabel = `⚠️ Vence em ${exp.diasRestantes}d`;
+              aVencer++;
+            } else {
+              vigentes++;
+            }
+
+            rows.push({
+              nome: p.nome || 'Paciente',
+              medicamento: lme.medicamentoNome || 'Medicamento CEAF',
+              dataSolicitacao: lme.dataSolicitacao || 'N/I',
+              dataValidade: lme.dataValidade || 'N/I',
+              diasRestantes: exp.diasRestantes !== undefined ? `${exp.diasRestantes}d` : 'N/I',
+              statusLme: statusLabel,
+              cnsPaciente: p.cns || 'Não cadastrado',
+              clinica: p.clinica || 'N/I'
+            });
+          });
+        }
+      });
+
+      rows.sort((a, b) => parseInt(a.diasRestantes) - parseInt(b.diasRestantes));
+
+      const kpis = [
+        { label: 'LMEs Ativas', value: rows.length },
+        { label: 'Válidas', value: vigentes },
+        { label: 'Vencendo em 30d', value: aVencer },
+        { label: 'Vencidas', value: vencidos }
+      ];
+
+      return { rows, kpis };
+    }
+
+    // ----------------------------------------------------
+    // 24. Desligamentos e Saídas (NOVO)
+    // ----------------------------------------------------
+    case 'desligamentos_historico': {
+      const rows = [];
+
+      // 1. Coleta de logs de auditoria de desligamento
+      if (Array.isArray(auditLogs)) {
+        auditLogs.forEach(log => {
+          if (log.tipoAcao === 'PATIENT_DISCHARGED' || (log.descricao || '').includes('desligado')) {
+            const det = log.detalhes || {};
+            rows.push({
+              data: det.dataOcorrencia || (log.timestamp ? log.timestamp.split('T')[0] : 'N/I'),
+              nome: det.patientName || log.descricao.replace(/Paciente\s+(.*?)\s+desligado.*/i, '$1') || 'Paciente',
+              motivo: det.motivo || 'Desligamento',
+              tempoHD: 'TRS Encerrada',
+              observacoes: det.observacoes || log.descricao || '-',
+              clinica: 'Registrado em Prontuário',
+              medico: log.targetDoctorName || 'Médico Responsável'
+            });
+          }
+        });
+      }
+
+      // 2. Coleta de pacientes com status inativo no prontuário
+      filteredPatients.forEach(p => {
+        if (p.status === 'Desligado' || p.status === 'Óbito' || p.status === 'Transplantado') {
+          // Evita duplicatas se já veio pelo auditLog
+          const exists = rows.some(r => r.nome.toLowerCase() === (p.nome || '').toLowerCase());
+          if (!exists) {
+            rows.push({
+              data: p.dataDesligamento || p.atualizadoEm?.split('T')[0] || 'N/I',
+              nome: p.nome || 'Paciente',
+              motivo: p.motivoDesligamento || p.status,
+              tempoHD: formatDialysisDuration(p.dataInicioDialise),
+              observacoes: p.observacoesClinicas || '-',
+              clinica: p.clinica || 'N/I',
+              medico: 'Médico Assistente'
+            });
+          }
+        }
+      });
+
+      rows.sort((a, b) => b.data.localeCompare(a.data));
+
+      const obitos = rows.filter(r => r.motivo.toLowerCase().includes('óbito') || r.motivo.toLowerCase().includes('obito')).length;
+      const transplantes = rows.filter(r => r.motivo.toLowerCase().includes('transplante')).length;
+      const transferencias = rows.filter(r => r.motivo.toLowerCase().includes('transfer')).length;
+
+      const kpis = [
+        { label: 'Total Saídas', value: rows.length },
+        { label: 'Óbitos', value: obitos },
+        { label: 'Transplantes', value: transplantes },
+        { label: 'Transferências', value: transferencias }
+      ];
+
+      return { rows, kpis };
+    }
+
+    // ----------------------------------------------------
+    // 25. Vigilância Sorológica (NOVO)
+    // ----------------------------------------------------
+    case 'vigilancia_sorologias': {
+      let reagentesHbsAg = 0, imunesHbs = 0, suscetiveis = 0;
+
+      const rows = filteredPatients.map(p => {
+        const ex = p.exames || {};
+        const hbsag = ex.hbsag || 'Não Reagente';
+        const antiHbs = ex.antiHbs || 'N/I';
+        const antiHcv = ex.antiHcv || 'Não Reagente';
+        const hiv = ex.hiv || 'Não Reagente';
+
+        const isHbsAgReagente = hbsag.toLowerCase().includes('reagente') && !hbsag.toLowerCase().includes('não');
+        if (isHbsAgReagente) reagentesHbsAg++;
+
+        let statusVac = 'Não avaliado';
+        const numAntiHbs = parseFloat(String(antiHbs).replace(/[^\d.-]/g, ''));
+        if (!isNaN(numAntiHbs)) {
+          if (numAntiHbs >= 10) {
+            statusVac = '✓ Imune (≥10 UI/L)';
+            imunesHbs++;
+          } else {
+            statusVac = '⚠️ Suscetível (<10)';
+            suscetiveis++;
+          }
+        } else if (antiHbs.toLowerCase().includes('reagente') && !antiHbs.toLowerCase().includes('não')) {
+          statusVac = '✓ Imune';
+          imunesHbs++;
+        }
+
+        let isolamento = 'Sala Geral';
+        if (isHbsAgReagente) {
+          isolamento = '🚨 Sala Amarela (Exclusiva)';
+        }
+
+        return {
+          nome: p.nome || 'Paciente',
+          hbsag: isHbsAgReagente ? '🚨 REAGENTE' : hbsag,
+          antiHbs: antiHbs,
+          antiHcv: antiHcv,
+          hiv: hiv,
+          statusVacinal: statusVac,
+          alocacaoSala: isolamento,
+          clinica: p.clinica || 'N/I'
+        };
+      });
+
+      const kpis = [
+        { label: 'Monitorados', value: rows.length },
+        { label: 'Imunes Hep B', value: imunesHbs },
+        { label: 'Suscetíveis', value: suscetiveis },
+        { label: 'HBsAg Reagente', value: reagentesHbsAg }
+      ];
+
+      return { rows, kpis };
+    }
+
+    // ----------------------------------------------------
+    // 26. Convênios e Operadoras (NOVO)
+    // ----------------------------------------------------
+    case 'convenios_operadoras': {
+      let susCount = 0, convenioCount = 0;
+
+      const rows = filteredPatients.map(p => {
+        const conv = p.convenio || p.planoSaude || 'SUS';
+        const isSus = conv.toLowerCase().includes('sus');
+        if (isSus) susCount++;
+        else convenioCount++;
+
+        return {
+          nome: p.nome || 'Paciente',
+          convenio: isSus ? 'SUS (Público)' : conv,
+          numeroCarteira: p.carteirinha || p.cns || p.cpf || 'N/I',
+          cpf: p.cpf || 'Não informado',
+          turno: p.turno || '1º Turno',
+          diaSemana: p.diaSemana || 'Seg/Qua/Sex',
+          clinica: p.clinica || 'N/I'
+        };
+      });
+
+      rows.sort((a, b) => a.convenio.localeCompare(b.convenio) || a.nome.localeCompare(b.nome));
+
+      const kpis = [
+        { label: 'Total', value: rows.length },
+        { label: 'Atendimentos SUS', value: `${susCount} (${rows.length ? Math.round((susCount/rows.length)*100) : 0}%)` },
+        { label: 'Saúde Suplementar', value: convenioCount },
+        { label: 'Operadoras', value: new Set(rows.map(r => r.convenio)).size }
+      ];
+
+      return { rows, kpis };
+    }
+
+    default: {
+      return generateReportData('censo_geral', filteredPatients, auditLogs);
     }
   }
 }
@@ -1379,14 +1827,14 @@ export function exportReportToExcel(report, rows = [], kpis = [], metadata = {})
   const aoa = [
     ['Nex-Ai.NEFRO — PLATAFORMA ESPECIALIZADA EM GESTÃO CLÍNICA NEFROLÓGICA'],
     [report.title.toUpperCase()],
-    [`Emitido em: ${emissionDate}`, `Médico Responsável: ${doctorName} ${doctorCrm}`, `Clínica: ${metadata.clinica || 'Geral'}`],
-    [`Filtros Aplicados: ${metadata.filtersDesc || 'Todos os registros do serviço'}`],
+    [`Emitido em: ${emissionDate}`, `Médico: ${doctorName} ${doctorCrm}`, `Unidade: ${metadata.clinica || 'Geral'}`],
+    [`Filtros: ${metadata.filtersDesc || 'Todos os registros'}`],
     []
   ];
 
   // Bloco de KPIs se existirem
   if (kpis && kpis.length > 0) {
-    aoa.push(['RESUMO EXECUTIVO / INDICADORES CLÍNICOS:']);
+    aoa.push(['RESUMO CLÍNICO / INDICADORES:']);
     const kpiRow1 = kpis.map(k => k.label);
     const kpiRow2 = kpis.map(k => k.value);
     aoa.push(kpiRow1);
@@ -1413,12 +1861,12 @@ export function exportReportToExcel(report, rows = [], kpis = [], metadata = {})
   }));
 
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Relatório Clínico');
+  XLSX.utils.book_append_sheet(wb, ws, 'Relatório');
 
   // Gerar nome de arquivo amigável e limpo
   const cleanId = report.id.replace(/_/g, '-');
   const dateStamp = new Date().toISOString().slice(0, 10);
-  const fileName = `nex-ai-nefro-relatorio-${cleanId}-${dateStamp}.xlsx`;
+  const fileName = `relatorio-${cleanId}-${dateStamp}.xlsx`;
 
   XLSX.writeFile(wb, fileName);
 }
