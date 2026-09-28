@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   X, 
   Printer, 
@@ -14,13 +14,19 @@ import {
   Stethoscope, 
   Eraser,
   Lightbulb,
-  Edit3
+  Pill,
+  Save,
+  Plus,
+  Trash2
 } from 'lucide-react';
 import PatientBulletinPrintDocument from './PatientBulletinPrintDocument';
 import PatientBulletinPdf from '../pdf/PatientBulletinPdf';
 import { downloadPdfDocument } from '../../services/pdfService';
 import { printElement } from '../../utils/printUtils';
 import { evaluatePatientExamsForBulletin, GOAL_STATUS } from '../../services/patientEducationService';
+import { normalizeMedicamentosList } from '../../data/dialysisMedications';
+import { savePatientPrescription } from '../../services/patientService';
+import { safeFormatDate } from '../../utils/dateUtils';
 
 const QUICK_PRESETS = [
   { label: '🍌 Potássio', text: 'Atenção com frutas ricas em potássio (banana, água de coco, abacate e molho de tomate).' },
@@ -30,6 +36,57 @@ const QUICK_PRESETS = [
   { label: '⏰ Horário Integral', text: 'Cumpra sempre as 4 horas completas de sessão na máquina para garantir máxima limpeza do sangue.' },
   { label: '👏 Parabéns pelas Metas', text: 'Parabéns pela dedicação e disciplina! Seus resultados mostram sua grande vitória este mês.' }
 ];
+
+function extractMedsFromSource(source, pat) {
+  if (!pat) return [];
+  if (source === 'active_meds') {
+    const ativas = normalizeMedicamentosList(pat.medicamentos).filter(m => m.ativo !== false);
+    return ativas.map((m, idx) => {
+      const nomeLimpo = (m.nome || '').trim();
+      const dosagemLimpa = (m.dosagem || '').trim();
+      const alreadyHasDosage = dosagemLimpa && nomeLimpo.toLowerCase().includes(dosagemLimpa.toLowerCase());
+      const medFinal = dosagemLimpa && !alreadyHasDosage ? `${nomeLimpo} ${dosagemLimpa}` : nomeLimpo;
+
+      return {
+        id: `med-${Date.now()}-${idx}`,
+        medicamento: medFinal,
+        posologia: m.frequencia || 'Conforme orientação médica',
+        via: m.via || 'VO',
+        quantidade: m.tipo === 'continuo' ? 'Uso Contínuo' : '1 caixa',
+        incluido: true
+      };
+    });
+  }
+
+  if (Array.isArray(pat.receitas)) {
+    const rec = pat.receitas.find(r => r.id === source);
+    if (rec && Array.isArray(rec.itens)) {
+      return rec.itens.map((it, idx) => ({
+        id: it.id || `item-${Date.now()}-${idx}`,
+        medicamento: it.medicamento || '',
+        posologia: it.posologia || 'Conforme orientação médica',
+        via: it.via || 'VO',
+        quantidade: it.quantidade || 'Uso Contínuo',
+        incluido: true
+      }));
+    }
+  }
+
+  if (source === 'manual') {
+    return [
+      {
+        id: `item-${Date.now()}-1`,
+        medicamento: '',
+        posologia: 'Tomar 1 comprimido ao dia.',
+        via: 'VO',
+        quantidade: 'Uso Contínuo',
+        incluido: true
+      }
+    ];
+  }
+
+  return [];
+}
 
 export default function PatientBulletinModal({
   isOpen,
@@ -45,6 +102,136 @@ export default function PatientBulletinModal({
   const [customNote, setCustomNote] = useState('');
   const [copied, setCopied] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+
+  // Estados de Prescrição Médica no Boletim (Requisitos 1 e 2)
+  const [includePrescription, setIncludePrescription] = useState(false);
+  const [prescriptionSource, setPrescriptionSource] = useState('active_meds');
+  const [prescriptionItems, setPrescriptionItems] = useState([]);
+  const [originalPrescriptionSnapshot, setOriginalPrescriptionSnapshot] = useState('');
+  const [isSavingPrescription, setIsSavingPrescription] = useState(false);
+  const [prescriptionSavedNotice, setPrescriptionSavedNotice] = useState('');
+
+  // Quantidade de medicamentos ativos no cadastro
+  const ativasCount = useMemo(() => {
+    return normalizeMedicamentosList(patient?.medicamentos).filter(m => m.ativo !== false).length;
+  }, [patient?.medicamentos]);
+
+  // Inicializa prescrição ao abrir o modal
+  useEffect(() => {
+    if (!isOpen || !patient) return;
+    
+    let initialSource = 'manual';
+    if (Array.isArray(patient.receitas) && patient.receitas.length > 0) {
+      initialSource = patient.receitas[0].id;
+    } else if (ativasCount > 0) {
+      initialSource = 'active_meds';
+    }
+
+    setPrescriptionSource(initialSource);
+    const initialItems = extractMedsFromSource(initialSource, patient);
+    setPrescriptionItems(initialItems);
+    setOriginalPrescriptionSnapshot(JSON.stringify(initialItems));
+    setPrescriptionSavedNotice('');
+  }, [isOpen, patient, ativasCount]);
+
+  const handlePrescriptionSourceChange = (newSource) => {
+    setPrescriptionSource(newSource);
+    const items = extractMedsFromSource(newSource, patient);
+    setPrescriptionItems(items);
+    setOriginalPrescriptionSnapshot(JSON.stringify(items));
+    setPrescriptionSavedNotice('');
+  };
+
+  const handleAddPrescriptionItem = () => {
+    setPrescriptionItems(prev => [
+      ...prev,
+      {
+        id: `item-${Date.now()}-${Math.random().toString(36).substring(2, 5)}`,
+        medicamento: '',
+        posologia: '1 comprimido ao dia',
+        via: 'VO',
+        quantidade: 'Uso Contínuo',
+        incluido: true
+      }
+    ]);
+  };
+
+  const handleUpdatePrescriptionItem = (id, field, value) => {
+    setPrescriptionItems(prev => prev.map(it => it.id === id ? { ...it, [field]: value } : it));
+  };
+
+  const handleRemovePrescriptionItem = (id) => {
+    setPrescriptionItems(prev => prev.filter(it => it.id !== id));
+  };
+
+  const activePrescriptionItems = useMemo(() => {
+    if (!includePrescription) return [];
+    return prescriptionItems.filter(it => 
+      it.incluido !== false && 
+      it.medicamento && 
+      String(it.medicamento).trim() !== ''
+    );
+  }, [includePrescription, prescriptionItems]);
+
+  const isPrescriptionModified = useMemo(() => {
+    if (!includePrescription || prescriptionItems.length === 0) return false;
+    return JSON.stringify(prescriptionItems) !== originalPrescriptionSnapshot;
+  }, [includePrescription, prescriptionItems, originalPrescriptionSnapshot]);
+
+  const handleSaveNewPrescription = async () => {
+    if (!patient || activePrescriptionItems.length === 0) return null;
+
+    try {
+      setIsSavingPrescription(true);
+
+      let crmNum = doctorInfo?.crm ? String(doctorInfo.crm) : '654321';
+      let crmUf = doctorInfo?.ufCrm || 'SP';
+
+      const payload = {
+        tipoReceita: 'simples',
+        dataEmissao: new Date().toISOString().split('T')[0],
+        validadeDias: 180,
+        subtitulo: 'Atualizada no Boletim de Saúde',
+        observacoesGerais: customNote ? `Recomendações: ${customNote.trim().slice(0, 150)}` : 'Prescrição revisada durante emissão do Boletim de Saúde.',
+        origem: 'Boletim de Saúde',
+        itens: activePrescriptionItems.map(it => ({
+          id: it.id || `item-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+          medicamento: it.medicamento.trim(),
+          posologia: it.posologia ? it.posologia.trim() : 'Conforme orientação médica.',
+          via: it.via || 'VO',
+          quantidade: it.quantidade || 'Uso Contínuo'
+        })),
+        medico: {
+          id: doctorInfo?.id || 'dr-marcelo',
+          nome: doctorInfo?.nome || 'Dr. Marcelo Ramos',
+          crm: crmNum,
+          ufCrm: crmUf,
+          rqe: doctorInfo?.rqe || '45890',
+          especialidade: doctorInfo?.especialidade || 'Nefrologia Clínica',
+          clinica: doctorInfo?.clinicaPrincipal || patient.clinica || 'Clínica de Hemodiálise'
+        },
+        paciente: {
+          id: patient.id,
+          nome: patient.nome,
+          cpf: patient.cpf || '',
+          idade: patient.idade || '',
+          endereco: patient.endereco || ''
+        }
+      };
+
+      const updatedReceitas = await savePatientPrescription(patient.id, payload, null);
+
+      setOriginalPrescriptionSnapshot(JSON.stringify(prescriptionItems));
+      setPrescriptionSavedNotice('Gravada no histórico! ✓');
+      setTimeout(() => setPrescriptionSavedNotice(''), 4000);
+      return updatedReceitas;
+    } catch (err) {
+      console.error('Erro ao gravar nova prescrição no Firestore:', err);
+      return null;
+    } finally {
+      setIsSavingPrescription(false);
+    }
+  };
 
   // Ordena exames do histórico ou usa o atual
   const historico = useMemo(() => {
@@ -180,6 +367,17 @@ export default function PatientBulletinModal({
       });
     }
 
+    if (includePrescription && activePrescriptionItems.length > 0) {
+      text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      text += `💊 *PRESCRIÇÃO MÉDICA ATUALIZADA:*\n`;
+      activePrescriptionItems.forEach(it => {
+        const via = it.via ? `[${it.via}] ` : '';
+        const poso = it.posologia ? ` - ${it.posologia}` : '';
+        text += `• ${via}*${it.medicamento}*${poso}\n`;
+      });
+      text += `\n`;
+    }
+
     if (customNote && customNote.trim()) {
       text += `━━━━━━━━━━━━━━━━━━━━━\n`;
       text += `💚🩺 *Orientação do Médico para este Mês:*\n`;
@@ -192,11 +390,22 @@ export default function PatientBulletinModal({
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
+
+    // Se houve modificações na prescrição, persiste automaticamente no histórico
+    if (includePrescription && isPrescriptionModified && activePrescriptionItems.length > 0) {
+      handleSaveNewPrescription();
+    }
   };
 
   const handleDownloadPdf = async () => {
     try {
       setIsDownloadingPdf(true);
+
+      // Se a prescrição foi alterada, salva automaticamente uma nova no Firestore
+      if (includePrescription && isPrescriptionModified && activePrescriptionItems.length > 0) {
+        await handleSaveNewPrescription();
+      }
+
       const safeName = (patient.nome || 'Paciente').replace(/\s+/g, '_');
       const fileName = `Boletim_Saude_${safeName}.pdf`;
       await downloadPdfDocument(
@@ -207,6 +416,8 @@ export default function PatientBulletinModal({
           selectedCardIds={activeCardIds}
           enabledTips={enabledTips}
           customTips={customTips}
+          includePrescription={includePrescription}
+          prescriptionItems={activePrescriptionItems}
         />,
         fileName
       );
@@ -218,7 +429,11 @@ export default function PatientBulletinModal({
     }
   };
 
-  const handlePrint = () => {
+  const handlePrint = async () => {
+    // Se a prescrição foi alterada, salva automaticamente uma nova no Firestore
+    if (includePrescription && isPrescriptionModified && activePrescriptionItems.length > 0) {
+      await handleSaveNewPrescription();
+    }
     printElement('printable-patient-bulletin-doc', `Boletim de Saúde - ${patient.nome || ''}`);
   };
 
@@ -563,6 +778,176 @@ export default function PatientBulletinModal({
               </div>
             </div>
 
+            {/* Prescrição Médica no Boletim (Requisitos 1 e 2) */}
+            <div style={{ background: '#ffffff', padding: '0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+              <div className="flex justify-between items-center mb-1.5">
+                <div className="flex items-center gap-1.5">
+                  <Pill size={14} color="#2563eb" />
+                  <label className="text-xs font-bold text-slate-800">Prescrição Médica:</label>
+                </div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', fontSize: '0.72rem', fontWeight: includePrescription ? '700' : '500', color: includePrescription ? '#1e40af' : '#64748b' }}>
+                  <input
+                    type="checkbox"
+                    checked={includePrescription}
+                    onChange={(e) => setIncludePrescription(e.target.checked)}
+                  />
+                  Incluir
+                </label>
+              </div>
+
+              {!includePrescription ? (
+                <span className="text-xxs text-slate-400 block italic">
+                  Marque para inserir prescrição atualizada junto às metas.
+                </span>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {/* Seletor de Prescrição do Paciente */}
+                  <div>
+                    <label className="text-xxs font-bold text-slate-500 uppercase block mb-1">
+                      Selecionar Prescrição:
+                    </label>
+                    <select
+                      className="input-field w-full"
+                      style={{ padding: '0.35rem 0.5rem', fontSize: '0.75rem' }}
+                      value={prescriptionSource}
+                      onChange={(e) => handlePrescriptionSourceChange(e.target.value)}
+                    >
+                      {patient?.medicamentos && patient.medicamentos.length > 0 && (
+                        <option value="active_meds">
+                          Medicamentos Ativos ({ativasCount})
+                        </option>
+                      )}
+                      {(patient?.receitas || []).map((rec, idx) => (
+                        <option key={rec.id || idx} value={rec.id}>
+                          Receita de {safeFormatDate(rec.dataEmissao)} ({rec.itens?.length || 0} medicamentos)
+                        </option>
+                      ))}
+                      <option value="manual">Prescrição Manual</option>
+                    </select>
+                  </div>
+
+                  {/* Barra de Status e Ações */}
+                  <div className="flex justify-between items-center py-1 border-t border-b border-slate-100">
+                    <div className="flex items-center gap-1">
+                      {isPrescriptionModified ? (
+                        <span style={{ fontSize: '0.67rem', fontWeight: '700', color: '#b45309', background: '#fef3c7', padding: '1px 5px', borderRadius: '4px', border: '1px solid #fde68a' }}>
+                          Alterações Detectadas
+                        </span>
+                      ) : prescriptionSavedNotice ? (
+                        <span style={{ fontSize: '0.67rem', fontWeight: '700', color: '#15803d', background: '#dcfce7', padding: '1px 5px', borderRadius: '4px', border: '1px solid #bbf7d0' }}>
+                          {prescriptionSavedNotice}
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: '0.67rem', color: '#64748b' }}>
+                          {activePrescriptionItems.length} selecionados
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={handleAddPrescriptionItem}
+                        className="btn btn-outline"
+                        style={{ padding: '2px 6px', fontSize: '0.68rem', display: 'flex', alignItems: 'center', gap: '3px' }}
+                        title="Adicionar medicamento à prescrição"
+                      >
+                        <Plus size={11} /> Item
+                      </button>
+
+                      {isPrescriptionModified && (
+                        <button
+                          type="button"
+                          onClick={handleSaveNewPrescription}
+                          disabled={isSavingPrescription}
+                          className="btn btn-primary"
+                          style={{ padding: '2px 8px', fontSize: '0.68rem', display: 'flex', alignItems: 'center', gap: '3px' }}
+                          title="Gravar como nova prescrição no histórico do paciente"
+                        >
+                          {isSavingPrescription ? <Loader2 size={11} className="animate-spin" /> : <Save size={11} />}
+                          <span>Gravar</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Lista de Medicamentos da Prescrição com Checkbox individual */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', maxHeight: '180px', overflowY: 'auto' }}>
+                    {prescriptionItems.map((item, idx) => (
+                      <div 
+                        key={item.id || idx}
+                        style={{
+                          background: '#f8fafc',
+                          border: item.incluido !== false ? '1px solid #cbd5e1' : '1px dashed #e2e8f0',
+                          borderRadius: '6px',
+                          padding: '5px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '4px',
+                          opacity: item.incluido !== false ? 1 : 0.6
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <input
+                            type="checkbox"
+                            checked={item.incluido !== false}
+                            onChange={(e) => handleUpdatePrescriptionItem(item.id, 'incluido', e.target.checked)}
+                            title="Exibir no boletim"
+                            style={{ cursor: 'pointer' }}
+                          />
+                          <input
+                            type="text"
+                            className="input-field"
+                            style={{ fontSize: '0.73rem', padding: '3px 5px', flex: 1, fontWeight: '600' }}
+                            placeholder="Medicamento (ex: Losartana 50mg)"
+                            value={item.medicamento || ''}
+                            onChange={(e) => handleUpdatePrescriptionItem(item.id, 'medicamento', e.target.value)}
+                          />
+                          <select
+                            className="input-field"
+                            style={{ fontSize: '0.68rem', padding: '3px 2px', width: '56px' }}
+                            value={item.via || 'VO'}
+                            onChange={(e) => handleUpdatePrescriptionItem(item.id, 'via', e.target.value)}
+                          >
+                            <option value="VO">VO</option>
+                            <option value="EV">EV</option>
+                            <option value="SC">SC</option>
+                            <option value="SL">SL</option>
+                            <option value="TOP">TOP</option>
+                            <option value="INAL">INAL</option>
+                          </select>
+                          <button
+                            type="button"
+                            onClick={() => handleRemovePrescriptionItem(item.id)}
+                            className="btn btn-outline"
+                            style={{ padding: '3px', color: '#dc2626', borderColor: '#fca5a5' }}
+                            title="Remover medicamento"
+                          >
+                            <Trash2 size={11} />
+                          </button>
+                        </div>
+
+                        <input
+                          type="text"
+                          className="input-field w-full"
+                          style={{ fontSize: '0.7rem', padding: '2px 5px' }}
+                          placeholder="Posologia (ex: 1 comprimido ao dia pela manhã)"
+                          value={item.posologia || ''}
+                          onChange={(e) => handleUpdatePrescriptionItem(item.id, 'posologia', e.target.value)}
+                        />
+                      </div>
+                    ))}
+
+                    {prescriptionItems.length === 0 && (
+                      <div className="text-center py-3 text-xxs text-slate-400">
+                        Nenhum medicamento na lista. Clique em "+ Item" para adicionar.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Observação / Conduta Médica do Mês (Inicia em Branco por Padrão) */}
             <div style={{ background: '#ffffff', padding: '0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0', flex: 1, display: 'flex', flexDirection: 'column' }}>
               <div className="flex justify-between items-center mb-1.5">
@@ -655,6 +1040,8 @@ export default function PatientBulletinModal({
                 selectedCardIds={activeCardIds}
                 enabledTips={enabledTips}
                 customTips={customTips}
+                includePrescription={includePrescription}
+                prescriptionItems={activePrescriptionItems}
               />
             </div>
           </div>

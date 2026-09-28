@@ -6,8 +6,7 @@ import {
   Activity, 
   ShieldCheck, 
   Zap, 
-  Award, 
-  HeartHandshake
+  Award
 } from 'lucide-react';
 import { GOAL_STATUS } from '../../services/patientEducationService';
 
@@ -27,7 +26,9 @@ export default function PatientBulletinPrintDocument({
   customNote = '',
   selectedCardIds = null,
   enabledTips = {},
-  customTips = {}
+  customTips = {},
+  includePrescription = false,
+  prescriptionItems = []
 }) {
   if (!bulletinData) return null;
 
@@ -48,6 +49,13 @@ export default function PatientBulletinPrintDocument({
   const metasBatidas = displayCards.filter(c => c.status === GOAL_STATUS.CONQUISTA).length;
   const taxaSucesso = totalMetas > 0 ? Math.round((metasBatidas / totalMetas) * 100) : 100;
 
+  // Itens de prescrição ativos
+  const validPrescriptionItems = (Array.isArray(prescriptionItems) ? prescriptionItems : []).filter(
+    it => it && it.medicamento && String(it.medicamento).trim() !== ''
+  );
+  const hasPrescription = Boolean(includePrescription && validPrescriptionItems.length > 0);
+  const totalMeds = hasPrescription ? validPrescriptionItems.length : 0;
+
   // Mensagem dinâmica coerente com os cartões selecionados
   let mensagemFinal = mensagemGeral;
   if (totalMetas > 0) {
@@ -60,8 +68,9 @@ export default function PatientBulletinPrintDocument({
     }
   }
 
-  // Ajusta densidade visual se houver poucas metas (1 a 4) para maximizar legibilidade
-  const isSpacious = totalMetas <= 4;
+  // Calibra a densidade para acomodar metas + prescrição em 1 folha A4 com proporção balanceada
+  const isCompact = hasPrescription && (totalMetas >= 8 || totalMeds >= 4);
+  const isSpacious = totalMetas <= 4 && (!hasPrescription || totalMeds <= 2);
   const isSingleColumn = totalMetas <= 2;
 
   const doctorName = doctorInfo?.nome || 'Dr(a). Médico(a) Responsável';
@@ -298,6 +307,75 @@ export default function PatientBulletinPrintDocument({
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* ================= PRESCRIÇÃO MÉDICA ATUALIZADA (SÓ EXIBE SE HABILITADA) ================= */}
+        {hasPrescription && (
+          <div style={{
+            background: '#f8fafc',
+            border: '1.5px solid #cbd5e1',
+            borderRadius: '8px',
+            padding: isCompact ? '5px 8px' : (isSpacious ? '8px 12px' : '6px 10px'),
+            marginBottom: isCompact ? '5px' : (isSpacious ? '8px' : '6px'),
+            breakInside: 'avoid',
+            pageBreakInside: 'avoid'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: isCompact ? '3px' : '4px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ fontSize: isCompact ? '11px' : (isSpacious ? '13px' : '12px'), lineHeight: 1 }}>💊</span>
+                <strong style={{ fontSize: isCompact ? '10px' : (isSpacious ? '11.5px' : '10.5px'), color: '#1e293b' }}>
+                  Prescrição Médica Atualizada
+                </strong>
+              </div>
+              <span style={{ fontSize: isCompact ? '7.5px' : '8.5px', color: '#64748b', fontWeight: '600' }}>
+                Uso Orientado • Em Vigor
+              </span>
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: validPrescriptionItems.length <= 1 ? '1fr' : '1fr 1fr',
+              gap: isCompact ? '4px' : (isSpacious ? '6px' : '5px')
+            }}>
+              {validPrescriptionItems.map((item, idx) => (
+                <div 
+                  key={item.id || idx}
+                  style={{
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '5px',
+                    padding: isCompact ? '3px 6px' : '4px 7px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <strong style={{ fontSize: isCompact ? '9px' : (isSpacious ? '10.5px' : '9.5px'), color: '#0f172a', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {item.medicamento}
+                    </strong>
+                    <span style={{ fontSize: isCompact ? '8px' : (isSpacious ? '9px' : '8.5px'), color: '#475569', display: 'block', lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {item.posologia || 'Conforme orientação médica'}
+                    </span>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <span style={{
+                      fontSize: isCompact ? '7px' : '8px',
+                      fontWeight: '700',
+                      background: '#eff6ff',
+                      color: '#1d4ed8',
+                      padding: '1px 5px',
+                      borderRadius: '3px',
+                      border: '1px solid #bfdbfe'
+                    }}>
+                      {item.via || 'VO'}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

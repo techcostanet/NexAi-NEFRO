@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.89",
+    "date": "28/09/2026",
+    "title": "feat: inclusao e edicao de prescricoes no Boletim de Saude com gravacao de hi...",
+    "highlights": [
+      "✨ feat: inclusao e edicao de prescricoes no Boletim de Saude com gravacao de historico"
+    ]
+  },
+  {
     "version": "1.1.88",
     "date": "28/09/2026",
     "title": "Melhorias no Boletim: titulo com nome do exame, layout compacto e dicas pontu...",

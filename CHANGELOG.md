@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.89] - 2026-09-28
+### Alterações
+- feat: inclusao e edicao de prescricoes no Boletim de Saude com gravacao de historico
+
 ## [1.1.88] - 2026-09-28
 ### Alterações
 - Melhorias no Boletim: titulo com nome do exame, layout compacto e dicas pontuais por exame

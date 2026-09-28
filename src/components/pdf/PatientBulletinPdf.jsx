@@ -135,6 +135,27 @@ const StethoscopeIcon = ({ size = 14, color = '#16a34a' }) => (
   </Svg>
 );
 
+const PillIcon = ({ size = 11, color = '#2563eb' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path
+      d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"
+      fill="none"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <Path
+      d="m8.5 8.5 7 7"
+      fill="none"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
 const StarIcon = ({ size = 9, color = '#15803d' }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Path
@@ -361,6 +382,82 @@ const styles = StyleSheet.create({
     color: '#334155',
     lineHeight: 1.2
   },
+  prescriptionBox: {
+    backgroundColor: '#f8fafc',
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    borderRadius: 6,
+    padding: 5,
+    marginBottom: 5
+  },
+  prescriptionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 3
+  },
+  prescriptionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  prescriptionTitle: {
+    fontSize: 8.5,
+    fontWeight: 'bold',
+    color: '#1e293b',
+    marginLeft: 3
+  },
+  prescriptionSubtitle: {
+    fontSize: 7,
+    color: '#64748b',
+    fontWeight: 'bold'
+  },
+  prescriptionGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between'
+  },
+  prescriptionItem: {
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 4,
+    padding: 3.5,
+    marginBottom: 2.5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  prescriptionItemLeft: {
+    flex: 1,
+    marginRight: 4
+  },
+  prescriptionItemName: {
+    fontSize: 7.5,
+    fontWeight: 'bold',
+    color: '#0f172a'
+  },
+  prescriptionItemPosology: {
+    fontSize: 6.5,
+    color: '#475569',
+    marginTop: 0.5
+  },
+  prescriptionItemRight: {
+    alignItems: 'flex-end',
+    flexShrink: 0
+  },
+  prescriptionViaBadge: {
+    backgroundColor: '#eff6ff',
+    borderWidth: 0.5,
+    borderColor: '#bfdbfe',
+    borderRadius: 3,
+    paddingVertical: 1,
+    paddingHorizontal: 4
+  },
+  prescriptionViaText: {
+    fontSize: 6,
+    fontWeight: 'bold',
+    color: '#1d4ed8'
+  },
 
   orientationBox: {
     backgroundColor: '#f0fdf4',
@@ -432,7 +529,9 @@ export default function PatientBulletinPdf({
   customNote = '',
   selectedCardIds = null,
   enabledTips = {},
-  customTips = {}
+  customTips = {},
+  includePrescription = false,
+  prescriptionItems = []
 }) {
   if (!bulletinData) return null;
 
@@ -443,6 +542,12 @@ export default function PatientBulletinPdf({
     mensagemGeral = '',
     cards = []
   } = bulletinData;
+
+  // Filtra itens de prescrição ativos
+  const validPrescriptionItems = (Array.isArray(prescriptionItems) ? prescriptionItems : []).filter(
+    it => it && it.medicamento && String(it.medicamento).trim() !== ''
+  );
+  const hasPrescription = Boolean(includePrescription && validPrescriptionItems.length > 0);
 
   // Filtra cartões conforme seleção estrita do médico
   const displayCards = Array.isArray(selectedCardIds)
@@ -604,6 +709,44 @@ export default function PatientBulletinPdf({
                 </View>
               );
             })}
+          </View>
+        )}
+
+        {/* ================= 3.5. PRESCRIÇÃO MÉDICA ATUALIZADA (SÓ EXIBE SE HABILITADA) ================= */}
+        {hasPrescription && (
+          <View style={styles.prescriptionBox}>
+            <View style={styles.prescriptionHeader}>
+              <View style={styles.prescriptionTitleRow}>
+                <PillIcon size={10} color="#2563eb" />
+                <Text style={styles.prescriptionTitle}>Prescrição Médica Atualizada</Text>
+              </View>
+              <Text style={styles.prescriptionSubtitle}>Uso Orientado • Em Vigor</Text>
+            </View>
+
+            <View style={styles.prescriptionGrid}>
+              {validPrescriptionItems.map((item, idx) => {
+                const itemWidth = validPrescriptionItems.length <= 1 ? '100%' : '48.5%';
+                return (
+                  <View key={idx} style={[styles.prescriptionItem, { width: itemWidth }]}>
+                    <View style={styles.prescriptionItemLeft}>
+                      <Text style={styles.prescriptionItemName}>
+                        {cleanPdfText(item.medicamento)}
+                      </Text>
+                      <Text style={styles.prescriptionItemPosology}>
+                        {cleanPdfText(item.posologia || 'Conforme orientação médica')}
+                      </Text>
+                    </View>
+                    <View style={styles.prescriptionItemRight}>
+                      <View style={styles.prescriptionViaBadge}>
+                        <Text style={styles.prescriptionViaText}>
+                          {cleanPdfText(item.via || 'VO')}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
           </View>
         )}
 
