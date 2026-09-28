@@ -26,9 +26,8 @@ export default function PatientBulletinPrintDocument({
   doctorInfo,
   customNote = '',
   selectedCardIds = null,
-  showTips = true,
-  customTips = {},
-  disabledTips = {}
+  enabledTips = {},
+  customTips = {}
 }) {
   if (!bulletinData) return null;
 
@@ -97,7 +96,7 @@ export default function PatientBulletinPrintDocument({
         width: '100%',
         maxWidth: '740px',
         margin: '0 auto',
-        padding: isSpacious ? '16px 20px' : '12px 18px',
+        padding: isSpacious ? '14px 18px' : '10px 14px',
         boxSizing: 'border-box'
       }}>
         
@@ -147,7 +146,7 @@ export default function PatientBulletinPrintDocument({
             border: '1px solid #bfdbfe',
             borderRadius: '10px',
             padding: isSpacious ? '10px 14px' : '8px 12px',
-            marginBottom: isSpacious ? '12px' : '9px',
+            marginBottom: isSpacious ? '10px' : '7px',
             display: 'flex',
             alignItems: 'center',
             gap: '12px'
@@ -156,15 +155,15 @@ export default function PatientBulletinPrintDocument({
               background: '#3b82f6',
               color: '#ffffff',
               borderRadius: '50%',
-              width: isSpacious ? '42px' : '38px',
-              height: isSpacious ? '42px' : '38px',
+              width: isSpacious ? '40px' : '36px',
+              height: isSpacious ? '40px' : '36px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexShrink: 0,
               boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.3)'
             }}>
-              <Trophy size={isSpacious ? 22 : 20} color="#ffffff" />
+              <Trophy size={isSpacious ? 20 : 18} color="#ffffff" />
             </div>
 
             <div style={{ flex: 1 }}>
@@ -213,8 +212,8 @@ export default function PatientBulletinPrintDocument({
           <div style={{
             display: 'grid',
             gridTemplateColumns: isSingleColumn ? '1fr' : '1fr 1fr',
-            gap: isSpacious ? '10px' : '7px',
-            marginBottom: isSpacious ? '12px' : '8px'
+            gap: isSpacious ? '8px' : '6px',
+            marginBottom: isSpacious ? '10px' : '6px'
           }}>
             {displayCards.map(card => {
               const isConquista = card.status === GOAL_STATUS.CONQUISTA;
@@ -226,10 +225,10 @@ export default function PatientBulletinPrintDocument({
               const badgeColor = isConquista ? '#166534' : (isQuaseLa ? '#92400e' : '#991b1b');
               const badgeText = isConquista ? '🟢 Conquista!' : (isQuaseLa ? '🟡 Quase Lá!' : '🔴 Atenção');
 
-              // Verifica se a dica está habilitada individualmente e se há texto personalizado
-              const isTipDisabledForCard = disabledTips[card.id] === true;
-              const tipContent = customTips[card.id] !== undefined ? customTips[card.id] : card.dica;
-              const showCardTip = showTips && !isTipDisabledForCard && Boolean(tipContent && tipContent.trim());
+              // Verifica se a dica está habilitada individualmente
+              const isTipEnabled = enabledTips[card.id] === true;
+              const rawTip = customTips[card.id] !== undefined ? customTips[card.id] : (card.dica || card.mensagem);
+              const tipContent = rawTip ? String(rawTip).replace(/^["']|["']$/g, '').trim() : '';
 
               return (
                 <div 
@@ -237,36 +236,31 @@ export default function PatientBulletinPrintDocument({
                   style={{
                     background: bgCard,
                     border: `1px solid ${borderCard}`,
-                    borderRadius: '8px',
-                    padding: isSpacious ? '10px 12px' : '7px 9px',
+                    borderRadius: '7px',
+                    padding: isSpacious ? '7px 10px' : '5px 8px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: isSpacious ? '5px' : '4px',
+                    gap: isSpacious ? '3px' : '2px',
                     breakInside: 'avoid',
                     pageBreakInside: 'avoid'
                   }}
                 >
-                  {/* Linha 1: Título, Ícone e Status */}
+                  {/* Linha 1: Nome do Exame (no lugar do grupo), Ícone e Status */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      {renderIcon(card.icone, card.corPrimaria, isSpacious ? 18 : 15)}
-                      <div>
-                        <strong style={{ fontSize: isSpacious ? '12.5px' : '11px', color: '#0f172a', display: 'block', lineHeight: '1.1' }}>
-                          {card.categoria}
-                        </strong>
-                        <span style={{ fontSize: isSpacious ? '10px' : '9px', color: '#64748b' }}>
-                          {card.subtitulo}
-                        </span>
-                      </div>
+                      {renderIcon(card.icone, card.corPrimaria, isSpacious ? 16 : 14)}
+                      <strong style={{ fontSize: isSpacious ? '12px' : '10.5px', color: '#0f172a', display: 'block', lineHeight: '1.15' }}>
+                        {card.subtitulo || card.categoria}
+                      </strong>
                     </div>
 
                     <span style={{
-                      fontSize: isSpacious ? '10.5px' : '9.5px',
+                      fontSize: isSpacious ? '10px' : '9px',
                       fontWeight: '700',
                       background: badgeBg,
                       color: badgeColor,
-                      padding: isSpacious ? '2px 8px' : '1px 6px',
-                      borderRadius: '6px',
+                      padding: isSpacious ? '2px 7px' : '1px 5px',
+                      borderRadius: '5px',
                       whiteSpace: 'nowrap'
                     }}>
                       {badgeText}
@@ -279,37 +273,27 @@ export default function PatientBulletinPrintDocument({
                     justifyContent: 'space-between',
                     alignItems: 'baseline',
                     background: 'rgba(255, 255, 255, 0.75)',
-                    padding: isSpacious ? '4px 8px' : '2px 6px',
-                    borderRadius: '5px',
-                    marginTop: '1px'
+                    padding: isSpacious ? '3px 6px' : '2px 5px',
+                    borderRadius: '4px'
                   }}>
-                    <span style={{ fontSize: isSpacious ? '12.5px' : '11px', fontWeight: '800', color: isConquista ? '#0f172a' : '#b45309' }}>
+                    <span style={{ fontSize: isSpacious ? '12px' : '10.5px', fontWeight: '800', color: isConquista ? '#0f172a' : '#b45309' }}>
                       Resultado: {card.valorFormatado}
                     </span>
-                    <span style={{ fontSize: isSpacious ? '9.5px' : '8.5px', color: '#64748b', fontStyle: 'italic' }}>
+                    <span style={{ fontSize: isSpacious ? '9px' : '8px', color: '#64748b', fontStyle: 'italic' }}>
                       {cleanMetaText(card.faixaMeta)}
                     </span>
                   </div>
 
-                  {/* Linha 3: Mensagem Direta e Humanizada */}
-                  <p style={{ margin: '0', fontSize: isSpacious ? '10.5px' : '9.5px', color: '#334155', lineHeight: '1.3' }}>
-                    "{card.mensagem}"
-                  </p>
-
-                  {/* Linha 4: Dica de Ouro Personalizada do Médico ou do Sistema */}
-                  {showCardTip && (
-                    <div style={{
-                      background: 'rgba(254, 240, 138, 0.25)',
-                      borderLeft: '2px solid #eab308',
-                      padding: isSpacious ? '3px 6px' : '2px 5px',
-                      fontSize: isSpacious ? '9.5px' : '9px',
-                      color: '#713f12',
-                      lineHeight: '1.25',
-                      borderRadius: '0 4px 4px 0',
-                      marginTop: '2px'
+                  {/* Linha 3: Dica de Hábito / Conduta (somente exibida quando o médico marcar "Exibir") */}
+                  {isTipEnabled && Boolean(tipContent) && (
+                    <p style={{
+                      margin: '1px 0 0 0',
+                      fontSize: isSpacious ? '9.5px' : '8.5px',
+                      color: '#334155',
+                      lineHeight: '1.25'
                     }}>
-                      <strong>💡 Dica:</strong> {tipContent}
-                    </div>
+                      "{tipContent}"
+                    </p>
                   )}
                 </div>
               );

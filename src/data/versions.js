@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.88",
+    "date": "28/09/2026",
+    "title": "Melhorias no Boletim: titulo com nome do exame, layout compacto e dicas pontu...",
+    "highlights": [
+      "✨ Melhorias no Boletim: titulo com nome do exame, layout compacto e dicas pontuais por exame"
+    ]
+  },
+  {
     "version": "1.1.87",
     "date": "28/09/2026",
     "title": "Novo Dossie Completo de LME padrao Farmacia de Minas (SES-MG) com 9 folhas of...",

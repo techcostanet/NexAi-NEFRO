@@ -295,19 +295,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 6
+    marginBottom: 4
   },
   card: {
     borderWidth: 1,
-    borderRadius: 6,
-    padding: 7,
-    marginBottom: 6
+    borderRadius: 5,
+    padding: 5,
+    marginBottom: 4
   },
   cardTitleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 2
   },
   cardLeftHeader: {
     flexDirection: 'row',
@@ -318,21 +318,17 @@ const styles = StyleSheet.create({
     marginLeft: 5
   },
   cardCategoryName: {
-    fontSize: 9,
+    fontSize: 8.5,
     fontWeight: 'bold',
     color: '#0f172a',
-    lineHeight: 1.1
-  },
-  cardSubtitleName: {
-    fontSize: 7,
-    color: '#64748b'
+    lineHeight: 1.15
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 1.5,
+    paddingVertical: 1,
     paddingHorizontal: 5,
-    borderRadius: 5
+    borderRadius: 4
   },
   statusBadgeText: {
     fontSize: 7,
@@ -344,39 +340,25 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#f1f5f9',
     borderRadius: 4,
-    paddingVertical: 2.5,
+    paddingVertical: 2,
     paddingHorizontal: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 3
+    marginBottom: 2
   },
   cardValueText: {
-    fontSize: 9.5,
+    fontSize: 9,
     fontWeight: 'bold'
   },
   cardTargetText: {
-    fontSize: 7.5,
+    fontSize: 7,
     color: '#64748b',
     fontStyle: 'italic'
   },
   cardMessage: {
-    fontSize: 7.5,
+    fontSize: 7,
     color: '#334155',
-    lineHeight: 1.25
-  },
-  cardTipBox: {
-    backgroundColor: '#fef9c3',
-    borderLeftWidth: 2,
-    borderLeftColor: '#eab308',
-    padding: 2.5,
-    paddingLeft: 4,
-    borderRadius: 2,
-    marginTop: 3
-  },
-  cardTipText: {
-    fontSize: 6.8,
-    color: '#713f12',
     lineHeight: 1.2
   },
 
@@ -449,9 +431,8 @@ export default function PatientBulletinPdf({
   doctorInfo,
   customNote = '',
   selectedCardIds = null,
-  showTips = true,
-  customTips = {},
-  disabledTips = {}
+  enabledTips = {},
+  customTips = {}
 }) {
   if (!bulletinData) return null;
 
@@ -573,9 +554,9 @@ export default function PatientBulletinPdf({
               const statusText = isConquista ? 'Conquista!' : (isQuaseLa ? 'Quase Lá!' : 'Atenção');
               const dotColor = isConquista ? '#16a34a' : (isQuaseLa ? '#d97706' : '#dc2626');
 
-              const isTipDisabledForCard = disabledTips[card.id] === true;
-              const tipContent = customTips[card.id] !== undefined ? customTips[card.id] : card.dica;
-              const showCardTip = showTips && !isTipDisabledForCard && Boolean(tipContent && tipContent.trim());
+              const isTipEnabled = enabledTips[card.id] === true;
+              const rawTip = customTips[card.id] !== undefined ? customTips[card.id] : (card.dica || card.mensagem);
+              const tipContent = rawTip ? String(rawTip).replace(/^["']|["']$/g, '').trim() : '';
 
               return (
                 <View 
@@ -589,18 +570,17 @@ export default function PatientBulletinPdf({
                     }
                   ]}
                 >
-                  {/* Linha 1: Ícone Categoria + Títulos + Badge de Status */}
+                  {/* Linha 1: Ícone + Nome do Exame + Badge de Status */}
                   <View style={styles.cardTitleRow}>
                     <View style={styles.cardLeftHeader}>
                       {renderPdfIcon(card.icone, card.corPrimaria || '#2563eb')}
                       <View style={styles.cardTitleBlock}>
-                        <Text style={styles.cardCategoryName}>{cleanPdfText(card.categoria || card.nome)}</Text>
-                        <Text style={styles.cardSubtitleName}>{cleanPdfText(card.subtitulo)}</Text>
+                        <Text style={styles.cardCategoryName}>{cleanPdfText(card.subtitulo || card.categoria || card.nome)}</Text>
                       </View>
                     </View>
 
                     <View style={[styles.statusBadge, { backgroundColor: statusBg }]}>
-                      <StatusDot color={dotColor} size={5} />
+                      <StatusDot color={dotColor} size={4.5} />
                       <Text style={[styles.statusBadgeText, { color: statusColor }]}>{statusText}</Text>
                     </View>
                   </View>
@@ -615,18 +595,11 @@ export default function PatientBulletinPdf({
                     </Text>
                   </View>
 
-                  {/* Linha 3: Frase de Feedback Acolhedor */}
-                  <Text style={styles.cardMessage}>
-                    "{cleanPdfText(card.mensagem || card.feedbackTexto)}"
-                  </Text>
-
-                  {/* Linha 4: Dica Prática do Médico ou Sistema */}
-                  {showCardTip && (
-                    <View style={styles.cardTipBox}>
-                      <Text style={styles.cardTipText}>
-                        Dica: {cleanPdfText(tipContent)}
-                      </Text>
-                    </View>
+                  {/* Linha 3: Dica de Hábito / Conduta (somente exibida quando o médico marcar "Exibir") */}
+                  {isTipEnabled && Boolean(tipContent) && (
+                    <Text style={styles.cardMessage}>
+                      "{cleanPdfText(tipContent)}"
+                    </Text>
                   )}
                 </View>
               );

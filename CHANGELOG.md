@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.88] - 2026-09-28
+### Alterações
+- Melhorias no Boletim: titulo com nome do exame, layout compacto e dicas pontuais por exame
+
 ## [1.1.87] - 2026-09-28
 ### Alterações
 - Novo Dossie Completo de LME padrao Farmacia de Minas (SES-MG) com 9 folhas oficiais

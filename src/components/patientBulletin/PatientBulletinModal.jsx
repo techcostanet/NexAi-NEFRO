@@ -23,7 +23,7 @@ import { printElement } from '../../utils/printUtils';
 import { evaluatePatientExamsForBulletin, GOAL_STATUS } from '../../services/patientEducationService';
 
 const QUICK_PRESETS = [
-  { label: '🍌 Potássio / Frutas', text: 'Atenção com frutas ricas em potássio (banana, água de coco, abacate e molho de tomate).' },
+  { label: '🍌 Potássio', text: 'Atenção com frutas ricas em potássio (banana, água de coco, abacate e molho de tomate).' },
   { label: '💊 Quelante nas Refeições', text: 'Tome o quelante de fósforo mastigado junto com a comida para proteger seus ossos e artérias.' },
   { label: '🩸 Ferro na Máquina', text: 'Mantenha em dia as aplicações de ferro e eritropoietina na máquina para tratar a anemia.' },
   { label: '💧 Líquidos e Sal', text: 'Cuidado com o ganho de peso entre as diálises. Modere o consumo de líquidos e sal no dia a dia.' },
@@ -39,9 +39,8 @@ export default function PatientBulletinModal({
 }) {
   const [selectedExamIndex, setSelectedExamIndex] = useState(0);
   const [selectedCardIds, setSelectedCardIds] = useState(null);
-  const [showTips, setShowTips] = useState(true);
   const [customTips, setCustomTips] = useState({});
-  const [disabledTips, setDisabledTips] = useState({});
+  const [enabledTips, setEnabledTips] = useState({});
   const [editingTipCardId, setEditingTipCardId] = useState(null);
   const [customNote, setCustomNote] = useState('');
   const [copied, setCopied] = useState(false);
@@ -168,14 +167,13 @@ export default function PatientBulletinModal({
 
         const metaLimpa = c.faixaMeta ? (c.faixaMeta.startsWith('Meta:') ? c.faixaMeta : `Meta: ${c.faixaMeta}`) : '';
 
-        text += `${statusBadge} *${c.categoria}*\n`;
-        if (c.subtitulo) text += `📌 _${c.subtitulo}_\n`;
+        text += `${statusBadge} *${c.subtitulo || c.categoria}*\n`;
         text += `📊 *Resultado:* ${c.valorFormatado} | _${metaLimpa}_\n`;
-        text += `💬 "${c.mensagem}"\n`;
 
-        const isTipDisabled = disabledTips[c.id] === true;
-        const tipContent = customTips[c.id] !== undefined ? customTips[c.id] : c.dica;
-        if (showTips && !isTipDisabled && tipContent && tipContent.trim()) {
+        const isTipEnabled = enabledTips[c.id] === true;
+        const rawTip = customTips[c.id] !== undefined ? customTips[c.id] : (c.dica || c.mensagem);
+        const tipContent = rawTip ? rawTip.replace(/^["']|["']$/g, '').trim() : '';
+        if (isTipEnabled && tipContent) {
           text += `💡 _Dica: ${tipContent}_\n`;
         }
         text += `\n`;
@@ -207,9 +205,8 @@ export default function PatientBulletinModal({
           doctorInfo={doctorInfo}
           customNote={customNote}
           selectedCardIds={activeCardIds}
-          showTips={showTips}
+          enabledTips={enabledTips}
           customTips={customTips}
-          disabledTips={disabledTips}
         />,
         fileName
       );
@@ -349,7 +346,7 @@ export default function PatientBulletinModal({
             <div style={{ background: '#ffffff', padding: '0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
               <div className="flex items-center gap-1.5 mb-1.5">
                 <Calendar size={13} color="#2563eb" />
-                <label className="text-xs font-bold text-slate-700">Mês / Coleta Avaliada:</label>
+                <label className="text-xs font-bold text-slate-700">Coleta Avaliada:</label>
               </div>
               <select
                 className="input-field w-full"
@@ -420,8 +417,8 @@ export default function PatientBulletinModal({
                   const badgeText = isConquista ? '🟢 Ok' : (isAtenção ? '🔴 Atenção' : '🟡 Quase');
 
                   const isEditingThisTip = editingTipCardId === card.id;
-                  const hasCustomTip = customTips[card.id] !== undefined && customTips[card.id] !== card.dica;
-                  const isTipDisabled = disabledTips[card.id] === true;
+                  const hasCustomTip = customTips[card.id] !== undefined && customTips[card.id] !== (card.dica || card.mensagem);
+                  const isTipEnabled = enabledTips[card.id] === true;
 
                   return (
                     <div key={card.id} style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
@@ -467,21 +464,21 @@ export default function PatientBulletinModal({
                                 setEditingTipCardId(isEditingThisTip ? null : card.id);
                               }}
                               style={{
-                                padding: '2px 5px',
+                                padding: '2px 6px',
                                 borderRadius: '4px',
-                                border: '1px solid #cbd5e1',
-                                background: isEditingThisTip ? '#eff6ff' : (hasCustomTip ? '#fef3c7' : '#f8fafc'),
+                                border: isTipEnabled ? '1px solid #86efac' : '1px solid #cbd5e1',
+                                background: isEditingThisTip ? '#eff6ff' : (isTipEnabled ? (hasCustomTip ? '#fef3c7' : '#f0fdf4') : '#f8fafc'),
                                 cursor: 'pointer',
                                 fontSize: '0.65rem',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '3px',
-                                color: isTipDisabled ? '#94a3b8' : (hasCustomTip ? '#b45309' : '#475569')
+                                color: isTipEnabled ? (hasCustomTip ? '#b45309' : '#15803d') : '#64748b'
                               }}
-                              title={isTipDisabled ? 'Dica oculta' : (hasCustomTip ? 'Dica personalizada pelo médico' : 'Personalizar dica deste exame')}
+                              title={isTipEnabled ? (hasCustomTip ? 'Dica personalizada ativa' : 'Dica ativa no boletim') : 'Personalizar dica deste exame'}
                             >
-                              <Lightbulb size={11} color={isTipDisabled ? '#94a3b8' : (hasCustomTip ? '#d97706' : '#2563eb')} />
-                              <span>{hasCustomTip ? 'Editada' : 'Dica'}</span>
+                              <Lightbulb size={11} color={isTipEnabled ? (hasCustomTip ? '#d97706' : '#16a34a') : '#94a3b8'} />
+                              <span>{isTipEnabled ? (hasCustomTip ? 'Editada' : 'Ativa') : 'Dica'}</span>
                             </button>
                           )}
                         </div>
@@ -503,76 +500,67 @@ export default function PatientBulletinModal({
                             <span style={{ fontSize: '0.68rem', fontWeight: 'bold', color: '#334155' }}>
                               Dica de Hábito • {card.subtitulo}:
                             </span>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '0.65rem', color: '#64748b' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', fontSize: '0.65rem', color: isTipEnabled ? '#15803d' : '#64748b', fontWeight: isTipEnabled ? 'bold' : 'normal' }}>
                               <input
                                 type="checkbox"
-                                checked={!isTipDisabled}
+                                checked={isTipEnabled}
                                 onChange={(e) => {
-                                  setDisabledTips({ ...disabledTips, [card.id]: !e.target.checked });
+                                  setEnabledTips(prev => ({ ...prev, [card.id]: e.target.checked }));
                                 }}
                               />
                               Exibir
                             </label>
                           </div>
 
-                          {!isTipDisabled && (
-                            <>
-                              <textarea
-                                className="input-field w-full"
-                                rows={2}
-                                style={{ fontSize: '0.72rem', padding: '4px 6px' }}
-                                placeholder={`Dica padrão: ${card.dica}`}
-                                value={customTips[card.id] !== undefined ? customTips[card.id] : card.dica}
-                                onChange={(e) => {
-                                  setCustomTips({ ...customTips, [card.id]: e.target.value });
+                          <textarea
+                            className="input-field w-full"
+                            rows={2}
+                            style={{ fontSize: '0.72rem', padding: '4px 6px', opacity: isTipEnabled ? 1 : 0.7 }}
+                            placeholder={`Dica: ${card.dica || card.mensagem}`}
+                            value={customTips[card.id] !== undefined ? customTips[card.id] : (card.dica || card.mensagem)}
+                            onChange={(e) => {
+                              setCustomTips(prev => ({ ...prev, [card.id]: e.target.value }));
+                              if (!isTipEnabled) {
+                                setEnabledTips(prev => ({ ...prev, [card.id]: true }));
+                              }
+                            }}
+                          />
+
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            {hasCustomTip ? (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const updated = { ...customTips };
+                                  delete updated[card.id];
+                                  setCustomTips(updated);
                                 }}
-                              />
-                              {hasCustomTip && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    const updated = { ...customTips };
-                                    delete updated[card.id];
-                                    setCustomTips(updated);
-                                  }}
-                                  style={{
-                                    alignSelf: 'flex-start',
-                                    background: 'none',
-                                    border: 'none',
-                                    color: '#2563eb',
-                                    fontSize: '0.65rem',
-                                    cursor: 'pointer',
-                                    textDecoration: 'underline',
-                                    padding: 0
-                                  }}
-                                >
-                                  Restaurar dica padrão do sistema
-                                </button>
-                              )}
-                            </>
-                          )}
+                                style={{
+                                  background: 'none',
+                                  border: 'none',
+                                  color: '#2563eb',
+                                  fontSize: '0.65rem',
+                                  cursor: 'pointer',
+                                  textDecoration: 'underline',
+                                  padding: 0
+                                }}
+                              >
+                                Restaurar dica padrão
+                              </button>
+                            ) : <span />}
+
+                            {!isTipEnabled && (
+                              <span style={{ fontSize: '0.63rem', color: '#94a3b8', fontStyle: 'italic' }}>
+                                Marque "Exibir" para incluir no boletim
+                              </span>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
                   );
                 })}
               </div>
-            </div>
-
-            {/* Controle Mestre de Dicas dos Cartões */}
-            <div style={{ background: '#ffffff', padding: '0.75rem', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
-              <label 
-                style={{ display: 'flex', alignItems: 'center', gap: '7px', cursor: 'pointer' }}
-                onClick={() => setShowTips(!showTips)}
-              >
-                {showTips ? <CheckSquare size={15} color="#2563eb" /> : <Square size={15} color="#94a3b8" />}
-                <div>
-                  <span className="text-xs font-bold text-slate-800 block">Exibir Dicas de Hábitos nos Cartões</span>
-                  <span className="text-xxs text-muted block">
-                    {showTips ? 'Dicas ativadas (visual educativo completo)' : 'Dicas ocultas (visual mais limpo e focado na sua conduta)'}
-                  </span>
-                </div>
-              </label>
             </div>
 
             {/* Observação / Conduta Médica do Mês (Inicia em Branco por Padrão) */}
@@ -665,9 +653,8 @@ export default function PatientBulletinModal({
                 doctorInfo={doctorInfo}
                 customNote={customNote}
                 selectedCardIds={activeCardIds}
-                showTips={showTips}
+                enabledTips={enabledTips}
                 customTips={customTips}
-                disabledTips={disabledTips}
               />
             </div>
           </div>
