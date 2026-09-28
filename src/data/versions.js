@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.87",
+    "date": "28/09/2026",
+    "title": "Novo Dossie Completo de LME padrao Farmacia de Minas (SES-MG) com 9 folhas of...",
+    "highlights": [
+      "✨ Novo Dossie Completo de LME padrao Farmacia de Minas (SES-MG) com 9 folhas oficiais"
+    ]
+  },
+  {
     "version": "1.1.86",
     "date": "27/09/2026",
     "title": "Seguranca Multi-Tenant: isolamento absoluto por medico na Central de Relatori...",

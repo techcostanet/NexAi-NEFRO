@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.87] - 2026-09-28
+### Alterações
+- Novo Dossie Completo de LME padrao Farmacia de Minas (SES-MG) com 9 folhas oficiais
+
 ## [1.1.86] - 2026-09-27
 ### Alterações
 - Seguranca Multi-Tenant: isolamento absoluto por medico na Central de Relatorios e historico de desligamentos

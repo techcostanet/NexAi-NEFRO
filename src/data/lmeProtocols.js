@@ -8,18 +8,21 @@ export const LME_MEDICAMENTOS = [
   {
     id: 'alfaepoetina',
     nome: 'Alfaepoetina (Eritropoietina Humana Recombinante - EPO)',
+    nomeOficial: 'Alfaepoetina',
+    agravo: 'anemia',
     nomeComercial: 'Hemax, Eprex, Eritromax',
     concentracoes: [
-      { id: 'epo_4000', label: '4.000 UI / mL (Frasco-ampola injetável)', dosePadrao: '4.000 UI' },
-      { id: 'epo_2000', label: '2.000 UI / mL (Frasco-ampola injetável)', dosePadrao: '2.000 UI' },
-      { id: 'epo_10000', label: '10.000 UI / mL (Frasco-ampola injetável)', dosePadrao: '10.000 UI' }
+      { id: 'epo_3000', label: '3.000 UI / mL (Frasco-ampola injetável)', dosePadrao: '3.000 UI', labelOficial: 'Alfaepoetina 3.000 UI injetável (por frasco-ampola)' },
+      { id: 'epo_4000', label: '4.000 UI / mL (Frasco-ampola injetável)', dosePadrao: '4.000 UI', labelOficial: 'Alfaepoetina 4.000 UI injetável (por frasco-ampola)' },
+      { id: 'epo_2000', label: '2.000 UI / mL (Frasco-ampola injetável)', dosePadrao: '2.000 UI', labelOficial: 'Alfaepoetina 2.000 UI injetável (por frasco-ampola)' },
+      { id: 'epo_10000', label: '10.000 UI / mL (Frasco-ampola injetável)', dosePadrao: '10.000 UI', labelOficial: 'Alfaepoetina 10.000 UI injetável (por frasco-ampola)' }
     ],
     cidPrincipal: 'N18.0',
-    cidDescricao: 'Doença renal em estágio terminal',
+    cidDescricao: 'Doença renal em estádio final',
     cidSecundario: 'D63.8',
     cidSecundarioDescricao: 'Anemia em outras doenças crônicas classificadas em outra parte',
     viaAdministracao: 'Subcutânea (SC) / Intravenosa (IV)',
-    posologiaSugerida: '4.000 UI por via subcutânea, 3 vezes por semana, imediatamente após as sessões de hemodiálise.',
+    posologiaSugerida: 'Administrar 1 ampola SC 3 vezes na semana - 12 ampolas/mês',
     quantidadeMensalPadrao: 12,
     vigenciaPadraoMeses: 6,
     indicacaoClinica: 'Tratamento da anemia da doença renal crônica em pacientes submetidos a hemodiálise periódica ou pré-diálise.',
@@ -252,16 +255,18 @@ export const LME_MEDICAMENTOS = [
   {
     id: 'paricalcitol',
     nome: 'Paricalcitol (Análogo Seletivo de Vitamina D)',
+    nomeOficial: 'Paricalcitol',
+    agravo: 'dmo',
     nomeComercial: 'Zemplar',
     concentracoes: [
-      { id: 'paricalcitol_5', label: '5 mcg / mL (Ampola injetável)', dosePadrao: '5 mcg' }
+      { id: 'paricalcitol_5', label: '5 mcg / mL (Ampola injetável com 1 mL)', dosePadrao: '5 mcg', labelOficial: 'Paricalcitol 5,0 mcg/mL solução injetável (ampola com 1 mL)' }
     ],
-    cidPrincipal: 'N18.0',
-    cidDescricao: 'Doença renal em estágio terminal',
+    cidPrincipal: 'N25.0',
+    cidDescricao: 'Osteodistrofia renal',
     cidSecundario: 'E21.1',
     cidSecundarioDescricao: 'Hiperparatireoidismo secundário da DRC',
     viaAdministracao: 'Intravenosa (IV) pós-hemodiálise',
-    posologiaSugerida: 'Administrar 1 ampola (5 mcg) por via intravenosa no final da sessão de hemodiálise, 3 vezes por semana.',
+    posologiaSugerida: 'Administrar 1 ampola EV por sessão de diálise (3 vezes/semana) - 12 ampolas/mês',
     quantidadeMensalPadrao: 12,
     vigenciaPadraoMeses: 6,
     indicacaoClinica: 'Prevenção e tratamento do hiperparatireoidismo secundário associado à DRC em estágio 5 em hemodiálise.',
@@ -370,3 +375,37 @@ ${examesTexto}
 
 O tratamento é indispensável para o controle clínico rigoroso, estabilização metabólica e prevenção de morbimortalidade cardiovascular e hematológica associada à insuficiência renal crônica terminal em diálise. Solicito deferimento da presente LME para fornecimento do medicamento supracitado.`;
 }
+
+/**
+ * Retorna se o medicamento pertence ao protocolo de Anemia na DRC
+ */
+export function isAnemiaAgravo(medicamentoId) {
+  return medicamentoId === 'alfaepoetina' || medicamentoId === 'sacarato_ferro';
+}
+
+/**
+ * Retorna se o medicamento pertence ao protocolo de Distúrbio Mineral e Ósseo (DMO)
+ */
+export function isDmoAgravo(medicamentoId) {
+  return medicamentoId === 'paricalcitol' || medicamentoId === 'cinacalcete' || medicamentoId === 'sevelamer' || medicamentoId === 'calcitriol';
+}
+
+/**
+ * Retorna o título oficial do agravo conforme Farmácia de Minas (SES-MG)
+ */
+export function getAgravoTitle(medicamentoId) {
+  if (isAnemiaAgravo(medicamentoId)) {
+    return 'ANEMIA NA DOENÇA RENAL CRÔNICA';
+  }
+  return 'DISTÚRBIO MINERAL E ÓSSEO NA DOENÇA RENAL CRÔNICA';
+}
+
+/**
+ * Retorna a denominação oficial e apresentação exigida na LME da Farmácia de Minas
+ */
+export function getMedicamentoOfficialLabel(medicamentoId, concentracaoId) {
+  const med = LME_MEDICAMENTOS.find(m => m.id === medicamentoId) || LME_MEDICAMENTOS[0];
+  const conc = med.concentracoes.find(c => c.id === concentracaoId) || med.concentracoes[0];
+  return conc?.labelOficial || `${med.nomeOficial || med.nome} ${conc?.label || ''}`;
+}
+

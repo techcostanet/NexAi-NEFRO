@@ -1,4 +1,11 @@
-import { LME_MEDICAMENTOS, buildLmeClinicalReportText } from '../data/lmeProtocols.js';
+import { 
+  LME_MEDICAMENTOS, 
+  buildLmeClinicalReportText,
+  isAnemiaAgravo,
+  isDmoAgravo,
+  getAgravoTitle,
+  getMedicamentoOfficialLabel
+} from '../data/lmeProtocols.js';
 
 /**
  * Serviço de Inteligência de Negócio e Gestão de LME (Alto Custo / CEAF)
@@ -174,4 +181,12 @@ export function getPatientsWithLmeAlerts(patients = []) {
   };
 }
 
-export { LME_MEDICAMENTOS, buildLmeClinicalReportText };
+export { 
+  LME_MEDICAMENTOS, 
+  buildLmeClinicalReportText,
+  isAnemiaAgravo,
+  isDmoAgravo,
+  getAgravoTitle,
+  getMedicamentoOfficialLabel
+};
+

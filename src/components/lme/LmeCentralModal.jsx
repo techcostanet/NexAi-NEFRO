@@ -55,12 +55,17 @@ export default function LmeCentralModal({
       setDownloadingId(lmeItem.id);
       const safePatient = (lmeItem.patient?.nome || 'Paciente').replace(/\s+/g, '_');
       const safeMed = (lmeItem.medicamentoNome || 'LME').replace(/\s+/g, '_');
-      const fileName = `LME_${safeMed}_${safePatient}.pdf`;
+      const fileName = `LME_MG_${safeMed}_${safePatient}.pdf`;
+
+      const effectiveDoctorInfo = {
+        ...doctorInfo,
+        cns: lmeItem.medicoSolicitante?.cns || doctorInfo?.cns || '898004770672707'
+      };
 
       await downloadPdfDocument(
         <LmeReportPdf
           patient={lmeItem.patient}
-          doctorInfo={doctorInfo}
+          doctorInfo={effectiveDoctorInfo}
           lmeData={lmeItem}
           clinicalReportText={lmeItem.justificativaClinica || ''}
         />,
