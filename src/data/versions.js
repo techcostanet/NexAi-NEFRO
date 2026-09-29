@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.94",
+    "date": "29/09/2026",
+    "title": "Blindagem do importador de laudos Labicon e correcao do worker local do PDF",
+    "highlights": [
+      "✨ Blindagem do importador de laudos Labicon e correcao do worker local do PDF"
+    ]
+  },
+  {
     "version": "1.1.93",
     "date": "29/09/2026",
     "title": "Painel laboratorial consolidando ultimo resultado valido de cada exame coletado",

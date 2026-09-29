@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.94] - 2026-09-29
+### Alterações
+- Blindagem do importador de laudos Labicon e correcao do worker local do PDF
+
 ## [1.1.93] - 2026-09-29
 ### Alterações
 - Painel laboratorial consolidando ultimo resultado valido de cada exame coletado

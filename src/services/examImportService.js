@@ -7,9 +7,16 @@ import { db } from '../config/firebase.js';
 import { collection, addDoc } from 'firebase/firestore';
 import { HOMOLOGATED_LABS, detectLaboratoryProfile } from '../data/labProfiles.js';
 
-// Configuração do Worker do PDF.js para ambiente Web/Vite
+// Configuração do Worker local do PDF.js (empacotado localmente sem dependência de CDN externa)
 if (typeof window !== 'undefined' && pdfjsLib) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version || '4.10.38'}/pdf.worker.min.mjs`;
+  try {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+      'pdfjs-dist/build/pdf.worker.mjs',
+      import.meta.url
+    ).toString();
+  } catch (err) {
+    console.warn("Aviso ao inicializar worker local do PDF:", err);
+  }
 }
 
 // Dicionário de Sinônimos de Exames Laboratoriais Nefrológicos
@@ -952,36 +959,44 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
         exames.hba1c = parseExamNumber(matchHba1c[1]);
       }
 
-      // Cabeçalhos de Exames
-      if (normLine === "CALCIO" || normLine.startsWith("CALCIO ")) {
+      // Cabeçalhos de Exames Homologados do Labicon
+      if (normLine === "CALCIO" || normLine.startsWith("CALCIO ") || normLine.includes("DOSAGEM DE CALCIO")) {
         activeExamKey = "ca";
         continue;
       }
-      if (normLine === "FOSFATASE ALCALINA" || normLine.startsWith("FOSFATASE ALCALINA ")) {
+      if (normLine === "FOSFATASE ALCALINA" || normLine.startsWith("FOSFATASE ALCALINA ") || normLine === "FA") {
         activeExamKey = "fa";
         continue;
       }
-      if (normLine === "FOSFORO" || normLine.startsWith("FOSFORO ")) {
+      if (normLine === "FOSFORO" || normLine.startsWith("FOSFORO ") || normLine.includes("DOSAGEM DE FOSFORO")) {
         activeExamKey = "fosforo";
         continue;
       }
-      if (normLine === "GLICEMIA EM JEJUM" || normLine.startsWith("GLICEMIA EM JEJUM ")) {
+      if (normLine.includes("GLICEMIA EM JEJUM") || normLine.includes("GLICEMIA DE JEJUM") || normLine === "GLICEMIA") {
         activeExamKey = "glicemia";
         continue;
       }
-      if (normLine.includes("TRANSAMINASE GLUTAMICO PIRUVICA") || normLine.includes("TGP")) {
+      if (normLine.includes("TRANSAMINASE GLUTAMICO PIRUVICA") || normLine.includes("TGP") || normLine.includes("ALT")) {
         activeExamKey = "tgp";
         continue;
       }
-      if (normLine.includes("UREIA POS DIALISE") || normLine.includes("UREIA POS-DIALISE")) {
+      if (normLine.includes("TRANSAMINASE GLUTAMICO OXALACETICA") || normLine.includes("TGO") || (normLine.includes("AST") && !normLine.includes("ASSINATURA"))) {
+        activeExamKey = "tgo";
+        continue;
+      }
+      if (normLine.includes("CREATININA") || normLine.includes("DOSAGEM DE CREATININA")) {
+        activeExamKey = "creatinina";
+        continue;
+      }
+      if (normLine.includes("UREIA POS DIALISE") || normLine.includes("UREIA POS-DIALISE") || normLine.includes("UREIA APOS DIALISE")) {
         activeExamKey = "ureiaPos";
         continue;
       }
-      if (normLine === "UREIA" || normLine.startsWith("UREIA ")) {
+      if (normLine === "UREIA" || normLine.startsWith("UREIA ") || normLine.includes("DOSAGEM DE UREIA")) {
         activeExamKey = "ureiaPre";
         continue;
       }
-      if (normLine.includes("VITAMINA D") || normLine.includes("25 DIHIDROXI")) {
+      if (normLine.includes("VITAMINA D") || normLine.includes("25 DIHIDROXI") || normLine.includes("25-OH")) {
         activeExamKey = "vitD";
         continue;
       }
@@ -989,16 +1004,41 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
         activeExamKey = "ferritina";
         continue;
       }
+      if (normLine.includes("FERRO SERICO") || (normLine.includes("FERRO") && !normLine.includes("TRANSFERRINA"))) {
+        activeExamKey = "ferro";
+        continue;
+      }
+      if (normLine.includes("TRANSFERRINA") && !normLine.includes("SATURACAO")) {
+        activeExamKey = "transferrina";
+        continue;
+      }
       if (normLine.includes("POTASSIO") || normLine.includes("POTÁSSIO")) {
         activeExamKey = "k";
         continue;
       }
-      if (normLine.includes("PARATORMONIO") || normLine.includes("PTH")) {
-        activeExamKey = "pth";
+      if (normLine.includes("SODIO") || normLine.includes("SÓDIO")) {
+        activeExamKey = "na";
         continue;
       }
-      if (normLine === "SODIO" || normLine === "SÓDIO") {
-        activeExamKey = "na";
+      if (normLine.includes("PROTEINA C REATIVA") || normLine === "PCR" || normLine.startsWith("PCR ")) {
+        activeExamKey = "pcr";
+        continue;
+      }
+      if (normLine.includes("BICARBONATO") || normLine.includes("RESERVA ALCALINA")) {
+        activeExamKey = "hco3";
+        continue;
+      }
+      if (normLine.includes("ALBUMINA") || normLine.includes("PROTEINAS TOTAIS E FRACOES")) {
+        activeExamKey = "albumina";
+        const mAlbInline = line.match(/Albumina[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+        if (mAlbInline && exames.albumina === undefined) {
+          exames.albumina = parseExamNumber(mAlbInline[1]);
+          activeExamKey = null;
+        }
+        continue;
+      }
+      if (normLine.includes("PARATORMONIO") || normLine.includes("PTH")) {
+        activeExamKey = "pth";
         continue;
       }
       if (normLine.includes("HBSAG")) {
@@ -1013,23 +1053,31 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
         activeExamKey = "antiHcv";
         continue;
       }
+      if (normLine.includes("ANTI HBC") || normLine.includes("HBC, ANTI")) {
+        activeExamKey = "antiHbc";
+        continue;
+      }
+      if (normLine.includes("HIV")) {
+        activeExamKey = "hiv";
+        continue;
+      }
 
       // Resultados de exame ativo
       if (activeExamKey) {
-        if (["hbsag", "antiHbs", "antiHcv"].includes(activeExamKey)) {
-          if (/Resultado[.:_\s]+N[aã]o\s+reagente/i.test(line)) {
+        if (["hbsag", "antiHbs", "antiHcv", "antiHbc", "hiv"].includes(activeExamKey)) {
+          if (/Resultado[.:_\s]+N[aã]o\s+reagente/i.test(line) || /N[aã]o\s+reagente/i.test(line)) {
             exames[activeExamKey] = "Não Reagente";
             activeExamKey = null;
             continue;
           }
-          if (/Resultado[.:_\s]+Reagente/i.test(line)) {
+          if (/Resultado[.:_\s]+Reagente/i.test(line) || /\bReagente\b/i.test(line)) {
             exames[activeExamKey] = "Reagente";
             activeExamKey = null;
             continue;
           }
         }
 
-        const matchRes = line.match(/Resultado[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+        const matchRes = line.match(/(?:Resultado|Valor)[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
         if (matchRes) {
           const val = parseExamNumber(matchRes[1]);
           if (val !== null) {
@@ -1038,15 +1086,30 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
             continue;
           }
         }
+
+        // Se a linha começar diretamente com valor e unidade
+        const matchDirect = line.trim().match(/^([0-9]+[.,]?[0-9]*)\s*(?:g\s*\/\s*d[lL]|mg\s*\/\s*d[lL]|mcg\s*\/\s*d[lL]|mcg\s*\/\s*[lL]|ng\s*\/\s*m[lL]|pg\s*\/\s*m[lL]|m[eE]q\s*\/\s*[lL]|U\s*\/\s*[lL]|%)/i);
+        if (matchDirect) {
+          const val = parseExamNumber(matchDirect[1]);
+          if (val !== null) {
+            exames[activeExamKey] = val;
+            activeExamKey = null;
+            continue;
+          }
+        }
       }
     }
 
     const finalExames = applyDerivedCalculations(exames);
-    const matched = matchPatientInList(bucket.cpf ? `${bucket.nome} CPF ${bucket.cpf}` : bucket.nome, patientsList);
+    let targetSearch = bucket.nome;
+    if (bucket.cpf) {
+      targetSearch = bucket.nome ? `${bucket.nome} CPF ${bucket.cpf}` : `CPF ${bucket.cpf}`;
+    }
+    const matched = matchPatientInList(targetSearch, patientsList);
 
     registros.push({
       id: `import-labicon-${idx}-${Date.now()}`,
-      nomeArquivo: bucket.nome || `Paciente Labicon ${idx + 1}`,
+      nomeArquivo: bucket.nome || (matched.patient ? matched.patient.nome : `Paciente Labicon ${idx + 1}`),
       cpf: bucket.cpf || null,
       pacienteId: matched.patient?.id || "",
       pacienteNome: matched.patient?.nome || "",
@@ -1115,14 +1178,57 @@ export async function parsePdfFile(file, patientsList = []) {
   const allLines = pagesLines.flatMap(p => p.lines);
   const fullTextUpper = allLines.join(' ').toUpperCase();
 
-  // ================= ESTRATÉGIA -1: DETECÇÃO DE LABORATÓRIO HOMOLOGADO (SMART LAB REGISTRY) =================
-  const homologatedLab = detectLaboratoryProfile(fullTextUpper);
-  if (homologatedLab && homologatedLab.id === 'labicon') {
+  // Se o PDF foi escaneado e não possui camada de texto nativa, ativa OCR óptico em canvas
+  const totalChars = allLines.join('').trim().length;
+  if (totalChars < 30 && pdf.numPages > 0 && typeof document !== 'undefined') {
+    try {
+      const ocrPagesLines = [];
+      const worker = await createWorker('por');
+      for (let pNum = 1; pNum <= pdf.numPages; pNum++) {
+        const page = await pdf.getPage(pNum);
+        const viewport = page.getViewport({ scale: 2.0 });
+        const canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        const ctx = canvas.getContext('2d');
+        await page.render({ canvasContext: ctx, viewport }).promise;
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        const ret = await worker.recognize(blob);
+        const lines = (ret.data.text || '').split('\n').map(l => l.trim()).filter(Boolean);
+        ocrPagesLines.push({ pageNum: pNum, lines });
+      }
+      await worker.terminate();
+
+      if (ocrPagesLines.some(p => p.lines.length > 0)) {
+        pagesLines.length = 0;
+        pagesLines.push(...ocrPagesLines);
+        allLines.length = 0;
+        allLines.push(...ocrPagesLines.flatMap(p => p.lines));
+      }
+    } catch (ocrErr) {
+      console.warn("Falha no OCR de contingência para PDF escaneado:", ocrErr);
+    }
+  }
+
+  const updatedFullText = allLines.join(' ').toUpperCase();
+
+  // ================= ESTRATÉGIA -1: DETECÇÃO DE LABORATÓRIO HOMOLOGADO (LABICON & OUTROS) =================
+  const homologatedLab = detectLaboratoryProfile(updatedFullText);
+  const isLabiconDoc = (homologatedLab && homologatedLab.id === 'labicon') ||
+                       updatedFullText.includes('LABICON') ||
+                       updatedFullText.includes('13.150.241/0001-69') ||
+                       updatedFullText.includes('13150241000169') ||
+                       updatedFullText.includes('6855865') ||
+                       updatedFullText.includes('ISABEL ARAUJO GOBIRA') ||
+                       updatedFullText.includes('AMANDA GONCALVES XAVIER') ||
+                       updatedFullText.includes('AMANDA GONÇALVES XAVIER');
+
+  if (isLabiconDoc) {
     const labiconResult = parseLabiconReport(pagesLines, patientsList, detectedGlobalDate);
     if (labiconResult && labiconResult.registros?.length > 0) {
       return {
-        tipoArquivo: `PDF - ${homologatedLab.nome} (Homologado)`,
-        laboratorioDetectado: homologatedLab,
+        tipoArquivo: `PDF - LABICON Laboratório (Homologado)`,
+        laboratorioDetectado: homologatedLab || { id: 'labicon', nome: 'LABICON Laboratório', homologado: true, confianca: '100%' },
         dataSugerida: labiconResult.dataSugerida,
         totalIdentificados: labiconResult.registros.length,
         registros: labiconResult.registros
@@ -1131,11 +1237,14 @@ export async function parsePdfFile(file, patientsList = []) {
   }
 
   // ================= ESTRATÉGIA 0: MAPA EXAMES COLUNAR (SISTEMA DIALSIST / DIALIZE) =================
-  const isDialsistMap = (homologatedLab && homologatedLab.id === 'dialsist-mapao') ||
-                        fullTextUpper.includes('MAPA EXAMES') || 
-                        fullTextUpper.includes('DIALSIST') || 
-                        fullTextUpper.includes('DIALIZE') ||
-                        (fullTextUpper.includes('NOME') && fullTextUpper.includes('DATA') && fullTextUpper.includes('KTV') && fullTextUpper.includes('CAS'));
+  // Proteção: Laudos individuais de convênio 'DIALIZE' nunca devem ser confundidos com tabelas consolidadas
+  const isDialsistMap = !isLabiconDoc && !updatedFullText.includes('RESULTADO') && (
+                        (homologatedLab && homologatedLab.id === 'dialsist-mapao') ||
+                        updatedFullText.includes('MAPA EXAMES') || 
+                        (updatedFullText.includes('DIALSIST') && !updatedFullText.includes('CONVENIO')) || 
+                        (updatedFullText.includes('DIALIZE') && updatedFullText.includes('MAPA') && !updatedFullText.includes('CONVENIO')) ||
+                        (updatedFullText.includes('NOME') && updatedFullText.includes('DATA') && updatedFullText.includes('KTV') && updatedFullText.includes('CAS'))
+  );
 
   if (isDialsistMap) {
     const dialsistResult = parseDialsistExamMap(pagesLines, patientsList, detectedGlobalDate, file?.name || '');
