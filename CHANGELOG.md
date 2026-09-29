@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.91] - 2026-09-29
+### Alterações
+- Icones ludicos precisos no Boletim Visual: substituicao de escudos por osso, prato com comida, copo de agua, termometro, maca, bateria e folha
+
 ## [1.1.90] - 2026-09-29
 ### Alterações
 - Implementação do Boletim Visual Lúdico para pacientes com baixa instrução

@@ -3,21 +3,43 @@ import {
   Trophy, 
   Heart, 
   Droplet, 
-  Activity, 
-  ShieldCheck, 
-  Zap, 
-  Award,
-  Sun,
-  Moon,
+  Bone,
   Utensils,
+  GlassWater,
+  BatteryCharging,
+  Zap,
+  Filter,
+  Apple,
+  Thermometer,
+  Leaf,
+  Wind,
+  Sun,
   Pill,
-  Sparkles,
-  Stethoscope,
-  Smile,
-  AlertCircle
+  Sparkles
 } from 'lucide-react';
 import { GOAL_STATUS } from '../../services/patientEducationService';
 import { getVisualDataForCard } from './bulletinVisualCatalog';
+
+const renderVisualDocIcon = (tema, color, size = 18) => {
+  const props = { size, color, strokeWidth: 2.2 };
+  switch (tema) {
+    case 'coracao': return <Heart {...props} />;
+    case 'sangue': return <Droplet {...props} />;
+    case 'ossos': return <Bone {...props} />;
+    case 'nutricao': return <Utensils {...props} />;
+    case 'sal': return <GlassWater {...props} />;
+    case 'energia': return <BatteryCharging {...props} />;
+    case 'circulacao': return <Zap {...props} />;
+    case 'sol': return <Sun {...props} />;
+    case 'filtro': return <Filter {...props} />;
+    case 'acucar': return <Apple {...props} />;
+    case 'febre':
+    case 'defesa': return <Thermometer {...props} />;
+    case 'figado': return <Leaf {...props} />;
+    case 'leveza': return <Wind {...props} />;
+    default: return <Bone {...props} />;
+  }
+};
 
 /**
  * 🎨 DOCUMENTO IMPRESSO LÚDICO: BOLETIM VISUAL & PICTOGRÁFICO DE SAÚDE
@@ -288,11 +310,10 @@ export default function PatientBulletinVisualDocument({
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: isSpacious ? '18px' : '16px',
                         flexShrink: 0,
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.06)'
                       }}>
-                        {visual.emoji}
+                        {renderVisualDocIcon(visual.tema, visual.corTema, isSpacious ? 19 : 17)}
                       </div>
 
                       <div>

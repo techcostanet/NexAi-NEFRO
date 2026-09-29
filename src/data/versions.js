@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.91",
+    "date": "29/09/2026",
+    "title": "Icones ludicos precisos no Boletim Visual: substituicao de escudos por osso, ...",
+    "highlights": [
+      "✨ Icones ludicos precisos no Boletim Visual: substituicao de escudos por osso, prato com comida, copo de agua, termometro, maca, bateria e folha"
+    ]
+  },
+  {
     "version": "1.1.90",
     "date": "29/09/2026",
     "title": "Implementação do Boletim Visual Lúdico para pacientes com baixa instrução",

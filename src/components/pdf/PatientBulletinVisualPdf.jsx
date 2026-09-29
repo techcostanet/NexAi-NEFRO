@@ -14,6 +14,7 @@ function cleanPdfText(text) {
     .trim();
 }
 
+
 // ================= ÍCONES VETORIAIS NATIVOS SVG PARA REACT-PDF =================
 const TrophyIcon = ({ size = 20, color = '#ffffff' }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
@@ -32,9 +33,9 @@ const HeartIcon = ({ size = 16, color = '#dc2626' }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Path
       d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"
-      fill={color}
+      fill="none"
       stroke={color}
-      strokeWidth={1}
+      strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
@@ -45,26 +46,77 @@ const DropletIcon = ({ size = 16, color = '#e11d48' }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Path
       d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"
-      fill={color}
-      stroke={color}
-      strokeWidth={1}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </Svg>
-);
-
-const ShieldIcon = ({ size = 16, color = '#d97706' }) => (
-  <Svg width={size} height={size} viewBox="0 0 24 24">
-    <Path
-      d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
       fill="none"
       stroke={color}
       strokeWidth={2}
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    <Path d="m9 12 2 2 4-4" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+const BoneIcon = ({ size = 16, color = '#d97706' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path
+      d="M17 10c.7-.7 1.69 0 2.5 0a2.5 2.5 0 1 0 0-5 .5.5 0 0 1-.5-.5 2.5 2.5 0 1 0-5 0c0 .81.7 1.8 0 2.5l-7 7c-.7.7-1.69 0-2.5 0a2.5 2.5 0 0 0 0 5c.28 0 .5.22.5.5a2.5 2.5 0 1 0 5 0c0-.81-.7-1.8 0-2.5Z"
+      fill="none"
+      stroke={color}
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </Svg>
+);
+
+const UtensilsIcon = ({ size = 16, color = '#7c3aed' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M7 2v20" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+const GlassWaterIcon = ({ size = 16, color = '#0284c7' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M5.116 4.104A1 1 0 0 1 6.11 3h11.78a1 1 0 0 1 .994 1.105L17.19 20.21A2 2 0 0 1 15.2 22H8.8a2 2 0 0 1-2-1.79z" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M6 12a5 5 0 0 1 6 0 5 5 0 0 0 6 0" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+const BatteryChargingIcon = ({ size = 16, color = '#c026d3' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="m11 7-3 5h4l-3 5" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M14.856 6H16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.935" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M22 14v-4" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M5.14 18H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h2.936" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+const ThermometerIcon = ({ size = 16, color = '#e11d48' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+const AppleIcon = ({ size = 16, color = '#0284c7' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M12 6.528V3a1 1 0 0 1 1-1h0" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M18.237 21A15 15 0 0 0 22 11a6 6 0 0 0-10-4.472A6 6 0 0 0 2 11a15.1 15.1 0 0 0 3.763 10 3 3 0 0 0 3.648.648 5.5 5.5 0 0 1 5.178 0A3 3 0 0 0 18.237 21" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+const LeafIcon = ({ size = 16, color = '#0d9488' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+  </Svg>
+);
+
+const WindIcon = ({ size = 16, color = '#0d9488' }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24">
+    <Path d="M12.8 19.6A2 2 0 1 0 14 16H2" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M17.5 8a2.5 2.5 0 1 1 2 4H2" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    <Path d="M9.8 4.4A2 2 0 1 1 11 8H2" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
   </Svg>
 );
 
@@ -75,7 +127,7 @@ const SunIcon = ({ size = 16, color = '#eab308' }) => (
   </Svg>
 );
 
-const ZapIcon = ({ size = 16, color = '#059669' }) => (
+const ZapIcon = ({ size = 16, color = '#ea580c' }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24">
     <Path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill={color} stroke={color} strokeWidth={1} strokeLinecap="round" strokeLinejoin="round" />
   </Svg>
@@ -140,13 +192,19 @@ const renderOrganIcon = (tema, color = '#2563eb') => {
   switch (tema) {
     case 'coracao': return <HeartIcon color={color} />;
     case 'sangue': return <DropletIcon color={color} />;
-    case 'ossos': return <ShieldIcon color={color} />;
+    case 'ossos': return <BoneIcon color={color} />;
+    case 'nutricao': return <UtensilsIcon color={color} />;
+    case 'sal': return <GlassWaterIcon color={color} />;
+    case 'energia': return <BatteryChargingIcon color={color} />;
+    case 'circulacao': return <ZapIcon color={color} />;
     case 'sol': return <SunIcon color={color} />;
     case 'filtro': return <MachineFilterIcon color={color} />;
-    case 'energia': return <ZapIcon color={color} />;
-    case 'nutricao': return <ShieldIcon color={color} />;
-    case 'sal': return <DropletIcon color={color} />;
-    default: return <ShieldIcon color={color} />;
+    case 'acucar': return <AppleIcon color={color} />;
+    case 'febre':
+    case 'defesa': return <ThermometerIcon color={color} />;
+    case 'figado': return <LeafIcon color={color} />;
+    case 'leveza': return <WindIcon color={color} />;
+    default: return <BoneIcon color={color} />;
   }
 };
 
