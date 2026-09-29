@@ -78,7 +78,7 @@ import ExamHistorySection from '../components/patient/ExamHistorySection';
 import TransplantReportPdf from '../components/pdf/TransplantReportPdf';
 import { downloadPdfDocument } from '../services/pdfService';
 import { printElement } from '../utils/printUtils';
-import { safeFormatDate } from '../utils/dateUtils';
+import { safeFormatDate, getExamTime, normalizeDateToString, formatShortColetaDate } from '../utils/dateUtils';
 import { evaluateExam, parseExamNumber, calculateCorrectedCalcium, calculateURR } from '../utils/examRanges';
 
 /**
@@ -440,25 +440,33 @@ export default function PatientProfile() {
   // Ordena histórico cronológico: coletas mais recentes no topo, preservando o índice original para edições e exclusões
   const sortedHistoricoExames = useMemo(() => {
     return [...historicoExames]
+      .filter(item => item && typeof item === 'object')
       .map((item, originalIndex) => ({ ...item, _originalIndex: originalIndex }))
-      .sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
+      .sort((a, b) => getExamTime(b.dataExame) - getExamTime(a.dataExame));
   }, [historicoExames]);
 
   // Consolidação de exames: exibe sempre o último resultado de cada exame coletado (mensal, trimestral, semestral e anual)
-  const { consolidados: ultimosExames, datas: ultimosExamesDatas } = useMemo(() => {
-    return consolidatePatientExams(sortedHistoricoExames, patient.exames);
-  }, [sortedHistoricoExames, patient.exames]);
+  const { consolidados: ultimosExames = {}, datas: ultimosExamesDatas = {} } = useMemo(() => {
+    try {
+      return consolidatePatientExams(sortedHistoricoExames, patient?.exames || {}) || { consolidados: {}, datas: {} };
+    } catch (err) {
+      console.error("Erro ao consolidar exames do paciente:", err);
+      return { consolidados: patient?.exames || {}, datas: {} };
+    }
+  }, [sortedHistoricoExames, patient?.exames]);
 
-  const exames = ultimosExames;
+  const exames = ultimosExames || patient?.exames || {};
   const dataUltimaColetaGeral = sortedHistoricoExames[0]?.dataExame || null;
 
   // Helper para renderizar tag sutil da data caso o exame venha de uma coleta anterior à mais recente
   const renderColetaBadge = (examKey) => {
+    if (!ultimosExamesDatas) return null;
     const dataColeta = ultimosExamesDatas[examKey];
     if (!dataColeta) return null;
-    if (dataUltimaColetaGeral && dataColeta !== dataUltimaColetaGeral) {
-      const parts = dataColeta.split('-');
-      const shortDate = parts.length === 3 ? `${parts[2]}/${parts[1]}` : dataColeta;
+    const normDataColeta = normalizeDateToString(dataColeta);
+    const normDataGeral = normalizeDateToString(dataUltimaColetaGeral);
+    if (normDataGeral && normDataColeta && normDataColeta !== normDataGeral) {
+      const shortDate = formatShortColetaDate(normDataColeta);
       return (
         <span 
           style={{ 

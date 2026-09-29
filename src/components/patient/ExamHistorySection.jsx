@@ -17,6 +17,7 @@ import {
   Droplet
 } from 'lucide-react';
 import { evaluateExam, parseExamNumber, calculateURR } from '../../utils/examRanges.js';
+import { safeFormatDate } from '../../utils/dateUtils.js';
 
 /**
  * Metadados dos biomarcadores para gráficos e matriz de metas
@@ -80,12 +81,7 @@ function ExamBadge({ examKey, value, suffix = '', title = '' }) {
  * Formata data de exame para exibição limpa
  */
 function formatExamDate(dateStr) {
-  if (!dateStr) return '-';
-  try {
-    return new Date(dateStr + 'T12:00:00').toLocaleDateString('pt-BR');
-  } catch (_) {
-    return dateStr;
-  }
+  return safeFormatDate(dateStr);
 }
 
 export default function ExamHistorySection({

@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.95",
+    "date": "29/09/2026",
+    "title": "Correcao critica de blindagem no prontuario: normalizacao de datas de exames ...",
+    "highlights": [
+      "✨ Correcao critica de blindagem no prontuario: normalizacao de datas de exames laboratoriais e prevencao de falhas em dados Firestore"
+    ]
+  },
+  {
     "version": "1.1.94",
     "date": "29/09/2026",
     "title": "Blindagem do importador de laudos Labicon e correcao do worker local do PDF",

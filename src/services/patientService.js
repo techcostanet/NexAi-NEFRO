@@ -16,6 +16,7 @@ import { db } from "../config/firebase.js";
 import { normalizeMedicamentosList } from "../data/dialysisMedications.js";
 import { DEMO_PATIENTS_DATA } from "../data/demoPatients.js";
 import { logAuditEvent } from "./auditService.js";
+import { getExamTime } from "../utils/dateUtils.js";
 
 const PATIENTS_COLLECTION = "patients";
 const METADATA_COLLECTION = "system_metadata";
@@ -421,7 +422,7 @@ export function consolidatePatientExams(historicoExames = [], fallbackExames = {
   const isValidValue = (v) => v !== null && v !== undefined && v !== '' && v !== '-';
 
   const sorted = Array.isArray(historicoExames)
-    ? [...historicoExames].sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0))
+    ? [...historicoExames].filter(item => item && typeof item === 'object').sort((a, b) => getExamTime(b?.dataExame) - getExamTime(a?.dataExame))
     : [];
 
   // 1. Percorre histórico do mais recente ao mais antigo
@@ -473,7 +474,7 @@ export function consolidatePatientExams(historicoExames = [], fallbackExames = {
   if (consolidados.fa && !consolidados.fosfAlcalina) consolidados.fosfAlcalina = consolidados.fa;
   if (consolidados.fosfAlcalina && !consolidados.fa) consolidados.fa = consolidados.fosfAlcalina;
 
-  return { consolidados, datas };
+  return { consolidados: consolidados || {}, datas: datas || {} };
 }
 
 /**
@@ -501,8 +502,8 @@ export async function savePatientExam(patientId, examData, examIndex = null) {
     historico.unshift(examRecord);
   }
 
-  // Ordena por data do mais recente para o mais antigo
-  historico.sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
+  // Ordena por data do mais recente para o mais antigo de forma 100% segura
+  historico.sort((a, b) => getExamTime(b?.dataExame) - getExamTime(a?.dataExame));
 
   // Consolidação cumulativa: sempre retém o último resultado válido de cada exame
   const { consolidados } = consolidatePatientExams(historico, patient.exames);
@@ -530,8 +531,8 @@ export async function deletePatientExam(patientId, examIndex) {
   const historico = [...patient.historicoExames];
   historico.splice(examIndex, 1);
 
-  // Ordena por data do mais recente para o mais antigo
-  historico.sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
+  // Ordena por data do mais recente para o mais antigo de forma 100% segura
+  historico.sort((a, b) => getExamTime(b?.dataExame) - getExamTime(a?.dataExame));
 
   // Recalcula a consolidação de exames após a remoção
   const { consolidados } = consolidatePatientExams(historico, {});
