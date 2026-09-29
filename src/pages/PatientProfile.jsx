@@ -689,7 +689,7 @@ export default function PatientProfile() {
                 )}
                 
                 {patient.dataNascimento && (
-                  <span className="text-slate-500">• Nasc: {new Date(patient.dataNascimento + 'T12:00:00').toLocaleDateString('pt-BR')}</span>
+                  <span className="text-slate-500">• Nasc: {safeFormatDate(patient.dataNascimento)}</span>
                 )}
 
                 {patient.etiologiaDRC ? (
@@ -1612,14 +1612,14 @@ export default function PatientProfile() {
                   <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
                     <span className="text-muted">Nesta Clínica:</span>
                     <strong className="text-slate-800 font-semibold">
-                      {new Date(patient.dataInicioClinica + 'T12:00:00').toLocaleDateString('pt-BR')} {patient.tempoNaClinica ? `(${patient.tempoNaClinica})` : ''}
+                      {safeFormatDate(patient.dataInicioClinica)} {patient.tempoNaClinica ? `(${patient.tempoNaClinica})` : ''}
                     </strong>
                   </div>
                 )}
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
                   <span className="text-muted">Início TRS:</span>
                   <strong className="text-slate-800 font-semibold">
-                    {patient.dataInicioDialise ? new Date(patient.dataInicioDialise + 'T12:00:00').toLocaleDateString('pt-BR') : '-'} {patient.tempoTotalTratamento ? `(${patient.tempoTotalTratamento})` : ''}
+                    {patient.dataInicioDialise ? safeFormatDate(patient.dataInicioDialise) : '-'} {patient.tempoTotalTratamento ? `(${patient.tempoTotalTratamento})` : ''}
                   </strong>
                 </div>
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
@@ -1790,9 +1790,9 @@ export default function PatientProfile() {
                               borderRadius: '4px 4px 0 0',
                               transition: 'height 0.3s'
                             }} 
-                            title={`${new Date(rec.data).toLocaleDateString('pt-BR')} - ${rec.peso}kg (${rec.tipo})`}
+                            title={`${safeFormatDate(rec.data)} - ${rec.peso}kg (${rec.tipo})`}
                           />
-                          <span className="text-muted" style={{ fontSize: '0.58rem' }}>{new Date(rec.data).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}</span>
+                          <span className="text-muted" style={{ fontSize: '0.58rem' }}>{safeFormatDate(rec.data)}</span>
                         </div>
                       );
                     })}
@@ -1820,7 +1820,7 @@ export default function PatientProfile() {
                           </span>
                         </div>
                         <span className="text-muted" style={{ fontSize: '0.65rem' }}>
-                          {new Date(rec.data).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })}
+                          {safeFormatDate(rec.data)}
                         </span>
                       </div>
 
@@ -2580,7 +2580,7 @@ export default function PatientProfile() {
                             {cult.resultado}
                           </span>
                           <strong className="text-slate-800">
-                            Coleta: {new Date(cult.dataColeta).toLocaleString('pt-BR')}
+                            Coleta: {safeFormatDate(cult.dataColeta)}
                           </strong>
                           <span className="text-slate-500">• Sítio: <strong>{cult.sitioColeta}</strong></span>
                           {cult.dtpHoras !== null && cult.dtpHoras !== undefined && (
@@ -2762,9 +2762,9 @@ export default function PatientProfile() {
 
                       <div className="text-xs text-muted mt-2">
                         {med.tipo === 'temporario' && med.dataFim ? (
-                          <span>Vigência: <strong>{new Date(med.dataInicio + 'T00:00:00').toLocaleDateString('pt-BR')}</strong> até <strong>{new Date(med.dataFim + 'T00:00:00').toLocaleDateString('pt-BR')}</strong></span>
+                          <span>Vigência: <strong>{safeFormatDate(med.dataInicio)}</strong> até <strong>{safeFormatDate(med.dataFim)}</strong></span>
                         ) : (
-                          <span>Início: {med.dataInicio ? new Date(med.dataInicio + 'T00:00:00').toLocaleDateString('pt-BR') : 'Uso contínuo'}</span>
+                          <span>Início: {med.dataInicio ? safeFormatDate(med.dataInicio) : 'Uso contínuo'}</span>
                         )}
                         {med.observacao && (
                           <div className="italic text-slate-500 mt-1">
@@ -2852,7 +2852,7 @@ export default function PatientProfile() {
                     <div className="flex items-center gap-2">
                       <Clock size={15} color="var(--primary)" />
                       <strong className="text-sm text-slate-800">
-                        {new Date(evo.dataHora).toLocaleString('pt-BR')}
+                        {safeFormatDate(evo.dataHora)}
                       </strong>
                       <span 
                         style={{ 
@@ -3114,68 +3114,84 @@ export default function PatientProfile() {
         </div>
       )}
 
-      {/* ================= MODAIS ================= */}
-      <PrescriptionModal 
-        isOpen={isPrescriptionModalOpen}
-        onClose={() => setIsPrescriptionModalOpen(false)}
-        patient={patient}
-        doctorInfo={doctorInfo}
-        prescriptionToEdit={prescriptionToEdit}
-        initialTipo={prescriptionInitialTipo}
-        onSaved={handleSavedPrescription}
-      />
+      {/* ================= MODAIS (RENDERIZADOS APENAS SOB DEMANDA PARA BLINDAGEM E ALTA PERFORMANCE) ================= */}
+      {isPrescriptionModalOpen && (
+        <PrescriptionModal 
+          isOpen={isPrescriptionModalOpen}
+          onClose={() => setIsPrescriptionModalOpen(false)}
+          patient={patient}
+          doctorInfo={doctorInfo}
+          prescriptionToEdit={prescriptionToEdit}
+          initialTipo={prescriptionInitialTipo}
+          onSaved={handleSavedPrescription}
+        />
+      )}
 
-      <PrescriptionPrintModal
-        isOpen={isPrescriptionPrintModalOpen}
-        onClose={() => setIsPrescriptionPrintModalOpen(false)}
-        prescription={prescriptionToPrint}
-        patient={patient}
-        doctorInfo={doctorInfo}
-      />
+      {isPrescriptionPrintModalOpen && (
+        <PrescriptionPrintModal
+          isOpen={isPrescriptionPrintModalOpen}
+          onClose={() => setIsPrescriptionPrintModalOpen(false)}
+          prescription={prescriptionToPrint}
+          patient={patient}
+          doctorInfo={doctorInfo}
+        />
+      )}
 
-      <PatientFormModal 
-        isOpen={isPatientModalOpen}
-        onClose={() => setIsPatientModalOpen(false)}
-        patientToEdit={patient}
-      />
+      {isPatientModalOpen && (
+        <PatientFormModal 
+          isOpen={isPatientModalOpen}
+          onClose={() => setIsPatientModalOpen(false)}
+          patientToEdit={patient}
+        />
+      )}
 
-      <ExamFormModal 
-        isOpen={isExamModalOpen}
-        onClose={() => setIsExamModalOpen(false)}
-        patientId={patient.id}
-        examToEdit={examToEdit}
-        examIndex={examIndexToEdit}
-      />
+      {isExamModalOpen && (
+        <ExamFormModal 
+          isOpen={isExamModalOpen}
+          onClose={() => setIsExamModalOpen(false)}
+          patientId={patient.id}
+          examToEdit={examToEdit}
+          examIndex={examIndexToEdit}
+        />
+      )}
 
-      <MedicationModal 
-        isOpen={isMedicationModalOpen}
-        onClose={() => setIsMedicationModalOpen(false)}
-        patientId={patient.id}
-        medicationToEdit={medicationToEdit}
-      />
+      {isMedicationModalOpen && (
+        <MedicationModal 
+          isOpen={isMedicationModalOpen}
+          onClose={() => setIsMedicationModalOpen(false)}
+          patientId={patient.id}
+          medicationToEdit={medicationToEdit}
+        />
+      )}
 
-      <EvolutionModal 
-        isOpen={isEvolutionModalOpen}
-        onClose={() => setIsEvolutionModalOpen(false)}
-        patientId={patient.id}
-        evolutionToEdit={evolutionToEdit}
-        doctorInfo={doctorInfo}
-      />
+      {isEvolutionModalOpen && (
+        <EvolutionModal 
+          isOpen={isEvolutionModalOpen}
+          onClose={() => setIsEvolutionModalOpen(false)}
+          patientId={patient.id}
+          evolutionToEdit={evolutionToEdit}
+          doctorInfo={doctorInfo}
+        />
+      )}
 
-      <ExamImportModal 
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
-        patients={[patient]}
-        doctorId={patient.doctorId || activeDoctorId}
-        preselectedPatientId={patient.id}
-      />
+      {isImportModalOpen && (
+        <ExamImportModal 
+          isOpen={isImportModalOpen}
+          onClose={() => setIsImportModalOpen(false)}
+          patients={[patient]}
+          doctorId={patient.doctorId || activeDoctorId}
+          preselectedPatientId={patient.id}
+        />
+      )}
 
-      <PatientBulletinModal 
-        isOpen={isBulletinModalOpen}
-        onClose={() => setIsBulletinModalOpen(false)}
-        patient={patient}
-        doctorInfo={doctorInfo}
-      />
+      {isBulletinModalOpen && (
+        <PatientBulletinModal 
+          isOpen={isBulletinModalOpen}
+          onClose={() => setIsBulletinModalOpen(false)}
+          patient={patient}
+          doctorInfo={doctorInfo}
+        />
+      )}
       {/* ================= MODAL: REGISTRAR PESO & EVOLUÇÃO PONDERAL (Requisito 2) ================= */}
       {isWeightModalOpen && (
         <div 
@@ -3456,7 +3472,7 @@ export default function PatientProfile() {
                   {hemoculturas.length === 0 ? (
                     'Sem hemoculturas positivas recentes.'
                   ) : (
-                    hemoculturas.map(h => `${new Date(h.dataColeta).toLocaleDateString('pt-BR')}: ${h.resultado} (${h.microrganismo || h.sitioColeta})`).join(' • ')
+                    hemoculturas.map(h => `${safeFormatDate(h.dataColeta)}: ${h.resultado} (${h.microrganismo || h.sitioColeta})`).join(' • ')
                   )}
                 </div>
               </div>
@@ -3685,24 +3701,28 @@ export default function PatientProfile() {
       )}
 
       {/* Modal de Desligamento do Paciente */}
-      <PatientDischargeModal
-        isOpen={isDischargeModalOpen}
-        onClose={() => setIsDischargeModalOpen(false)}
-        patient={patient}
-        onSuccess={() => {
-          navigate('/doctor');
-        }}
-      />
+      {isDischargeModalOpen && (
+        <PatientDischargeModal
+          isOpen={isDischargeModalOpen}
+          onClose={() => setIsDischargeModalOpen(false)}
+          patient={patient}
+          onSuccess={() => {
+            navigate('/doctor');
+          }}
+        />
+      )}
 
       {/* Modal de Emissão e Renovação de LME (Alto Custo SUS) */}
-      <LmeModal
-        isOpen={isLmeModalOpen}
-        onClose={() => setIsLmeModalOpen(false)}
-        patient={patient}
-        doctorInfo={doctorInfo}
-        lmeToEdit={lmeToEdit}
-        isRenovacao={isRenovacaoLme}
-      />
+      {isLmeModalOpen && (
+        <LmeModal
+          isOpen={isLmeModalOpen}
+          onClose={() => setIsLmeModalOpen(false)}
+          patient={patient}
+          doctorInfo={doctorInfo}
+          lmeToEdit={lmeToEdit}
+          isRenovacao={isRenovacaoLme}
+        />
+      )}
     </div>
   );
 }

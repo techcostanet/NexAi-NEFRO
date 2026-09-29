@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.96",
+    "date": "29/09/2026",
+    "title": "Correcao critica no prontuario: renderizacao condicional de modais e blindage...",
+    "highlights": [
+      "✨ Correcao critica no prontuario: renderizacao condicional de modais e blindagem total de datas e hooks"
+    ]
+  },
+  {
     "version": "1.1.95",
     "date": "29/09/2026",
     "title": "Correcao critica de blindagem no prontuario: normalizacao de datas de exames ...",

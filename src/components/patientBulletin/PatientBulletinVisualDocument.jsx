@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { GOAL_STATUS } from '../../services/patientEducationService';
 import { getVisualDataForCard } from './bulletinVisualCatalog';
+import { normalizeDateToString } from '../../utils/dateUtils';
 
 const renderVisualDocIcon = (tema, color, size = 18) => {
   const props = { size, color, strokeWidth: 2.2 };
@@ -92,7 +93,8 @@ export default function PatientBulletinVisualDocument({
   const doctorCrm = doctorInfo?.crm ? `CRM-${doctorInfo?.ufCrm || 'MG'} ${doctorInfo?.crm}` : 'Nefrologista Responsável';
   const doctorClinica = doctorInfo?.clinicaPrincipal || 'Clínica de Hemodiálise';
 
-  const dataObj = dataReferencia ? new Date(dataReferencia + 'T12:00:00') : new Date();
+  const cleanDateRef = normalizeDateToString(dataReferencia);
+  const dataObj = cleanDateRef ? new Date(cleanDateRef + 'T12:00:00') : new Date();
   const mesAnoExtenso = dataObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
   const mesFormatado = mesAnoExtenso.charAt(0).toUpperCase() + mesAnoExtenso.slice(1);
 

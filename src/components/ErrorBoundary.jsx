@@ -53,9 +53,35 @@ export class ErrorBoundary extends React.Component {
             <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#0f172a', marginBottom: '0.5rem' }}>
               Algo não carregou corretamente
             </h2>
-            <p style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+            <p style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '1rem', lineHeight: '1.5' }}>
               Ocorreu uma inconsistência ao renderizar este componente. Clique no botão abaixo para restaurar a visualização.
             </p>
+
+            {this.state.error && (
+              <div style={{
+                margin: '1rem 0 1.5rem',
+                textAlign: 'left',
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                borderRadius: '8px',
+                padding: '0.75rem',
+                fontSize: '0.75rem',
+                color: '#991b1b',
+                maxHeight: '140px',
+                overflowY: 'auto',
+                fontFamily: 'monospace',
+                wordBreak: 'break-word'
+              }}>
+                <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>Diagnóstico Técnico:</div>
+                <div>{String(this.state.error?.message || this.state.error)}</div>
+                {this.state.error?.stack && (
+                  <div style={{ marginTop: '4px', fontSize: '0.68rem', color: '#b91c1c', opacity: 0.85, whiteSpace: 'pre-wrap' }}>
+                    {this.state.error.stack.split('\n').slice(0, 3).join('\n')}
+                  </div>
+                )}
+              </div>
+            )}
+
             <button
               onClick={this.handleReload}
               style={{

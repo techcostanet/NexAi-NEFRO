@@ -9,6 +9,7 @@ import {
   Award
 } from 'lucide-react';
 import { GOAL_STATUS } from '../../services/patientEducationService';
+import { normalizeDateToString } from '../../utils/dateUtils';
 
 /**
  * 📄 DOCUMENTO IMPRESSO OFICIAL: BOLETIM DE CONQUISTAS & METAS DE SAÚDE DO PACIENTE
@@ -77,7 +78,8 @@ export default function PatientBulletinPrintDocument({
   const doctorCrm = doctorInfo?.crm ? `CRM-${doctorInfo?.ufCrm || 'MG'} ${doctorInfo?.crm}` : 'Nefrologista Responsável';
   const doctorClinica = doctorInfo?.clinicaPrincipal || 'Clínica de Hemodiálise';
 
-  const dataObj = dataReferencia ? new Date(dataReferencia + 'T12:00:00') : new Date();
+  const cleanDateRef = normalizeDateToString(dataReferencia);
+  const dataObj = cleanDateRef ? new Date(cleanDateRef + 'T12:00:00') : new Date();
   const mesAnoExtenso = dataObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
   const mesFormatado = mesAnoExtenso.charAt(0).toUpperCase() + mesAnoExtenso.slice(1);
 

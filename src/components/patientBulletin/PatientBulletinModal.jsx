@@ -31,7 +31,7 @@ import { printElement } from '../../utils/printUtils';
 import { evaluatePatientExamsForBulletin, GOAL_STATUS } from '../../services/patientEducationService';
 import { normalizeMedicamentosList } from '../../data/dialysisMedications';
 import { savePatientPrescription } from '../../services/patientService';
-import { safeFormatDate } from '../../utils/dateUtils';
+import { safeFormatDate, normalizeDateToString, getExamTime } from '../../utils/dateUtils';
 
 const QUICK_PRESETS = [
   { label: '🍌 Potássio', text: 'Atenção com frutas ricas em potássio (banana, água de coco, abacate e molho de tomate).' },
@@ -245,18 +245,18 @@ export default function PatientBulletinModal({
     const h = Array.isArray(patient.historicoExames) ? [...patient.historicoExames] : [];
     if (h.length === 0 && patient.exames) {
       h.push({
-        dataExame: patient.atualizadoEm ? patient.atualizadoEm.split('T')[0] : new Date().toISOString().split('T')[0],
+        dataExame: normalizeDateToString(patient.atualizadoEm) || new Date().toISOString().split('T')[0],
         ...patient.exames
       });
     }
-    return h.sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
+    return h.sort((a, b) => getExamTime(b.dataExame) - getExamTime(a.dataExame));
   }, [patient]);
 
   const exameSelecionado = useMemo(() => {
     return historico[selectedExamIndex] || patient?.exames || {};
   }, [historico, selectedExamIndex, patient]);
 
-  const dataRef = exameSelecionado.dataExame || (patient?.atualizadoEm ? patient.atualizadoEm.split('T')[0] : null);
+  const dataRef = exameSelecionado.dataExame || normalizeDateToString(patient?.atualizadoEm) || null;
 
   const bulletinData = useMemo(() => {
     if (!patient) return null;
@@ -325,7 +325,8 @@ export default function PatientBulletinModal({
     const doctorName = doctorInfo?.nome || 'Dr. Marcelo Ramos';
     const doctorCrm = doctorInfo?.crm ? `CRM-${doctorInfo?.ufCrm || 'SP'} ${doctorInfo?.crm}` : 'CRM-SP 654321';
 
-    const dataObj = dataReferencia ? new Date(dataReferencia + 'T12:00:00') : new Date();
+    const cleanDateRef = normalizeDateToString(dataReferencia);
+    const dataObj = cleanDateRef ? new Date(cleanDateRef + 'T12:00:00') : new Date();
     const mesFormatado = dataObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
     const mesCapitalizado = mesFormatado.charAt(0).toUpperCase() + mesFormatado.slice(1);
 
@@ -682,7 +683,7 @@ export default function PatientBulletinModal({
               >
                 {historico.map((h, idx) => (
                   <option key={idx} value={idx}>
-                    {h.dataExame ? new Date(h.dataExame + 'T12:00:00').toLocaleDateString('pt-BR') : `Coleta ${idx + 1}`} {idx === 0 ? '(Mais Recente)' : ''}
+                    {h.dataExame ? safeFormatDate(h.dataExame) : `Coleta ${idx + 1}`} {idx === 0 ? '(Mais Recente)' : ''}
                   </option>
                 ))}
               </select>

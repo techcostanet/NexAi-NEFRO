@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.96] - 2026-09-29
+### Alterações
+- Correcao critica no prontuario: renderizacao condicional de modais e blindagem total de datas e hooks
+
 ## [1.1.95] - 2026-09-29
 ### Alterações
 - Correcao critica de blindagem no prontuario: normalizacao de datas de exames laboratoriais e prevencao de falhas em dados Firestore
