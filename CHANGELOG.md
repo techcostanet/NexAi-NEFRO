@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.90] - 2026-09-29
+### Alterações
+- Implementação do Boletim Visual Lúdico para pacientes com baixa instrução
+
 ## [1.1.89] - 2026-09-28
 ### Alterações
 - feat: inclusao e edicao de prescricoes no Boletim de Saude com gravacao de historico

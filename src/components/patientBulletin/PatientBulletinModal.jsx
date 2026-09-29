@@ -17,10 +17,15 @@ import {
   Pill,
   Save,
   Plus,
-  Trash2
+  Trash2,
+  Sparkles,
+  FileText
 } from 'lucide-react';
 import PatientBulletinPrintDocument from './PatientBulletinPrintDocument';
+import PatientBulletinVisualDocument from './PatientBulletinVisualDocument';
 import PatientBulletinPdf from '../pdf/PatientBulletinPdf';
+import PatientBulletinVisualPdf from '../pdf/PatientBulletinVisualPdf';
+import { getVisualDataForCard } from './bulletinVisualCatalog';
 import { downloadPdfDocument } from '../../services/pdfService';
 import { printElement } from '../../utils/printUtils';
 import { evaluatePatientExamsForBulletin, GOAL_STATUS } from '../../services/patientEducationService';
@@ -100,6 +105,7 @@ export default function PatientBulletinModal({
   const [enabledTips, setEnabledTips] = useState({});
   const [editingTipCardId, setEditingTipCardId] = useState(null);
   const [customNote, setCustomNote] = useState('');
+  const [bulletinModel, setBulletinModel] = useState('standard'); // 'standard' | 'visual'
   const [copied, setCopied] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
@@ -333,43 +339,76 @@ export default function PatientBulletinModal({
       mensagemGeral = `Cada mês é uma nova oportunidade de recomeço e vitória. Toda a nossa equipe de Nefrologia está de mãos dadas com você para alcançarmos o melhor bem-estar possível!`;
     }
 
-    let text = `🏥 *${clinica.toUpperCase()}* • _Boletim Nefrológico_\n`;
-    text += `📋 *Boletim de Saúde*\n`;
-    text += `👤 *Paciente:* ${pacienteNome}\n`;
-    text += `📅 *Referência:* ${mesCapitalizado}\n`;
-    text += `👨‍⚕️ *Resp:* ${doctorName} (${doctorCrm})\n`;
-    text += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
+    let text = '';
 
-    if (total > 0) {
-      text += `🏆 *${tituloPlacar}*\n`;
-      text += `🌟 *${batidas} de ${total} Metas Batidas (${taxa}% de Sucesso)*\n`;
-      text += `"${mensagemGeral}"\n\n`;
-      text += `━━━━━━━━━━━━━━━━━━━━━\n`;
-      text += `*METAS DE SAÚDE AVALIADAS:*\n\n`;
+    if (bulletinModel === 'visual') {
+      text = `🏥 *${clinica.toUpperCase()}* • _Boletim Ilustrado de Saúde_\n`;
+      text += `🎨 *Boletim de Saúde*\n`;
+      text += `👤 *Paciente:* ${pacienteNome}\n`;
+      text += `📅 *Referência:* ${mesCapitalizado}\n`;
+      text += `👨‍⚕️ *Médico:* ${doctorName} (${doctorCrm})\n`;
+      text += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
-      filtered.forEach(c => {
-        const isConquista = c.status === GOAL_STATUS.CONQUISTA;
-        const isQuaseLa = c.status === GOAL_STATUS.QUASE_LA;
-        const statusBadge = isConquista ? '🟢 Conquista!' : isQuaseLa ? '🟡 Quase Lá!' : '🔴 Atenção';
+      if (total > 0) {
+        text += `🏆 *${tituloPlacar}*\n`;
+        text += `⭐ *${batidas} de ${total} Conquistas de Ouro (${taxa}% de Sucesso)*\n`;
+        text += `"${mensagemGeral}"\n\n`;
+        text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+        text += `*SUAS CONQUISTAS DO MÊS:*\n\n`;
 
-        const metaLimpa = c.faixaMeta ? (c.faixaMeta.startsWith('Meta:') ? c.faixaMeta : `Meta: ${c.faixaMeta}`) : '';
+        filtered.forEach(c => {
+          const visual = getVisualDataForCard(c);
+          const isTipEnabled = enabledTips[c.id] === true;
+          const rawTip = customTips[c.id] !== undefined ? customTips[c.id] : (c.dica || visual.acaoTexto);
+          const tipContent = rawTip ? rawTip.replace(/^["']|["']$/g, '').trim() : '';
 
-        text += `${statusBadge} *${c.subtitulo || c.categoria}*\n`;
-        text += `📊 *Resultado:* ${c.valorFormatado} | _${metaLimpa}_\n`;
+          text += `${visual.emoji} *${visual.titulo.toUpperCase()}* • ${visual.carinha} ${visual.rotuloStatus}\n`;
+          text += `👉 _${visual.mensagem}_\n`;
+          if (tipContent) {
+            text += `${visual.acaoIcone} _Dica: ${tipContent}_\n`;
+          }
+          text += `\n`;
+        });
+      }
+    } else {
+      text = `🏥 *${clinica.toUpperCase()}* • _Boletim Nefrológico_\n`;
+      text += `📋 *Boletim de Saúde*\n`;
+      text += `👤 *Paciente:* ${pacienteNome}\n`;
+      text += `📅 *Referência:* ${mesCapitalizado}\n`;
+      text += `👨‍⚕️ *Resp:* ${doctorName} (${doctorCrm})\n`;
+      text += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
 
-        const isTipEnabled = enabledTips[c.id] === true;
-        const rawTip = customTips[c.id] !== undefined ? customTips[c.id] : (c.dica || c.mensagem);
-        const tipContent = rawTip ? rawTip.replace(/^["']|["']$/g, '').trim() : '';
-        if (isTipEnabled && tipContent) {
-          text += `💡 _Dica: ${tipContent}_\n`;
-        }
-        text += `\n`;
-      });
+      if (total > 0) {
+        text += `🏆 *${tituloPlacar}*\n`;
+        text += `🌟 *${batidas} de ${total} Metas Batidas (${taxa}% de Sucesso)*\n`;
+        text += `"${mensagemGeral}"\n\n`;
+        text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+        text += `*METAS DE SAÚDE AVALIADAS:*\n\n`;
+
+        filtered.forEach(c => {
+          const isConquista = c.status === GOAL_STATUS.CONQUISTA;
+          const isQuaseLa = c.status === GOAL_STATUS.QUASE_LA;
+          const statusBadge = isConquista ? '🟢 Conquista!' : isQuaseLa ? '🟡 Quase Lá!' : '🔴 Atenção';
+
+          const metaLimpa = c.faixaMeta ? (c.faixaMeta.startsWith('Meta:') ? c.faixaMeta : `Meta: ${c.faixaMeta}`) : '';
+
+          text += `${statusBadge} *${c.subtitulo || c.categoria}*\n`;
+          text += `📊 *Resultado:* ${c.valorFormatado} | _${metaLimpa}_\n`;
+
+          const isTipEnabled = enabledTips[c.id] === true;
+          const rawTip = customTips[c.id] !== undefined ? customTips[c.id] : (c.dica || c.mensagem);
+          const tipContent = rawTip ? rawTip.replace(/^["']|["']$/g, '').trim() : '';
+          if (isTipEnabled && tipContent) {
+            text += `💡 _Dica: ${tipContent}_\n`;
+          }
+          text += `\n`;
+        });
+      }
     }
 
     if (includePrescription && activePrescriptionItems.length > 0) {
       text += `━━━━━━━━━━━━━━━━━━━━━\n`;
-      text += `💊 *PRESCRIÇÃO MÉDICA ATUALIZADA:*\n`;
+      text += `💊 *SEUS REMÉDIOS DO DIA:*\n`;
       activePrescriptionItems.forEach(it => {
         const via = it.via ? `[${it.via}] ` : '';
         const poso = it.posologia ? ` - ${it.posologia}` : '';
@@ -407,8 +446,21 @@ export default function PatientBulletinModal({
       }
 
       const safeName = (patient.nome || 'Paciente').replace(/\s+/g, '_');
-      const fileName = `Boletim_Saude_${safeName}.pdf`;
-      await downloadPdfDocument(
+      const isVisual = bulletinModel === 'visual';
+      const fileName = isVisual ? `Boletim_Visual_${safeName}.pdf` : `Boletim_Saude_${safeName}.pdf`;
+
+      const PdfElement = isVisual ? (
+        <PatientBulletinVisualPdf
+          bulletinData={bulletinData}
+          doctorInfo={doctorInfo}
+          customNote={customNote}
+          selectedCardIds={activeCardIds}
+          enabledTips={enabledTips}
+          customTips={customTips}
+          includePrescription={includePrescription}
+          prescriptionItems={activePrescriptionItems}
+        />
+      ) : (
         <PatientBulletinPdf
           bulletinData={bulletinData}
           doctorInfo={doctorInfo}
@@ -418,9 +470,10 @@ export default function PatientBulletinModal({
           customTips={customTips}
           includePrescription={includePrescription}
           prescriptionItems={activePrescriptionItems}
-        />,
-        fileName
+        />
       );
+
+      await downloadPdfDocument(PdfElement, fileName);
     } catch (err) {
       console.error('Falha ao baixar PDF do boletim:', err);
       printElement('printable-patient-bulletin-doc');
@@ -434,7 +487,8 @@ export default function PatientBulletinModal({
     if (includePrescription && isPrescriptionModified && activePrescriptionItems.length > 0) {
       await handleSaveNewPrescription();
     }
-    printElement('printable-patient-bulletin-doc', `Boletim de Saúde - ${patient.nome || ''}`);
+    const docTitle = bulletinModel === 'visual' ? `Boletim Visual - ${patient.nome || ''}` : `Boletim de Saúde - ${patient.nome || ''}`;
+    printElement('printable-patient-bulletin-doc', docTitle);
   };
 
   return (
@@ -493,6 +547,64 @@ export default function PatientBulletinModal({
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Seletor de Modelo do Boletim (Regra de 1 palavra: Padrão | Visual) */}
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              background: '#e2e8f0',
+              padding: '3px',
+              borderRadius: '8px',
+              border: '1px solid #cbd5e1',
+              marginRight: '6px'
+            }}>
+              <button 
+                type="button"
+                onClick={() => setBulletinModel('standard')}
+                style={{
+                  padding: '4px 10px',
+                  fontSize: '0.74rem',
+                  fontWeight: '700',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: bulletinModel === 'standard' ? '#ffffff' : 'transparent',
+                  color: bulletinModel === 'standard' ? '#1d4ed8' : '#64748b',
+                  boxShadow: bulletinModel === 'standard' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+                title="Modelo analítico padrão com valores laboratoriais detalhados"
+              >
+                <FileText size={13} color={bulletinModel === 'standard' ? '#1d4ed8' : '#94a3b8'} />
+                <span>Padrão</span>
+              </button>
+              <button 
+                type="button"
+                onClick={() => setBulletinModel('visual')}
+                style={{
+                  padding: '4px 10px',
+                  fontSize: '0.74rem',
+                  fontWeight: '700',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: bulletinModel === 'visual' ? '#ffffff' : 'transparent',
+                  color: bulletinModel === 'visual' ? '#b45309' : '#64748b',
+                  boxShadow: bulletinModel === 'visual' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+                title="Modelo lúdico e pictográfico para pacientes com baixa instrução"
+              >
+                <Sparkles size={13} color={bulletinModel === 'visual' ? '#d97706' : '#94a3b8'} />
+                <span>Visual</span>
+              </button>
+            </div>
+
             <button 
               type="button"
               onClick={handleCopyWhatsApp}
@@ -1033,16 +1145,29 @@ export default function PatientBulletinModal({
                 transition: 'all 0.2s ease'
               }}
             >
-              <PatientBulletinPrintDocument 
-                bulletinData={bulletinData}
-                doctorInfo={doctorInfo}
-                customNote={customNote}
-                selectedCardIds={activeCardIds}
-                enabledTips={enabledTips}
-                customTips={customTips}
-                includePrescription={includePrescription}
-                prescriptionItems={activePrescriptionItems}
-              />
+              {bulletinModel === 'visual' ? (
+                <PatientBulletinVisualDocument 
+                  bulletinData={bulletinData}
+                  doctorInfo={doctorInfo}
+                  customNote={customNote}
+                  selectedCardIds={activeCardIds}
+                  enabledTips={enabledTips}
+                  customTips={customTips}
+                  includePrescription={includePrescription}
+                  prescriptionItems={activePrescriptionItems}
+                />
+              ) : (
+                <PatientBulletinPrintDocument 
+                  bulletinData={bulletinData}
+                  doctorInfo={doctorInfo}
+                  customNote={customNote}
+                  selectedCardIds={activeCardIds}
+                  enabledTips={enabledTips}
+                  customTips={customTips}
+                  includePrescription={includePrescription}
+                  prescriptionItems={activePrescriptionItems}
+                />
+              )}
             </div>
           </div>
 

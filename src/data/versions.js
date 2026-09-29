@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.90",
+    "date": "29/09/2026",
+    "title": "Implementação do Boletim Visual Lúdico para pacientes com baixa instrução",
+    "highlights": [
+      "✨ Implementação do Boletim Visual Lúdico para pacientes com baixa instrução"
+    ]
+  },
+  {
     "version": "1.1.89",
     "date": "28/09/2026",
     "title": "feat: inclusao e edicao de prescricoes no Boletim de Saude com gravacao de hi...",
