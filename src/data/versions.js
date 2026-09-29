@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.93",
+    "date": "29/09/2026",
+    "title": "Painel laboratorial consolidando ultimo resultado valido de cada exame coletado",
+    "highlights": [
+      "✨ Painel laboratorial consolidando ultimo resultado valido de cada exame coletado"
+    ]
+  },
+  {
     "version": "1.1.92",
     "date": "29/09/2026",
     "title": "Boletim Visual: frases e dicas condicionadas estritamente a opcao Exibir com ...",

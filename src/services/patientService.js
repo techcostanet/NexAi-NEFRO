@@ -385,6 +385,98 @@ export async function savePatient(patientData) {
 }
 
 /**
+ * Consolida os exames mais recentes de um paciente a partir do histórico cronológico.
+ * Como exames laboratoriais em nefrologia/hemodiálise possuem periodicidades distintas
+ * (mensais, trimestrais, semestrais e anuais), esta função garante que cada exame
+ * retenha o último resultado válido/coletado disponível.
+ */
+export function consolidatePatientExams(historicoExames = [], fallbackExames = {}) {
+  const EXAM_KEYS = [
+    'hb', 'ht', 'ist', 'ferritina', 'ferro', 'transferrina', 'leucocitos', 'plaquetas',
+    'pth', 'fosforo', 'ca', 'vitD', 'fa',
+    'k', 'na', 'hco3',
+    'ktv', 'ureiaPre', 'ureiaPos', 'ur',
+    'creatinina', 'albumina', 'pcr',
+    'glicemia', 'hba1c', 'tgp', 'tgo',
+    'hbsag', 'antiHbs', 'antiHcv', 'antiHbc', 'hiv'
+  ];
+
+  const ALIAS_MAP = {
+    hemoglobina: 'hb',
+    hematocrito: 'ht',
+    calcio: 'ca',
+    vitaminaD: 'vitD',
+    fosfAlcalina: 'fa',
+    potassio: 'k',
+    sodio: 'na',
+    bicarbonato: 'hco3',
+    albuminaSerica: 'albumina',
+    glicemiaJejum: 'glicemia',
+    hba1cGlicada: 'hba1c'
+  };
+
+  const consolidados = {};
+  const datas = {};
+
+  const isValidValue = (v) => v !== null && v !== undefined && v !== '' && v !== '-';
+
+  const sorted = Array.isArray(historicoExames)
+    ? [...historicoExames].sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0))
+    : [];
+
+  // 1. Percorre histórico do mais recente ao mais antigo
+  for (const item of sorted) {
+    if (!item || typeof item !== 'object') continue;
+    const dataColeta = item.dataExame || null;
+
+    // Campos diretos e canônicos
+    for (const key of EXAM_KEYS) {
+      if (consolidados[key] === undefined) {
+        if (isValidValue(item[key])) {
+          consolidados[key] = item[key];
+          if (dataColeta) datas[key] = dataColeta;
+        }
+      }
+    }
+
+    // Tratamento de aliases comuns
+    for (const [alias, canonical] of Object.entries(ALIAS_MAP)) {
+      if (consolidados[canonical] === undefined && isValidValue(item[alias])) {
+        consolidados[canonical] = item[alias];
+        if (dataColeta) datas[canonical] = dataColeta;
+      }
+    }
+
+    // Chaves adicionais
+    for (const [k, v] of Object.entries(item)) {
+      if (['id', '_originalIndex', 'dataExame', 'registradoEm', 'observacoes', 'hemocultura', 'medicamentos'].includes(k)) {
+        continue;
+      }
+      if (consolidados[k] === undefined && isValidValue(v)) {
+        consolidados[k] = v;
+        if (dataColeta) datas[k] = dataColeta;
+      }
+    }
+  }
+
+  // 2. Fallback para valores já presentes em fallbackExames
+  if (fallbackExames && typeof fallbackExames === 'object') {
+    for (const [k, v] of Object.entries(fallbackExames)) {
+      const canonicalKey = ALIAS_MAP[k] || k;
+      if (consolidados[canonicalKey] === undefined && isValidValue(v)) {
+        consolidados[canonicalKey] = v;
+      }
+    }
+  }
+
+  // Sincroniza aliases bidirecionais comuns (fa <-> fosfAlcalina)
+  if (consolidados.fa && !consolidados.fosfAlcalina) consolidados.fosfAlcalina = consolidados.fa;
+  if (consolidados.fosfAlcalina && !consolidados.fa) consolidados.fa = consolidados.fosfAlcalina;
+
+  return { consolidados, datas };
+}
+
+/**
  * Adiciona ou atualiza um exame com data no histórico do paciente no Firestore
  */
 export async function savePatientExam(patientId, examData, examIndex = null) {
@@ -412,45 +504,13 @@ export async function savePatientExam(patientId, examData, examIndex = null) {
   // Ordena por data do mais recente para o mais antigo
   historico.sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
 
-  // O exame mais recente é colocado como os exames atuais do paciente
-  const latestExam = historico[0] || examRecord;
+  // Consolidação cumulativa: sempre retém o último resultado válido de cada exame
+  const { consolidados } = consolidatePatientExams(historico, patient.exames);
 
   const updatePayload = {
     historicoExames: historico,
-    exames: {
-      hb: latestExam.hb !== undefined ? latestExam.hb : (patient.exames?.hb || null),
-      ht: latestExam.ht !== undefined ? latestExam.ht : (patient.exames?.ht || null),
-      ist: latestExam.ist !== undefined ? latestExam.ist : (patient.exames?.ist || null),
-      ferritina: latestExam.ferritina !== undefined ? latestExam.ferritina : (patient.exames?.ferritina || null),
-      pth: latestExam.pth !== undefined ? latestExam.pth : (patient.exames?.pth || null),
-      fosforo: latestExam.fosforo !== undefined ? latestExam.fosforo : (patient.exames?.fosforo || null),
-      ca: latestExam.ca !== undefined ? latestExam.ca : (patient.exames?.ca || null),
-      vitD: latestExam.vitD !== undefined ? latestExam.vitD : (patient.exames?.vitD || null),
-      fa: latestExam.fa !== undefined ? latestExam.fa : (patient.exames?.fa || null),
-      k: latestExam.k !== undefined ? latestExam.k : (patient.exames?.k || null),
-      na: latestExam.na !== undefined ? latestExam.na : (patient.exames?.na || null),
-      hco3: latestExam.hco3 !== undefined ? latestExam.hco3 : (patient.exames?.hco3 || null),
-      ktv: latestExam.ktv !== undefined ? latestExam.ktv : (patient.exames?.ktv || null),
-      ureiaPre: latestExam.ureiaPre !== undefined ? latestExam.ureiaPre : (patient.exames?.ureiaPre || null),
-      ureiaPos: latestExam.ureiaPos !== undefined ? latestExam.ureiaPos : (patient.exames?.ureiaPos || null),
-      creatinina: latestExam.creatinina !== undefined ? latestExam.creatinina : (patient.exames?.creatinina || null),
-      albumina: latestExam.albumina !== undefined ? latestExam.albumina : (patient.exames?.albumina || null),
-      pcr: latestExam.pcr !== undefined ? latestExam.pcr : (patient.exames?.pcr || null),
-      glicemia: latestExam.glicemia !== undefined ? latestExam.glicemia : (patient.exames?.glicemia || null),
-      hba1c: latestExam.hba1c !== undefined ? latestExam.hba1c : (patient.exames?.hba1c || null),
-      tgp: latestExam.tgp !== undefined ? latestExam.tgp : (patient.exames?.tgp || null),
-      tgo: latestExam.tgo !== undefined ? latestExam.tgo : (patient.exames?.tgo || null),
-      ferro: latestExam.ferro !== undefined ? latestExam.ferro : (patient.exames?.ferro || null),
-      transferrina: latestExam.transferrina !== undefined ? latestExam.transferrina : (patient.exames?.transferrina || null),
-      leucocitos: latestExam.leucocitos !== undefined ? latestExam.leucocitos : (patient.exames?.leucocitos || null),
-      plaquetas: latestExam.plaquetas !== undefined ? latestExam.plaquetas : (patient.exames?.plaquetas || null),
-      hbsag: latestExam.hbsag !== undefined ? latestExam.hbsag : (patient.exames?.hbsag || null),
-      antiHbs: latestExam.antiHbs !== undefined ? latestExam.antiHbs : (patient.exames?.antiHbs || null),
-      antiHcv: latestExam.antiHcv !== undefined ? latestExam.antiHcv : (patient.exames?.antiHcv || null),
-      antiHbc: latestExam.antiHbc !== undefined ? latestExam.antiHbc : (patient.exames?.antiHbc || null),
-      hiv: latestExam.hiv !== undefined ? latestExam.hiv : (patient.exames?.hiv || null)
-    },
-    medicamentos: (patient.medicamentos && (Array.isArray(patient.medicamentos) ? patient.medicamentos.length > 0 : Object.keys(patient.medicamentos).length > 0)) ? patient.medicamentos : (latestExam.medicamentos || []),
+    exames: consolidados,
+    medicamentos: (patient.medicamentos && (Array.isArray(patient.medicamentos) ? patient.medicamentos.length > 0 : Object.keys(patient.medicamentos).length > 0)) ? patient.medicamentos : (examRecord.medicamentos || []),
     atualizadoEm: new Date().toISOString()
   };
 
@@ -470,9 +530,16 @@ export async function deletePatientExam(patientId, examIndex) {
   const historico = [...patient.historicoExames];
   historico.splice(examIndex, 1);
 
+  // Ordena por data do mais recente para o mais antigo
+  historico.sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
+
+  // Recalcula a consolidação de exames após a remoção
+  const { consolidados } = consolidatePatientExams(historico, {});
+
   const docRef = doc(db, PATIENTS_COLLECTION, patientId);
   await updateDoc(docRef, {
     historicoExames: historico,
+    exames: consolidados,
     atualizadoEm: new Date().toISOString()
   });
 }

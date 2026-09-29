@@ -56,7 +56,8 @@ import {
   deletePatientWeightRecord,
   deletePatientBloodCulture,
   STATUS_TRANSPLANTE_OPTIONS,
-  getAnticoagulacaoInfo
+  getAnticoagulacaoInfo,
+  consolidatePatientExams
 } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
 import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
@@ -432,15 +433,53 @@ export default function PatientProfile() {
     );
   }
 
-  const exames = patient.exames || {};
   const acessoVascular = patient.acessoVascular || {};
   const medicamentosList = normalizeMedicamentosList(patient.medicamentos);
   const historicoExames = Array.isArray(patient.historicoExames) ? patient.historicoExames : [];
   
   // Ordena histórico cronológico: coletas mais recentes no topo, preservando o índice original para edições e exclusões
-  const sortedHistoricoExames = [...historicoExames]
-    .map((item, originalIndex) => ({ ...item, _originalIndex: originalIndex }))
-    .sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
+  const sortedHistoricoExames = useMemo(() => {
+    return [...historicoExames]
+      .map((item, originalIndex) => ({ ...item, _originalIndex: originalIndex }))
+      .sort((a, b) => new Date(b.dataExame || 0) - new Date(a.dataExame || 0));
+  }, [historicoExames]);
+
+  // Consolidação de exames: exibe sempre o último resultado de cada exame coletado (mensal, trimestral, semestral e anual)
+  const { consolidados: ultimosExames, datas: ultimosExamesDatas } = useMemo(() => {
+    return consolidatePatientExams(sortedHistoricoExames, patient.exames);
+  }, [sortedHistoricoExames, patient.exames]);
+
+  const exames = ultimosExames;
+  const dataUltimaColetaGeral = sortedHistoricoExames[0]?.dataExame || null;
+
+  // Helper para renderizar tag sutil da data caso o exame venha de uma coleta anterior à mais recente
+  const renderColetaBadge = (examKey) => {
+    const dataColeta = ultimosExamesDatas[examKey];
+    if (!dataColeta) return null;
+    if (dataUltimaColetaGeral && dataColeta !== dataUltimaColetaGeral) {
+      const parts = dataColeta.split('-');
+      const shortDate = parts.length === 3 ? `${parts[2]}/${parts[1]}` : dataColeta;
+      return (
+        <span 
+          style={{ 
+            fontSize: '0.62rem', 
+            color: '#64748b', 
+            backgroundColor: '#f1f5f9', 
+            padding: '1px 5px', 
+            borderRadius: '4px', 
+            marginLeft: '5px',
+            fontWeight: 'normal',
+            border: '1px solid #e2e8f0',
+            verticalAlign: 'middle'
+          }} 
+          title={`Coleta anterior deste exame: ${safeFormatDate(dataColeta)}`}
+        >
+          {shortDate}
+        </span>
+      );
+    }
+    return null;
+  };
 
   const evolucoes = Array.isArray(patient.evolucoes) ? patient.evolucoes : [];
   const receitas = Array.isArray(patient.receitas) ? patient.receitas : [];
@@ -2092,7 +2131,7 @@ export default function PatientProfile() {
                 <FlaskConical size={18} color="var(--primary)" />
                 <span>Painel Laboratorial</span>
               </h2>
-              <p className="text-xs text-muted">Metas KDIGO/SBN</p>
+              <p className="text-xs text-muted">Metas KDIGO/SBN • Últimos resultados consolidados</p>
             </div>
             
             <div className="flex items-center gap-2">
@@ -2154,28 +2193,44 @@ export default function PatientProfile() {
               </div>
               
               <div className="flex flex-col gap-1.5 text-xs">
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.hb ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.hb)}` : undefined}
+                >
                   <span className="text-muted">Hemoglobina:</span>
                   <strong style={{ color: evaluateExam('hb', exames.hb).color, fontWeight: 'bold' }}>
                     {exames.hb ? `${exames.hb} g/dL` : '-'} <span className="text-muted font-normal text-2xs">(10-12)</span>
+                    {renderColetaBadge('hb')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.ht ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.ht)}` : undefined}
+                >
                   <span className="text-muted">Hematócrito:</span>
                   <strong style={{ color: evaluateExam('ht', exames.ht).color, fontWeight: 'bold' }}>
                     {exames.ht ? `${exames.ht}%` : '-'} <span className="text-muted font-normal text-2xs">(30-36%)</span>
+                    {renderColetaBadge('ht')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.ist ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.ist)}` : undefined}
+                >
                   <span className="text-muted">IST:</span>
                   <strong style={{ color: evaluateExam('ist', exames.ist).color, fontWeight: 'bold' }}>
                     {exames.ist ? `${exames.ist}%` : '-'} <span className="text-muted font-normal text-2xs">(&gt;20%)</span>
+                    {renderColetaBadge('ist')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.ferritina ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.ferritina)}` : undefined}
+                >
                   <span className="text-muted">Ferritina:</span>
                   <strong style={{ color: evaluateExam('ferritina', exames.ferritina).color, fontWeight: 'bold' }}>
                     {exames.ferritina ? `${exames.ferritina} ng/mL` : '-'}
+                    {renderColetaBadge('ferritina')}
                   </strong>
                 </div>
               </div>
@@ -2189,22 +2244,34 @@ export default function PatientProfile() {
               </div>
               
               <div className="flex flex-col gap-1.5 text-xs">
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.pth ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.pth)}` : undefined}
+                >
                   <span className="text-muted">PTH Intacto:</span>
                   <strong style={{ color: evaluateExam('pth', exames.pth).color, fontWeight: 'bold' }}>
                     {exames.pth ? `${exames.pth} pg/mL` : '-'} <span className="text-muted font-normal text-2xs">(150-600)</span>
+                    {renderColetaBadge('pth')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.fosforo ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.fosforo)}` : undefined}
+                >
                   <span className="text-muted">Fósforo:</span>
                   <strong style={{ color: evaluateExam('fosforo', exames.fosforo).color, fontWeight: 'bold' }}>
                     {exames.fosforo ? `${exames.fosforo} mg/dL` : '-'} <span className="text-muted font-normal text-2xs">(3.5-5.5)</span>
+                    {renderColetaBadge('fosforo')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.ca ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.ca)}` : undefined}
+                >
                   <span className="text-muted">Cálcio Total:</span>
                   <strong style={{ color: evaluateExam('ca', exames.ca).color, fontWeight: 'bold' }}>
                     {exames.ca ? `${exames.ca} mg/dL` : '-'} <span className="text-muted font-normal text-2xs">(8.5-10.2)</span>
+                    {renderColetaBadge('ca')}
                   </strong>
                 </div>
                 {(() => {
@@ -2219,15 +2286,25 @@ export default function PatientProfile() {
                     </div>
                   );
                 })()}
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.fa ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.fa)}` : undefined}
+                >
                   <span className="text-muted">Fosf. Alcalina:</span>
                   <strong style={{ color: evaluateExam('fa', exames.fa).color, fontWeight: 'bold' }}>
                     {exames.fa ? `${exames.fa} U/L` : '-'} <span className="text-muted font-normal text-2xs">(40-130)</span>
+                    {renderColetaBadge('fa')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.vitD ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.vitD)}` : undefined}
+                >
                   <span className="text-muted">Vitamina D:</span>
-                  <strong className="text-slate-800">{exames.vitD ? `${exames.vitD} ng/mL` : '-'}</strong>
+                  <strong className="text-slate-800">
+                    {exames.vitD ? `${exames.vitD} ng/mL` : '-'}
+                    {renderColetaBadge('vitD')}
+                  </strong>
                 </div>
               </div>
             </div>
@@ -2240,22 +2317,34 @@ export default function PatientProfile() {
               </div>
               
               <div className="flex flex-col gap-1.5 text-xs">
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.ktv ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.ktv)}` : undefined}
+                >
                   <span className="text-muted">Kt/V Dialítico:</span>
                   <strong style={{ color: evaluateExam('ktv', exames.ktv).color, fontWeight: 'bold' }}>
                     {exames.ktv || '-'} <span className="text-muted font-normal text-2xs">(&ge;1.2)</span>
+                    {renderColetaBadge('ktv')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.ureiaPre ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.ureiaPre)}` : undefined}
+                >
                   <span className="text-muted">Ureia Pré-HD:</span>
                   <strong style={{ color: evaluateExam('ureiapre', exames.ureiaPre).color, fontWeight: 'bold' }}>
                     {exames.ureiaPre ? `${exames.ureiaPre} mg/dL` : '-'}
+                    {renderColetaBadge('ureiaPre')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.ureiaPos ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.ureiaPos)}` : undefined}
+                >
                   <span className="text-muted">Ureia Pós-HD:</span>
                   <strong style={{ color: evaluateExam('ureiapos', exames.ureiaPos).color, fontWeight: 'bold' }}>
                     {exames.ureiaPos ? `${exames.ureiaPos} mg/dL` : '-'}
+                    {renderColetaBadge('ureiaPos')}
                   </strong>
                 </div>
                 {(() => {
@@ -2266,6 +2355,7 @@ export default function PatientProfile() {
                       <span className="text-emerald-900 font-medium" style={{ fontSize: '0.72rem' }}>Redução Ureia (UR%):</span>
                       <strong style={{ color: urrEval.color, fontWeight: 'bold' }}>
                         {urr !== null ? `${urr}%` : '-'} <span className="text-muted font-normal text-2xs">(&ge;65%)</span>
+                        {renderColetaBadge('ur') || renderColetaBadge('ureiaPos')}
                       </strong>
                     </div>
                   );
@@ -2281,22 +2371,34 @@ export default function PatientProfile() {
               </div>
               
               <div className="flex flex-col gap-1.5 text-xs">
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.k ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.k)}` : undefined}
+                >
                   <span className="text-muted">Potássio (K⁺):</span>
                   <strong style={{ color: evaluateExam('k', exames.k).color, fontWeight: 'bold' }}>
                     {exames.k ? `${exames.k} mEq/L` : '-'} <span className="text-muted font-normal text-2xs">(3.5-5.5)</span>
+                    {renderColetaBadge('k')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.na ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.na)}` : undefined}
+                >
                   <span className="text-muted">Sódio (Na⁺):</span>
                   <strong className="text-slate-800">
                     {exames.na ? `${exames.na} mEq/L` : '-'} <span className="text-muted font-normal text-2xs">(135-145)</span>
+                    {renderColetaBadge('na')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.hco3 ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.hco3)}` : undefined}
+                >
                   <span className="text-muted">Bicarbonato (HCO₃⁻):</span>
                   <strong style={{ color: evaluateExam('hco3', exames.hco3).color, fontWeight: 'bold' }}>
                     {exames.hco3 ? `${exames.hco3} mEq/L` : '-'} <span className="text-muted font-normal text-2xs">(22-26)</span>
+                    {renderColetaBadge('hco3')}
                   </strong>
                 </div>
               </div>
@@ -2310,21 +2412,35 @@ export default function PatientProfile() {
               </div>
               
               <div className="flex flex-col gap-1.5 text-xs">
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.albumina ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.albumina)}` : undefined}
+                >
                   <span className="text-muted">Albumina Sérica:</span>
                   <strong style={{ color: evaluateExam('albumina', exames.albumina).color, fontWeight: 'bold' }}>
                     {exames.albumina ? `${exames.albumina} g/dL` : '-'} <span className="text-muted font-normal text-2xs">(&ge;3.8)</span>
+                    {renderColetaBadge('albumina')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.pcr ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.pcr)}` : undefined}
+                >
                   <span className="text-muted">PCR (Prot. C Reativa):</span>
                   <strong style={{ color: evaluateExam('pcr', exames.pcr).color, fontWeight: 'bold' }}>
                     {exames.pcr ? `${exames.pcr} mg/L` : '-'} <span className="text-muted font-normal text-2xs">(&lt;5.0)</span>
+                    {renderColetaBadge('pcr')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.creatinina ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.creatinina)}` : undefined}
+                >
                   <span className="text-muted">Creatinina (Massa):</span>
-                  <strong className="text-slate-800">{exames.creatinina ? `${exames.creatinina} mg/dL` : '-'}</strong>
+                  <strong className="text-slate-800">
+                    {exames.creatinina ? `${exames.creatinina} mg/dL` : '-'}
+                    {renderColetaBadge('creatinina')}
+                  </strong>
                 </div>
               </div>
             </div>
@@ -2337,27 +2453,45 @@ export default function PatientProfile() {
               </div>
               
               <div className="flex flex-col gap-1.5 text-xs">
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.glicemia ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.glicemia)}` : undefined}
+                >
                   <span className="text-muted">Glicemia Jejum:</span>
                   <strong style={{ color: evaluateExam('glicemia', exames.glicemia).color, fontWeight: 'bold' }}>
                     {exames.glicemia ? `${exames.glicemia} mg/dL` : '-'} <span className="text-muted font-normal text-2xs">(70-130)</span>
+                    {renderColetaBadge('glicemia')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-teal-50/70 border border-teal-200/60">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-teal-50/70 border border-teal-200/60"
+                  title={ultimosExamesDatas?.hba1c ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.hba1c)}` : undefined}
+                >
                   <span className="text-teal-900 font-medium" style={{ fontSize: '0.72rem' }}>HbA1c Glicada (%):</span>
                   <strong style={{ color: evaluateExam('hba1c', exames.hba1c).color, fontWeight: 'bold' }}>
                     {exames.hba1c ? `${exames.hba1c}%` : '-'} <span className="text-muted font-normal text-2xs">(&lt;7.0%)</span>
+                    {renderColetaBadge('hba1c')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.tgp ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.tgp)}` : undefined}
+                >
                   <span className="text-muted">TGP (ALT):</span>
                   <strong style={{ color: evaluateExam('tgp', exames.tgp).color, fontWeight: 'bold' }}>
                     {exames.tgp ? `${exames.tgp} U/L` : '-'} <span className="text-muted font-normal text-2xs">(&lt;45)</span>
+                    {renderColetaBadge('tgp')}
                   </strong>
                 </div>
-                <div className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50">
+                <div 
+                  className="flex justify-between items-center p-1.5 rounded-lg bg-slate-50"
+                  title={ultimosExamesDatas?.tgo ? `Última coleta: ${safeFormatDate(ultimosExamesDatas.tgo)}` : undefined}
+                >
                   <span className="text-muted">TGO (AST):</span>
-                  <strong className="text-slate-800">{exames.tgo ? `${exames.tgo} U/L` : '-'} <span className="text-muted font-normal text-2xs">(&lt;35)</span></strong>
+                  <strong className="text-slate-800">
+                    {exames.tgo ? `${exames.tgo} U/L` : '-'} <span className="text-muted font-normal text-2xs">(&lt;35)</span>
+                    {renderColetaBadge('tgo')}
+                  </strong>
                 </div>
               </div>
             </div>

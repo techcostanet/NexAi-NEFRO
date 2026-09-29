@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.93] - 2026-09-29
+### Alterações
+- Painel laboratorial consolidando ultimo resultado valido de cada exame coletado
+
 ## [1.1.92] - 2026-09-29
 ### Alterações
 - Boletim Visual: frases e dicas condicionadas estritamente a opcao Exibir com ajuste compacto de altura do card
