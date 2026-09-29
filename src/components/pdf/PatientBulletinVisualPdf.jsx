@@ -653,9 +653,9 @@ export default function PatientBulletinVisualPdf({
 
             const isTipEnabled = enabledTips[card.id] === true;
             const customTip = customTips[card.id];
-            const finalTip = (customTip !== undefined && customTip.trim() !== '')
+            const tipContent = (customTip !== undefined && customTip.trim() !== '')
               ? cleanPdfText(customTip)
-              : (isTipEnabled ? cleanPdfText(card.dica || visual.acaoTexto) : cleanPdfText(visual.acaoTexto));
+              : cleanPdfText(card.dica || visual.acaoTexto);
 
             return (
               <View
@@ -665,7 +665,8 @@ export default function PatientBulletinVisualPdf({
                   {
                     width: cardWidth,
                     backgroundColor: visual.bgTema,
-                    borderColor: visual.bordaTema
+                    borderColor: visual.bordaTema,
+                    padding: isTipEnabled ? 5 : 4
                   }
                 ]}
               >
@@ -681,30 +682,27 @@ export default function PatientBulletinVisualPdf({
                     </View>
                   </View>
 
-                  <View style={[styles.statusBadge, { backgroundColor: visual.bgStatus, borderColor: visual.bordaStatus }]}>
-                    {renderFaceIcon(visual.humor)}
-                    <Text style={[styles.statusText, { color: visual.corStatus }]}>
-                      {cleanPdfText(visual.rotuloStatus)}
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={[styles.techValue, { marginRight: 4 }]}>
+                      {cleanPdfText(card.valorFormatado)}
                     </Text>
+                    <View style={[styles.statusBadge, { backgroundColor: visual.bgStatus, borderColor: visual.bordaStatus }]}>
+                      {renderFaceIcon(visual.humor)}
+                      <Text style={[styles.statusText, { color: visual.corStatus }]}>
+                        {cleanPdfText(visual.rotuloStatus)}
+                      </Text>
+                    </View>
                   </View>
                 </View>
 
-                {/* Caixa de Mensagem Simples */}
-                <View style={styles.messageBox}>
-                  <Text style={styles.messageText}>
-                    {cleanPdfText(visual.mensagem)}
-                  </Text>
-                </View>
-
-                {/* Dica de Ação e Valor Técnico */}
-                <View style={styles.cardBottom}>
-                  <Text style={styles.tipText}>
-                    {finalTip}
-                  </Text>
-                  <Text style={styles.techValue}>
-                    {cleanPdfText(card.valorFormatado)}
-                  </Text>
-                </View>
+                {/* Dica de Ação (SOMENTE SE O MÉDICO MARCAR EXIBIR) */}
+                {isTipEnabled && Boolean(tipContent) && (
+                  <View style={styles.messageBox}>
+                    <Text style={styles.messageText}>
+                      "{tipContent}"
+                    </Text>
+                  </View>
+                )}
               </View>
             );
           })}

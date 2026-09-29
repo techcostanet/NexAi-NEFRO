@@ -362,9 +362,8 @@ export default function PatientBulletinModal({
           const rawTip = customTips[c.id] !== undefined ? customTips[c.id] : (c.dica || visual.acaoTexto);
           const tipContent = rawTip ? rawTip.replace(/^["']|["']$/g, '').trim() : '';
 
-          text += `${visual.emoji} *${visual.titulo.toUpperCase()}* • ${visual.carinha} ${visual.rotuloStatus}\n`;
-          text += `👉 _${visual.mensagem}_\n`;
-          if (tipContent) {
+          text += `${visual.emoji} *${visual.titulo.toUpperCase()}* • ${visual.carinha} ${visual.rotuloStatus} (${c.valorFormatado})\n`;
+          if (isTipEnabled && tipContent) {
             text += `${visual.acaoIcone} _Dica: ${tipContent}_\n`;
           }
           text += `\n`;

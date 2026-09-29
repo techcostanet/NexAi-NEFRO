@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.92] - 2026-09-29
+### Alterações
+- Boletim Visual: frases e dicas condicionadas estritamente a opcao Exibir com ajuste compacto de altura do card
+
 ## [1.1.91] - 2026-09-29
 ### Alterações
 - Icones ludicos precisos no Boletim Visual: substituicao de escudos por osso, prato com comida, copo de agua, termometro, maca, bateria e folha

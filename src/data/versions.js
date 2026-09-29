@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.92",
+    "date": "29/09/2026",
+    "title": "Boletim Visual: frases e dicas condicionadas estritamente a opcao Exibir com ...",
+    "highlights": [
+      "✨ Boletim Visual: frases e dicas condicionadas estritamente a opcao Exibir com ajuste compacto de altura do card"
+    ]
+  },
+  {
     "version": "1.1.91",
     "date": "29/09/2026",
     "title": "Icones ludicos precisos no Boletim Visual: substituicao de escudos por osso, ...",

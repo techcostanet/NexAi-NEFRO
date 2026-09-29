@@ -273,12 +273,12 @@ export default function PatientBulletinVisualDocument({
               const visual = getVisualDataForCard(card);
               if (!visual) return null;
 
-              // Dica personalizada ou do catálogo
+              // Dica personalizada ou do catálogo (SOMENTE SE HABILITADA PELO MÉDICO)
               const isTipEnabled = enabledTips[card.id] === true;
               const customTip = customTips[card.id];
-              const finalTip = (customTip !== undefined && customTip.trim() !== '')
+              const tipContent = (customTip !== undefined && customTip.trim() !== '')
                 ? customTip.replace(/^["']|["']$/g, '').trim()
-                : (isTipEnabled ? (card.dica || visual.acaoTexto) : visual.acaoTexto);
+                : (card.dica || visual.acaoTexto);
 
               return (
                 <div
@@ -287,19 +287,19 @@ export default function PatientBulletinVisualDocument({
                     background: visual.bgTema,
                     border: `1.5px solid ${visual.bordaTema}`,
                     borderRadius: '10px',
-                    padding: isSpacious ? '8px 10px' : '6px 8px',
+                    padding: isTipEnabled ? (isSpacious ? '7px 10px' : '5px 8px') : (isSpacious ? '6px 10px' : '4px 8px'),
                     display: 'flex',
                     flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    gap: isSpacious ? '4px' : '3px',
+                    justifyContent: 'center',
+                    gap: isTipEnabled ? (isSpacious ? '4px' : '3px') : '0px',
                     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                     breakInside: 'avoid',
                     pageBreakInside: 'avoid'
                   }}
                 >
-                  {/* Linha 1: Figura do Órgão + Nome Lúdico Grande + Semáforo de Carinha */}
+                  {/* Linha Principal: Figura do Órgão + Nome Lúdico + Valor Técnico + Semáforo */}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
                       {/* Ícone Lúdico em Círculo Colorido */}
                       <div style={{
                         background: '#ffffff',
@@ -316,7 +316,7 @@ export default function PatientBulletinVisualDocument({
                         {renderVisualDocIcon(visual.tema, visual.corTema, isSpacious ? 19 : 17)}
                       </div>
 
-                      <div>
+                      <div style={{ minWidth: 0 }}>
                         {/* Nome do Órgão / Sistema em Letra Grande */}
                         <strong style={{ fontSize: isSpacious ? '13px' : '11.5px', color: '#0f172a', display: 'block', lineHeight: 1.15 }}>
                           {visual.titulo}
@@ -327,79 +327,67 @@ export default function PatientBulletinVisualDocument({
                       </div>
                     </div>
 
-                    {/* Semáforo de Carinha Universal */}
-                    <div style={{
-                      background: visual.bgStatus,
-                      border: `1.5px solid ${visual.bordaStatus}`,
-                      color: visual.corStatus,
-                      padding: isSpacious ? '3px 8px' : '2px 6px',
-                      borderRadius: '16px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      flexShrink: 0
-                    }}>
-                      <span style={{ fontSize: isSpacious ? '14px' : '12px', lineHeight: 1 }}>
-                        {visual.carinha}
-                      </span>
-                      <strong style={{ fontSize: isSpacious ? '10px' : '9px', letterSpacing: '0.2px' }}>
-                        {visual.rotuloStatus}
-                      </strong>
-                    </div>
-                  </div>
-
-                  {/* Linha 2: Frase Acolhedora Simples */}
-                  <div style={{
-                    background: 'rgba(255, 255, 255, 0.85)',
-                    border: '1px solid rgba(226, 232, 240, 0.8)',
-                    borderRadius: '6px',
-                    padding: isSpacious ? '4px 7px' : '3px 6px'
-                  }}>
-                    <p style={{ margin: 0, fontSize: isSpacious ? '10.5px' : '9px', color: '#1e293b', fontWeight: '700', lineHeight: 1.25 }}>
-                      {visual.mensagem}
-                    </p>
-                  </div>
-
-                  {/* Linha 3: Dica Prática de Ação com Figura */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '4px',
-                    paddingTop: '2px'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1, minWidth: 0 }}>
-                      <span style={{ fontSize: isSpacious ? '12px' : '11px', flexShrink: 0 }}>
-                        {visual.acaoIcone}
-                      </span>
-                      <span style={{ 
-                        fontSize: isSpacious ? '9px' : '8px', 
-                        color: '#475569', 
-                        fontWeight: '600', 
-                        lineHeight: 1.2,
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis'
-                      }}>
-                        {finalTip}
-                      </span>
-                    </div>
-
-                    {/* Registro Técnico Pequeno e Discreto para Médico / Familiar */}
-                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    {/* Lado Direito: Valor Técnico + Semáforo de Carinha Universal */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                       <span style={{
                         fontSize: '7.5px',
-                        color: '#94a3b8',
-                        background: '#f8fafc',
-                        border: '1px solid #e2e8f0',
-                        padding: '1px 4px',
+                        color: '#64748b',
+                        background: '#ffffff',
+                        border: '1px solid #cbd5e1',
+                        padding: '1px 5px',
                         borderRadius: '4px',
-                        fontFamily: 'monospace'
+                        fontFamily: 'monospace',
+                        fontWeight: 'bold'
                       }}>
                         {card.valorFormatado}
                       </span>
+
+                      <div style={{
+                        background: visual.bgStatus,
+                        border: `1.5px solid ${visual.bordaStatus}`,
+                        color: visual.corStatus,
+                        padding: isSpacious ? '3px 8px' : '2px 6px',
+                        borderRadius: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}>
+                        <span style={{ fontSize: isSpacious ? '14px' : '12px', lineHeight: 1 }}>
+                          {visual.carinha}
+                        </span>
+                        <strong style={{ fontSize: isSpacious ? '10px' : '9px', letterSpacing: '0.2px' }}>
+                          {visual.rotuloStatus}
+                        </strong>
+                      </div>
                     </div>
                   </div>
+
+                  {/* Linha de Dica (SOMENTE SE O MÉDICO MARCAR "EXIBIR") */}
+                  {isTipEnabled && Boolean(tipContent) && (
+                    <div style={{
+                      background: 'rgba(255, 255, 255, 0.9)',
+                      border: '1px solid rgba(226, 232, 240, 0.9)',
+                      borderRadius: '6px',
+                      padding: isSpacious ? '3px 7px' : '2px 6px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      marginTop: '2px'
+                    }}>
+                      <span style={{ fontSize: isSpacious ? '12px' : '11px', flexShrink: 0 }}>
+                        {visual.acaoIcone}
+                      </span>
+                      <p style={{
+                        margin: 0,
+                        fontSize: isSpacious ? '9.5px' : '8.5px',
+                        color: '#1e293b',
+                        fontWeight: '600',
+                        lineHeight: 1.25
+                      }}>
+                        "{tipContent}"
+                      </p>
+                    </div>
+                  )}
 
                 </div>
               );
