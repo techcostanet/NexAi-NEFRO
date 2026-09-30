@@ -36,8 +36,6 @@ export default function ReportsCenterModal({
   locaisList = [],
   doctorId = null
 }) {
-  if (!isOpen) return null;
-
   // Identificador do médico ativo para isolamento absoluto multi-tenant
   const effectiveDoctorId = doctorId || doctor?.id || doctor?.uid || (doctor?.nome ? 'dr-marcelo' : null);
 
@@ -206,6 +204,8 @@ export default function ReportsCenterModal({
       default: return <FileText size={15} color="#64748b" />;
     }
   };
+
+  if (!isOpen) return null;
 
   return (
     <div

@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.97",
+    "date": "29/09/2026",
+    "title": "Correcao do erro ReferenceError useMemo e ordenacao de hooks no prontuario",
+    "highlights": [
+      "✨ Correcao do erro ReferenceError useMemo e ordenacao de hooks no prontuario"
+    ]
+  },
+  {
     "version": "1.1.96",
     "date": "29/09/2026",
     "title": "Correcao critica no prontuario: renderizacao condicional de modais e blindage...",

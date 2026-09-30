@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.97] - 2026-09-30
+### Alterações
+- Correcao do erro ReferenceError useMemo e ordenacao de hooks no prontuario
+
 ## [1.1.96] - 2026-09-29
 ### Alterações
 - Correcao critica no prontuario: renderizacao condicional de modais e blindagem total de datas e hooks

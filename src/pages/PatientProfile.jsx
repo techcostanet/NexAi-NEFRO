@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -415,6 +415,26 @@ export default function PatientProfile() {
     }
   };
 
+  // Ordena histórico cronológico: coletas mais recentes no topo, preservando o índice original para edições e exclusões
+  const sortedHistoricoExames = useMemo(() => {
+    const list = Array.isArray(patient?.historicoExames) ? patient.historicoExames : [];
+    return [...list]
+      .filter(item => item && typeof item === 'object')
+      .map((item, originalIndex) => ({ ...item, _originalIndex: originalIndex }))
+      .sort((a, b) => getExamTime(b.dataExame) - getExamTime(a.dataExame));
+  }, [patient?.historicoExames]);
+
+  // Consolidação de exames: exibe sempre o último resultado de cada exame coletado (mensal, trimestral, semestral e anual)
+  const { consolidados: ultimosExames = {}, datas: ultimosExamesDatas = {} } = useMemo(() => {
+    if (!patient) return { consolidados: {}, datas: {} };
+    try {
+      return consolidatePatientExams(sortedHistoricoExames, patient.exames || {}) || { consolidados: {}, datas: {} };
+    } catch (err) {
+      console.error("Erro ao consolidar exames do paciente:", err);
+      return { consolidados: patient.exames || {}, datas: {} };
+    }
+  }, [sortedHistoricoExames, patient]);
+
   if (loading) {
     return (
       <div className="container flex items-center justify-center h-screen flex-col gap-4">
@@ -436,26 +456,7 @@ export default function PatientProfile() {
   const acessoVascular = patient.acessoVascular || {};
   const medicamentosList = normalizeMedicamentosList(patient.medicamentos);
   const historicoExames = Array.isArray(patient.historicoExames) ? patient.historicoExames : [];
-  
-  // Ordena histórico cronológico: coletas mais recentes no topo, preservando o índice original para edições e exclusões
-  const sortedHistoricoExames = useMemo(() => {
-    return [...historicoExames]
-      .filter(item => item && typeof item === 'object')
-      .map((item, originalIndex) => ({ ...item, _originalIndex: originalIndex }))
-      .sort((a, b) => getExamTime(b.dataExame) - getExamTime(a.dataExame));
-  }, [historicoExames]);
-
-  // Consolidação de exames: exibe sempre o último resultado de cada exame coletado (mensal, trimestral, semestral e anual)
-  const { consolidados: ultimosExames = {}, datas: ultimosExamesDatas = {} } = useMemo(() => {
-    try {
-      return consolidatePatientExams(sortedHistoricoExames, patient?.exames || {}) || { consolidados: {}, datas: {} };
-    } catch (err) {
-      console.error("Erro ao consolidar exames do paciente:", err);
-      return { consolidados: patient?.exames || {}, datas: {} };
-    }
-  }, [sortedHistoricoExames, patient?.exames]);
-
-  const exames = ultimosExames || patient?.exames || {};
+  const exames = ultimosExames || patient.exames || {};
   const dataUltimaColetaGeral = sortedHistoricoExames[0]?.dataExame || null;
 
   // Helper para renderizar tag sutil da data caso o exame venha de uma coleta anterior à mais recente
