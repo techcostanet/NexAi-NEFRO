@@ -310,19 +310,19 @@ export default function VascularAccessTab({
           </div>
 
           <div className="flex flex-col gap-2 text-xs">
-            <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-              <span className="text-muted">Local:</span>
-              <strong className="text-slate-800 font-semibold">{acessoVascular.ladoMembro || 'Não informado'}</strong>
+            <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+              <span className="text-muted shrink-0">Local:</span>
+              <strong className="text-slate-800 font-semibold text-right">{acessoVascular.ladoMembro || 'Não informado'}</strong>
             </div>
-            <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-              <span className="text-muted">Confecção:</span>
-              <strong className="text-slate-800 font-semibold">
+            <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+              <span className="text-muted shrink-0">Confecção:</span>
+              <strong className="text-slate-800 font-semibold text-right">
                 {acessoVascular.dataConfeccao ? safeFormatDate(acessoVascular.dataConfeccao) : 'Não informada'}
               </strong>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted">Tempo em Uso:</span>
-              <strong className="text-blue-700 font-semibold">{accessAge || 'Recente'}</strong>
+            <div className="flex justify-between items-center gap-3">
+              <span className="text-muted shrink-0">Tempo em Uso:</span>
+              <strong className="text-blue-700 font-semibold text-right">{accessAge || 'Recente'}</strong>
             </div>
           </div>
         </div>
@@ -359,21 +359,21 @@ export default function VascularAccessTab({
           </div>
 
           <div className="flex flex-col gap-2 text-xs">
-            <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-              <span className="text-muted">Qb (Fluxo Sangue):</span>
-              <strong className="text-slate-800 font-semibold">
+            <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+              <span className="text-muted shrink-0">Qb (Fluxo Sangue):</span>
+              <strong className="text-slate-800 font-semibold text-right">
                 {acessoVascular.fluxoSangue ? `${acessoVascular.fluxoSangue} ml/min` : '-'}
               </strong>
             </div>
-            <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-              <span className="text-muted">Qd (Dialisato):</span>
-              <strong className="text-slate-800 font-semibold">
+            <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+              <span className="text-muted shrink-0">Qd (Dialisato):</span>
+              <strong className="text-slate-800 font-semibold text-right">
                 {acessoVascular.fluxoDialisato ? `${acessoVascular.fluxoDialisato} ml/min` : '-'}
               </strong>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted">Calibre:</span>
-              <strong className="text-slate-800 font-semibold">
+            <div className="flex justify-between items-center gap-3">
+              <span className="text-muted shrink-0">Calibre:</span>
+              <strong className="text-slate-800 font-semibold text-right">
                 {acessoVascular.agulha || (isCatheter ? 'Permcath Duplo' : '16G')}
               </strong>
             </div>
@@ -412,16 +412,16 @@ export default function VascularAccessTab({
           </div>
 
           <div className="flex flex-col gap-2 text-xs">
-            <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-              <span className="text-muted">Último Evento:</span>
+            <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+              <span className="text-muted shrink-0">Último Evento:</span>
               <strong className="text-slate-800 font-semibold truncate max-w-[60%] text-right">
                 {historicoAcesso[0] 
                   ? `${safeFormatDate(historicoAcesso[0].data)} (${historicoAcesso[0].tipoEvento})`
                   : 'Nenhum lançamento'}
               </strong>
             </div>
-            <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-              <span className="text-muted">Anticoagulação:</span>
+            <div className="flex justify-between items-start gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+              <span className="text-muted shrink-0">Anticoagulação:</span>
               <strong 
                 className="font-semibold text-right"
                 style={{ color: anticoagulacaoInfo.isSemHeparina ? '#dc2626' : '#334155' }}
@@ -429,8 +429,8 @@ export default function VascularAccessTab({
                 {anticoagulacaoInfo.textoCompleto || 'Heparina'}
               </strong>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-muted">Condição:</span>
+            <div className="flex justify-between items-center gap-3">
+              <span className="text-muted shrink-0">Condição:</span>
               <span className="text-emerald-700 font-medium inline-flex items-center gap-1">
                 <CheckCircle2 size={13} />
                 <span>Em atividade</span>

@@ -1561,17 +1561,17 @@ export default function PatientProfile() {
               </div>
 
               <div className="flex flex-col gap-2 text-xs">
-                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Acesso:</span>
-                  <strong className="text-slate-800 font-semibold">{acessoVascular.tipo || 'Não informado'}</strong>
+                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Acesso:</span>
+                  <strong className="text-slate-800 font-semibold text-right">{acessoVascular.tipo || 'Não informado'}</strong>
                 </div>
-                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Local:</span>
-                  <strong className="text-slate-800 font-semibold">{acessoVascular.ladoMembro || '-'}</strong>
+                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Local:</span>
+                  <strong className="text-slate-800 font-semibold text-right">{acessoVascular.ladoMembro || '-'}</strong>
                 </div>
                 {acessoVascular.ultimaIntervencao && (
-                  <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                    <span className="text-muted">Último Evento:</span>
+                  <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted shrink-0">Último Evento:</span>
                     <span 
                       className="text-blue-700 font-semibold text-right cursor-pointer hover:underline truncate max-w-[65%]" 
                       onClick={() => setActiveTab('acesso')}
@@ -1581,28 +1581,28 @@ export default function PatientProfile() {
                     </span>
                   </div>
                 )}
-                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Qb (Sangue):</span>
-                  <strong className="text-slate-800 font-semibold">{acessoVascular.fluxoSangue ? `${acessoVascular.fluxoSangue} ml/min` : '-'}</strong>
+                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Qb (Sangue):</span>
+                  <strong className="text-slate-800 font-semibold text-right">{acessoVascular.fluxoSangue ? `${acessoVascular.fluxoSangue} ml/min` : '-'}</strong>
                 </div>
-                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Qd (Dialisato):</span>
-                  <strong className="text-slate-800 font-semibold">{acessoVascular.fluxoDialisato ? `${acessoVascular.fluxoDialisato} ml/min` : '-'}</strong>
+                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Qd (Dialisato):</span>
+                  <strong className="text-slate-800 font-semibold text-right">{acessoVascular.fluxoDialisato ? `${acessoVascular.fluxoDialisato} ml/min` : '-'}</strong>
                 </div>
-                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Agulha:</span>
-                  <strong className="text-slate-800 font-semibold">{acessoVascular.agulha || '-'}</strong>
+                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Agulha:</span>
+                  <strong className="text-slate-800 font-semibold text-right">{acessoVascular.agulha || '-'}</strong>
                 </div>
-                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Anticoagulação:</span>
-                  <strong className="text-slate-800 font-semibold" style={{ color: anticoagulacaoInfo.isSemHeparina ? '#dc2626' : 'inherit' }}>
+                <div className="flex justify-between items-start gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Anticoagulação:</span>
+                  <strong className="text-slate-800 font-semibold text-right" style={{ color: anticoagulacaoInfo.isSemHeparina ? '#dc2626' : 'inherit' }}>
                     {anticoagulacaoInfo.textoCompleto}
                   </strong>
                 </div>
                 {anticoagulacaoInfo.observacoes && (
-                  <div className="flex justify-between">
-                    <span className="text-muted">Conduta:</span>
-                    <span className="text-slate-700 font-medium text-right text-xs max-w-[65%]">
+                  <div className="flex justify-between items-start gap-3">
+                    <span className="text-muted shrink-0">Conduta:</span>
+                    <span className="text-slate-700 font-medium text-right text-xs">
                       {anticoagulacaoInfo.observacoes}
                     </span>
                   </div>
@@ -1631,59 +1631,59 @@ export default function PatientProfile() {
 
               <div className="flex flex-col gap-2 text-xs">
                 {patient.cpf && (
-                  <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                    <span className="text-muted">CPF:</span>
-                    <strong className="text-slate-800 font-mono font-semibold">{patient.cpf}</strong>
+                  <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted shrink-0">CPF:</span>
+                    <strong className="text-slate-800 font-mono font-semibold text-right">{patient.cpf}</strong>
                   </div>
                 )}
                 {patient.convenio && (
-                  <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                    <span className="text-muted">Convênio:</span>
+                  <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted shrink-0">Convênio:</span>
                     <span style={{ fontSize: '0.72rem', padding: '1px 7px', borderRadius: '6px', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe', fontWeight: '700' }}>
                       {patient.convenio}
                     </span>
                   </div>
                 )}
                 {patient.modalidade && (
-                  <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                    <span className="text-muted">Modalidade:</span>
-                    <strong className="text-slate-800 font-semibold">{patient.modalidade} {patient.tipoPaciente ? `(${patient.tipoPaciente})` : ''}</strong>
+                  <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted shrink-0">Modalidade:</span>
+                    <strong className="text-slate-800 font-semibold text-right">{patient.modalidade} {patient.tipoPaciente ? `(${patient.tipoPaciente})` : ''}</strong>
                   </div>
                 )}
-                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Transplante:</span>
+                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Transplante:</span>
                   <span style={{ fontSize: '0.72rem', padding: '1px 8px', borderRadius: '8px', background: transplantOpt.badgeBg, color: transplantOpt.color, border: `1px solid ${transplantOpt.border}`, fontWeight: 'bold' }}>
                     {transplantOpt.label}
                   </span>
                 </div>
-                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Etiologia:</span>
-                  <strong className="text-slate-800 font-semibold">{patient.etiologiaDRC || 'Não informada'}</strong>
+                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Etiologia:</span>
+                  <strong className="text-slate-800 font-semibold text-right">{patient.etiologiaDRC || 'Não informada'}</strong>
                 </div>
-                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Peso Seco:</span>
-                  <strong className="text-slate-800 font-semibold">{patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}</strong>
+                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Peso Seco:</span>
+                  <strong className="text-slate-800 font-semibold text-right">{patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}</strong>
                 </div>
                 {patient.dataInicioClinica && (
-                  <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                    <span className="text-muted">Nesta Clínica:</span>
-                    <strong className="text-slate-800 font-semibold">
+                  <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted shrink-0">Nesta Clínica:</span>
+                    <strong className="text-slate-800 font-semibold text-right">
                       {safeFormatDate(patient.dataInicioClinica)} {patient.tempoNaClinica ? `(${patient.tempoNaClinica})` : ''}
                     </strong>
                   </div>
                 )}
-                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Início TRS:</span>
-                  <strong className="text-slate-800 font-semibold">
+                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Início TRS:</span>
+                  <strong className="text-slate-800 font-semibold text-right">
                     {patient.dataInicioDialise ? safeFormatDate(patient.dataInicioDialise) : '-'} {patient.tempoTotalTratamento ? `(${patient.tempoTotalTratamento})` : ''}
                   </strong>
                 </div>
-                <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted">Hospital:</span>
-                  <strong className="text-slate-800 font-semibold">{patient.hospital || 'Hospital Geral'}</strong>
+                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Hospital:</span>
+                  <strong className="text-slate-800 font-semibold text-right">{patient.hospital || 'Hospital Geral'}</strong>
                 </div>
-                <div className="flex justify-between items-start">
-                  <span className="text-muted">Alergias:</span>
+                <div className="flex justify-between items-start gap-3">
+                  <span className="text-muted shrink-0">Alergias:</span>
                   <div className="text-right flex flex-wrap justify-end gap-1 max-w-[65%]">
                     {Array.isArray(patient.alergias) && patient.alergias.length > 0 ? (
                       patient.alergias.map((al, idx) => (

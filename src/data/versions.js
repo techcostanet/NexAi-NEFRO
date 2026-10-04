@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.100",
+    "date": "04/10/2026",
+    "title": "Correção de espaçamento entre rótulos e valores com dois pontos nos cards de ...",
+    "highlights": [
+      "✨ Correção de espaçamento entre rótulos e valores com dois pontos nos cards de acesso vascular e vigilância clínica"
+    ]
+  },
+  {
     "version": "1.1.99",
     "date": "04/10/2026",
     "title": "Base de demonstração do Dr",
