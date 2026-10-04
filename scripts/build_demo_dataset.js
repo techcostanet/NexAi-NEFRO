@@ -94,6 +94,13 @@ const HOSPITAIS = [
   "Hospital Madre Teresa"
 ];
 
+const CONVENIOS = [
+  "SUS", "SUS", "SUS", "SUS", // ~70% SUS
+  "Unimed", "Unimed",
+  "Bradesco Saúde",
+  "SulAmérica"
+];
+
 const ALERGIAS_POOL = [
   ["Nega alergias conhecidas"],
   ["Dipirona"],
@@ -128,12 +135,56 @@ function buildPatient(item, index, clinicName, clinicNum) {
   const hospital = HOSPITAIS[seed % HOSPITAIS.length];
   const turno = (seed % 3 === 1) ? "1º Turno" : (seed % 3 === 2) ? "2º Turno" : "3º Turno";
   const diaSemana = (seed % 2 === 0) ? "Seg/Qua/Sex" : "Ter/Qui/Sáb";
+  const convenio = CONVENIOS[seed % CONVENIOS.length];
+  const modalidade = (seed % 6 === 0) ? "HDF" : "HD";
 
-  // Acessos: ~70% FAV, ~18% Permcath, ~8% Prótese, ~4% CDL
+  // Status de Transplante coerente
+  let statusTransplante = "Não Avaliado";
+  if (item.status === "Transplantado") {
+    statusTransplante = "Já Transplantado";
+  } else if (item.status === "Óbito" || item.idade >= 75) {
+    statusTransplante = "Contraindicação Definitiva";
+  } else {
+    const stPool = [
+      "Ativo em Lista de Espera",
+      "Encaminhado / Em Avaliação",
+      "Encaminhar / Em Triagem",
+      "Doador Vivo em Investigação",
+      "Contraindicação Provisória",
+      "Suspenso / Inativo em Lista",
+      "Recusa do Paciente"
+    ];
+    statusTransplante = stPool[seed % stPool.length];
+  }
+
+  // Anticoagulação coerente
+  let anticoagulacao = {
+    tipo: "heparina_padrao",
+    doseAtaque: 1000,
+    doseManutencao: 500,
+    tempoSuspensaoMin: 60,
+    observacoes: "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+  };
+  if (seed % 10 === 3) {
+    anticoagulacao = {
+      tipo: "sem_heparina",
+      motivoSemHeparina: "Risco de Sangramento / Pós-operatório Recente",
+      observacoes: "Diálise sem heparina com lavagens salinas periódicas (SF 0,9% 100ml) a cada 30 min."
+    };
+  } else if (seed % 10 === 6) {
+    anticoagulacao = {
+      tipo: "enoxaparina",
+      doseEnoxaparina: "40",
+      observacoes: "Enoxaparina 40mg SC administrada 1h antes do início da sessão."
+    };
+  }
+
+  // Acessos Vasculares
   let acessoTipo = "FAV";
-  let acessoLado = "MSE";
+  let acessoLado = "MSE (Radiocefálica)";
   let agulha = "15G";
   let fluxoQb = 350 + (seed % 6) * 10;
+  const dataConfeccao = `202${(seed % 3) + 2}-0${(seed % 9) + 1}-10`;
 
   if (seed % 10 === 4 || seed % 10 === 9) {
     acessoTipo = "Permcath";
@@ -141,20 +192,150 @@ function buildPatient(item, index, clinicName, clinicNum) {
     agulha = "14.5 Fr";
     fluxoQb = 300 + (seed % 4) * 10;
   } else if (seed % 10 === 7) {
-    acessoTipo = "Prótese";
-    acessoLado = "MSE";
+    acessoTipo = "Prótese PTFE";
+    acessoLado = "MSE (Braquioaxilar)";
     agulha = "16G";
     fluxoQb = 340;
   } else if (seed === 14 || seed === 34) {
-    acessoTipo = "CDL";
-    acessoLado = "Jugular Interna";
+    acessoTipo = "Cateter Duplo Lúmen";
+    acessoLado = "Jugular Interna Direita (JID)";
     agulha = "12 Fr";
     fluxoQb = 280;
   } else {
     acessoTipo = "FAV";
-    acessoLado = (seed % 3 === 0) ? "MSD" : "MSE";
+    acessoLado = (seed % 3 === 0) ? "MSD (Braquiocefálica)" : (seed % 2 === 0 ? "MSE (Radiocefálica)" : "MSE (Braquiocefálica)");
     agulha = (seed % 2 === 0) ? "15G" : "16G";
   }
+
+  // Histórico de Intervenções e Manutenções no Acesso
+  const historicoAcesso = [];
+  if (acessoTipo === "FAV") {
+    // Evento mais recente (se tiver mais de 1 ano de confecção)
+    if (seed % 2 === 0) {
+      historicoAcesso.push({
+        id: `acc-${idNum}-1`,
+        data: `2026-0${(seed % 7) + 1}-14`,
+        tipoEvento: "Angioplastia",
+        acesso: "FAV",
+        ladoMembro: acessoLado,
+        profissional: "Dr. Fernando Silveira (Cirurgião Vascular)",
+        hospital: "Hospital Santa Casa",
+        desfecho: "Estenose Dilatada",
+        descricao: "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        conduta: "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        criadoEm: `2026-0${(seed % 7) + 1}-14T14:30:00Z`
+      });
+    } else {
+      historicoAcesso.push({
+        id: `acc-${idNum}-1`,
+        data: `2025-11-20`,
+        tipoEvento: "Doppler / Exame",
+        acesso: "FAV",
+        ladoMembro: acessoLado,
+        profissional: "Dra. Renata Albuquerque (Vascular)",
+        hospital: "Hospital das Clínicas",
+        desfecho: "Sucesso",
+        descricao: "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        conduta: "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        criadoEm: `2025-11-20T09:15:00Z`
+      });
+    }
+
+    // Confecção original
+    historicoAcesso.push({
+      id: `acc-${idNum}-2`,
+      data: dataConfeccao,
+      tipoEvento: "Confecção",
+      acesso: "FAV",
+      ladoMembro: acessoLado,
+      profissional: "Dr. Fernando Silveira (Cirurgião Vascular)",
+      hospital: "Hospital Santa Casa",
+      desfecho: "Sucesso",
+      descricao: `Confecção cirúrgica de fístula arteriovenosa ${acessoLado.toLowerCase()} com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.`,
+      conduta: "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+      criadoEm: `${dataConfeccao}T10:00:00Z`
+    });
+  } else if (acessoTipo === "Permcath") {
+    historicoAcesso.push({
+      id: `acc-${idNum}-1`,
+      data: "2026-01-12",
+      tipoEvento: "Desobstrução (Alteplase)",
+      acesso: "Permcath",
+      ladoMembro: acessoLado,
+      profissional: "Dr. Marcelo Ramos (Nefrologista)",
+      hospital: clinicName,
+      desfecho: "Trombo Removido",
+      descricao: "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+      conduta: "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+      criadoEm: "2026-01-12T13:45:00Z"
+    });
+
+    historicoAcesso.push({
+      id: `acc-${idNum}-2`,
+      data: dataConfeccao,
+      tipoEvento: "Confecção",
+      acesso: "Permcath",
+      ladoMembro: acessoLado,
+      profissional: "Dr. Fernando Silveira (Cirurgião Vascular)",
+      hospital: "Hospital Santa Casa",
+      desfecho: "Sem Intercorrências",
+      descricao: `Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em ${acessoLado} sob ultrassom e radioscopia. Ponta em átrio direito.`,
+      conduta: "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+      criadoEm: `${dataConfeccao}T16:00:00Z`
+    });
+  } else if (acessoTipo === "Prótese PTFE") {
+    historicoAcesso.push({
+      id: `acc-${idNum}-1`,
+      data: "2026-03-05",
+      tipoEvento: "Doppler / Exame",
+      acesso: "Prótese PTFE",
+      ladoMembro: acessoLado,
+      profissional: "Dra. Renata Albuquerque (Vascular)",
+      hospital: "Hospital Santa Casa",
+      desfecho: "Sucesso",
+      descricao: "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose venosa sem estenose de hiperplasia miointimal evidente.",
+      conduta: "Acesso apto para punção em técnica de escada.",
+      criadoEm: "2026-03-05T11:00:00Z"
+    });
+
+    historicoAcesso.push({
+      id: `acc-${idNum}-2`,
+      data: dataConfeccao,
+      tipoEvento: "Confecção",
+      acesso: "Prótese PTFE",
+      ladoMembro: acessoLado,
+      profissional: "Dr. Fernando Silveira (Cirurgião Vascular)",
+      hospital: "Hospital Santa Casa",
+      desfecho: "Sucesso",
+      descricao: "Implante de prótese vascular de PTFE 6mm em alça antebraquial esquerda.",
+      conduta: "Aguardar período de cicatrização de 3 semanas antes da primeira punção.",
+      criadoEm: `${dataConfeccao}T14:00:00Z`
+    });
+  } else {
+    // CDL provisório
+    historicoAcesso.push({
+      id: `acc-${idNum}-1`,
+      data: "2026-08-10",
+      tipoEvento: "Confecção",
+      acesso: "Cateter Duplo Lúmen",
+      ladoMembro: acessoLado,
+      profissional: "Dr. Marcelo Ramos (Nefrologista)",
+      hospital: clinicName,
+      desfecho: "Sem Intercorrências",
+      descricao: "Passagem de cateter duplo lúmen provisório (12 Fr x 20cm) em veia jugular interna direita sob técnica asséptica e visualização ecográfica.",
+      conduta: "Curativo oclusivo estéril. Paciente encaminhado com prioridade para confecção de FAV definitiva.",
+      criadoEm: "2026-08-10T08:30:00Z"
+    });
+  }
+
+  // Última intervenção para exibição resumida
+  const ultimaIntervencao = historicoAcesso[0] ? {
+    id: historicoAcesso[0].id,
+    data: historicoAcesso[0].data,
+    tipoEvento: historicoAcesso[0].tipoEvento,
+    descricao: historicoAcesso[0].descricao.slice(0, 70) + "...",
+    desfecho: historicoAcesso[0].desfecho
+  } : null;
 
   // Perfis laboratoriais ricos e diversificados
   let hb = 11.2 + ((seed % 7) - 3) * 0.3; // 10.3 a 12.1
@@ -166,24 +347,20 @@ function buildPatient(item, index, clinicName, clinicNum) {
   let ist = 26 + (seed % 14); // 26 a 39
   let albumina = 3.9 + ((seed % 6) * 0.1); // 3.9 a 4.4
 
-  // Injetar alguns casos clínicos reais específicos para demonstrar alertas:
+  // Alertas clínicos específicos
   if (seed === 3 || seed === 25 || seed === 48) {
-    // Alerta Anemia
     hb = 9.2;
     ferritina = 180;
     ist = 18;
   }
   if (seed === 8 || seed === 31 || seed === 52) {
-    // Alerta Hiperparatireoidismo
     pth = 740;
     fosforo = 6.2;
   }
   if (seed === 12 || seed === 44) {
-    // Alerta Hipercalemia
     k = 5.8;
   }
   if (seed === 17 || seed === 38) {
-    // Alerta Hipoalbuminemia
     albumina = 3.4;
   }
 
@@ -191,7 +368,44 @@ function buildPatient(item, index, clinicName, clinicNum) {
   const altura = 155 + ((seed * 11) % 28);
   const alergias = ALERGIAS_POOL[seed % ALERGIAS_POOL.length];
 
-  // Prescrições com mix de contínuas, ciclos temporários normais, expirando e expirados
+  // Histórico de Pesagens (6 sessões recentes com Pré e Pós HD)
+  const isSegQuaSex = diaSemana === "Seg/Qua/Sex";
+  const sessionDates = isSegQuaSex
+    ? ["2026-10-02", "2026-09-30", "2026-09-28", "2026-09-25", "2026-09-23", "2026-09-21"]
+    : ["2026-10-03", "2026-10-01", "2026-09-29", "2026-09-26", "2026-09-24", "2026-09-22"];
+
+  const historicoPesos = [];
+  sessionDates.forEach((sDate, sIdx) => {
+    const ganho = parseFloat((1.8 + ((seed + sIdx * 3) % 15) * 0.1).toFixed(2));
+    const pesoPre = parseFloat((pesoSeco + ganho).toFixed(2));
+    const pesoPos = parseFloat((pesoSeco + (sIdx % 2 === 0 ? 0 : 0.1)).toFixed(2));
+
+    historicoPesos.push({
+      id: `peso-${idNum}-${sIdx + 1}-pre`,
+      data: `${sDate}T08:00:00.000Z`,
+      peso: pesoPre,
+      tipo: "Pré-HD",
+      pesoSecoReferencia: pesoSeco,
+      ganhoInterdialitico: ganho,
+      observacoes: "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+      registradoEm: `${sDate}T08:00:00.000Z`
+    });
+
+    historicoPesos.push({
+      id: `peso-${idNum}-${sIdx + 1}-pos`,
+      data: `${sDate}T12:00:00.000Z`,
+      peso: pesoPos,
+      tipo: "Pós-HD",
+      pesoSecoReferencia: pesoSeco,
+      ganhoInterdialitico: parseFloat((pesoPos - pesoSeco).toFixed(2)),
+      observacoes: "Meta de UF atingida sem intercorrências ou câimbras.",
+      registradoEm: `${sDate}T12:00:00.000Z`
+    });
+  });
+
+  const ultimoPesoAferido = historicoPesos[0].peso;
+
+  // Prescrições com mix de contínuas e ciclos
   const medicamentos = [
     {
       id: `med-${idNum}-1`,
@@ -234,9 +448,7 @@ function buildPatient(item, index, clinicName, clinicNum) {
     }
   ];
 
-  // Adicionar ciclo temporário de ferro endovenoso ou antibiótico
   if (seed % 3 === 1) {
-    // Ciclo ativo com término futuro
     medicamentos.push({
       id: `med-${idNum}-4`,
       nome: "Sacarato de Hidróxido de Ferro (Noripurum IV)",
@@ -251,7 +463,6 @@ function buildPatient(item, index, clinicName, clinicNum) {
       ativo: true
     });
   } else if (seed % 3 === 2) {
-    // Ciclo que expira nos próximos 3 dias (Dispara alerta amarelo no dashboard!)
     medicamentos.push({
       id: `med-${idNum}-4`,
       nome: "Sacarato de Hidróxido de Ferro (Noripurum IV)",
@@ -261,12 +472,11 @@ function buildPatient(item, index, clinicName, clinicNum) {
       frequencia: "1x por semana",
       tipo: "temporario",
       dataInicio: "2026-08-15",
-      dataFim: "2026-09-17", // Vence em 3 dias da data atual
+      dataFim: "2026-09-17",
       observacao: "Penúltima dose do ciclo de manutenção de ferro",
       ativo: true
     });
   } else {
-    // Ciclo expirado recentemente (Dispara alerta vermelho de ciclo encerrado!)
     medicamentos.push({
       id: `med-${idNum}-4`,
       nome: "Sacarato de Hidróxido de Ferro (Noripurum IV)",
@@ -276,13 +486,12 @@ function buildPatient(item, index, clinicName, clinicNum) {
       frequencia: "1x por semana",
       tipo: "temporario",
       dataInicio: "2026-08-01",
-      dataFim: "2026-09-08", // Expirado há 6 dias
+      dataFim: "2026-09-08",
       observacao: "Ciclo concluído. Solicitar nova cinética de ferro no próximo mês.",
       ativo: true
     });
   }
 
-  // Adicionar medicação de Hipertensão ou PTH alto
   if (pth > 600) {
     medicamentos.push({
       id: `med-${idNum}-5`,
@@ -313,7 +522,6 @@ function buildPatient(item, index, clinicName, clinicNum) {
     });
   }
 
-  // Algum medicamento suspenso para demonstrar o filtro "Suspensos"
   if (seed % 4 === 0) {
     medicamentos.push({
       id: `med-${idNum}-6`,
@@ -330,7 +538,7 @@ function buildPatient(item, index, clinicName, clinicNum) {
     });
   }
 
-  // Histórico com 3 a 4 coletas anteriores cronológicas
+  // Histórico de Exames Laboratoriais
   const historicoExames = [
     {
       dataExame: "2026-08-10",
@@ -400,7 +608,7 @@ function buildPatient(item, index, clinicName, clinicNum) {
     }
   ];
 
-  // 2 a 3 Evoluções clínicas médicas assinadas
+  // Evoluções Clínicas
   const evolucoes = [
     {
       id: `evo-${idNum}-1`,
@@ -432,6 +640,161 @@ function buildPatient(item, index, clinicName, clinicNum) {
     }
   ];
 
+  // LMEs (Laudos de Medicamentos Especializados do SUS - Alto Custo)
+  const lmes = [
+    {
+      id: `lme-${idNum}-1`,
+      medicamentoId: hb < 10 ? "alfaepoetina_10000" : "alfaepoetina_4000",
+      medicamentoNome: hb < 10 ? "Alfaepoetina 10.000 UI" : "Alfaepoetina 4.000 UI",
+      concentracaoLabel: hb < 10 ? "10.000 UI/ml - Frasco/Ampola" : "4.000 UI/ml - Frasco/Ampola",
+      posologia: hb < 10 ? "10.000 UI SC 3x por semana pós-HD (12 frascos/mês)" : "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+      quantidadeMensal: 12,
+      vigenciaMeses: 6,
+      dataSolicitacao: "2026-06-15",
+      dataValidade: "2026-12-15",
+      cid10: "N18.0",
+      anamneseResumo: `Paciente com DRC dialítica há ${(seed % 3) + 2} anos. Apresenta anemia secundária à DRC com Hb de ${hb.toFixed(1)} g/dL. Em uso regular de agente estimulador da eritropoiese.`,
+      justificativaClinica: "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+      medicoSolicitante: {
+        nome: "Dr. Marcelo Ramos",
+        crm: "654321",
+        ufCrm: "SP",
+        cns: "708401234567891"
+      },
+      registradoEm: "2026-06-15T10:00:00Z"
+    }
+  ];
+
+  // Adiciona 2ª LME (Noripurum ou Sevelâmer ou Calcitriol)
+  if (ferritina < 500 || ist < 30) {
+    lmes.push({
+      id: `lme-${idNum}-2`,
+      medicamentoId: "sacarato_hidroxido_ferro",
+      medicamentoNome: "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+      concentracaoLabel: "100mg/5ml - Ampola",
+      posologia: "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+      quantidadeMensal: 4,
+      vigenciaMeses: 6,
+      dataSolicitacao: "2026-07-01",
+      dataValidade: "2027-01-01",
+      cid10: "N18.0",
+      anamneseResumo: `Reposição parenteral de ferro em paciente com ferritina de ${ferritina} ng/mL e IST de ${ist}%.`,
+      justificativaClinica: "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+      medicoSolicitante: {
+        nome: "Dr. Marcelo Ramos",
+        crm: "654321",
+        ufCrm: "SP",
+        cns: "708401234567891"
+      },
+      registradoEm: "2026-07-01T11:00:00Z"
+    });
+  } else if (fosforo > 5.5) {
+    lmes.push({
+      id: `lme-${idNum}-2`,
+      medicamentoId: "cloridrato_sevelamer_800",
+      medicamentoNome: "Cloridrato de Sevelâmer 800mg",
+      concentracaoLabel: "800mg - Comprimido",
+      posologia: "1 a 2 comprimidos VO 3x ao dia no início das principais refeições",
+      quantidadeMensal: 180,
+      vigenciaMeses: 6,
+      dataSolicitacao: "2026-05-10",
+      dataValidade: "2026-11-10",
+      cid10: "N18.0",
+      anamneseResumo: `Hiperfosfatemia crônica (fósforo sérico de ${fosforo.toFixed(1)} mg/dL) com indicação de quelante não cálcico.`,
+      justificativaClinica: "Prevenção de calcificação vascular e controle do distúrbio mineral-ósseo da DRC.",
+      medicoSolicitante: {
+        nome: "Dr. Marcelo Ramos",
+        crm: "654321",
+        ufCrm: "SP",
+        cns: "708401234567891"
+      },
+      registradoEm: "2026-05-10T09:30:00Z"
+    });
+  } else if (pth > 400) {
+    lmes.push({
+      id: `lme-${idNum}-2`,
+      medicamentoId: pth > 800 ? "cinacalcet_30" : "calcitriol_025",
+      medicamentoNome: pth > 800 ? "Cloridrato de Cinacalcete 30mg" : "Calcitriol 0,25 mcg",
+      concentracaoLabel: pth > 800 ? "30mg - Comprimido" : "0,25 mcg - Cápsula",
+      posologia: pth > 800 ? "1 comprimido VO 1x ao dia às refeições" : "1 cápsula VO 1x ao dia pela manhã",
+      quantidadeMensal: 30,
+      vigenciaMeses: 6,
+      dataSolicitacao: "2026-06-01",
+      dataValidade: "2026-12-01",
+      cid10: "N18.0",
+      anamneseResumo: `Hiperparatireoidismo secundário refratário com PTH intacto de ${pth} pg/mL.`,
+      justificativaClinica: "Supressão hormonal de paratireoide para controle de turnover ósseo e osteodistrofia.",
+      medicoSolicitante: {
+        nome: "Dr. Marcelo Ramos",
+        crm: "654321",
+        ufCrm: "SP",
+        cns: "708401234567891"
+      },
+      registradoEm: "2026-06-01T14:00:00Z"
+    });
+  }
+
+  // Receituário Oficial emitido
+  const receitas = [
+    {
+      id: `rec-${idNum}-1`,
+      dataEmissao: "2026-08-15",
+      tipoReceita: "simples",
+      validadeDias: 180,
+      itens: [
+        {
+          medicamento: fosforo > 5.5 ? "Cloridrato de Sevelâmer 800mg" : "Carbonato de Cálcio 500mg",
+          quantidade: "2 frascos",
+          posologia: "1 comprimido VO no início do café, almoço e jantar",
+          via: "Oral"
+        },
+        {
+          medicamento: "Besilato de Anlodipino 5mg",
+          quantidade: "3 caixas",
+          posologia: "1 comprimido VO 1x ao dia pela manhã",
+          via: "Oral"
+        },
+        {
+          medicamento: "Complexo B + Vitamina C (Dialyvit)",
+          quantidade: "2 caixas",
+          posologia: "1 comprimido VO 1x ao dia após hemodiálise",
+          via: "Oral"
+        },
+        {
+          medicamento: "Ácido Fólico 5mg",
+          quantidade: "2 caixas",
+          posologia: "1 comprimido VO 1x ao dia",
+          via: "Oral"
+        }
+      ],
+      observacoesGerais: "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+      medico: {
+        nome: "Dr. Marcelo Ramos",
+        crm: "654321",
+        ufCrm: "SP"
+      }
+    }
+  ];
+
+  // Hemoculturas para pacientes em Cateter
+  const hemoculturas = [];
+  if (acessoTipo === "Permcath" || acessoTipo === "Cateter Duplo Lúmen") {
+    hemoculturas.push({
+      id: `hemo-${idNum}-1`,
+      dataColeta: "2026-08-20T14:30",
+      sitioColeta: "Cateter - Lúmen Venoso e Arterial",
+      resultado: "Negativa",
+      microrganismo: "Sem crescimento bacteriano após 5 dias de incubação",
+      sensibilidade: "",
+      resistencia: "",
+      dtpHoras: null,
+      conduta: "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+      registradoEm: "2026-08-20T14:30:00Z"
+    });
+  }
+
+  const dataInicioDialise = `202${(seed % 4) + 1}-0${(seed % 9) + 1}-15`;
+
   return {
     id,
     doctorId: "dr-marcelo",
@@ -452,21 +815,28 @@ function buildPatient(item, index, clinicName, clinicNum) {
     hospital,
     turno,
     diaSemana,
+    convenio,
+    modalidade,
     status: item.status,
+    statusTransplante,
     etiologiaDRC: etiologia,
     pesoSeco,
     altura,
-    dataInicioDialise: `202${(seed % 4) + 1}-0${(seed % 9) + 1}-15`,
+    dataInicioDialise,
+    dataInicioClinica: dataInicioDialise,
     alergias,
-    observacoesClinicas: `Paciente portador de DRC estágio 5D secundária a ${etiologia}. Em acompanhamento regular na ${clinicName} com rotina de 3 sessões semanais de 4 horas.`,
+    observacoesClinicas: `Paciente portador de DRC estágio 5D secundária a ${etiologia}. Em acompanhamento regular na ${clinicName} com rotina de 3 sessões semanais de 4 horas. Modalidade ${modalidade} sob convênio ${convenio}.`,
+    anticoagulacao,
     acessoVascular: {
       tipo: acessoTipo,
       ladoMembro: acessoLado,
       fluxoSangue: fluxoQb,
       fluxoDialisato: 500,
       agulha,
-      dataConfeccao: `202${(seed % 3) + 2}-0${(seed % 9) + 1}-10`
+      dataConfeccao,
+      ultimaIntervencao
     },
+    historicoAcesso,
     exames: {
       hb: Number(hb.toFixed(1)),
       ht: Number((hb * 3).toFixed(1)),
@@ -491,7 +861,12 @@ function buildPatient(item, index, clinicName, clinicNum) {
     },
     medicamentos,
     historicoExames,
-    evolucoes
+    historicoPesos,
+    ultimoPesoAferido,
+    evolucoes,
+    lmes,
+    receitas,
+    hemoculturas
   };
 }
 
@@ -519,7 +894,8 @@ function main() {
 
   const content = `/**
  * Base de Pacientes de Demonstração Completa e Realística para Apresentação
- * Cobre 100% dos recursos clínicos, turnos, acessos vasculares, exames e alertas de medicamentos.
+ * Cobre 100% dos recursos clínicos, turnos, acessos vasculares, exames, histórico de intervenções,
+ * pesos, prescrições, LME e alertas de medicamentos.
  * 60 Pacientes distribuídos igualmente em 3 Clínicas:
  * - Clínica Renalis (20 pacientes)
  * - Clínica Nefrovita (20 pacientes)

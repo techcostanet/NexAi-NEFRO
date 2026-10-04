@@ -1,5 +1,14 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.99",
+    "date": "04/10/2026",
+    "title": "Base de demonstração do Dr",
+    "highlights": [
+      "✨ Base de demonstração do Dr",
+      "✨ Marcelo 100% preenchida com consistência clínica em todos os módulos (LME, acessos, receitas, pesos, transplante e anticoagulação)"
+    ]
+  },
+  {
     "version": "1.1.98",
     "date": "04/10/2026",
     "title": "Nova aba Acesso com histórico completo de intervenções cirúrgicas e manutençõ...",

@@ -1,6 +1,7 @@
 /**
  * Base de Pacientes de Demonstração Completa e Realística para Apresentação
- * Cobre 100% dos recursos clínicos, turnos, acessos vasculares, exames e alertas de medicamentos.
+ * Cobre 100% dos recursos clínicos, turnos, acessos vasculares, exames, histórico de intervenções,
+ * pesos, prescrições, LME e alertas de medicamentos.
  * 60 Pacientes distribuídos igualmente em 3 Clínicas:
  * - Clínica Renalis (20 pacientes)
  * - Clínica Nefrovita (20 pacientes)
@@ -28,56 +29,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "1º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhado / Em Avaliação",
     "etiologiaDRC": "Hipertensão Arterial Sistêmica (HAS)",
     "pesoSeco": 72,
     "altura": 166,
     "dataInicioDialise": "2022-02-15",
+    "dataInicioClinica": "2022-02-15",
     "alergias": [
       "Dipirona"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 360,
       "fluxoDialisato": 500,
       "agulha": "16G",
       "dataConfeccao": "2023-02-10",
       "ultimaIntervencao": {
-        "id": "acc-demo-01-1",
-        "data": "2024-08-14",
-        "tipoEvento": "Angioplastia",
-        "descricao": "Angioplastia com balão 6x40mm em arco cefálico",
-        "desfecho": "Estenose Dilatada"
+        "id": "acc-01-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
       }
     },
     "historicoAcesso": [
       {
-        "id": "acc-demo-01-1",
-        "data": "2024-08-14",
-        "tipoEvento": "Angioplastia",
+        "id": "acc-01-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
         "acesso": "FAV",
-        "ladoMembro": "MSE (Radiocefálica)",
-        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
-        "hospital": "Hospital Santa Casa",
-        "desfecho": "Estenose Dilatada",
-        "descricao": "Angioplastia transluminal percutânea de estenose em arco cefálico com balão de alta pressão 6x40mm. Desaparecimento do gradiente de pressão e restauração de frêmito contínuo.",
-        "conduta": "Repouso do membro por 24h. Liberado para hemodiálise na sessão seguinte com punção habitual.",
-        "criadoEm": "2024-08-14T14:30:00Z"
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
       },
       {
-        "id": "acc-demo-01-2",
+        "id": "acc-01-2",
         "data": "2023-02-10",
         "tipoEvento": "Confecção",
         "acesso": "FAV",
-        "ladoMembro": "MSE (Radiocefálica)",
+        "ladoMembro": "MSE (Braquiocefálica)",
         "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
-        "hospital": "Hospital Universitário",
+        "hospital": "Hospital Santa Casa",
         "desfecho": "Sucesso",
-        "descricao": "Confecção de fístula arteriovenosa radiocefálica término-lateral esquerda. Excelente frêmito e pulso imediato.",
-        "conduta": "Exercícios de aperto de bola a partir da 2ª semana. Maturação programada para 6 semanas antes da primeira punção.",
-        "criadoEm": "2023-02-10T11:00:00Z"
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-02-10T10:00:00Z"
       }
     ],
     "exames": {
@@ -237,6 +249,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-01-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 73.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-01-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 72,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-01-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 74.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-01-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 72.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-01-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 74.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-01-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 72,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-01-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 74.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-01-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 72.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-01-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 75.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-01-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 72,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-01-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 73.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-01-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 72.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 73.9,
     "evolucoes": [
       {
         "id": "evo-01-1",
@@ -248,7 +383,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 360,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -266,7 +401,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-01-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 10.6 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-01-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 393 ng/mL e IST de 27%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-01-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-02",
@@ -288,42 +508,66 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "2º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhar / Em Triagem",
     "etiologiaDRC": "Glomerulonefrite Crônica (GNC)",
     "pesoSeco": 57.5,
     "altura": 177,
     "dataInicioDialise": "2023-03-15",
+    "dataInicioClinica": "2023-03-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 370,
       "fluxoDialisato": 500,
       "agulha": "15G",
       "dataConfeccao": "2024-03-10",
       "ultimaIntervencao": {
-        "id": "acc-demo-02-1",
-        "data": "2024-03-10",
-        "tipoEvento": "Confecção",
-        "descricao": "Confecção de fístula braquiocefálica término-lateral esquerda",
-        "desfecho": "Sucesso"
+        "id": "acc-02-1",
+        "data": "2026-03-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
       }
     },
     "historicoAcesso": [
       {
-        "id": "acc-demo-02-1",
+        "id": "acc-02-1",
+        "data": "2026-03-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-03-14T14:30:00Z"
+      },
+      {
+        "id": "acc-02-2",
         "data": "2024-03-10",
         "tipoEvento": "Confecção",
         "acesso": "FAV",
-        "ladoMembro": "MSE (Braquiocefálica)",
+        "ladoMembro": "MSE (Radiocefálica)",
         "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
         "hospital": "Hospital Santa Casa",
         "desfecho": "Sucesso",
-        "descricao": "Confecção de fístula arteriovenosa braquiocefálica término-lateral esquerda sob anestesia local. Veia cefálica de excelente calibre (4.0mm) e fluxo túrgido imediato.",
-        "conduta": "Curativo oclusivo por 24h. Manter membro elevado. Retorno ambulatorial em 15 dias para retirada de pontos e acompanhamento de maturação.",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
         "criadoEm": "2024-03-10T10:00:00Z"
       }
     ],
@@ -484,6 +728,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-02-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 59.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-02-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 57.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-02-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 59.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-02-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 57.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-02-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 60.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-02-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 57.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-02-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 60.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-02-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 57.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-02-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 60.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-02-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 57.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-02-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 59.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-02-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 57.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 59.5,
     "evolucoes": [
       {
         "id": "evo-02-1",
@@ -495,7 +862,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 370,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -513,7 +880,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-02-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 10.9 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-02-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 436 ng/mL e IST de 28%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-02-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-03",
@@ -535,23 +987,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "3º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Doador Vivo em Investigação",
     "etiologiaDRC": "Doença Renal Policística Autossômica Dominante (DRPAD)",
     "pesoSeco": 74,
     "altura": 160,
     "dataInicioDialise": "2024-04-15",
+    "dataInicioClinica": "2024-04-15",
     "alergias": [
       "Penicilina"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "sem_heparina",
+      "motivoSemHeparina": "Risco de Sangramento / Pós-operatório Recente",
+      "observacoes": "Diálise sem heparina com lavagens salinas periódicas (SF 0,9% 100ml) a cada 30 min."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 380,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2022-04-10"
+      "dataConfeccao": "2022-04-10",
+      "ultimaIntervencao": {
+        "id": "acc-03-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-03-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-03-2",
+        "data": "2022-04-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-04-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 9.2,
       "ht": 27.6,
@@ -709,6 +1205,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-03-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 76.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-03-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 74,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-03-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 76.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-03-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 74.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-03-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 76.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-03-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 74,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-03-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 77,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-03-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 74.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-03-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 75.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-03-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 74,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-03-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 76.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-03-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 74.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 76.1,
     "evolucoes": [
       {
         "id": "evo-03-1",
@@ -720,7 +1339,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 380,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -738,7 +1357,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-03-1",
+        "medicamentoId": "alfaepoetina_10000",
+        "medicamentoNome": "Alfaepoetina 10.000 UI",
+        "concentracaoLabel": "10.000 UI/ml - Frasco/Ampola",
+        "posologia": "10.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 9.2 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-03-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 180 ng/mL e IST de 18%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-03-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-04",
@@ -760,15 +1464,26 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "1º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Provisória",
     "etiologiaDRC": "Nefropatia Lúpica / Doenças Autoimunes",
     "pesoSeco": 59.5,
     "altura": 171,
     "dataInicioDialise": "2021-05-15",
+    "dataInicioClinica": "2021-05-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Direita (JID)",
@@ -777,16 +1492,16 @@ export const DEMO_PATIENTS_DATA = [
       "agulha": "14.5 Fr",
       "dataConfeccao": "2023-05-10",
       "ultimaIntervencao": {
-        "id": "acc-demo-04-1",
+        "id": "acc-04-1",
         "data": "2026-01-12",
         "tipoEvento": "Desobstrução (Alteplase)",
-        "descricao": "Lock com Alteplase 2mg por via intraluminal por 2 horas",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
         "desfecho": "Trombo Removido"
       }
     },
     "historicoAcesso": [
       {
-        "id": "acc-demo-04-1",
+        "id": "acc-04-1",
         "data": "2026-01-12",
         "tipoEvento": "Desobstrução (Alteplase)",
         "acesso": "Permcath",
@@ -794,12 +1509,12 @@ export const DEMO_PATIENTS_DATA = [
         "profissional": "Dr. Marcelo Ramos (Nefrologista)",
         "hospital": "Clínica Renalis",
         "desfecho": "Trombo Removido",
-        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath com Qb < 200 ml/min. Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados pequenos coágulos e obtido fluxo livre superior a 300 ml/min.",
-        "conduta": "Permcath liberado para diálise imediata. Manter heparinização padrão ao término das sessões.",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
         "criadoEm": "2026-01-12T13:45:00Z"
       },
       {
-        "id": "acc-demo-04-2",
+        "id": "acc-04-2",
         "data": "2023-05-10",
         "tipoEvento": "Confecção",
         "acesso": "Permcath",
@@ -807,8 +1522,8 @@ export const DEMO_PATIENTS_DATA = [
         "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
         "hospital": "Hospital Santa Casa",
         "desfecho": "Sem Intercorrências",
-        "descricao": "Implante de cateter tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em veia jugular interna direita sob orientação ultrassonográfica e radioscópica. Bom posicionamento da ponta em átrio direito.",
-        "conduta": "Radiografia de tórax de controle sem pneumotórax. Curativo estéril. Liberado para uso regular.",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Direita (JID) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
         "criadoEm": "2023-05-10T16:00:00Z"
       }
     ],
@@ -982,6 +1697,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-04-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 61.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-04-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 59.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-04-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 62,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-04-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 59.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-04-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 62.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-04-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 59.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-04-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 62.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-04-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 59.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-04-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 61.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-04-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 59.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-04-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 61.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-04-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 59.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 61.7,
     "evolucoes": [
       {
         "id": "evo-04-1",
@@ -1011,6 +1849,83 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-04-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 11.5 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-04-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-04-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -1033,23 +1948,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "2º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Suspenso / Inativo em Lista",
     "etiologiaDRC": "Uropatia Obstrutiva / Litíase Renal",
     "pesoSeco": 76,
     "altura": 182,
     "dataInicioDialise": "2022-06-15",
+    "dataInicioClinica": "2022-06-15",
     "alergias": [
       "Iodo / Contrastes Iodados"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 400,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2024-06-10"
+      "dataConfeccao": "2024-06-10",
+      "ultimaIntervencao": {
+        "id": "acc-05-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-05-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-05-2",
+        "data": "2024-06-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-06-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.8,
       "ht": 35.4,
@@ -1207,6 +2168,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-05-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 78.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-05-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 76,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-05-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 78.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-05-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 76.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-05-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 78.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-05-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 76,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-05-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 79.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-05-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 76.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-05-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 78,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-05-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 76,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-05-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 78.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-05-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 76.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 78.3,
     "evolucoes": [
       {
         "id": "evo-05-1",
@@ -1218,7 +2302,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 400,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -1236,7 +2320,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-05-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 11.8 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-05-2",
+        "medicamentoId": "cloridrato_sevelamer_800",
+        "medicamentoNome": "Cloridrato de Sevelâmer 800mg",
+        "concentracaoLabel": "800mg - Comprimido",
+        "posologia": "1 a 2 comprimidos VO 3x ao dia no início das principais refeições",
+        "quantidadeMensal": 180,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-05-10",
+        "dataValidade": "2026-11-10",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperfosfatemia crônica (fósforo sérico de 6.1 mg/dL) com indicação de quelante não cálcico.",
+        "justificativaClinica": "Prevenção de calcificação vascular e controle do distúrbio mineral-ósseo da DRC.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-05-10T09:30:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-05-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-06",
@@ -1258,23 +2427,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "3º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Bradesco Saúde",
+    "modalidade": "HDF",
     "status": "Ativo",
+    "statusTransplante": "Recusa do Paciente",
     "etiologiaDRC": "Nefrite Túbulo-Intersticial Crônica (NTIC)",
     "pesoSeco": 61.5,
     "altura": 165,
     "dataInicioDialise": "2023-07-15",
+    "dataInicioClinica": "2023-07-15",
     "alergias": [
       "AINEs (Anti-inflamatórios)"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HDF sob convênio Bradesco Saúde.",
+    "anticoagulacao": {
+      "tipo": "enoxaparina",
+      "doseEnoxaparina": "40",
+      "observacoes": "Enoxaparina 40mg SC administrada 1h antes do início da sessão."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 350,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2022-07-10"
+      "dataConfeccao": "2022-07-10",
+      "ultimaIntervencao": {
+        "id": "acc-06-1",
+        "data": "2026-07-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-06-1",
+        "data": "2026-07-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-07-14T14:30:00Z"
+      },
+      {
+        "id": "acc-06-2",
+        "data": "2022-07-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-07-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 12.1,
       "ht": 36.3,
@@ -1432,6 +2645,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-06-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 63.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-06-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 61.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-06-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 64.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-06-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 61.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-06-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 64.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-06-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 61.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-06-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 63.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-06-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 61.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-06-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 63.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-06-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 61.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-06-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 63.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-06-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 61.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 63.9,
     "evolucoes": [
       {
         "id": "evo-06-1",
@@ -1443,7 +2779,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 350,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -1461,7 +2797,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-06-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 12.1 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-06-2",
+        "medicamentoId": "calcitriol_025",
+        "medicamentoNome": "Calcitriol 0,25 mcg",
+        "concentracaoLabel": "0,25 mcg - Cápsula",
+        "posologia": "1 cápsula VO 1x ao dia pela manhã",
+        "quantidadeMensal": 30,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-01",
+        "dataValidade": "2026-12-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperparatireoidismo secundário refratário com PTH intacto de 414 pg/mL.",
+        "justificativaClinica": "Supressão hormonal de paratireoide para controle de turnover ósseo e osteodistrofia.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-01T14:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-06-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-07",
@@ -1483,23 +2904,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "1º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SulAmérica",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Ativo em Lista de Espera",
     "etiologiaDRC": "Doença Renal Indeterminada / Desconhecida",
     "pesoSeco": 78,
     "altura": 176,
     "dataInicioDialise": "2024-08-15",
+    "dataInicioClinica": "2024-08-15",
     "alergias": [
       "Sulfas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SulAmérica.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
-      "tipo": "Prótese",
-      "ladoMembro": "MSE",
+      "tipo": "Prótese PTFE",
+      "ladoMembro": "MSE (Braquioaxilar)",
       "fluxoSangue": 340,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2023-08-10"
+      "dataConfeccao": "2023-08-10",
+      "ultimaIntervencao": {
+        "id": "acc-07-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose veno...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-07-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose venosa sem estenose de hiperplasia miointimal evidente.",
+        "conduta": "Acesso apto para punção em técnica de escada.",
+        "criadoEm": "2026-03-05T11:00:00Z"
+      },
+      {
+        "id": "acc-07-2",
+        "data": "2023-08-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Implante de prótese vascular de PTFE 6mm em alça antebraquial esquerda.",
+        "conduta": "Aguardar período de cicatrização de 3 semanas antes da primeira punção.",
+        "criadoEm": "2023-08-10T14:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.3,
       "ht": 30.9,
@@ -1657,6 +3124,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-07-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 80.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-07-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 78,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-07-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 80.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-07-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 78.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-07-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 81.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-07-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 78,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-07-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 79.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-07-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 78.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-07-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 80.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-07-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 78,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-07-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 80.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-07-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 78.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 80.5,
     "evolucoes": [
       {
         "id": "evo-07-1",
@@ -1668,7 +3258,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 340,
         "intercorrencias": "Câimbras leves em panturrilhas ao término da 3ª hora de HD, aliviadas com massagem local e elevação de membros.",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese PTFE em MSE (Braquioaxilar)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -1686,7 +3276,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-07-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 10.3 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-07-2",
+        "medicamentoId": "cloridrato_sevelamer_800",
+        "medicamentoNome": "Cloridrato de Sevelâmer 800mg",
+        "concentracaoLabel": "800mg - Comprimido",
+        "posologia": "1 a 2 comprimidos VO 3x ao dia no início das principais refeições",
+        "quantidadeMensal": 180,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-05-10",
+        "dataValidade": "2026-11-10",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperfosfatemia crônica (fósforo sérico de 5.7 mg/dL) com indicação de quelante não cálcico.",
+        "justificativaClinica": "Prevenção de calcificação vascular e controle do distúrbio mineral-ósseo da DRC.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-05-10T09:30:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-07-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-08",
@@ -1708,23 +3383,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "2º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhado / Em Avaliação",
     "etiologiaDRC": "Diabetes Mellitus / Nefropatia Diabética",
     "pesoSeco": 63.5,
     "altura": 159,
     "dataInicioDialise": "2021-09-15",
+    "dataInicioClinica": "2021-09-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 370,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2024-09-10"
+      "dataConfeccao": "2024-09-10",
+      "ultimaIntervencao": {
+        "id": "acc-08-1",
+        "data": "2026-02-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-08-1",
+        "data": "2026-02-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-02-14T14:30:00Z"
+      },
+      {
+        "id": "acc-08-2",
+        "data": "2024-09-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-09-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.6,
       "ht": 31.8,
@@ -1895,6 +3616,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-08-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 66.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-08-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 63.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-08-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 66.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-08-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 63.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-08-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 66.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-08-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 63.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-08-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 65.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-08-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 63.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-08-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 65.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-08-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 63.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-08-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 66.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-08-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 63.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 66.1,
     "evolucoes": [
       {
         "id": "evo-08-1",
@@ -1906,7 +3750,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 370,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -1924,7 +3768,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-08-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 10.6 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-08-2",
+        "medicamentoId": "cloridrato_sevelamer_800",
+        "medicamentoNome": "Cloridrato de Sevelâmer 800mg",
+        "concentracaoLabel": "800mg - Comprimido",
+        "posologia": "1 a 2 comprimidos VO 3x ao dia no início das principais refeições",
+        "quantidadeMensal": 180,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-05-10",
+        "dataValidade": "2026-11-10",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperfosfatemia crônica (fósforo sérico de 6.2 mg/dL) com indicação de quelante não cálcico.",
+        "justificativaClinica": "Prevenção de calcificação vascular e controle do distúrbio mineral-ósseo da DRC.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-05-10T09:30:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-08-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-09",
@@ -1946,23 +3875,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "3º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhar / Em Triagem",
     "etiologiaDRC": "Hipertensão Arterial Sistêmica (HAS)",
     "pesoSeco": 80,
     "altura": 170,
     "dataInicioDialise": "2022-01-15",
+    "dataInicioClinica": "2022-01-15",
     "alergias": [
       "Dipirona"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Esquerda (JIE)",
       "fluxoSangue": 310,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2022-01-10"
+      "dataConfeccao": "2022-01-10",
+      "ultimaIntervencao": {
+        "id": "acc-09-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-09-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Renalis",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-09-2",
+        "data": "2022-01-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Esquerda (JIE) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+        "criadoEm": "2022-01-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.9,
       "ht": 32.7,
@@ -2120,6 +4095,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-09-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 82.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-09-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 80,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-09-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 83,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-09-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 80.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-09-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 81.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-09-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 80,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-09-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 82.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-09-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 80.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-09-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 82.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-09-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 80,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-09-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 82.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-09-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 80.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 82.7,
     "evolucoes": [
       {
         "id": "evo-09-1",
@@ -2149,6 +4247,104 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-09-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 10.9 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-09-2",
+        "medicamentoId": "calcitriol_025",
+        "medicamentoNome": "Calcitriol 0,25 mcg",
+        "concentracaoLabel": "0,25 mcg - Cápsula",
+        "posologia": "1 cápsula VO 1x ao dia pela manhã",
+        "quantidadeMensal": 30,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-01",
+        "dataValidade": "2026-12-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperparatireoidismo secundário refratário com PTH intacto de 501 pg/mL.",
+        "justificativaClinica": "Supressão hormonal de paratireoide para controle de turnover ósseo e osteodistrofia.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-01T14:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-09-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-09-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -2171,23 +4367,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "1º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Definitiva",
     "etiologiaDRC": "Glomerulonefrite Crônica (GNC)",
     "pesoSeco": 65.5,
     "altura": 181,
     "dataInicioDialise": "2023-02-15",
+    "dataInicioClinica": "2023-02-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 390,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2023-02-10"
+      "dataConfeccao": "2023-02-10",
+      "ultimaIntervencao": {
+        "id": "acc-10-1",
+        "data": "2026-04-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-10-1",
+        "data": "2026-04-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-04-14T14:30:00Z"
+      },
+      {
+        "id": "acc-10-2",
+        "data": "2023-02-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-02-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.2,
       "ht": 33.6,
@@ -2345,6 +4587,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-10-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 68.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-10-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 65.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-10-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 68.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-10-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 65.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-10-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 67.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-10-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 65.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-10-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 67.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-10-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 65.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-10-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 68,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-10-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 65.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-10-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 68.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-10-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 65.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 68.3,
     "evolucoes": [
       {
         "id": "evo-10-1",
@@ -2356,7 +4721,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 390,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -2374,7 +4739,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-10-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 11.2 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-10-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 380 ng/mL e IST de 36%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-10-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-11",
@@ -2396,23 +4846,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "2º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Provisória",
     "etiologiaDRC": "Doença Renal Policística Autossômica Dominante (DRPAD)",
     "pesoSeco": 82,
     "altura": 164,
     "dataInicioDialise": "2024-03-15",
+    "dataInicioClinica": "2024-03-15",
     "alergias": [
       "Penicilina"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 400,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2024-03-10"
+      "dataConfeccao": "2024-03-10",
+      "ultimaIntervencao": {
+        "id": "acc-11-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-11-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-11-2",
+        "data": "2024-03-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-03-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.5,
       "ht": 34.5,
@@ -2570,6 +5066,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-11-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 84.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-11-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 82,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-11-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 85.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-11-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 82.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-11-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 84,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-11-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 82,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-11-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 84.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-11-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 82.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-11-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 84.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-11-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 82,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-11-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 84.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-11-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 82.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 84.9,
     "evolucoes": [
       {
         "id": "evo-11-1",
@@ -2581,7 +5200,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 400,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -2599,7 +5218,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-11-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 11.5 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-11-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 423 ng/mL e IST de 37%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-11-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-12",
@@ -2621,23 +5325,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "3º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Unimed",
+    "modalidade": "HDF",
     "status": "Ativo",
+    "statusTransplante": "Suspenso / Inativo em Lista",
     "etiologiaDRC": "Nefropatia Lúpica / Doenças Autoimunes",
     "pesoSeco": 67.5,
     "altura": 175,
     "dataInicioDialise": "2021-04-15",
+    "dataInicioClinica": "2021-04-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HDF sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 350,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2022-04-10"
+      "dataConfeccao": "2022-04-10",
+      "ultimaIntervencao": {
+        "id": "acc-12-1",
+        "data": "2026-06-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-12-1",
+        "data": "2026-06-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-06-14T14:30:00Z"
+      },
+      {
+        "id": "acc-12-2",
+        "data": "2022-04-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-04-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.8,
       "ht": 35.4,
@@ -2808,6 +5558,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-12-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 70.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-12-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 67.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-12-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 69.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-12-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 67.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-12-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 69.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-12-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 67.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-12-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 69.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-12-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 67.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-12-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 70.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-12-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 67.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-12-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 70.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-12-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 67.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 70.5,
     "evolucoes": [
       {
         "id": "evo-12-1",
@@ -2819,7 +5692,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 350,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -2837,7 +5710,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-12-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 11.8 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-12-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 466 ng/mL e IST de 38%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-12-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-13",
@@ -2859,23 +5817,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "1º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Recusa do Paciente",
     "etiologiaDRC": "Uropatia Obstrutiva / Litíase Renal",
     "pesoSeco": 84,
     "altura": 158,
     "dataInicioDialise": "2022-05-15",
+    "dataInicioClinica": "2022-05-15",
     "alergias": [
       "Iodo / Contrastes Iodados"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "sem_heparina",
+      "motivoSemHeparina": "Risco de Sangramento / Pós-operatório Recente",
+      "observacoes": "Diálise sem heparina com lavagens salinas periódicas (SF 0,9% 100ml) a cada 30 min."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 360,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2023-05-10"
+      "dataConfeccao": "2023-05-10",
+      "ultimaIntervencao": {
+        "id": "acc-13-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-13-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-13-2",
+        "data": "2023-05-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-05-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 12.1,
       "ht": 36.3,
@@ -3033,6 +6035,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-13-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 87.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-13-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 84,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-13-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 85.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-13-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 84.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-13-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 86.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-13-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 84,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-13-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 86.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-13-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 84.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-13-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 86.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-13-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 84,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-13-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 87.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-13-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 84.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 87.1,
     "evolucoes": [
       {
         "id": "evo-13-1",
@@ -3044,7 +6169,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 360,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -3062,7 +6187,71 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-13-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 12.1 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-13-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-14",
@@ -3084,23 +6273,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "2º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Bradesco Saúde",
+    "modalidade": "HD",
     "status": "Em Tratamento",
+    "statusTransplante": "Ativo em Lista de Espera",
     "etiologiaDRC": "Nefrite Túbulo-Intersticial Crônica (NTIC)",
     "pesoSeco": 69.5,
     "altura": 169,
     "dataInicioDialise": "2023-06-15",
+    "dataInicioClinica": "2023-06-15",
     "alergias": [
       "AINEs (Anti-inflamatórios)"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Bradesco Saúde.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Direita (JID)",
       "fluxoSangue": 320,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2024-06-10"
+      "dataConfeccao": "2024-06-10",
+      "ultimaIntervencao": {
+        "id": "acc-14-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-14-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Renalis",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-14-2",
+        "data": "2024-06-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Direita (JID) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+        "criadoEm": "2024-06-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.3,
       "ht": 30.9,
@@ -3258,6 +6493,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-14-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 72.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-14-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 69.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-14-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 71.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-14-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 69.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-14-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 71.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-14-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 69.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-14-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 72.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-14-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 69.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-14-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 72.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-14-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 69.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-14-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 72.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-14-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 69.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 72.7,
     "evolucoes": [
       {
         "id": "evo-14-1",
@@ -3287,6 +6645,104 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-14-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 10.3 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-14-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 552 ng/mL e IST de 26%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-14-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-14-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -3309,23 +6765,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "3º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SulAmérica",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhado / Em Avaliação",
     "etiologiaDRC": "Doença Renal Indeterminada / Desconhecida",
     "pesoSeco": 86,
     "altura": 180,
     "dataInicioDialise": "2024-07-15",
+    "dataInicioClinica": "2024-07-15",
     "alergias": [
       "Sulfas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SulAmérica.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 380,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2022-07-10"
+      "dataConfeccao": "2022-07-10",
+      "ultimaIntervencao": {
+        "id": "acc-15-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-15-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-15-2",
+        "data": "2022-07-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-07-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.6,
       "ht": 31.8,
@@ -3483,6 +6985,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-15-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 87.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-15-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 86,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-15-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 88.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-15-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 86.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-15-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 88.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-15-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 86,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-15-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 88.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-15-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 86.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-15-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 89,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-15-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 86,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-15-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 87.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-15-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 86.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 87.8,
     "evolucoes": [
       {
         "id": "evo-15-1",
@@ -3494,7 +7119,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 380,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -3512,7 +7137,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-15-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 10.6 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-15-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 595 ng/mL e IST de 27%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-15-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-16",
@@ -3534,23 +7244,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "1º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhar / Em Triagem",
     "etiologiaDRC": "Diabetes Mellitus / Nefropatia Diabética",
     "pesoSeco": 71.5,
     "altura": 163,
     "dataInicioDialise": "2021-08-15",
+    "dataInicioClinica": "2021-08-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "enoxaparina",
+      "doseEnoxaparina": "40",
+      "observacoes": "Enoxaparina 40mg SC administrada 1h antes do início da sessão."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 390,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2023-08-10"
+      "dataConfeccao": "2023-08-10",
+      "ultimaIntervencao": {
+        "id": "acc-16-1",
+        "data": "2026-03-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-16-1",
+        "data": "2026-03-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-03-14T14:30:00Z"
+      },
+      {
+        "id": "acc-16-2",
+        "data": "2023-08-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-08-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.9,
       "ht": 32.7,
@@ -3721,6 +7475,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-16-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 73.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-16-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 71.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-16-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 73.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-16-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 71.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-16-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 74,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-16-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 71.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-16-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 74.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-16-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 71.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-16-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 74.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-16-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 71.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-16-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 73.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-16-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 71.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 73.4,
     "evolucoes": [
       {
         "id": "evo-16-1",
@@ -3732,7 +7609,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 390,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -3750,7 +7627,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-16-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 10.9 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-16-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 638 ng/mL e IST de 28%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-16-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-17",
@@ -3772,23 +7734,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "2º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Doador Vivo em Investigação",
     "etiologiaDRC": "Hipertensão Arterial Sistêmica (HAS)",
     "pesoSeco": 56,
     "altura": 174,
     "dataInicioDialise": "2022-09-15",
+    "dataInicioClinica": "2022-09-15",
     "alergias": [
       "Dipirona"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
-      "tipo": "Prótese",
-      "ladoMembro": "MSE",
+      "tipo": "Prótese PTFE",
+      "ladoMembro": "MSE (Braquioaxilar)",
       "fluxoSangue": 340,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2024-09-10"
+      "dataConfeccao": "2024-09-10",
+      "ultimaIntervencao": {
+        "id": "acc-17-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose veno...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-17-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose venosa sem estenose de hiperplasia miointimal evidente.",
+        "conduta": "Acesso apto para punção em técnica de escada.",
+        "criadoEm": "2026-03-05T11:00:00Z"
+      },
+      {
+        "id": "acc-17-2",
+        "data": "2024-09-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Implante de prótese vascular de PTFE 6mm em alça antebraquial esquerda.",
+        "conduta": "Aguardar período de cicatrização de 3 semanas antes da primeira punção.",
+        "criadoEm": "2024-09-10T14:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.2,
       "ht": 33.6,
@@ -3946,6 +7954,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-17-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 58,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-17-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 56,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-17-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 58.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-17-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 56.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-17-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 58.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-17-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 56,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-17-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 58.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-17-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 56.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-17-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 59.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-17-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 56,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-17-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 58,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-17-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 56.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 58,
     "evolucoes": [
       {
         "id": "evo-17-1",
@@ -3957,7 +8088,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 340,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese PTFE em MSE (Braquioaxilar)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -3975,7 +8106,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-17-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 11.2 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-17-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 681 ng/mL e IST de 29%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-17-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-18",
@@ -3997,23 +8213,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "3º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HDF",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Provisória",
     "etiologiaDRC": "Glomerulonefrite Crônica (GNC)",
     "pesoSeco": 73.5,
     "altura": 157,
     "dataInicioDialise": "2023-01-15",
+    "dataInicioClinica": "2023-01-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HDF sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 350,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2022-01-10"
+      "dataConfeccao": "2022-01-10",
+      "ultimaIntervencao": {
+        "id": "acc-18-1",
+        "data": "2026-05-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-18-1",
+        "data": "2026-05-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-05-14T14:30:00Z"
+      },
+      {
+        "id": "acc-18-2",
+        "data": "2022-01-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-01-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.5,
       "ht": 34.5,
@@ -4171,6 +8433,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-18-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 75.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-18-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 73.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-18-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 75.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-18-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 73.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-18-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 76.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-18-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 73.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-18-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 76.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-18-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 73.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-18-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 75.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-18-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 73.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-18-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 75.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-18-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 73.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 75.6,
     "evolucoes": [
       {
         "id": "evo-18-1",
@@ -4182,7 +8567,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 350,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -4200,7 +8585,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-18-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 11.5 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-18-2",
+        "medicamentoId": "calcitriol_025",
+        "medicamentoNome": "Calcitriol 0,25 mcg",
+        "concentracaoLabel": "0,25 mcg - Cápsula",
+        "posologia": "1 cápsula VO 1x ao dia pela manhã",
+        "quantidadeMensal": 30,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-01",
+        "dataValidade": "2026-12-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperparatireoidismo secundário refratário com PTH intacto de 442 pg/mL.",
+        "justificativaClinica": "Supressão hormonal de paratireoide para controle de turnover ósseo e osteodistrofia.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-01T14:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-18-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-19",
@@ -4222,23 +8692,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "1º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Transplantado",
+    "statusTransplante": "Já Transplantado",
     "etiologiaDRC": "Doença Renal Policística Autossômica Dominante (DRPAD)",
     "pesoSeco": 58,
     "altura": 168,
     "dataInicioDialise": "2024-02-15",
+    "dataInicioClinica": "2024-02-15",
     "alergias": [
       "Penicilina"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Esquerda (JIE)",
       "fluxoSangue": 330,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2023-02-10"
+      "dataConfeccao": "2023-02-10",
+      "ultimaIntervencao": {
+        "id": "acc-19-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-19-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Renalis",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-19-2",
+        "data": "2023-02-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Esquerda (JIE) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+        "criadoEm": "2023-02-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.8,
       "ht": 35.4,
@@ -4396,6 +8912,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-19-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 60.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-19-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 58,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-19-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 60.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-19-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 58.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-19-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 60.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-19-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 58,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-19-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 61.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-19-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 58.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-19-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 59.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-19-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 58,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-19-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 60.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-19-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 58.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 60.2,
     "evolucoes": [
       {
         "id": "evo-19-1",
@@ -4425,6 +9064,104 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-19-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 11.8 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-19-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 367 ng/mL e IST de 31%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-19-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-19-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -4447,23 +9184,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "2º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Recusa do Paciente",
     "etiologiaDRC": "Nefropatia Lúpica / Doenças Autoimunes",
     "pesoSeco": 75.5,
     "altura": 179,
     "dataInicioDialise": "2021-03-15",
+    "dataInicioClinica": "2021-03-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 370,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2024-03-10"
+      "dataConfeccao": "2024-03-10",
+      "ultimaIntervencao": {
+        "id": "acc-20-1",
+        "data": "2026-07-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-20-1",
+        "data": "2026-07-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-07-14T14:30:00Z"
+      },
+      {
+        "id": "acc-20-2",
+        "data": "2024-03-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-03-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 12.1,
       "ht": 36.3,
@@ -4634,6 +9417,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-20-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 77.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-20-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 75.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-20-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 78.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-20-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 75.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-20-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 78.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-20-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 75.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-20-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 78.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-20-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 75.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-20-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 77.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-20-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 75.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-20-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 77.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-20-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 75.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 77.8,
     "evolucoes": [
       {
         "id": "evo-20-1",
@@ -4645,7 +9551,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 370,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -4663,7 +9569,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-20-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 12.1 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-20-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 410 ng/mL e IST de 32%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-20-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-21",
@@ -4685,23 +9676,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "3º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Ativo em Lista de Espera",
     "etiologiaDRC": "Uropatia Obstrutiva / Litíase Renal",
     "pesoSeco": 60,
     "altura": 162,
     "dataInicioDialise": "2022-04-15",
+    "dataInicioClinica": "2022-04-15",
     "alergias": [
       "Iodo / Contrastes Iodados"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 380,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2022-04-10"
+      "dataConfeccao": "2022-04-10",
+      "ultimaIntervencao": {
+        "id": "acc-21-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-21-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-21-2",
+        "data": "2022-04-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-04-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.3,
       "ht": 30.9,
@@ -4859,6 +9896,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-21-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 62.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-21-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 60,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-21-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 62.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-21-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 60.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-21-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 63,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-21-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 60,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-21-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 61.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-21-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 60.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-21-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 62.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-21-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 60,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-21-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 62.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-21-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 60.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 62.4,
     "evolucoes": [
       {
         "id": "evo-21-1",
@@ -4870,7 +10030,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 380,
         "intercorrencias": "Câimbras leves em panturrilhas ao término da 3ª hora de HD, aliviadas com massagem local e elevação de membros.",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -4888,7 +10048,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-21-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 10.3 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-21-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 453 ng/mL e IST de 33%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-21-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-22",
@@ -4910,23 +10155,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "1º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Bradesco Saúde",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhado / Em Avaliação",
     "etiologiaDRC": "Nefrite Túbulo-Intersticial Crônica (NTIC)",
     "pesoSeco": 77.5,
     "altura": 173,
     "dataInicioDialise": "2023-05-15",
+    "dataInicioClinica": "2023-05-15",
     "alergias": [
       "AINEs (Anti-inflamatórios)"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Bradesco Saúde.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 390,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2023-05-10"
+      "dataConfeccao": "2023-05-10",
+      "ultimaIntervencao": {
+        "id": "acc-22-1",
+        "data": "2026-02-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-22-1",
+        "data": "2026-02-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-02-14T14:30:00Z"
+      },
+      {
+        "id": "acc-22-2",
+        "data": "2023-05-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-05-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.6,
       "ht": 31.8,
@@ -5084,6 +10375,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-22-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 80,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-22-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 77.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-22-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 80.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-22-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 77.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-22-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 80.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-22-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 77.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-22-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 79.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-22-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 77.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-22-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 79.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-22-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 77.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-22-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 80,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-22-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 77.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 80,
     "evolucoes": [
       {
         "id": "evo-22-1",
@@ -5095,7 +10509,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 390,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -5113,7 +10527,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-22-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 10.6 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-22-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 496 ng/mL e IST de 34%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-22-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-23",
@@ -5135,23 +10634,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "2º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SulAmérica",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhar / Em Triagem",
     "etiologiaDRC": "Doença Renal Indeterminada / Desconhecida",
     "pesoSeco": 62,
     "altura": 156,
     "dataInicioDialise": "2024-06-15",
+    "dataInicioClinica": "2024-06-15",
     "alergias": [
       "Sulfas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SulAmérica.",
+    "anticoagulacao": {
+      "tipo": "sem_heparina",
+      "motivoSemHeparina": "Risco de Sangramento / Pós-operatório Recente",
+      "observacoes": "Diálise sem heparina com lavagens salinas periódicas (SF 0,9% 100ml) a cada 30 min."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 400,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2024-06-10"
+      "dataConfeccao": "2024-06-10",
+      "ultimaIntervencao": {
+        "id": "acc-23-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-23-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-23-2",
+        "data": "2024-06-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-06-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.9,
       "ht": 32.7,
@@ -5309,6 +10852,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-23-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 64.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-23-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 62,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-23-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 64.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-23-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 62.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-23-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 65.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-23-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 62,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-23-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 64,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-23-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 62.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-23-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 64.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-23-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 62,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-23-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 64.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-23-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 62.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 64.6,
     "evolucoes": [
       {
         "id": "evo-23-1",
@@ -5320,7 +10986,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 400,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -5338,7 +11004,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-23-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 10.9 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-23-2",
+        "medicamentoId": "cloridrato_sevelamer_800",
+        "medicamentoNome": "Cloridrato de Sevelâmer 800mg",
+        "concentracaoLabel": "800mg - Comprimido",
+        "posologia": "1 a 2 comprimidos VO 3x ao dia no início das principais refeições",
+        "quantidadeMensal": 180,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-05-10",
+        "dataValidade": "2026-11-10",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperfosfatemia crônica (fósforo sérico de 6.1 mg/dL) com indicação de quelante não cálcico.",
+        "justificativaClinica": "Prevenção de calcificação vascular e controle do distúrbio mineral-ósseo da DRC.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-05-10T09:30:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-23-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-24",
@@ -5360,23 +11111,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "3º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HDF",
     "status": "Ativo",
+    "statusTransplante": "Doador Vivo em Investigação",
     "etiologiaDRC": "Diabetes Mellitus / Nefropatia Diabética",
     "pesoSeco": 79.5,
     "altura": 167,
     "dataInicioDialise": "2021-07-15",
+    "dataInicioClinica": "2021-07-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HDF sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Direita (JID)",
       "fluxoSangue": 300,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2022-07-10"
+      "dataConfeccao": "2022-07-10",
+      "ultimaIntervencao": {
+        "id": "acc-24-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-24-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Nefrovita",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-24-2",
+        "data": "2022-07-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Direita (JID) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+        "criadoEm": "2022-07-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.2,
       "ht": 33.6,
@@ -5547,6 +11344,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-24-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 82.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-24-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 79.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-24-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 82.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-24-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 79.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-24-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 81.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-24-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 79.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-24-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 81.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-24-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 79.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-24-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 81.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-24-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 79.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-24-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 82.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-24-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 79.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 82.2,
     "evolucoes": [
       {
         "id": "evo-24-1",
@@ -5576,6 +11496,83 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-24-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 11.2 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-24-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-24-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -5598,23 +11595,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "1º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Provisória",
     "etiologiaDRC": "Hipertensão Arterial Sistêmica (HAS)",
     "pesoSeco": 64,
     "altura": 178,
     "dataInicioDialise": "2022-08-15",
+    "dataInicioClinica": "2022-08-15",
     "alergias": [
       "Dipirona"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 360,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2023-08-10"
+      "dataConfeccao": "2023-08-10",
+      "ultimaIntervencao": {
+        "id": "acc-25-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-25-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-25-2",
+        "data": "2023-08-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-08-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 9.2,
       "ht": 27.6,
@@ -5772,6 +11815,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-25-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 66.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-25-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 64,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-25-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 67.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-25-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 64.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-25-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 65.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-25-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 64,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-25-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 66.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-25-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 64.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-25-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 66.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-25-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 64,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-25-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 66.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-25-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 64.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 66.8,
     "evolucoes": [
       {
         "id": "evo-25-1",
@@ -5783,7 +11949,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 360,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -5801,7 +11967,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-25-1",
+        "medicamentoId": "alfaepoetina_10000",
+        "medicamentoNome": "Alfaepoetina 10.000 UI",
+        "concentracaoLabel": "10.000 UI/ml - Frasco/Ampola",
+        "posologia": "10.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 9.2 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-25-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 180 ng/mL e IST de 18%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-25-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-26",
@@ -5823,23 +12074,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "2º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Definitiva",
     "etiologiaDRC": "Glomerulonefrite Crônica (GNC)",
     "pesoSeco": 81.5,
     "altura": 161,
     "dataInicioDialise": "2023-09-15",
+    "dataInicioClinica": "2023-09-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "enoxaparina",
+      "doseEnoxaparina": "40",
+      "observacoes": "Enoxaparina 40mg SC administrada 1h antes do início da sessão."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 370,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2024-09-10"
+      "dataConfeccao": "2024-09-10",
+      "ultimaIntervencao": {
+        "id": "acc-26-1",
+        "data": "2026-06-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-26-1",
+        "data": "2026-06-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-06-14T14:30:00Z"
+      },
+      {
+        "id": "acc-26-2",
+        "data": "2024-09-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-09-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.8,
       "ht": 35.4,
@@ -5997,6 +12292,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-26-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 84.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-26-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 81.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-26-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 84.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-26-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 81.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-26-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 83.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-26-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 81.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-26-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 83.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-26-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 81.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-26-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 84.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-26-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 81.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-26-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 84.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-26-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 81.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 84.4,
     "evolucoes": [
       {
         "id": "evo-26-1",
@@ -6008,7 +12426,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 370,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -6026,7 +12444,71 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-26-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 11.8 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-26-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-27",
@@ -6048,23 +12530,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "3º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Recusa do Paciente",
     "etiologiaDRC": "Doença Renal Policística Autossômica Dominante (DRPAD)",
     "pesoSeco": 66,
     "altura": 172,
     "dataInicioDialise": "2024-01-15",
+    "dataInicioClinica": "2024-01-15",
     "alergias": [
       "Penicilina"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
-      "tipo": "Prótese",
-      "ladoMembro": "MSE",
+      "tipo": "Prótese PTFE",
+      "ladoMembro": "MSE (Braquioaxilar)",
       "fluxoSangue": 340,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2022-01-10"
+      "dataConfeccao": "2022-01-10",
+      "ultimaIntervencao": {
+        "id": "acc-27-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose veno...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-27-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose venosa sem estenose de hiperplasia miointimal evidente.",
+        "conduta": "Acesso apto para punção em técnica de escada.",
+        "criadoEm": "2026-03-05T11:00:00Z"
+      },
+      {
+        "id": "acc-27-2",
+        "data": "2022-01-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Implante de prótese vascular de PTFE 6mm em alça antebraquial esquerda.",
+        "conduta": "Aguardar período de cicatrização de 3 semanas antes da primeira punção.",
+        "criadoEm": "2022-01-10T14:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 12.1,
       "ht": 36.3,
@@ -6222,6 +12750,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-27-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 69,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-27-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 66,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-27-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 67.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-27-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 66.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-27-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 68.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-27-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 66,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-27-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 68.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-27-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 66.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-27-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 68.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-27-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 66,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-27-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 69,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-27-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 66.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 69,
     "evolucoes": [
       {
         "id": "evo-27-1",
@@ -6233,7 +12884,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 340,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese PTFE em MSE (Braquioaxilar)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -6251,7 +12902,71 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-27-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 12.1 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-27-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-28",
@@ -6273,23 +12988,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "1º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Ativo em Lista de Espera",
     "etiologiaDRC": "Nefropatia Lúpica / Doenças Autoimunes",
     "pesoSeco": 83.5,
     "altura": 155,
     "dataInicioDialise": "2021-02-15",
+    "dataInicioClinica": "2021-02-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 390,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2023-02-10"
+      "dataConfeccao": "2023-02-10",
+      "ultimaIntervencao": {
+        "id": "acc-28-1",
+        "data": "2026-01-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-28-1",
+        "data": "2026-01-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-01-14T14:30:00Z"
+      },
+      {
+        "id": "acc-28-2",
+        "data": "2023-02-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-02-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.3,
       "ht": 30.9,
@@ -6460,6 +13221,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-28-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 86.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-28-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 83.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-28-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 85.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-28-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 83.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-28-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 85.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-28-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 83.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-28-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 86,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-28-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 83.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-28-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 86.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-28-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 83.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-28-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 86.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-28-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 83.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 86.6,
     "evolucoes": [
       {
         "id": "evo-28-1",
@@ -6471,7 +13355,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 390,
         "intercorrencias": "Câimbras leves em panturrilhas ao término da 3ª hora de HD, aliviadas com massagem local e elevação de membros.",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -6489,7 +13373,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-28-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 10.3 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-28-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 354 ng/mL e IST de 26%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-28-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-29",
@@ -6511,23 +13480,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "2º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhado / Em Avaliação",
     "etiologiaDRC": "Uropatia Obstrutiva / Litíase Renal",
     "pesoSeco": 68,
     "altura": 166,
     "dataInicioDialise": "2022-03-15",
+    "dataInicioClinica": "2022-03-15",
     "alergias": [
       "Iodo / Contrastes Iodados"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Esquerda (JIE)",
       "fluxoSangue": 310,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2024-03-10"
+      "dataConfeccao": "2024-03-10",
+      "ultimaIntervencao": {
+        "id": "acc-29-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-29-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Nefrovita",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-29-2",
+        "data": "2024-03-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Esquerda (JIE) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+        "criadoEm": "2024-03-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.6,
       "ht": 31.8,
@@ -6685,6 +13700,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-29-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 71.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-29-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 68,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-29-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 70,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-29-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 68.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-29-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 70.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-29-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 68,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-29-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 70.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-29-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 68.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-29-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 70.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-29-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 68,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-29-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 71.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-29-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 68.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 68,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 71.2,
     "evolucoes": [
       {
         "id": "evo-29-1",
@@ -6714,6 +13852,104 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-29-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 10.6 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-29-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 397 ng/mL e IST de 27%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-29-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-29-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -6736,23 +13972,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "3º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Bradesco Saúde",
+    "modalidade": "HDF",
     "status": "Ativo",
+    "statusTransplante": "Encaminhar / Em Triagem",
     "etiologiaDRC": "Nefrite Túbulo-Intersticial Crônica (NTIC)",
     "pesoSeco": 85.5,
     "altura": 177,
     "dataInicioDialise": "2023-04-15",
+    "dataInicioClinica": "2023-04-15",
     "alergias": [
       "AINEs (Anti-inflamatórios)"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HDF sob convênio Bradesco Saúde.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 350,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2022-04-10"
+      "dataConfeccao": "2022-04-10",
+      "ultimaIntervencao": {
+        "id": "acc-30-1",
+        "data": "2026-03-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-30-1",
+        "data": "2026-03-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-03-14T14:30:00Z"
+      },
+      {
+        "id": "acc-30-2",
+        "data": "2022-04-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-04-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.9,
       "ht": 32.7,
@@ -6910,6 +14192,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-30-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 87.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-30-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 85.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-30-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 87.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-30-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 85.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-30-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 87.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-30-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 85.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-30-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 88.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-30-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 85.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-30-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 88.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-30-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 85.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-30-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 87.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-30-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 85.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 85.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 87.3,
     "evolucoes": [
       {
         "id": "evo-30-1",
@@ -6921,7 +14326,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 350,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -6939,7 +14344,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-30-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 10.9 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-30-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 440 ng/mL e IST de 28%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-30-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-31",
@@ -6961,23 +14451,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "1º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SulAmérica",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Doador Vivo em Investigação",
     "etiologiaDRC": "Doença Renal Indeterminada / Desconhecida",
     "pesoSeco": 70,
     "altura": 160,
     "dataInicioDialise": "2024-05-15",
+    "dataInicioClinica": "2024-05-15",
     "alergias": [
       "Sulfas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SulAmérica.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 360,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2023-05-10"
+      "dataConfeccao": "2023-05-10",
+      "ultimaIntervencao": {
+        "id": "acc-31-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-31-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-31-2",
+        "data": "2023-05-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-05-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.2,
       "ht": 33.6,
@@ -7135,6 +14671,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-31-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 71.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-31-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 70,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-31-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 72.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-31-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 70.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-31-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 72.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-31-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 70,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-31-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 72.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-31-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 70.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-31-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 73.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-31-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 70,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-31-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 71.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-31-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 70.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 70,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 71.9,
     "evolucoes": [
       {
         "id": "evo-31-1",
@@ -7146,7 +14805,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 360,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -7164,7 +14823,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-31-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 11.2 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-31-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 483 ng/mL e IST de 29%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-31-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-32",
@@ -7186,23 +14930,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "2º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Provisória",
     "etiologiaDRC": "Diabetes Mellitus / Nefropatia Diabética",
     "pesoSeco": 55.5,
     "altura": 171,
     "dataInicioDialise": "2021-06-15",
+    "dataInicioClinica": "2021-06-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 370,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2024-06-10"
+      "dataConfeccao": "2024-06-10",
+      "ultimaIntervencao": {
+        "id": "acc-32-1",
+        "data": "2026-05-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-32-1",
+        "data": "2026-05-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-05-14T14:30:00Z"
+      },
+      {
+        "id": "acc-32-2",
+        "data": "2024-06-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-06-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.5,
       "ht": 34.5,
@@ -7373,6 +15163,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-32-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 57.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-32-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 55.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-32-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 57.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-32-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 55.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-32-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 58.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-32-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 55.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-32-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 58.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-32-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 55.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-32-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 58.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-32-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 55.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-32-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 57.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-32-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 55.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 55.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 57.5,
     "evolucoes": [
       {
         "id": "evo-32-1",
@@ -7384,7 +15297,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 370,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -7402,7 +15315,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-32-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 11.5 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-32-2",
+        "medicamentoId": "calcitriol_025",
+        "medicamentoNome": "Calcitriol 0,25 mcg",
+        "concentracaoLabel": "0,25 mcg - Cápsula",
+        "posologia": "1 cápsula VO 1x ao dia pela manhã",
+        "quantidadeMensal": 30,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-01",
+        "dataValidade": "2026-12-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperparatireoidismo secundário refratário com PTH intacto de 528 pg/mL.",
+        "justificativaClinica": "Supressão hormonal de paratireoide para controle de turnover ósseo e osteodistrofia.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-01T14:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-32-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-33",
@@ -7424,23 +15422,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "3º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Suspenso / Inativo em Lista",
     "etiologiaDRC": "Hipertensão Arterial Sistêmica (HAS)",
     "pesoSeco": 72,
     "altura": 182,
     "dataInicioDialise": "2022-07-15",
+    "dataInicioClinica": "2022-07-15",
     "alergias": [
       "Dipirona"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "sem_heparina",
+      "motivoSemHeparina": "Risco de Sangramento / Pós-operatório Recente",
+      "observacoes": "Diálise sem heparina com lavagens salinas periódicas (SF 0,9% 100ml) a cada 30 min."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 380,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2022-07-10"
+      "dataConfeccao": "2022-07-10",
+      "ultimaIntervencao": {
+        "id": "acc-33-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-33-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-33-2",
+        "data": "2022-07-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-07-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.8,
       "ht": 35.4,
@@ -7598,6 +15640,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-33-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 74.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-33-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 72,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-33-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 74.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-33-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 72.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-33-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 74.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-33-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 72,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-33-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 75,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-33-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 72.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-33-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 73.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-33-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 72,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-33-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 74.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-33-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 72.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 72,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 74.1,
     "evolucoes": [
       {
         "id": "evo-33-1",
@@ -7609,7 +15774,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 380,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -7627,7 +15792,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-33-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 11.8 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-33-2",
+        "medicamentoId": "cloridrato_sevelamer_800",
+        "medicamentoNome": "Cloridrato de Sevelâmer 800mg",
+        "concentracaoLabel": "800mg - Comprimido",
+        "posologia": "1 a 2 comprimidos VO 3x ao dia no início das principais refeições",
+        "quantidadeMensal": 180,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-05-10",
+        "dataValidade": "2026-11-10",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperfosfatemia crônica (fósforo sérico de 5.9 mg/dL) com indicação de quelante não cálcico.",
+        "justificativaClinica": "Prevenção de calcificação vascular e controle do distúrbio mineral-ósseo da DRC.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-05-10T09:30:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-33-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-34",
@@ -7649,23 +15899,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "1º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Em Tratamento",
+    "statusTransplante": "Recusa do Paciente",
     "etiologiaDRC": "Glomerulonefrite Crônica (GNC)",
     "pesoSeco": 57.5,
     "altura": 165,
     "dataInicioDialise": "2023-08-15",
+    "dataInicioClinica": "2023-08-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Direita (JID)",
       "fluxoSangue": 320,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2023-08-10"
+      "dataConfeccao": "2023-08-10",
+      "ultimaIntervencao": {
+        "id": "acc-34-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-34-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Nefrovita",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-34-2",
+        "data": "2023-08-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Direita (JID) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+        "criadoEm": "2023-08-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 12.1,
       "ht": 36.3,
@@ -7823,6 +16119,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-34-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 59.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-34-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 57.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-34-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 60,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-34-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 57.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-34-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 60.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-34-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 57.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-34-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 60.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-34-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 57.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-34-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 59.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-34-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 57.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-34-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 59.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-34-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 57.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 57.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 59.7,
     "evolucoes": [
       {
         "id": "evo-34-1",
@@ -7852,6 +16271,83 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-34-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 12.1 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-34-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-34-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -7874,23 +16370,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "2º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Ativo em Lista de Espera",
     "etiologiaDRC": "Doença Renal Policística Autossômica Dominante (DRPAD)",
     "pesoSeco": 74,
     "altura": 176,
     "dataInicioDialise": "2024-09-15",
+    "dataInicioClinica": "2024-09-15",
     "alergias": [
       "Penicilina"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 400,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2024-09-10"
+      "dataConfeccao": "2024-09-10",
+      "ultimaIntervencao": {
+        "id": "acc-35-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-35-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-35-2",
+        "data": "2024-09-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-09-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.3,
       "ht": 30.9,
@@ -8048,6 +16590,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-35-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 76.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-35-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 74,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-35-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 76.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-35-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 74.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-35-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 76.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-35-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 74,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-35-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 77.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-35-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 74.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-35-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 76,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-35-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 74,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-35-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 76.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-35-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 74.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 74,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 76.3,
     "evolucoes": [
       {
         "id": "evo-35-1",
@@ -8059,7 +16724,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 400,
         "intercorrencias": "Câimbras leves em panturrilhas ao término da 3ª hora de HD, aliviadas com massagem local e elevação de membros.",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -8077,7 +16742,71 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-35-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 10.3 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-35-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-36",
@@ -8099,23 +16828,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "3º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Unimed",
+    "modalidade": "HDF",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Definitiva",
     "etiologiaDRC": "Nefropatia Lúpica / Doenças Autoimunes",
     "pesoSeco": 59.5,
     "altura": 159,
     "dataInicioDialise": "2021-01-15",
+    "dataInicioClinica": "2021-01-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HDF sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "enoxaparina",
+      "doseEnoxaparina": "40",
+      "observacoes": "Enoxaparina 40mg SC administrada 1h antes do início da sessão."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 350,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2022-01-10"
+      "dataConfeccao": "2022-01-10",
+      "ultimaIntervencao": {
+        "id": "acc-36-1",
+        "data": "2026-02-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-36-1",
+        "data": "2026-02-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-02-14T14:30:00Z"
+      },
+      {
+        "id": "acc-36-2",
+        "data": "2022-01-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-01-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.6,
       "ht": 31.8,
@@ -8286,6 +17059,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-36-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 61.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-36-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 59.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-36-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 62.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-36-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 59.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-36-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 62.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-36-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 59.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-36-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 61.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-36-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 59.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-36-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 61.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-36-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 59.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-36-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 61.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-36-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 59.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 59.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 61.9,
     "evolucoes": [
       {
         "id": "evo-36-1",
@@ -8297,7 +17193,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 350,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -8315,7 +17211,71 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-36-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 10.6 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-36-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-37",
@@ -8337,23 +17297,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "1º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhar / Em Triagem",
     "etiologiaDRC": "Uropatia Obstrutiva / Litíase Renal",
     "pesoSeco": 76,
     "altura": 170,
     "dataInicioDialise": "2022-02-15",
+    "dataInicioClinica": "2022-02-15",
     "alergias": [
       "Iodo / Contrastes Iodados"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
-      "tipo": "Prótese",
-      "ladoMembro": "MSE",
+      "tipo": "Prótese PTFE",
+      "ladoMembro": "MSE (Braquioaxilar)",
       "fluxoSangue": 340,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2023-02-10"
+      "dataConfeccao": "2023-02-10",
+      "ultimaIntervencao": {
+        "id": "acc-37-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose veno...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-37-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose venosa sem estenose de hiperplasia miointimal evidente.",
+        "conduta": "Acesso apto para punção em técnica de escada.",
+        "criadoEm": "2026-03-05T11:00:00Z"
+      },
+      {
+        "id": "acc-37-2",
+        "data": "2023-02-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Implante de prótese vascular de PTFE 6mm em alça antebraquial esquerda.",
+        "conduta": "Aguardar período de cicatrização de 3 semanas antes da primeira punção.",
+        "criadoEm": "2023-02-10T14:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.9,
       "ht": 32.7,
@@ -8511,6 +17517,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-37-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 78.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-37-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 76,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-37-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 78.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-37-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 76.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-37-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 79.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-37-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 76,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-37-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 77.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-37-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 76.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-37-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 78.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-37-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 76,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-37-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 78.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-37-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 76.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 76,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 78.5,
     "evolucoes": [
       {
         "id": "evo-37-1",
@@ -8522,7 +17651,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 340,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese PTFE em MSE (Braquioaxilar)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -8540,7 +17669,71 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-37-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 10.9 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-37-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-38",
@@ -8562,23 +17755,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "2º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Bradesco Saúde",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Doador Vivo em Investigação",
     "etiologiaDRC": "Nefrite Túbulo-Intersticial Crônica (NTIC)",
     "pesoSeco": 61.5,
     "altura": 181,
     "dataInicioDialise": "2023-03-15",
+    "dataInicioClinica": "2023-03-15",
     "alergias": [
       "AINEs (Anti-inflamatórios)"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Bradesco Saúde.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 370,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2024-03-10"
+      "dataConfeccao": "2024-03-10",
+      "ultimaIntervencao": {
+        "id": "acc-38-1",
+        "data": "2026-04-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-38-1",
+        "data": "2026-04-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-04-14T14:30:00Z"
+      },
+      {
+        "id": "acc-38-2",
+        "data": "2024-03-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-03-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.2,
       "ht": 33.6,
@@ -8736,6 +17975,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-38-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 64.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-38-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 61.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-38-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 64.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-38-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 61.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-38-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 64.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-38-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 61.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-38-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 63.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-38-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 61.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-38-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 63.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-38-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 61.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-38-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 64.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-38-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 61.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 61.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 64.1,
     "evolucoes": [
       {
         "id": "evo-38-1",
@@ -8747,7 +18109,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 370,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -8765,7 +18127,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-38-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 11.2 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-38-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 384 ng/mL e IST de 36%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-38-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-39",
@@ -8787,23 +18234,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "3º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SulAmérica",
+    "modalidade": "HD",
     "status": "Transplantado",
+    "statusTransplante": "Já Transplantado",
     "etiologiaDRC": "Doença Renal Indeterminada / Desconhecida",
     "pesoSeco": 78,
     "altura": 164,
     "dataInicioDialise": "2024-04-15",
+    "dataInicioClinica": "2024-04-15",
     "alergias": [
       "Sulfas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SulAmérica.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Esquerda (JIE)",
       "fluxoSangue": 330,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2022-04-10"
+      "dataConfeccao": "2022-04-10",
+      "ultimaIntervencao": {
+        "id": "acc-39-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-39-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Nefrovita",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-39-2",
+        "data": "2022-04-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Esquerda (JIE) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+        "criadoEm": "2022-04-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.5,
       "ht": 34.5,
@@ -8961,6 +18454,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-39-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 80.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-39-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 78,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-39-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 81,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-39-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 78.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-39-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 79.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-39-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 78,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-39-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 80.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-39-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 78.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-39-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 80.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-39-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 78,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-39-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 80.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-39-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 78.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 78,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 80.7,
     "evolucoes": [
       {
         "id": "evo-39-1",
@@ -8990,6 +18606,104 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-39-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 11.5 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-39-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 427 ng/mL e IST de 37%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-39-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-39-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -9012,23 +18726,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "1º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Suspenso / Inativo em Lista",
     "etiologiaDRC": "Diabetes Mellitus / Nefropatia Diabética",
     "pesoSeco": 63.5,
     "altura": 175,
     "dataInicioDialise": "2021-05-15",
+    "dataInicioClinica": "2021-05-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Nefrovita com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 390,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2023-05-10"
+      "dataConfeccao": "2023-05-10",
+      "ultimaIntervencao": {
+        "id": "acc-40-1",
+        "data": "2026-06-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-40-1",
+        "data": "2026-06-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-06-14T14:30:00Z"
+      },
+      {
+        "id": "acc-40-2",
+        "data": "2023-05-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-05-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.8,
       "ht": 35.4,
@@ -9199,6 +18959,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-40-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 66.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-40-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 63.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-40-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 66.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-40-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 63.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-40-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 65.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-40-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 63.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-40-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 65.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-40-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 63.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-40-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 66,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-40-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 63.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-40-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 66.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-40-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 63.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 63.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 66.3,
     "evolucoes": [
       {
         "id": "evo-40-1",
@@ -9210,7 +19093,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 390,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -9228,7 +19111,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-40-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 11.8 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-40-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 470 ng/mL e IST de 38%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-40-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-41",
@@ -9250,23 +19218,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "2º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Recusa do Paciente",
     "etiologiaDRC": "Hipertensão Arterial Sistêmica (HAS)",
     "pesoSeco": 80,
     "altura": 158,
     "dataInicioDialise": "2022-06-15",
+    "dataInicioClinica": "2022-06-15",
     "alergias": [
       "Dipirona"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 400,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2024-06-10"
+      "dataConfeccao": "2024-06-10",
+      "ultimaIntervencao": {
+        "id": "acc-41-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-41-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-41-2",
+        "data": "2024-06-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-06-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 12.1,
       "ht": 36.3,
@@ -9424,6 +19438,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-41-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 82.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-41-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 80,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-41-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 83.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-41-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 80.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-41-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 82,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-41-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 80,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-41-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 82.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-41-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 80.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-41-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 82.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-41-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 80,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-41-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 82.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-41-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 80.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 80,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 82.9,
     "evolucoes": [
       {
         "id": "evo-41-1",
@@ -9435,7 +19572,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 400,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -9453,7 +19590,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-41-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 12.1 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-41-2",
+        "medicamentoId": "cloridrato_sevelamer_800",
+        "medicamentoNome": "Cloridrato de Sevelâmer 800mg",
+        "concentracaoLabel": "800mg - Comprimido",
+        "posologia": "1 a 2 comprimidos VO 3x ao dia no início das principais refeições",
+        "quantidadeMensal": 180,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-05-10",
+        "dataValidade": "2026-11-10",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperfosfatemia crônica (fósforo sérico de 6.1 mg/dL) com indicação de quelante não cálcico.",
+        "justificativaClinica": "Prevenção de calcificação vascular e controle do distúrbio mineral-ósseo da DRC.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-05-10T09:30:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-41-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-42",
@@ -9475,23 +19697,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "3º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HDF",
     "status": "Ativo",
+    "statusTransplante": "Ativo em Lista de Espera",
     "etiologiaDRC": "Glomerulonefrite Crônica (GNC)",
     "pesoSeco": 65.5,
     "altura": 169,
     "dataInicioDialise": "2023-07-15",
+    "dataInicioClinica": "2023-07-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HDF sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 350,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2022-07-10"
+      "dataConfeccao": "2022-07-10",
+      "ultimaIntervencao": {
+        "id": "acc-42-1",
+        "data": "2026-01-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-42-1",
+        "data": "2026-01-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-01-14T14:30:00Z"
+      },
+      {
+        "id": "acc-42-2",
+        "data": "2022-07-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-07-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.3,
       "ht": 30.9,
@@ -9649,6 +19917,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-42-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 68.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-42-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 65.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-42-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 67.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-42-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 65.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-42-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 67.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-42-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 65.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-42-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 67.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-42-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 65.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-42-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 68.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-42-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 65.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-42-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 68.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-42-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 65.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 65.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 68.5,
     "evolucoes": [
       {
         "id": "evo-42-1",
@@ -9660,7 +20051,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 350,
         "intercorrencias": "Câimbras leves em panturrilhas ao término da 3ª hora de HD, aliviadas com massagem local e elevação de membros.",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -9678,7 +20069,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-42-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 10.3 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-42-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 556 ng/mL e IST de 26%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-42-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-43",
@@ -9700,23 +20176,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "1º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhado / Em Avaliação",
     "etiologiaDRC": "Doença Renal Policística Autossômica Dominante (DRPAD)",
     "pesoSeco": 82,
     "altura": 180,
     "dataInicioDialise": "2024-08-15",
+    "dataInicioClinica": "2024-08-15",
     "alergias": [
       "Penicilina"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "sem_heparina",
+      "motivoSemHeparina": "Risco de Sangramento / Pós-operatório Recente",
+      "observacoes": "Diálise sem heparina com lavagens salinas periódicas (SF 0,9% 100ml) a cada 30 min."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 360,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2023-08-10"
+      "dataConfeccao": "2023-08-10",
+      "ultimaIntervencao": {
+        "id": "acc-43-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-43-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-43-2",
+        "data": "2023-08-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-08-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.6,
       "ht": 31.8,
@@ -9874,6 +20394,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-43-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 85.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-43-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 82,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-43-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 83.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-43-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 82.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-43-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 84.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-43-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 82,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-43-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 84.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-43-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 82.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-43-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 84.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-43-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 82,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-43-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 85.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-43-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 82.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 82,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 85.1,
     "evolucoes": [
       {
         "id": "evo-43-1",
@@ -9885,7 +20528,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 360,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -9903,7 +20546,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-43-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 10.6 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-43-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 599 ng/mL e IST de 27%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-43-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-44",
@@ -9925,23 +20653,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "2º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhar / Em Triagem",
     "etiologiaDRC": "Nefropatia Lúpica / Doenças Autoimunes",
     "pesoSeco": 67.5,
     "altura": 163,
     "dataInicioDialise": "2021-09-15",
+    "dataInicioClinica": "2021-09-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Direita (JID)",
       "fluxoSangue": 300,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2024-09-10"
+      "dataConfeccao": "2024-09-10",
+      "ultimaIntervencao": {
+        "id": "acc-44-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-44-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Hemovida",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-44-2",
+        "data": "2024-09-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Direita (JID) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+        "criadoEm": "2024-09-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.9,
       "ht": 32.7,
@@ -10112,6 +20886,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-44-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 70.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-44-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 67.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-44-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 69.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-44-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 67.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-44-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 69.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-44-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 67.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-44-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 70.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-44-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 67.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-44-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 70.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-44-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 67.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-44-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 70.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-44-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 67.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 67.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 70.7,
     "evolucoes": [
       {
         "id": "evo-44-1",
@@ -10141,6 +21038,104 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-44-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 10.9 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-44-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 642 ng/mL e IST de 28%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-44-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-44-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -10163,23 +21158,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "3º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Doador Vivo em Investigação",
     "etiologiaDRC": "Uropatia Obstrutiva / Litíase Renal",
     "pesoSeco": 84,
     "altura": 174,
     "dataInicioDialise": "2022-01-15",
+    "dataInicioClinica": "2022-01-15",
     "alergias": [
       "Iodo / Contrastes Iodados"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 380,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2022-01-10"
+      "dataConfeccao": "2022-01-10",
+      "ultimaIntervencao": {
+        "id": "acc-45-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-45-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-45-2",
+        "data": "2022-01-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-01-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.2,
       "ht": 33.6,
@@ -10337,6 +21378,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-45-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 85.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-45-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 84,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-45-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 86.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-45-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 84.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-45-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 86.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-45-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 84,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-45-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 86.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-45-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 84.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-45-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 87,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-45-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 84,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-45-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 85.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-45-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 84.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 84,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 85.8,
     "evolucoes": [
       {
         "id": "evo-45-1",
@@ -10348,7 +21512,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 380,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -10366,7 +21530,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-45-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 11.2 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-45-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 685 ng/mL e IST de 29%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-45-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-46",
@@ -10388,23 +21637,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "1º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Bradesco Saúde",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Provisória",
     "etiologiaDRC": "Nefrite Túbulo-Intersticial Crônica (NTIC)",
     "pesoSeco": 69.5,
     "altura": 157,
     "dataInicioDialise": "2023-02-15",
+    "dataInicioClinica": "2023-02-15",
     "alergias": [
       "AINEs (Anti-inflamatórios)"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Bradesco Saúde.",
+    "anticoagulacao": {
+      "tipo": "enoxaparina",
+      "doseEnoxaparina": "40",
+      "observacoes": "Enoxaparina 40mg SC administrada 1h antes do início da sessão."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 390,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2023-02-10"
+      "dataConfeccao": "2023-02-10",
+      "ultimaIntervencao": {
+        "id": "acc-46-1",
+        "data": "2026-05-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-46-1",
+        "data": "2026-05-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-05-14T14:30:00Z"
+      },
+      {
+        "id": "acc-46-2",
+        "data": "2023-02-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-02-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.5,
       "ht": 34.5,
@@ -10562,6 +21855,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-46-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 71.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-46-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 69.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-46-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 71.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-46-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 69.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-46-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 72,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-46-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 69.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-46-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 72.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-46-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 69.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-46-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 72.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-46-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 69.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-46-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 71.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-46-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 69.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 69.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 71.4,
     "evolucoes": [
       {
         "id": "evo-46-1",
@@ -10573,7 +21989,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 390,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -10591,7 +22007,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-46-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 11.5 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-46-2",
+        "medicamentoId": "cloridrato_sevelamer_800",
+        "medicamentoNome": "Cloridrato de Sevelâmer 800mg",
+        "concentracaoLabel": "800mg - Comprimido",
+        "posologia": "1 a 2 comprimidos VO 3x ao dia no início das principais refeições",
+        "quantidadeMensal": 180,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-05-10",
+        "dataValidade": "2026-11-10",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperfosfatemia crônica (fósforo sérico de 6.0 mg/dL) com indicação de quelante não cálcico.",
+        "justificativaClinica": "Prevenção de calcificação vascular e controle do distúrbio mineral-ósseo da DRC.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-05-10T09:30:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-46-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-47",
@@ -10613,23 +22114,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "2º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SulAmérica",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Suspenso / Inativo em Lista",
     "etiologiaDRC": "Doença Renal Indeterminada / Desconhecida",
     "pesoSeco": 86,
     "altura": 168,
     "dataInicioDialise": "2024-03-15",
+    "dataInicioClinica": "2024-03-15",
     "alergias": [
       "Sulfas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SulAmérica.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
-      "tipo": "Prótese",
-      "ladoMembro": "MSE",
+      "tipo": "Prótese PTFE",
+      "ladoMembro": "MSE (Braquioaxilar)",
       "fluxoSangue": 340,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2024-03-10"
+      "dataConfeccao": "2024-03-10",
+      "ultimaIntervencao": {
+        "id": "acc-47-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose veno...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-47-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose venosa sem estenose de hiperplasia miointimal evidente.",
+        "conduta": "Acesso apto para punção em técnica de escada.",
+        "criadoEm": "2026-03-05T11:00:00Z"
+      },
+      {
+        "id": "acc-47-2",
+        "data": "2024-03-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Implante de prótese vascular de PTFE 6mm em alça antebraquial esquerda.",
+        "conduta": "Aguardar período de cicatrização de 3 semanas antes da primeira punção.",
+        "criadoEm": "2024-03-10T14:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.8,
       "ht": 35.4,
@@ -10787,6 +22334,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-47-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 88,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-47-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 86,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-47-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 88.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-47-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 86.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-47-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 88.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-47-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 86,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-47-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 88.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-47-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 86.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-47-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 89.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-47-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 86,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-47-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 88,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-47-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 86.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 86,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 88,
     "evolucoes": [
       {
         "id": "evo-47-1",
@@ -10798,7 +22468,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 340,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese PTFE em MSE (Braquioaxilar)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -10816,7 +22486,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-47-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 11.8 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-47-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 371 ng/mL e IST de 31%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-47-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-48",
@@ -10838,23 +22593,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "3º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HDF",
     "status": "Ativo",
+    "statusTransplante": "Recusa do Paciente",
     "etiologiaDRC": "Diabetes Mellitus / Nefropatia Diabética",
     "pesoSeco": 71.5,
     "altura": 179,
     "dataInicioDialise": "2021-04-15",
+    "dataInicioClinica": "2021-04-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HDF sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 350,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2022-04-10"
+      "dataConfeccao": "2022-04-10",
+      "ultimaIntervencao": {
+        "id": "acc-48-1",
+        "data": "2026-07-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-48-1",
+        "data": "2026-07-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-07-14T14:30:00Z"
+      },
+      {
+        "id": "acc-48-2",
+        "data": "2022-04-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-04-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 9.2,
       "ht": 27.6,
@@ -11025,6 +22826,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-48-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 73.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-48-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 71.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-48-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 73.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-48-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 71.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-48-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 74.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-48-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 71.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-48-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 74.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-48-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 71.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-48-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 73.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-48-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 71.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-48-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 73.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-48-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 71.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 71.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 73.6,
     "evolucoes": [
       {
         "id": "evo-48-1",
@@ -11036,7 +22960,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 350,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -11054,7 +22978,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-48-1",
+        "medicamentoId": "alfaepoetina_10000",
+        "medicamentoNome": "Alfaepoetina 10.000 UI",
+        "concentracaoLabel": "10.000 UI/ml - Frasco/Ampola",
+        "posologia": "10.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 9.2 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-48-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 180 ng/mL e IST de 18%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-48-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-49",
@@ -11076,23 +23085,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "1º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Ativo em Lista de Espera",
     "etiologiaDRC": "Hipertensão Arterial Sistêmica (HAS)",
     "pesoSeco": 56,
     "altura": 162,
     "dataInicioDialise": "2022-05-15",
+    "dataInicioClinica": "2022-05-15",
     "alergias": [
       "Dipirona"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Esquerda (JIE)",
       "fluxoSangue": 310,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2023-05-10"
+      "dataConfeccao": "2023-05-10",
+      "ultimaIntervencao": {
+        "id": "acc-49-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-49-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Hemovida",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-49-2",
+        "data": "2023-05-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Esquerda (JIE) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+        "criadoEm": "2023-05-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.3,
       "ht": 30.9,
@@ -11250,6 +23305,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-49-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 58.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-49-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 56,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-49-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 58.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-49-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 56.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-49-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 58.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-49-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 56,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-49-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 59.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-49-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 56.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-49-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 57.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-49-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 56,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-49-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 58.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-49-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 56.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 56,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 58.2,
     "evolucoes": [
       {
         "id": "evo-49-1",
@@ -11279,6 +23457,104 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-49-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 10.3 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-49-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 457 ng/mL e IST de 33%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-49-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-49-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -11301,23 +23577,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "2º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhado / Em Avaliação",
     "etiologiaDRC": "Glomerulonefrite Crônica (GNC)",
     "pesoSeco": 73.5,
     "altura": 173,
     "dataInicioDialise": "2023-06-15",
+    "dataInicioClinica": "2023-06-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 370,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2024-06-10"
+      "dataConfeccao": "2024-06-10",
+      "ultimaIntervencao": {
+        "id": "acc-50-1",
+        "data": "2026-02-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-50-1",
+        "data": "2026-02-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-02-14T14:30:00Z"
+      },
+      {
+        "id": "acc-50-2",
+        "data": "2024-06-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-06-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.6,
       "ht": 31.8,
@@ -11475,6 +23797,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-50-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 75.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-50-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 73.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-50-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 76.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-50-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 73.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-50-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 76.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-50-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 73.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-50-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 76.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-50-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 73.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-50-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 75.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-50-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 73.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-50-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 75.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-50-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 73.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 73.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 75.8,
     "evolucoes": [
       {
         "id": "evo-50-1",
@@ -11486,7 +23931,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 370,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -11504,7 +23949,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-50-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 10.6 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-50-2",
+        "medicamentoId": "calcitriol_025",
+        "medicamentoNome": "Calcitriol 0,25 mcg",
+        "concentracaoLabel": "0,25 mcg - Cápsula",
+        "posologia": "1 cápsula VO 1x ao dia pela manhã",
+        "quantidadeMensal": 30,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-01",
+        "dataValidade": "2026-12-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperparatireoidismo secundário refratário com PTH intacto de 410 pg/mL.",
+        "justificativaClinica": "Supressão hormonal de paratireoide para controle de turnover ósseo e osteodistrofia.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-01T14:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-50-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-51",
@@ -11526,23 +24056,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "3º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhar / Em Triagem",
     "etiologiaDRC": "Doença Renal Policística Autossômica Dominante (DRPAD)",
     "pesoSeco": 58,
     "altura": 156,
     "dataInicioDialise": "2024-07-15",
+    "dataInicioClinica": "2024-07-15",
     "alergias": [
       "Penicilina"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 380,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2022-07-10"
+      "dataConfeccao": "2022-07-10",
+      "ultimaIntervencao": {
+        "id": "acc-51-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-51-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-51-2",
+        "data": "2022-07-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-07-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.9,
       "ht": 32.7,
@@ -11700,6 +24276,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-51-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 60.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-51-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 58,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-51-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 60.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-51-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 58.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-51-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 61,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-51-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 58,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-51-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 59.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-51-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 58.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-51-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 60.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-51-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 58,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-51-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 60.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-51-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 58.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 58,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 60.4,
     "evolucoes": [
       {
         "id": "evo-51-1",
@@ -11711,7 +24410,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 380,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 380 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -11729,7 +24428,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-51-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 10.9 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-51-2",
+        "medicamentoId": "cloridrato_sevelamer_800",
+        "medicamentoNome": "Cloridrato de Sevelâmer 800mg",
+        "concentracaoLabel": "800mg - Comprimido",
+        "posologia": "1 a 2 comprimidos VO 3x ao dia no início das principais refeições",
+        "quantidadeMensal": 180,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-05-10",
+        "dataValidade": "2026-11-10",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperfosfatemia crônica (fósforo sérico de 5.9 mg/dL) com indicação de quelante não cálcico.",
+        "justificativaClinica": "Prevenção de calcificação vascular e controle do distúrbio mineral-ósseo da DRC.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-05-10T09:30:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-51-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-52",
@@ -11751,23 +24535,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "1º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Definitiva",
     "etiologiaDRC": "Nefropatia Lúpica / Doenças Autoimunes",
     "pesoSeco": 75.5,
     "altura": 167,
     "dataInicioDialise": "2021-08-15",
+    "dataInicioClinica": "2021-08-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 390,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2023-08-10"
+      "dataConfeccao": "2023-08-10",
+      "ultimaIntervencao": {
+        "id": "acc-52-1",
+        "data": "2026-04-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-52-1",
+        "data": "2026-04-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-04-14T14:30:00Z"
+      },
+      {
+        "id": "acc-52-2",
+        "data": "2023-08-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-08-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.2,
       "ht": 33.6,
@@ -11938,6 +24768,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-52-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 78,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-52-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 75.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-52-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 78.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-52-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 75.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-52-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 78.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-52-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 75.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-52-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 77.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-52-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 75.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-52-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 77.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-52-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 75.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-52-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 78,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-52-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 75.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 75.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 78,
     "evolucoes": [
       {
         "id": "evo-52-1",
@@ -11949,7 +24902,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 390,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -11967,7 +24920,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-52-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 11.2 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-52-2",
+        "medicamentoId": "cloridrato_sevelamer_800",
+        "medicamentoNome": "Cloridrato de Sevelâmer 800mg",
+        "concentracaoLabel": "800mg - Comprimido",
+        "posologia": "1 a 2 comprimidos VO 3x ao dia no início das principais refeições",
+        "quantidadeMensal": 180,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-05-10",
+        "dataValidade": "2026-11-10",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperfosfatemia crônica (fósforo sérico de 6.2 mg/dL) com indicação de quelante não cálcico.",
+        "justificativaClinica": "Prevenção de calcificação vascular e controle do distúrbio mineral-ósseo da DRC.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-05-10T09:30:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-52-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-53",
@@ -11989,23 +25027,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "2º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "Unimed",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Provisória",
     "etiologiaDRC": "Uropatia Obstrutiva / Litíase Renal",
     "pesoSeco": 60,
     "altura": 178,
     "dataInicioDialise": "2022-09-15",
+    "dataInicioClinica": "2022-09-15",
     "alergias": [
       "Iodo / Contrastes Iodados"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "sem_heparina",
+      "motivoSemHeparina": "Risco de Sangramento / Pós-operatório Recente",
+      "observacoes": "Diálise sem heparina com lavagens salinas periódicas (SF 0,9% 100ml) a cada 30 min."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 400,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2024-09-10"
+      "dataConfeccao": "2024-09-10",
+      "ultimaIntervencao": {
+        "id": "acc-53-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-53-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-53-2",
+        "data": "2024-09-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-09-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.5,
       "ht": 34.5,
@@ -12163,6 +25245,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-53-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 62.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-53-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 60,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-53-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 62.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-53-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 60.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-53-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 63.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-53-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 60,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-53-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 62,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-53-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 60.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-53-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 62.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-53-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 60,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-53-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 62.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-53-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 60.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 60,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 62.6,
     "evolucoes": [
       {
         "id": "evo-53-1",
@@ -12174,7 +25379,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 400,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 400 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -12192,7 +25397,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-53-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 11.5 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-53-2",
+        "medicamentoId": "calcitriol_025",
+        "medicamentoNome": "Calcitriol 0,25 mcg",
+        "concentracaoLabel": "0,25 mcg - Cápsula",
+        "posologia": "1 cápsula VO 1x ao dia pela manhã",
+        "quantidadeMensal": 30,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-01",
+        "dataValidade": "2026-12-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperparatireoidismo secundário refratário com PTH intacto de 497 pg/mL.",
+        "justificativaClinica": "Supressão hormonal de paratireoide para controle de turnover ósseo e osteodistrofia.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-01T14:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-53-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-54",
@@ -12214,23 +25504,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "3º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Bradesco Saúde",
+    "modalidade": "HDF",
     "status": "Ativo",
+    "statusTransplante": "Suspenso / Inativo em Lista",
     "etiologiaDRC": "Nefrite Túbulo-Intersticial Crônica (NTIC)",
     "pesoSeco": 77.5,
     "altura": 161,
     "dataInicioDialise": "2023-01-15",
+    "dataInicioClinica": "2023-01-15",
     "alergias": [
       "AINEs (Anti-inflamatórios)"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HDF sob convênio Bradesco Saúde.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Direita (JID)",
       "fluxoSangue": 320,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2022-01-10"
+      "dataConfeccao": "2022-01-10",
+      "ultimaIntervencao": {
+        "id": "acc-54-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-54-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Hemovida",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-54-2",
+        "data": "2022-01-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Direita (JID) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+        "criadoEm": "2022-01-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.8,
       "ht": 35.4,
@@ -12388,6 +25724,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-54-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 80.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-54-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 77.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-54-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 80.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-54-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 77.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-54-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 79.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-54-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 77.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-54-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 79.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-54-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 77.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-54-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 79.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-54-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 77.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-54-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 80.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-54-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 77.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 77.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 80.2,
     "evolucoes": [
       {
         "id": "evo-54-1",
@@ -12417,6 +25876,104 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-54-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 11.8 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-54-2",
+        "medicamentoId": "calcitriol_025",
+        "medicamentoNome": "Calcitriol 0,25 mcg",
+        "concentracaoLabel": "0,25 mcg - Cápsula",
+        "posologia": "1 cápsula VO 1x ao dia pela manhã",
+        "quantidadeMensal": 30,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-01",
+        "dataValidade": "2026-12-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperparatireoidismo secundário refratário com PTH intacto de 526 pg/mL.",
+        "justificativaClinica": "Supressão hormonal de paratireoide para controle de turnover ósseo e osteodistrofia.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-01T14:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-54-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-54-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -12439,23 +25996,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "1º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SulAmérica",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Recusa do Paciente",
     "etiologiaDRC": "Doença Renal Indeterminada / Desconhecida",
     "pesoSeco": 62,
     "altura": 172,
     "dataInicioDialise": "2024-02-15",
+    "dataInicioClinica": "2024-02-15",
     "alergias": [
       "Sulfas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SulAmérica.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Braquiocefálica)",
       "fluxoSangue": 360,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2023-02-10"
+      "dataConfeccao": "2023-02-10",
+      "ultimaIntervencao": {
+        "id": "acc-55-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 92...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-55-1",
+        "data": "2025-11-20",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital das Clínicas",
+        "desfecho": "Sucesso",
+        "descricao": "Mapeamento ultrassonográfico doppler colorido: fluxo volumétrico de 920 ml/min, profundidade de 3.5mm e diâmetro de 6.2mm. Sem estenoses ou trombos.",
+        "conduta": "Acesso maduro e estável. Manter rotação adequada dos sítios de punção.",
+        "criadoEm": "2025-11-20T09:15:00Z"
+      },
+      {
+        "id": "acc-55-2",
+        "data": "2023-02-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-02-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 12.1,
       "ht": 36.3,
@@ -12613,6 +26216,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-55-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 64.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-55-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 62,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-55-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 65.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-55-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 62.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-55-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 63.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-55-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 62,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-55-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 64.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-55-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 62.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-55-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 64.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-55-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 62,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-55-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 64.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-55-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 62.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 62,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 64.8,
     "evolucoes": [
       {
         "id": "evo-55-1",
@@ -12624,7 +26350,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 360,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 360 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -12642,7 +26368,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-55-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 12.1 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-55-2",
+        "medicamentoId": "calcitriol_025",
+        "medicamentoNome": "Calcitriol 0,25 mcg",
+        "concentracaoLabel": "0,25 mcg - Cápsula",
+        "posologia": "1 cápsula VO 1x ao dia pela manhã",
+        "quantidadeMensal": 30,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-01",
+        "dataValidade": "2026-12-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Hiperparatireoidismo secundário refratário com PTH intacto de 555 pg/mL.",
+        "justificativaClinica": "Supressão hormonal de paratireoide para controle de turnover ósseo e osteodistrofia.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-01T14:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-55-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-56",
@@ -12664,23 +26475,67 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "2º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Em Tratamento",
+    "statusTransplante": "Ativo em Lista de Espera",
     "etiologiaDRC": "Diabetes Mellitus / Nefropatia Diabética",
     "pesoSeco": 79.5,
     "altura": 155,
     "dataInicioDialise": "2021-03-15",
+    "dataInicioClinica": "2021-03-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "enoxaparina",
+      "doseEnoxaparina": "40",
+      "observacoes": "Enoxaparina 40mg SC administrada 1h antes do início da sessão."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 370,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2024-03-10"
+      "dataConfeccao": "2024-03-10",
+      "ultimaIntervencao": {
+        "id": "acc-56-1",
+        "data": "2026-01-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-56-1",
+        "data": "2026-01-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-01-14T14:30:00Z"
+      },
+      {
+        "id": "acc-56-2",
+        "data": "2024-03-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2024-03-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.3,
       "ht": 30.9,
@@ -12851,6 +26706,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-56-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 82.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-56-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 79.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-56-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 82.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-56-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 79.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-56-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 81.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-56-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 79.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-56-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 81.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-56-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 79.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-56-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 82.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-56-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 79.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-56-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 82.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-56-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 79.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 79.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 82.4,
     "evolucoes": [
       {
         "id": "evo-56-1",
@@ -12862,7 +26840,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 370,
         "intercorrencias": "Câimbras leves em panturrilhas ao término da 3ª hora de HD, aliviadas com massagem local e elevação de membros.",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 370 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -12880,7 +26858,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-56-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 10.3 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-56-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 358 ng/mL e IST de 26%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-56-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-57",
@@ -12902,23 +26965,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital das Clínicas",
     "turno": "3º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Contraindicação Definitiva",
     "etiologiaDRC": "Hipertensão Arterial Sistêmica (HAS)",
     "pesoSeco": 64,
     "altura": 166,
     "dataInicioDialise": "2022-04-15",
+    "dataInicioClinica": "2022-04-15",
     "alergias": [
       "Dipirona"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
-      "tipo": "Prótese",
-      "ladoMembro": "MSE",
+      "tipo": "Prótese PTFE",
+      "ladoMembro": "MSE (Braquioaxilar)",
       "fluxoSangue": 340,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2022-04-10"
+      "dataConfeccao": "2022-04-10",
+      "ultimaIntervencao": {
+        "id": "acc-57-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose veno...",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-57-1",
+        "data": "2026-03-05",
+        "tipoEvento": "Doppler / Exame",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dra. Renata Albuquerque (Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Doppler de prótese arteriovenosa: fluxo de 820 ml/min. Anastomose venosa sem estenose de hiperplasia miointimal evidente.",
+        "conduta": "Acesso apto para punção em técnica de escada.",
+        "criadoEm": "2026-03-05T11:00:00Z"
+      },
+      {
+        "id": "acc-57-2",
+        "data": "2022-04-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Prótese PTFE",
+        "ladoMembro": "MSE (Braquioaxilar)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Implante de prótese vascular de PTFE 6mm em alça antebraquial esquerda.",
+        "conduta": "Aguardar período de cicatrização de 3 semanas antes da primeira punção.",
+        "criadoEm": "2022-04-10T14:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.6,
       "ht": 31.8,
@@ -13076,6 +27185,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-57-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 67,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-57-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 64,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-57-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 65.8,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-57-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 64.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-57-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 66.1,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-57-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 64,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-57-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 66.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-57-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 64.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-57-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 66.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-57-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 64,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-57-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 67,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-57-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 64.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 64,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 67,
     "evolucoes": [
       {
         "id": "evo-57-1",
@@ -13087,7 +27319,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 340,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (Prótese PTFE em MSE (Braquioaxilar)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 340 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -13105,7 +27337,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-57-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 10.6 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-57-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 401 ng/mL e IST de 27%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-57-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-58",
@@ -13127,23 +27444,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital São Lucas",
     "turno": "1º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Encaminhar / Em Triagem",
     "etiologiaDRC": "Glomerulonefrite Crônica (GNC)",
     "pesoSeco": 81.5,
     "altura": 177,
     "dataInicioDialise": "2023-05-15",
+    "dataInicioClinica": "2023-05-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE",
+      "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 390,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2023-05-10"
+      "dataConfeccao": "2023-05-10",
+      "ultimaIntervencao": {
+        "id": "acc-58-1",
+        "data": "2026-03-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-58-1",
+        "data": "2026-03-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-03-14T14:30:00Z"
+      },
+      {
+        "id": "acc-58-2",
+        "data": "2023-05-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa mse (radiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2023-05-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.9,
       "ht": 32.7,
@@ -13301,6 +27664,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-58-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 84.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-58-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 81.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-58-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 83.4,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 1.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-58-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 81.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-58-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 83.7,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 2.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-58-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 81.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-58-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 84,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 2.5,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-58-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 81.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-58-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 84.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 2.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-58-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 81.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-58-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 84.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 3.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-58-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 81.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 81.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 84.6,
     "evolucoes": [
       {
         "id": "evo-58-1",
@@ -13312,7 +27798,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 390,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSE (Radiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 390 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -13330,7 +27816,92 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-58-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 3 anos. Apresenta anemia secundária à DRC com Hb de 10.9 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-58-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 444 ng/mL e IST de 28%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-58-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   },
   {
     "id": "paciente-demo-59",
@@ -13352,23 +27923,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Madre Teresa",
     "turno": "2º Turno",
     "diaSemana": "Ter/Qui/Sáb",
+    "convenio": "SUS",
+    "modalidade": "HD",
     "status": "Ativo",
+    "statusTransplante": "Doador Vivo em Investigação",
     "etiologiaDRC": "Doença Renal Policística Autossômica Dominante (DRPAD)",
     "pesoSeco": 66,
     "altura": 160,
     "dataInicioDialise": "2024-06-15",
+    "dataInicioClinica": "2024-06-15",
     "alergias": [
       "Penicilina"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Esquerda (JIE)",
       "fluxoSangue": 330,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2024-06-10"
+      "dataConfeccao": "2024-06-10",
+      "ultimaIntervencao": {
+        "id": "acc-59-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-2...",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-59-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Hemovida",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath (pressão arterial <-250 mmHg em Qb > 220 ml/min). Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados coágulos e obtido fluxo livre >300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização rigorosa pós-sessão.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-59-2",
+        "data": "2024-06-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Esquerda (JIE)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter venoso central tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em Jugular Interna Esquerda (JIE) sob ultrassom e radioscopia. Ponta em átrio direito.",
+        "conduta": "RX de tórax de controle sem pneumotórax. Curativo estéril com clorexidina. Liberado para hemodiálise.",
+        "criadoEm": "2024-06-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.2,
       "ht": 33.6,
@@ -13526,6 +28143,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-59-1-pre",
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 69.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
+      },
+      {
+        "id": "peso-59-1-pos",
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 66,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
+      },
+      {
+        "id": "peso-59-2-pre",
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 68,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
+      },
+      {
+        "id": "peso-59-2-pos",
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 66.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
+      },
+      {
+        "id": "peso-59-3-pre",
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 68.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 2.3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
+      },
+      {
+        "id": "peso-59-3-pos",
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 66,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
+      },
+      {
+        "id": "peso-59-4-pre",
+        "data": "2026-09-26T08:00:00.000Z",
+        "peso": 68.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 2.6,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-26T08:00:00.000Z"
+      },
+      {
+        "id": "peso-59-4-pos",
+        "data": "2026-09-26T12:00:00.000Z",
+        "peso": 66.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-26T12:00:00.000Z"
+      },
+      {
+        "id": "peso-59-5-pre",
+        "data": "2026-09-24T08:00:00.000Z",
+        "peso": 68.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 2.9,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-24T08:00:00.000Z"
+      },
+      {
+        "id": "peso-59-5-pos",
+        "data": "2026-09-24T12:00:00.000Z",
+        "peso": 66,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-24T12:00:00.000Z"
+      },
+      {
+        "id": "peso-59-6-pre",
+        "data": "2026-09-22T08:00:00.000Z",
+        "peso": 69.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 3.2,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-22T08:00:00.000Z"
+      },
+      {
+        "id": "peso-59-6-pos",
+        "data": "2026-09-22T12:00:00.000Z",
+        "peso": 66.1,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 66,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-22T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 69.2,
     "evolucoes": [
       {
         "id": "evo-59-1",
@@ -13555,6 +28295,104 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
+    ],
+    "lmes": [
+      {
+        "id": "lme-59-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 4 anos. Apresenta anemia secundária à DRC com Hb de 11.2 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      },
+      {
+        "id": "lme-59-2",
+        "medicamentoId": "sacarato_hidroxido_ferro",
+        "medicamentoNome": "Sacarato de Hidróxido de Ferro 100mg (Noripurum)",
+        "concentracaoLabel": "100mg/5ml - Ampola",
+        "posologia": "100mg IV diluído em SF 0,9% 100ml em infusão lenta durante a hemodiálise 1x por semana",
+        "quantidadeMensal": 4,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-07-01",
+        "dataValidade": "2027-01-01",
+        "cid10": "N18.0",
+        "anamneseResumo": "Reposição parenteral de ferro em paciente com ferritina de 487 ng/mL e IST de 29%.",
+        "justificativaClinica": "Otimização de estoques de ferro para garantia de resposta terapêutica à eritropoietina.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-07-01T11:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-59-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Cloridrato de Sevelâmer 800mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": [
+      {
+        "id": "hemo-59-1",
+        "dataColeta": "2026-08-20T14:30",
+        "sitioColeta": "Cateter - Lúmen Venoso e Arterial",
+        "resultado": "Negativa",
+        "microrganismo": "Sem crescimento bacteriano após 5 dias de incubação",
+        "sensibilidade": "",
+        "resistencia": "",
+        "dtpHoras": null,
+        "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
+        "registradoEm": "2026-08-20T14:30:00Z"
+      }
     ]
   },
   {
@@ -13577,23 +28415,69 @@ export const DEMO_PATIENTS_DATA = [
     "hospital": "Hospital Santa Casa",
     "turno": "3º Turno",
     "diaSemana": "Seg/Qua/Sex",
+    "convenio": "Unimed",
+    "modalidade": "HDF",
     "status": "Óbito",
+    "statusTransplante": "Contraindicação Definitiva",
     "etiologiaDRC": "Nefropatia Lúpica / Doenças Autoimunes",
     "pesoSeco": 83.5,
     "altura": 171,
     "dataInicioDialise": "2021-07-15",
+    "dataInicioClinica": "2021-07-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas.",
+    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Hemovida com rotina de 3 sessões semanais de 4 horas. Modalidade HDF sob convênio Unimed.",
+    "anticoagulacao": {
+      "tipo": "heparina_padrao",
+      "doseAtaque": 1000,
+      "doseManutencao": 500,
+      "tempoSuspensaoMin": 60,
+      "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
+    },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD",
+      "ladoMembro": "MSD (Braquiocefálica)",
       "fluxoSangue": 350,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2022-07-10"
+      "dataConfeccao": "2022-07-10",
+      "ultimaIntervencao": {
+        "id": "acc-60-1",
+        "data": "2026-05-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm ...",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-60-1",
+        "data": "2026-05-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea com balão de alta pressão 6x40mm em estenose de arco cefálico. Redução significativa do gradiente e normalização das pressões venosas dinâmicas em HD.",
+        "conduta": "Repouso do membro por 24h. Liberado para punção na sessão seguinte com agulhas habituais.",
+        "criadoEm": "2026-05-14T14:30:00Z"
+      },
+      {
+        "id": "acc-60-2",
+        "data": "2022-07-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSD (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção cirúrgica de fístula arteriovenosa msd (braquiocefálica) com anastomose término-lateral sob anestesia local. Ótimo frêmito imediato.",
+        "conduta": "Exercícios de aperto de bola após cicatrização inicial (14º dia). Maturação mínima prevista de 6 semanas antes da 1ª punção.",
+        "criadoEm": "2022-07-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.5,
       "ht": 34.5,
@@ -13764,6 +28648,129 @@ export const DEMO_PATIENTS_DATA = [
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
+    "historicoPesos": [
+      {
+        "id": "peso-60-1-pre",
+        "data": "2026-10-02T08:00:00.000Z",
+        "peso": 85.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-10-02T08:00:00.000Z"
+      },
+      {
+        "id": "peso-60-1-pos",
+        "data": "2026-10-02T12:00:00.000Z",
+        "peso": 83.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-10-02T12:00:00.000Z"
+      },
+      {
+        "id": "peso-60-2-pre",
+        "data": "2026-09-30T08:00:00.000Z",
+        "peso": 85.6,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 2.1,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-30T08:00:00.000Z"
+      },
+      {
+        "id": "peso-60-2-pos",
+        "data": "2026-09-30T12:00:00.000Z",
+        "peso": 83.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-30T12:00:00.000Z"
+      },
+      {
+        "id": "peso-60-3-pre",
+        "data": "2026-09-28T08:00:00.000Z",
+        "peso": 85.9,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 2.4,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-28T08:00:00.000Z"
+      },
+      {
+        "id": "peso-60-3-pos",
+        "data": "2026-09-28T12:00:00.000Z",
+        "peso": 83.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-28T12:00:00.000Z"
+      },
+      {
+        "id": "peso-60-4-pre",
+        "data": "2026-09-25T08:00:00.000Z",
+        "peso": 86.2,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 2.7,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-25T08:00:00.000Z"
+      },
+      {
+        "id": "peso-60-4-pos",
+        "data": "2026-09-25T12:00:00.000Z",
+        "peso": 83.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-25T12:00:00.000Z"
+      },
+      {
+        "id": "peso-60-5-pre",
+        "data": "2026-09-23T08:00:00.000Z",
+        "peso": 86.5,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 3,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-23T08:00:00.000Z"
+      },
+      {
+        "id": "peso-60-5-pos",
+        "data": "2026-09-23T12:00:00.000Z",
+        "peso": 83.5,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-23T12:00:00.000Z"
+      },
+      {
+        "id": "peso-60-6-pre",
+        "data": "2026-09-21T08:00:00.000Z",
+        "peso": 85.3,
+        "tipo": "Pré-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 1.8,
+        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "registradoEm": "2026-09-21T08:00:00.000Z"
+      },
+      {
+        "id": "peso-60-6-pos",
+        "data": "2026-09-21T12:00:00.000Z",
+        "peso": 83.6,
+        "tipo": "Pós-HD",
+        "pesoSecoReferencia": 83.5,
+        "ganhoInterdialitico": 0.1,
+        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "registradoEm": "2026-09-21T12:00:00.000Z"
+      }
+    ],
+    "ultimoPesoAferido": 85.3,
     "evolucoes": [
       {
         "id": "evo-60-1",
@@ -13775,7 +28782,7 @@ export const DEMO_PATIENTS_DATA = [
         "ufRetirada": 2200,
         "qbEfetivo": 350,
         "intercorrencias": "Nenhuma",
-        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
+        "condutaClinica": "Paciente comparece lúcido e orientado para sessão programada de hemodiálise. Acesso vascular (FAV em MSD (Braquiocefálica)) pérvio, com excelente frêmito sisto-diastólico e sem sinais flogísticos locais. Fluxo de sangue estável em 350 ml/min. Sessão concluída com alcance integral da meta de ultrafiltração. Prescrição medicamentosa mantida. Orientada ingesta hídrica controlada para o período interdialítico.",
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       },
@@ -13793,6 +28800,70 @@ export const DEMO_PATIENTS_DATA = [
         "medicoNome": "Dr. Marcelo Ramos",
         "medicoCrm": "654321/SP"
       }
-    ]
+    ],
+    "lmes": [
+      {
+        "id": "lme-60-1",
+        "medicamentoId": "alfaepoetina_4000",
+        "medicamentoNome": "Alfaepoetina 4.000 UI",
+        "concentracaoLabel": "4.000 UI/ml - Frasco/Ampola",
+        "posologia": "4.000 UI SC 3x por semana pós-HD (12 frascos/mês)",
+        "quantidadeMensal": 12,
+        "vigenciaMeses": 6,
+        "dataSolicitacao": "2026-06-15",
+        "dataValidade": "2026-12-15",
+        "cid10": "N18.0",
+        "anamneseResumo": "Paciente com DRC dialítica há 2 anos. Apresenta anemia secundária à DRC com Hb de 11.5 g/dL. Em uso regular de agente estimulador da eritropoiese.",
+        "justificativaClinica": "Indicação conforme PCDT da Anemia na Doença Renal Crônica. Manutenção do hematócrito para redução da sobrecarga hemodinâmica e necessidade transfusional.",
+        "medicoSolicitante": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP",
+          "cns": "708401234567891"
+        },
+        "registradoEm": "2026-06-15T10:00:00Z"
+      }
+    ],
+    "receitas": [
+      {
+        "id": "rec-60-1",
+        "dataEmissao": "2026-08-15",
+        "tipoReceita": "simples",
+        "validadeDias": 180,
+        "itens": [
+          {
+            "medicamento": "Carbonato de Cálcio 500mg",
+            "quantidade": "2 frascos",
+            "posologia": "1 comprimido VO no início do café, almoço e jantar",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Besilato de Anlodipino 5mg",
+            "quantidade": "3 caixas",
+            "posologia": "1 comprimido VO 1x ao dia pela manhã",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Complexo B + Vitamina C (Dialyvit)",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia após hemodiálise",
+            "via": "Oral"
+          },
+          {
+            "medicamento": "Ácido Fólico 5mg",
+            "quantidade": "2 caixas",
+            "posologia": "1 comprimido VO 1x ao dia",
+            "via": "Oral"
+          }
+        ],
+        "observacoesGerais": "Uso contínuo por 180 dias. Tomar os quelantes de fósforo rigorosamente durante as refeições. Restrição hídrica estrita de 500 ml/dia + volume de diurese residual.",
+        "medico": {
+          "nome": "Dr. Marcelo Ramos",
+          "crm": "654321",
+          "ufCrm": "SP"
+        }
+      }
+    ],
+    "hemoculturas": []
   }
 ];

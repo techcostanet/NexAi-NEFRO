@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.99] - 2026-10-04
+### Alterações
+- Base de demonstração do Dr. Marcelo 100% preenchida com consistência clínica em todos os módulos (LME, acessos, receitas, pesos, transplante e anticoagulação)
+
 ## [1.1.98] - 2026-10-04
 ### Alterações
 - Nova aba Acesso com histórico completo de intervenções cirúrgicas e manutenções vasculares no prontuário
