@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.98] - 2026-10-04
+### Alterações
+- Nova aba Acesso com histórico completo de intervenções cirúrgicas e manutenções vasculares no prontuário
+
 ## [1.1.97] - 2026-09-30
 ### Alterações
 - Correcao do erro ReferenceError useMemo e ordenacao de hooks no prontuario

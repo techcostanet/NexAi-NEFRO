@@ -43,8 +43,43 @@ export const DEMO_PATIENTS_DATA = [
       "fluxoSangue": 360,
       "fluxoDialisato": 500,
       "agulha": "16G",
-      "dataConfeccao": "2023-02-10"
+      "dataConfeccao": "2023-02-10",
+      "ultimaIntervencao": {
+        "id": "acc-demo-01-1",
+        "data": "2024-08-14",
+        "tipoEvento": "Angioplastia",
+        "descricao": "Angioplastia com balão 6x40mm em arco cefálico",
+        "desfecho": "Estenose Dilatada"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-demo-01-1",
+        "data": "2024-08-14",
+        "tipoEvento": "Angioplastia",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Estenose Dilatada",
+        "descricao": "Angioplastia transluminal percutânea de estenose em arco cefálico com balão de alta pressão 6x40mm. Desaparecimento do gradiente de pressão e restauração de frêmito contínuo.",
+        "conduta": "Repouso do membro por 24h. Liberado para hemodiálise na sessão seguinte com punção habitual.",
+        "criadoEm": "2024-08-14T14:30:00Z"
+      },
+      {
+        "id": "acc-demo-01-2",
+        "data": "2023-02-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Radiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Universitário",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção de fístula arteriovenosa radiocefálica término-lateral esquerda. Excelente frêmito e pulso imediato.",
+        "conduta": "Exercícios de aperto de bola a partir da 2ª semana. Maturação programada para 6 semanas antes da primeira punção.",
+        "criadoEm": "2023-02-10T11:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.6,
       "ht": 31.8,
@@ -268,8 +303,30 @@ export const DEMO_PATIENTS_DATA = [
       "fluxoSangue": 370,
       "fluxoDialisato": 500,
       "agulha": "15G",
-      "dataConfeccao": "2024-03-10"
+      "dataConfeccao": "2024-03-10",
+      "ultimaIntervencao": {
+        "id": "acc-demo-02-1",
+        "data": "2024-03-10",
+        "tipoEvento": "Confecção",
+        "descricao": "Confecção de fístula braquiocefálica término-lateral esquerda",
+        "desfecho": "Sucesso"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-demo-02-1",
+        "data": "2024-03-10",
+        "tipoEvento": "Confecção",
+        "acesso": "FAV",
+        "ladoMembro": "MSE (Braquiocefálica)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sucesso",
+        "descricao": "Confecção de fístula arteriovenosa braquiocefálica término-lateral esquerda sob anestesia local. Veia cefálica de excelente calibre (4.0mm) e fluxo túrgido imediato.",
+        "conduta": "Curativo oclusivo por 24h. Manter membro elevado. Retorno ambulatorial em 15 dias para retirada de pontos e acompanhamento de maturação.",
+        "criadoEm": "2024-03-10T10:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 10.9,
       "ht": 32.7,
@@ -718,8 +775,43 @@ export const DEMO_PATIENTS_DATA = [
       "fluxoSangue": 300,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
-      "dataConfeccao": "2023-05-10"
+      "dataConfeccao": "2023-05-10",
+      "ultimaIntervencao": {
+        "id": "acc-demo-04-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "descricao": "Lock com Alteplase 2mg por via intraluminal por 2 horas",
+        "desfecho": "Trombo Removido"
+      }
     },
+    "historicoAcesso": [
+      {
+        "id": "acc-demo-04-1",
+        "data": "2026-01-12",
+        "tipoEvento": "Desobstrução (Alteplase)",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Marcelo Ramos (Nefrologista)",
+        "hospital": "Clínica Renalis",
+        "desfecho": "Trombo Removido",
+        "descricao": "Disfunção de fluxo no lúmen arterial do Permcath com Qb < 200 ml/min. Realizado protocolo de lock com Alteplase (Actilyse 2mg/2ml) em cada via por 2 horas. Aspirados pequenos coágulos e obtido fluxo livre superior a 300 ml/min.",
+        "conduta": "Permcath liberado para diálise imediata. Manter heparinização padrão ao término das sessões.",
+        "criadoEm": "2026-01-12T13:45:00Z"
+      },
+      {
+        "id": "acc-demo-04-2",
+        "data": "2023-05-10",
+        "tipoEvento": "Confecção",
+        "acesso": "Permcath",
+        "ladoMembro": "Jugular Interna Direita (JID)",
+        "profissional": "Dr. Fernando Silveira (Cirurgião Vascular)",
+        "hospital": "Hospital Santa Casa",
+        "desfecho": "Sem Intercorrências",
+        "descricao": "Implante de cateter tunelizado de longa permanência (Permcath 14.5 Fr x 28cm) em veia jugular interna direita sob orientação ultrassonográfica e radioscópica. Bom posicionamento da ponta em átrio direito.",
+        "conduta": "Radiografia de tórax de controle sem pneumotórax. Curativo estéril. Liberado para uso regular.",
+        "criadoEm": "2023-05-10T16:00:00Z"
+      }
+    ],
     "exames": {
       "hb": 11.5,
       "ht": 34.5,

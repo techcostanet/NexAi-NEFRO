@@ -1171,4 +1171,225 @@ export async function deletePatientLme(patientId, lmeId) {
   return lmes;
 }
 
+/**
+ * Catálogo de tipos de eventos e intervenções no acesso vascular
+ */
+export const TIPOS_EVENTO_ACESSO = [
+  { value: 'Confecção', label: 'Confecção', color: '#1d4ed8', bg: '#eff6ff', border: '#bfdbfe' },
+  { value: 'Angioplastia', label: 'Angioplastia', color: '#7c3aed', bg: '#f5f3ff', border: '#ddd6fe' },
+  { value: 'Trombectomia', label: 'Trombectomia', color: '#c2410c', bg: '#fff7ed', border: '#ffedd5' },
+  { value: 'Troca de Cateter', label: 'Troca Cateter', color: '#0284c7', bg: '#f0f9ff', border: '#bae6fd' },
+  { value: 'Retirada de Cateter', label: 'Retirada Cateter', color: '#b91c1c', bg: '#fef2f2', border: '#fecaca' },
+  { value: 'Desobstrução (Alteplase)', label: 'Desobstrução', color: '#0d9488', bg: '#f0fdf4', border: '#99f6e4' },
+  { value: 'Doppler / Exame', label: 'Doppler', color: '#059669', bg: '#ecfdf5', border: '#a7f3d0' },
+  { value: 'Revisão Cirúrgica', label: 'Revisão Cirúrgica', color: '#4338ca', bg: '#eef2ff', border: '#c7d2fe' },
+  { value: 'Infecção / Cultura', label: 'Infecção', color: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
+  { value: 'Outro', label: 'Outro', color: '#475569', bg: '#f8fafc', border: '#e2e8f0' }
+];
+
+export const RESULTADOS_ACESSO = [
+  { value: 'Sucesso', label: 'Sucesso' },
+  { value: 'Parcial', label: 'Parcial' },
+  { value: 'Insucesso', label: 'Insucesso' },
+  { value: 'Estenose Dilatada', label: 'Estenose Dilatada' },
+  { value: 'Trombo Removido', label: 'Trombo Removido' },
+  { value: 'Sem Intercorrências', label: 'Sem Intercorrências' }
+];
+
+export const LOCALIZACOES_ACESSO_COMUNS = [
+  'MSE (Radiocefálica)',
+  'MSE (Braquiocefálica)',
+  'MSE (Braquiobasílica)',
+  'MSD (Radiocefálica)',
+  'MSD (Braquiocefálica)',
+  'MSD (Braquiobasílica)',
+  'Jugular Interna Direita',
+  'Jugular Interna Esquerda',
+  'Femoral Direita',
+  'Femoral Esquerda',
+  'Subclávia Direita',
+  'Subclávia Esquerda'
+];
+
+/**
+ * Salva ou atualiza uma intervenção ou manutenção no histórico de acesso vascular
+ */
+export async function savePatientAccessIntervention(patientId, interventionData, interventionId = null, userEmail = '') {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado.");
+
+  const historico = Array.isArray(patient.historicoAcesso) ? [...patient.historicoAcesso] : [];
+  const targetId = interventionId || `acc-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+
+  const record = {
+    ...interventionData,
+    id: targetId,
+    data: interventionData.data || new Date().toISOString().split('T')[0],
+    tipoEvento: interventionData.tipoEvento || 'Outro',
+    acesso: interventionData.acesso || patient.acessoVascular?.tipo || 'FAV',
+    ladoMembro: interventionData.ladoMembro || patient.acessoVascular?.ladoMembro || '',
+    profissional: interventionData.profissional || '',
+    hospital: interventionData.hospital || '',
+    desfecho: interventionData.desfecho || 'Sucesso',
+    descricao: interventionData.descricao || '',
+    conduta: interventionData.conduta || '',
+    anexoUrl: interventionData.anexoUrl || '',
+    registradoPor: userEmail || interventionData.registradoPor || 'Médico Responsável',
+    criadoEm: interventionData.criadoEm || new Date().toISOString(),
+    atualizadoEm: new Date().toISOString()
+  };
+
+  const existingIdx = historico.findIndex(item => item.id === targetId);
+  if (existingIdx !== -1) {
+    historico[existingIdx] = record;
+  } else {
+    historico.unshift(record);
+  }
+
+  // Ordena por data decrescente
+  historico.sort((a, b) => new Date(b.data || 0) - new Date(a.data || 0));
+
+  // Determina a última intervenção para exibir no resumo rápido
+  const latest = historico[0];
+  const acessoVascularAtual = {
+    ...(patient.acessoVascular || {}),
+    ultimaIntervencao: latest ? {
+      id: latest.id,
+      data: latest.data,
+      tipoEvento: latest.tipoEvento,
+      descricao: latest.descricao,
+      desfecho: latest.desfecho
+    } : null
+  };
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    historicoAcesso: historico,
+    acessoVascular: acessoVascularAtual,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  // Trilha de auditoria no Cloud Firestore
+  try {
+    await logAuditEvent({
+      tipoAcao: interventionId ? 'ACCESS_INTERVENTION_UPDATED' : 'ACCESS_INTERVENTION_CREATED',
+      descricao: `${interventionId ? 'Atualizada' : 'Registrada'} intervenção de acesso (${record.tipoEvento}) para ${patient.nome}`,
+      targetDoctorId: patient.doctorId || null,
+      detalhes: {
+        patientId,
+        patientName: patient.nome,
+        interventionId: targetId,
+        tipoEvento: record.tipoEvento,
+        data: record.data,
+        desfecho: record.desfecho
+      }
+    });
+  } catch (err) {
+    console.warn("Falha ao registrar log de auditoria da intervenção de acesso:", err);
+  }
+
+  return historico;
+}
+
+/**
+ * Exclui uma intervenção de acesso do prontuário no Cloud Firestore
+ */
+export async function deletePatientAccessIntervention(patientId, interventionId) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient || !Array.isArray(patient.historicoAcesso)) return [];
+
+  const itemToDelete = patient.historicoAcesso.find(item => item.id === interventionId);
+  const historico = patient.historicoAcesso.filter(item => item.id !== interventionId);
+
+  // Reordena e recalcula a última intervenção
+  historico.sort((a, b) => new Date(b.data || 0) - new Date(a.data || 0));
+  const latest = historico[0];
+
+  const acessoVascularAtual = {
+    ...(patient.acessoVascular || {}),
+    ultimaIntervencao: latest ? {
+      id: latest.id,
+      data: latest.data,
+      tipoEvento: latest.tipoEvento,
+      descricao: latest.descricao,
+      desfecho: latest.desfecho
+    } : null
+  };
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    historicoAcesso: historico,
+    acessoVascular: acessoVascularAtual,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  // Trilha de auditoria no Cloud Firestore
+  try {
+    await logAuditEvent({
+      tipoAcao: 'ACCESS_INTERVENTION_DELETED',
+      descricao: `Removida intervenção (${itemToDelete?.tipoEvento || 'Intervenção'}) do histórico de acesso de ${patient.nome}`,
+      targetDoctorId: patient.doctorId || null,
+      detalhes: {
+        patientId,
+        patientName: patient.nome,
+        interventionId
+      }
+    });
+  } catch (err) {
+    console.warn("Falha ao registrar log de exclusão de intervenção de acesso:", err);
+  }
+
+  return historico;
+}
+
+/**
+ * Atualiza os parâmetros vigentes do acesso vascular do paciente
+ */
+export async function updatePatientAccessVascular(patientId, acessoVascularData) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado.");
+
+  const acessoAtual = patient.acessoVascular || {};
+  const novoAcesso = {
+    ...acessoAtual,
+    ...acessoVascularData,
+    tipo: acessoVascularData.tipo || acessoAtual.tipo || 'FAV',
+    ladoMembro: acessoVascularData.ladoMembro !== undefined ? acessoVascularData.ladoMembro : (acessoAtual.ladoMembro || ''),
+    fluxoSangue: acessoVascularData.fluxoSangue !== undefined ? Number(acessoVascularData.fluxoSangue) : (acessoAtual.fluxoSangue || 350),
+    fluxoDialisato: acessoVascularData.fluxoDialisato !== undefined ? Number(acessoVascularData.fluxoDialisato) : (acessoAtual.fluxoDialisato || 500),
+    agulha: acessoVascularData.agulha !== undefined ? acessoVascularData.agulha : (acessoAtual.agulha || '16G'),
+    dataConfeccao: acessoVascularData.dataConfeccao !== undefined ? acessoVascularData.dataConfeccao : (acessoAtual.dataConfeccao || '')
+  };
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, {
+    acessoVascular: novoAcesso,
+    tipoAcesso: novoAcesso.tipo,
+    atualizadoEm: new Date().toISOString()
+  });
+
+  try {
+    await logAuditEvent({
+      tipoAcao: 'ACCESS_PARAMETERS_UPDATED',
+      descricao: `Atualizados parâmetros do acesso vascular (${novoAcesso.tipo}) de ${patient.nome}`,
+      targetDoctorId: patient.doctorId || null,
+      detalhes: {
+        patientId,
+        patientName: patient.nome,
+        tipo: novoAcesso.tipo,
+        ladoMembro: novoAcesso.ladoMembro,
+        fluxoSangue: novoAcesso.fluxoSangue
+      }
+    });
+  } catch (err) {
+    console.warn("Falha ao registrar log de auditoria dos parâmetros de acesso:", err);
+  }
+
+  return novoAcesso;
+}
+
+
 

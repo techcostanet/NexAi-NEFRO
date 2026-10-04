@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.98",
+    "date": "04/10/2026",
+    "title": "Nova aba Acesso com histórico completo de intervenções cirúrgicas e manutençõ...",
+    "highlights": [
+      "✨ Nova aba Acesso com histórico completo de intervenções cirúrgicas e manutenções vasculares no prontuário"
+    ]
+  },
+  {
     "version": "1.1.97",
     "date": "29/09/2026",
     "title": "Correcao do erro ReferenceError useMemo e ordenacao de hooks no prontuario",

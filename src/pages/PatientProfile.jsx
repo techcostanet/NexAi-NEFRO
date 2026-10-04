@@ -75,6 +75,7 @@ import PatientDischargeModal from '../components/PatientDischargeModal';
 import LmeModal from '../components/lme/LmeModal';
 import LmePatientSection from '../components/lme/LmePatientSection';
 import ExamHistorySection from '../components/patient/ExamHistorySection';
+import VascularAccessTab from '../components/patient/VascularAccessTab';
 import TransplantReportPdf from '../components/pdf/TransplantReportPdf';
 import { downloadPdfDocument } from '../services/pdfService';
 import { printElement } from '../utils/printUtils';
@@ -454,6 +455,7 @@ export default function PatientProfile() {
   }
 
   const acessoVascular = patient.acessoVascular || {};
+  const historicoAcesso = Array.isArray(patient.historicoAcesso) ? patient.historicoAcesso : [];
   const medicamentosList = normalizeMedicamentosList(patient.medicamentos);
   const historicoExames = Array.isArray(patient.historicoExames) ? patient.historicoExames : [];
   const exames = ultimosExames || patient.exames || {};
@@ -1352,6 +1354,36 @@ export default function PatientProfile() {
         <button
           type="button"
           className="btn"
+          onClick={() => setActiveTab('acesso')}
+          style={{ 
+            padding: '0.5rem 1.15rem', 
+            fontSize: '0.85rem', 
+            display: 'inline-flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            borderRadius: '12px',
+            fontWeight: activeTab === 'acesso' ? '700' : '500',
+            background: activeTab === 'acesso' ? '#2563eb' : 'transparent',
+            color: activeTab === 'acesso' ? '#ffffff' : '#475569',
+            boxShadow: activeTab === 'acesso' ? '0 2px 8px rgba(37, 99, 235, 0.25)' : 'none',
+            border: 'none',
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap'
+          }}
+          title="Histórico e vigilância do acesso vascular"
+        >
+          <Syringe size={16} />
+          <span>Acesso</span>
+          {historicoAcesso.length > 0 && (
+            <span style={{ fontSize: '0.7rem', padding: '1px 7px', borderRadius: '10px', background: activeTab === 'acesso' ? 'rgba(255,255,255,0.25)' : '#e2e8f0', color: activeTab === 'acesso' ? '#ffffff' : '#475569', fontWeight: 'bold' }}>
+              {historicoAcesso.length}
+            </span>
+          )}
+        </button>
+
+        <button
+          type="button"
+          className="btn"
           onClick={() => setActiveTab('exams')}
           style={{ 
             padding: '0.5rem 1.15rem', 
@@ -1512,9 +1544,20 @@ export default function PatientProfile() {
                   <Activity size={16} color="var(--primary)" />
                   <span>Acesso Vascular</span>
                 </h2>
-                <span style={{ fontSize: '0.72rem', background: '#eff6ff', color: '#1e40af', padding: '2px 8px', borderRadius: '8px', fontWeight: '600' }}>
-                  {acessoVascular.tipo || 'FAV'}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('acesso')}
+                    className="text-xs text-blue-600 hover:text-blue-800 font-semibold hover:underline flex items-center gap-0.5 mr-1"
+                    title="Ver histórico de intervenções"
+                  >
+                    <span>Histórico</span>
+                    <ChevronRight size={12} />
+                  </button>
+                  <span style={{ fontSize: '0.72rem', background: '#eff6ff', color: '#1e40af', padding: '2px 8px', borderRadius: '8px', fontWeight: '600' }}>
+                    {acessoVascular.tipo || 'FAV'}
+                  </span>
+                </div>
               </div>
 
               <div className="flex flex-col gap-2 text-xs">
@@ -1526,6 +1569,18 @@ export default function PatientProfile() {
                   <span className="text-muted">Local:</span>
                   <strong className="text-slate-800 font-semibold">{acessoVascular.ladoMembro || '-'}</strong>
                 </div>
+                {acessoVascular.ultimaIntervencao && (
+                  <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted">Último Evento:</span>
+                    <span 
+                      className="text-blue-700 font-semibold text-right cursor-pointer hover:underline truncate max-w-[65%]" 
+                      onClick={() => setActiveTab('acesso')}
+                      title={acessoVascular.ultimaIntervencao.descricao || ''}
+                    >
+                      {safeFormatDate(acessoVascular.ultimaIntervencao.data)}: {acessoVascular.ultimaIntervencao.tipoEvento}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
                   <span className="text-muted">Qb (Sangue):</span>
                   <strong className="text-slate-800 font-semibold">{acessoVascular.fluxoSangue ? `${acessoVascular.fluxoSangue} ml/min` : '-'}</strong>
@@ -2126,6 +2181,18 @@ export default function PatientProfile() {
               onRenewLme={handleRenewLme}
             />
           </div>
+        </div>
+      )}
+
+      {/* ================= ABA: ACESSO VASCULAR ================= */}
+      {activeTab === 'acesso' && (
+        <div className="flex flex-col gap-4 animate-in">
+          <VascularAccessTab
+            patient={patient}
+            currentUser={doctorInfo}
+            anticoagulacaoInfo={anticoagulacaoInfo}
+            onOpenLockTherapy={() => setIsLockTherapyModalOpen(true)}
+          />
         </div>
       )}
 
