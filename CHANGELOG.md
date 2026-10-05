@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.101] - 2026-10-05
+### Alterações
+- Adiciona recurso completo de Portabilidade e Backup Clínico no Perfil: exportação integral e personalizada de prontuários em planilhas Excel (.xlsx) multi-abas e dossiês PDF vetoriais em alta resolução
+
 ## [1.1.100] - 2026-10-04
 ### Alterações
 - Correção de espaçamento entre rótulos e valores com dois pontos nos cards de acesso vascular e vigilância clínica

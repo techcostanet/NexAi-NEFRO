@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.101",
+    "date": "05/10/2026",
+    "title": "Adiciona recurso completo de Portabilidade e Backup Clínico no Perfil: export...",
+    "highlights": [
+      "✨ Adiciona recurso completo de Portabilidade e Backup Clínico no Perfil: exportação integral e personalizada de prontuários em planilhas Excel (.xlsx) multi-abas e dossiês PDF vetoriais em alta resolução"
+    ]
+  },
+  {
     "version": "1.1.100",
     "date": "04/10/2026",
     "title": "Correção de espaçamento entre rótulos e valores com dois pontos nos cards de ...",
