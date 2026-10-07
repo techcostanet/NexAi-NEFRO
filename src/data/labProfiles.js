@@ -80,9 +80,12 @@ export const HOMOLOGATED_LABS = [
     tipoLayout: 'MAPAO_COLUNAR_DIALISE',
     assinaturas: [
       'MAPA EXAMES',
+      'MAPAO EXAMES',
+      'DIALSIST WEB',
+      'SISTEMA DIALSIST',
       'DIALSIST',
-      'DIALIZE',
-      'ADEQUACAO DIALITICA'
+      'ADEQUACAO DIALITICA',
+      'MAPA DE EXAMES'
     ],
     examesHomologados: [
       'Hb', 'Ht', 'Ferro', 'Ferritina', 'IST', 'Transferrina',
@@ -99,29 +102,58 @@ export const HOMOLOGATED_LABS = [
     id: 'db-diagnosticos',
     nome: 'DB Diagnósticos do Brasil (Laboratório de Apoio)',
     cnpj: '04.054.414/0001-30',
-    cnes: '4057619',
-    cidade: 'São José dos Pinhais / PR (Nacional)',
-    responsavelTecnico: 'Corpo Técnico DB',
+    cnes: '4061934',
+    cidade: 'São José dos Pinhais / PR e Goiânia / GO (Nacional)',
+    responsavelTecnico: 'Corpo Técnico DB Diagnósticos',
     status: 'HOMOLOGADO',
-    confianca: '98%',
+    confianca: '100%',
     tipoLayout: 'LAUDO_CLINICO_MULTIPAGINAS',
     assinaturas: [
       'DIAGNOSTICOS DO BRASIL',
+      'DIAGNÓSTICOS DO BRASIL',
       'DB DIAGNOSTICOS',
+      'DB DIAGNÓSTICOS',
+      'DBDIAGNOSTICOS.COM.BR',
+      'DB AP. DE',
       'APOIO DB',
-      'CNES: 4057619'
+      'CNES: 4057619',
+      'CNES: 4061934',
+      '4061934',
+      'COD. APOIADO',
+      'CÓD. APOIADO',
+      '50.914.934/0001-07',
+      '43.272.843/0001-50',
+      '44.203.391/0001-17',
+      '49.157.120/0001-95'
     ],
     examesHomologados: [
-      'Sorologias (HBsAg, Anti-HBs, Anti-HCV, Anti-HBc, HIV)',
-      'PTH Intacto',
+      'Potássio (K+)',
+      'Sódio (Na+)',
+      'Cálcio Sérico',
+      'Fósforo Sérico',
+      'Ureia Pré-diálise',
+      'Ureia Pós-diálise',
+      'Kt/V Daugirdas e Taxa de Redução de Ureia (UR%)',
+      'Creatinina Sérica',
+      'Ferro Sérico & TIBC',
+      'Índice de Saturação da Transferrina (IST %)',
+      'Transaminase Glutâmico Pirúvica (TGP / ALT)',
+      'Transaminase Glutâmico Oxalacética (TGO / AST)',
+      'Fosfatase Alcalina (FA)',
+      'Proteínas Totais e Albumina',
+      'Glicemia de Jejum',
+      'Ferritina Sérica',
+      'Paratormônio Intacto (PTH Molécula Intacta)',
+      'Hemograma Completo (Hb, Ht, Leucócitos, Plaquetas)',
+      'Hemoglobina Glicada (HbA1c)',
       'Vitamina D 25-OH',
-      'Ferritina',
       'Alumínio Sérico',
-      'Potássio e Eletrólitos'
+      'Bicarbonato Sérico',
+      'Sorologias (HBsAg, Anti-HBs, Anti-HCV, Anti-HBc, HIV)'
     ],
-    totalExames: 12,
-    dataHomologacao: '2026-09-21',
-    descricao: 'Laboratório de apoio especializado integrado a laudos de rotina de nefrologia.'
+    totalExames: 24,
+    dataHomologacao: '2026-10-07',
+    descricao: 'Laudos clínicos multi-páginas do laboratório de apoio DB Diagnósticos com gráficos temporais de evolução e rotina de nefrologia.'
   },
   {
     id: 'hermes-pardini',
@@ -155,7 +187,15 @@ export function detectLaboratoryProfile(fullText = '') {
   if (!fullText) return null;
   const upper = fullText.toUpperCase();
 
-  for (const lab of HOMOLOGATED_LABS) {
+  // Prioriza laboratórios de análises clínicas específicos antes de layouts de mapas colunares
+  const priorityOrder = ['db-diagnosticos', 'labicon', 'hermes-pardini', 'dialsist-mapao'];
+  const orderedLabs = [...HOMOLOGATED_LABS].sort((a, b) => {
+    const idxA = priorityOrder.indexOf(a.id);
+    const idxB = priorityOrder.indexOf(b.id);
+    return (idxA !== -1 ? idxA : 99) - (idxB !== -1 ? idxB : 99);
+  });
+
+  for (const lab of orderedLabs) {
     for (const sig of lab.assinaturas) {
       if (upper.includes(sig.toUpperCase())) {
         return lab;

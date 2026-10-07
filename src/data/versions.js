@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.103",
+    "date": "07/10/2026",
+    "title": "Homologação e importação automática de laudos laboratoriais do DB Diagnósticos",
+    "highlights": [
+      "✨ Homologação e importação automática de laudos laboratoriais do DB Diagnósticos"
+    ]
+  },
+  {
     "version": "1.1.102",
     "date": "07/10/2026",
     "title": "Adiciona exibicao e rastreio de TGP e TGO no historico cronologico de exames ...",

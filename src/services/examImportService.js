@@ -1134,8 +1134,321 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
 }
 
 /**
+ * 🔬 PARSER ESPECIALIZADO: DB DIAGNÓSTICOS DO BRASIL (HOMOLOGADO)
+ * Extrai laudos multi-páginas de rotina nefrológica do laboratório de apoio DB Diagnósticos,
+ * blindando a leitura contra gráficos temporais ("Evolução do paciente") e capturando múltiplos
+ * exames por página com total fidelidade clínica.
+ */
+export function parseDbDiagnosticosReport(pagesLines, patientsList = [], detectedGlobalDate = null) {
+  const patientBuckets = [];
+  let currentBucket = null;
+
+  for (const { pageNum, lines } of pagesLines) {
+    let pageCpf = null;
+    let pageNome = null;
+    let pageDate = null;
+    let pageReq = null;
+
+    for (const line of lines) {
+      if (!pageCpf) {
+        const m = line.match(/CPF[.:_\s]+(\d{3}\.?\d{3}\.?\d{3}-?\d{2}|\d{11})/i);
+        if (m) pageCpf = m[1].trim();
+      }
+      if (!pageNome) {
+        const m = line.match(/(?:^|\s)(?:Paciente|Nome)[.:_\s]+([A-ZÀ-Úa-z\s]+?)(?=\s*(?:\bIdade\b|\bData\b|\bCPF\b|\bRG\b|\bDt\.\s*Nasc\b|\bD\.Nasc\b|\bSexo\b|\bConvenio\b|\bEntrada\b|\bPedido\b|\bApoiado\b|\bSolicitante\b|$))/i);
+        if (m && m[1].trim().length >= 3 && !m[1].toLowerCase().includes("social")) {
+          pageNome = m[1].trim();
+        }
+      }
+      if (!pageReq) {
+        const m = line.match(/(?:Pedido|Requisi[çc][aã]o)[.:_\s]+(\d+)/i);
+        if (m) pageReq = m[1].trim();
+      }
+      if (!pageDate) {
+        const m = line.match(/Coletado\s+em[\s.:_(\[]+(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4})/i) ||
+                  line.match(/Dt\.\s*Cadastro[.:_\s]+(\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4})/i);
+        if (m) {
+          let [_, d, mo, y] = m[1].match(/(\d{1,2})[\/\.-](\d{1,2})[\/\.-](\d{2,4})/);
+          if (y.length === 2) y = "20" + y;
+          pageDate = `${y}-${mo.padStart(2, "0")}-${d.padStart(2, "0")}`;
+        }
+      }
+    }
+
+    const isDifferent = currentBucket && (
+      (pageCpf && currentBucket.cpf && pageCpf.replace(/\D/g, '') !== currentBucket.cpf.replace(/\D/g, '')) ||
+      (pageReq && currentBucket.requisicao && pageReq !== currentBucket.requisicao) ||
+      (pageNome && currentBucket.nome && calculateNameSimilarity(pageNome, currentBucket.nome) < 0.6)
+    );
+
+    if (!currentBucket || isDifferent) {
+      currentBucket = {
+        cpf: pageCpf,
+        nome: pageNome,
+        requisicao: pageReq,
+        dataExame: pageDate || detectedGlobalDate || new Date().toISOString().split("T")[0],
+        allLines: [...lines]
+      };
+      patientBuckets.push(currentBucket);
+    } else {
+      if (pageCpf && !currentBucket.cpf) currentBucket.cpf = pageCpf;
+      if (pageNome && !currentBucket.nome) currentBucket.nome = pageNome;
+      if (pageDate && !currentBucket.dataExame) currentBucket.dataExame = pageDate;
+      currentBucket.allLines.push(...lines);
+    }
+  }
+
+  // Extração dos parâmetros analíticos por bucket de paciente
+  const registros = [];
+  patientBuckets.forEach((bucket, idx) => {
+    const exames = {};
+    let activeExamKey = null;
+
+    for (let i = 0; i < bucket.allLines.length; i++) {
+      const line = bucket.allLines[i];
+      const normLine = line.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
+
+      // Encerra exame ativo e ignora blocos de histórico anterior, gráficos ou assinaturas
+      if (
+        normLine.includes("EVOLUCAO DO PACIENTE") ||
+        normLine.includes("RESULTADOS ANTERIORES") ||
+        normLine.includes("ASSINATURA DIGITAL") ||
+        normLine.includes("ASSINADO ELETRONICAMENTE") ||
+        normLine.includes("AMOSTRA BIOLOGICA") ||
+        normLine.includes("RESULTADO CONFERIDO") ||
+        normLine.includes("NUMERO PEDIDO") ||
+        normLine.includes("NÚMERO PEDIDO") ||
+        normLine.includes("DIRETRIZ") ||
+        normLine.includes("METODO..:") ||
+        normLine.includes("MATERIAL:") ||
+        normLine.startsWith("PAGINA ")
+      ) {
+        activeExamKey = null;
+        continue;
+      }
+
+      // Se há um exame ativo aguardando resultado, prioriza leitura da linha de resultado
+      if (activeExamKey) {
+        // Exames sorológicos ou qualitativos
+        if (["hbsag", "antiHbs", "antiHcv", "antiHbc", "hiv"].includes(activeExamKey)) {
+          if (/Resultado[.:_\s]+N[aã]o\s+reagente/i.test(line) || /N[aã]o\s+reagente/i.test(line)) {
+            exames[activeExamKey] = "Não Reagente";
+            activeExamKey = null;
+            continue;
+          }
+          if (/Resultado[.:_\s]+Reagente/i.test(line) || /\bReagente\b/i.test(line)) {
+            exames[activeExamKey] = "Reagente";
+            activeExamKey = null;
+            continue;
+          }
+        }
+
+        // Padrão primário DB: "Resultado: 5,7 mEq/L" ou "Resultado: 108 mg/dL"
+        const matchRes = line.match(/(?:^|\s)(?:Resultado|Valor)[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+        if (matchRes) {
+          const val = parseExamNumber(matchRes[1]);
+          if (val !== null) {
+            exames[activeExamKey] = val;
+            activeExamKey = null; // Fecha imediatamente para não absorver números subsequentes ou referências
+            continue;
+          }
+        }
+
+        // Se a linha começar com número e unidade (caso o rótulo "Resultado:" venha deslocado)
+        const matchDirect = line.trim().match(/^([0-9]+[.,]?[0-9]*)\s*(?:g\s*\/\s*d[lL]|mg\s*\/\s*d[lL]|mcg\s*\/\s*d[lL]|μg\s*\/\s*d[lL]|ug\s*\/\s*d[lL]|ng\s*\/\s*m[lL]|pg\s*\/\s*m[lL]|m[eE]q\s*\/\s*[lL]|U\s*\/\s*[lL]|%)/i);
+        if (matchDirect) {
+          const val = parseExamNumber(matchDirect[1]);
+          if (val !== null) {
+            exames[activeExamKey] = val;
+            activeExamKey = null;
+            continue;
+          }
+        }
+      }
+
+      // Extrações em linha específicas do layout DB
+      // 1. Ferro Sérico & IST
+      const matchFerro = line.match(/Ferro\s*s[eé]rico[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+      if (matchFerro && exames.ferro === undefined) {
+        exames.ferro = parseExamNumber(matchFerro[1]);
+      }
+      const matchIst = line.match(/[IÍ]ndice\s*de\s*Satura[çc][aã]o[.:_\s]+([0-9]+[.,]?[0-9]*)\s*%/i) ||
+                       line.match(/[IÍ]ndice\s*de\s*Satura[çc][aã]o\s*(?:da|de)?\s*Transferrina[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+      if (matchIst && exames.ist === undefined) {
+        exames.ist = parseExamNumber(matchIst[1]);
+      }
+
+      // 2. Proteínas Totais & Albumina
+      const matchAlb = line.match(/(?:^|\s)Albumina[.:_\s]+([0-9]+[.,]?[0-9]*)/i) ||
+                       line.match(/([0-9]+[.,]?[0-9]*)\s*g\s*\/\s*d[lL]\s+Albumina/i);
+      if (matchAlb && exames.albumina === undefined) {
+        exames.albumina = parseExamNumber(matchAlb[1]);
+      }
+      const matchProt = line.match(/(?:^|\s)Prote[íi]nas\s+totais[.:_\s]+([0-9]+[.,]?[0-9]*)/i) ||
+                        line.match(/([0-9]+[.,]?[0-9]*)\s*g\s*\/\s*d[lL]\s+Prote[íi]nas\s+totais/i);
+      if (matchProt && exames.proteinasTotais === undefined) {
+        exames.proteinasTotais = parseExamNumber(matchProt[1]);
+      }
+
+      // 3. Hemoglobina Glicada HbA1c
+      const matchHba1c = line.match(/HBA1C[.:_\s]+([0-9]+[.,]?[0-9]*)\s*%/i) ||
+                         line.match(/Hemoglobina\s+Glicada[^%]*?[.:_\s]+([0-9]+[.,]?[0-9]*)\s*%/i);
+      if (matchHba1c && exames.hba1c === undefined) {
+        exames.hba1c = parseExamNumber(matchHba1c[1]);
+      }
+
+      // 4. Hemograma Completo
+      const matchHb = line.match(/(?:^|\b)HEMOGLOBINA\s+([0-9]+[.,]?[0-9]*)\s*g\s*\/\s*d[lL]/i) ||
+                      line.match(/(?:^|\b)HEMOGLOBINA[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+      if (matchHb && exames.hb === undefined && !normLine.includes("GLICADA")) {
+        exames.hb = parseExamNumber(matchHb[1]);
+      }
+      const matchHt = line.match(/(?:^|\b)HEMAT[OÓ]CRITO[.:_\s]+([0-9]+[.,]?[0-9]*)\s*%/i) ||
+                      line.match(/(?:^|\b)HEMAT[OÓ]CRITO[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+      if (matchHt && exames.ht === undefined) {
+        exames.ht = parseExamNumber(matchHt[1]);
+      }
+      const matchLeu = line.match(/(?:^|\b)LEUC[OÓ]CITOS[.:_\s]+([0-9.]+)\s*\/\s*mm³/i) ||
+                       line.match(/(?:^|\b)LEUC[OÓ]CITOS[.:_\s]+([0-9.]+)/i);
+      if (matchLeu && exames.leucocitos === undefined) {
+        exames.leucocitos = parseExamNumber(matchLeu[1]);
+      }
+      const matchPlq = line.match(/(?:^|\b)Plaquetas[.:_\s]+([0-9.]+)\s*\/\s*mm³/i) ||
+                       line.match(/(?:^|\b)Plaquetas[.:_\s]+([0-9.]+)/i);
+      if (matchPlq && exames.plaquetas === undefined) {
+        exames.plaquetas = parseExamNumber(matchPlq[1]);
+      }
+
+      // Identificação de Seções / Cabeçalhos de Exames do DB Diagnósticos (somente se a linha não for de resultado nem explicativa)
+      if (!normLine.includes("RESULTADO") && !normLine.includes("DIRETRIZ") && !normLine.includes("CRITERIOS") && !normLine.includes("RECOMENDA")) {
+        if (normLine.startsWith("POTASSIO") || normLine.includes("DOSAGEM DE POTASSIO")) {
+          activeExamKey = "k";
+          continue;
+        }
+        if (normLine.startsWith("SODIO") || normLine.includes("DOSAGEM DE SODIO")) {
+          activeExamKey = "na";
+          continue;
+        }
+        if (normLine.startsWith("CALCIO") || normLine.includes("DOSAGEM DE CALCIO")) {
+          activeExamKey = "ca";
+          continue;
+        }
+        // Ureia pós deve ser verificada ANTES de Ureia pré para não capturar falso positivo
+        if (normLine.includes("UREIA POS DIALISE") || normLine.includes("UREIA POS-DIALISE") || normLine.includes("UREIA APOS DIALISE")) {
+          activeExamKey = "ureiaPos";
+          continue;
+        }
+        if (normLine === "UREIA" || normLine.startsWith("UREIA ") || normLine.includes("DOSAGEM DE UREIA")) {
+          activeExamKey = "ureiaPre";
+          continue;
+        }
+        if (normLine.includes("CREATININA") || normLine.includes("DOSAGEM DE CREATININA")) {
+          activeExamKey = "creatinina";
+          continue;
+        }
+        if (normLine.includes("ALANINA AMINOTRANSFERASE") || /\bTGP\b/.test(normLine) || /\bALT\b/.test(normLine)) {
+          activeExamKey = "tgp";
+          continue;
+        }
+        if (normLine.includes("ASPARTATO AMINOTRANSFERASE") || (/\bTGO\b/.test(normLine) && !normLine.includes("TTGO")) || (/\bAST\b/.test(normLine) && !normLine.includes("ASSINATURA"))) {
+          activeExamKey = "tgo";
+          continue;
+        }
+        if (normLine.includes("FOSFATASE ALCALINA")) {
+          activeExamKey = "fa";
+          continue;
+        }
+        if (normLine.includes("GLICOSE DE JEJUM") || normLine.includes("GLICEMIA DE JEJUM") || normLine.includes("GLICEMIA EM JEJUM")) {
+          activeExamKey = "glicemia";
+          continue;
+        }
+        if (normLine.startsWith("FOSFORO") || normLine.includes("DOSAGEM DE FOSFORO")) {
+          activeExamKey = "fosforo";
+          continue;
+        }
+        if (normLine.includes("FERRITINA")) {
+          activeExamKey = "ferritina";
+          continue;
+        }
+        if (normLine.includes("PARATORMONIO") || normLine.includes("PTH")) {
+          activeExamKey = "pth";
+          continue;
+        }
+        if (normLine.includes("VITAMINA D") || normLine.includes("25-HIDROXIVITAMINA D") || normLine.includes("25-OH")) {
+          activeExamKey = "vitD";
+          continue;
+        }
+        if (normLine.includes("BICARBONATO") || normLine.includes("RESERVA ALCALINA")) {
+          activeExamKey = "hco3";
+          continue;
+        }
+        if (normLine.includes("ALUMINIO")) {
+          activeExamKey = "aluminio";
+          continue;
+        }
+        if (normLine.includes("PROTEINA C REATIVA") || normLine === "PCR" || normLine.startsWith("PCR ")) {
+          activeExamKey = "pcr";
+          continue;
+        }
+        if (normLine.includes("HBSAG")) {
+          activeExamKey = "hbsag";
+          continue;
+        }
+        if (normLine.includes("HBS, ANTI") || normLine.includes("ANTI HBS") || normLine.includes("HBS ANTI")) {
+          activeExamKey = "antiHbs";
+          continue;
+        }
+        if (normLine.includes("ANTI HCV") || normLine.includes("HEPATITE C")) {
+          activeExamKey = "antiHcv";
+          continue;
+        }
+        if (normLine.includes("ANTI HBC") || normLine.includes("HBC, ANTI")) {
+          activeExamKey = "antiHbc";
+          continue;
+        }
+        if (normLine.includes("HIV")) {
+          activeExamKey = "hiv";
+          continue;
+        }
+      }
+    }
+
+    const finalExames = applyDerivedCalculations(exames);
+    let targetSearch = bucket.nome;
+    if (bucket.cpf) {
+      targetSearch = bucket.nome ? `${bucket.nome} CPF ${bucket.cpf}` : `CPF ${bucket.cpf}`;
+    }
+    const matched = matchPatientInList(targetSearch, patientsList);
+
+    registros.push({
+      id: `import-db-${idx}-${Date.now()}`,
+      nomeArquivo: bucket.nome || (matched.patient ? matched.patient.nome : `Paciente DB ${idx + 1}`),
+      cpf: bucket.cpf || null,
+      pacienteId: matched.patient?.id || "",
+      pacienteNome: matched.patient?.nome || "",
+      statusMatch: matched.status,
+      confianca: matched.score,
+      dataExame: bucket.dataExame,
+      exames: finalExames,
+      confirmado: matched.status === "EXACT_OR_HIGH"
+    });
+  });
+
+  return {
+    laboratorio: {
+      id: "db-diagnosticos",
+      nome: "DB Diagnósticos do Brasil",
+      confianca: "100%",
+      homologado: true
+    },
+    dataSugerida: registros[0]?.dataExame || detectedGlobalDate || new Date().toISOString().split("T")[0],
+    registros
+  };
+}
+
+/**
  * 📑 PARSER PDF UNIVERSAL (.pdf)
- * Suporta Laudos Clínicos Individuais/Multi-páginas (Labicon, Hermes Pardini, DB, Fleury, etc.)
+ * Suporta Laudos Clínicos Individuais/Multi-páginas (Labicon, DB Diagnósticos, Hermes Pardini, etc.)
  * e Mapões/Tabelas Consolidadas de Diálise (Sistema Dialsist Web / DialiZe)
  */
 export async function parsePdfFile(file, patientsList = []) {
@@ -1232,6 +1545,30 @@ export async function parsePdfFile(file, patientsList = []) {
         dataSugerida: labiconResult.dataSugerida,
         totalIdentificados: labiconResult.registros.length,
         registros: labiconResult.registros
+      };
+    }
+  }
+
+  // ================= ESTRATÉGIA -1.5: DB DIAGNÓSTICOS DO BRASIL (HOMOLOGADO) =================
+  const isDbDoc = (homologatedLab && homologatedLab.id === 'db-diagnosticos') ||
+                  updatedFullText.includes('DIAGNOSTICOS DO BRASIL') ||
+                  updatedFullText.includes('DIAGNÓSTICOS DO BRASIL') ||
+                  updatedFullText.includes('DB DIAGNOSTICOS') ||
+                  updatedFullText.includes('DB DIAGNÓSTICOS') ||
+                  updatedFullText.includes('DBDIAGNOSTICOS.COM.BR') ||
+                  updatedFullText.includes('DB AP. DE') ||
+                  (updatedFullText.includes('4061934') && updatedFullText.includes('CNES')) ||
+                  (updatedFullText.includes('COD. APOIADO') && updatedFullText.includes('APOIADO:'));
+
+  if (isDbDoc) {
+    const dbResult = parseDbDiagnosticosReport(pagesLines, patientsList, detectedGlobalDate);
+    if (dbResult && dbResult.registros?.length > 0) {
+      return {
+        tipoArquivo: `PDF - DB Diagnósticos (Homologado)`,
+        laboratorioDetectado: homologatedLab || { id: 'db-diagnosticos', nome: 'DB Diagnósticos do Brasil', homologado: true, confianca: '100%' },
+        dataSugerida: dbResult.dataSugerida,
+        totalIdentificados: dbResult.registros.length,
+        registros: dbResult.registros
       };
     }
   }

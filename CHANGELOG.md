@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.103] - 2026-10-07
+### Alterações
+- Homologação e importação automática de laudos laboratoriais do DB Diagnósticos
+
 ## [1.1.102] - 2026-10-07
 ### Alterações
 - Adiciona exibicao e rastreio de TGP e TGO no historico cronologico de exames com badges de metas clinicas, graficos e exportacao
