@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.102] - 2026-10-07
+### Alterações
+- Adiciona exibicao e rastreio de TGP e TGO no historico cronologico de exames com badges de metas clinicas, graficos e exportacao
+
 ## [1.1.101] - 2026-10-05
 ### Alterações
 - Adiciona recurso completo de Portabilidade e Backup Clínico no Perfil: exportação integral e personalizada de prontuários em planilhas Excel (.xlsx) multi-abas e dossiês PDF vetoriais em alta resolução

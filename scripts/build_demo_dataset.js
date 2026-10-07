@@ -346,6 +346,8 @@ function buildPatient(item, index, clinicName, clinicNum) {
   let ferritina = 350 + ((seed * 43) % 400); // 350 a 750
   let ist = 26 + (seed % 14); // 26 a 39
   let albumina = 3.9 + ((seed % 6) * 0.1); // 3.9 a 4.4
+  const tgpBase = seed % 12 === 0 ? 56 : 18 + (seed % 14);
+  const tgoBase = seed % 12 === 0 ? 42 : 20 + (seed % 10);
 
   // Alertas clínicos específicos
   if (seed === 3 || seed === 25 || seed === 48) {
@@ -560,6 +562,8 @@ function buildPatient(item, index, clinicName, clinicNum) {
       creatinina: 9.6,
       albumina: Number(albumina.toFixed(1)),
       pcr: 2.6,
+      tgp: tgpBase,
+      tgo: tgoBase,
       observacoes: "Paciente estável com boa adesão terapêutica."
     },
     {
@@ -582,6 +586,8 @@ function buildPatient(item, index, clinicName, clinicNum) {
       creatinina: 9.8,
       albumina: Number((albumina - 0.1).toFixed(1)),
       pcr: 2.9,
+      tgp: tgpBase > 45 ? tgpBase - 4 : tgpBase + 1,
+      tgo: tgoBase > 35 ? tgoBase - 3 : tgoBase + 1,
       observacoes: "Rotina mensal de controle dialítico."
     },
     {
@@ -604,6 +610,8 @@ function buildPatient(item, index, clinicName, clinicNum) {
       creatinina: 10.1,
       albumina: Number(albumina.toFixed(1)),
       pcr: 3.2,
+      tgp: tgpBase > 45 ? tgpBase - 8 : tgpBase - 1,
+      tgo: tgoBase > 35 ? tgoBase - 5 : tgoBase - 1,
       observacoes: "Ajuste de doses de eritropoietina e quelantes."
     }
   ];
@@ -857,7 +865,9 @@ function buildPatient(item, index, clinicName, clinicNum) {
       albumina: Number(albumina.toFixed(1)),
       pcr: 2.6,
       glicemia: etiologia.includes('Diabetes') ? 142 : 94,
-      hba1c: etiologia.includes('Diabetes') ? 7.2 : 5.4
+      hba1c: etiologia.includes('Diabetes') ? 7.2 : 5.4,
+      tgp: tgpBase,
+      tgo: tgoBase
     },
     medicamentos,
     historicoExames,

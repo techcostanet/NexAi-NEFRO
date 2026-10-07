@@ -112,7 +112,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 19,
+      "tgo": 21
     },
     "medicamentos": [
       {
@@ -202,6 +204,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4,
         "pcr": 2.6,
+        "tgp": 19,
+        "tgo": 21,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -224,6 +228,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.9,
         "pcr": 2.9,
+        "tgp": 20,
+        "tgo": 22,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -246,6 +252,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4,
         "pcr": 3.2,
+        "tgp": 18,
+        "tgo": 20,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -591,7 +599,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.1,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 20,
+      "tgo": 22
     },
     "medicamentos": [
       {
@@ -681,6 +691,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.1,
         "pcr": 2.6,
+        "tgp": 20,
+        "tgo": 22,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -703,6 +715,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4,
         "pcr": 2.9,
+        "tgp": 21,
+        "tgo": 23,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -725,6 +739,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.1,
         "pcr": 3.2,
+        "tgp": 19,
+        "tgo": 21,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -1068,7 +1084,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.2,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 21,
+      "tgo": 23
     },
     "medicamentos": [
       {
@@ -1158,6 +1176,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.2,
         "pcr": 2.6,
+        "tgp": 21,
+        "tgo": 23,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -1180,6 +1200,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.1,
         "pcr": 2.9,
+        "tgp": 22,
+        "tgo": 24,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -1202,6 +1224,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.2,
         "pcr": 3.2,
+        "tgp": 20,
+        "tgo": 22,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -1547,7 +1571,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.3,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 22,
+      "tgo": 24
     },
     "medicamentos": [
       {
@@ -1650,6 +1676,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.3,
         "pcr": 2.6,
+        "tgp": 22,
+        "tgo": 24,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -1672,6 +1700,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.2,
         "pcr": 2.9,
+        "tgp": 23,
+        "tgo": 25,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -1694,6 +1724,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.3,
         "pcr": 3.2,
+        "tgp": 21,
+        "tgo": 23,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -2031,7 +2063,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 23,
+      "tgo": 25
     },
     "medicamentos": [
       {
@@ -2121,6 +2155,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.4,
         "pcr": 2.6,
+        "tgp": 23,
+        "tgo": 25,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -2143,6 +2179,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.3,
         "pcr": 2.9,
+        "tgp": 24,
+        "tgo": 26,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -2165,6 +2203,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.4,
         "pcr": 3.2,
+        "tgp": 22,
+        "tgo": 24,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -2508,7 +2548,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.9,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 24,
+      "tgo": 26
     },
     "medicamentos": [
       {
@@ -2598,6 +2640,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.9,
         "pcr": 2.6,
+        "tgp": 24,
+        "tgo": 26,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -2620,6 +2664,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.8,
         "pcr": 2.9,
+        "tgp": 25,
+        "tgo": 27,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -2642,6 +2688,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.9,
         "pcr": 3.2,
+        "tgp": 23,
+        "tgo": 25,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -2987,7 +3035,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 25,
+      "tgo": 27
     },
     "medicamentos": [
       {
@@ -3077,6 +3127,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4,
         "pcr": 2.6,
+        "tgp": 25,
+        "tgo": 27,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -3099,6 +3151,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.9,
         "pcr": 2.9,
+        "tgp": 26,
+        "tgo": 28,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -3121,6 +3175,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4,
         "pcr": 3.2,
+        "tgp": 24,
+        "tgo": 26,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -3466,7 +3522,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.1,
       "pcr": 2.6,
       "glicemia": 142,
-      "hba1c": 7.2
+      "hba1c": 7.2,
+      "tgp": 26,
+      "tgo": 28
     },
     "medicamentos": [
       {
@@ -3569,6 +3627,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.1,
         "pcr": 2.6,
+        "tgp": 26,
+        "tgo": 28,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -3591,6 +3651,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4,
         "pcr": 2.9,
+        "tgp": 27,
+        "tgo": 29,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -3613,6 +3675,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.1,
         "pcr": 3.2,
+        "tgp": 25,
+        "tgo": 27,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -3958,7 +4022,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.2,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 27,
+      "tgo": 29
     },
     "medicamentos": [
       {
@@ -4048,6 +4114,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.2,
         "pcr": 2.6,
+        "tgp": 27,
+        "tgo": 29,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -4070,6 +4138,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.1,
         "pcr": 2.9,
+        "tgp": 28,
+        "tgo": 30,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -4092,6 +4162,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.2,
         "pcr": 3.2,
+        "tgp": 26,
+        "tgo": 28,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -4450,7 +4522,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.3,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 28,
+      "tgo": 20
     },
     "medicamentos": [
       {
@@ -4540,6 +4614,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.3,
         "pcr": 2.6,
+        "tgp": 28,
+        "tgo": 20,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -4562,6 +4638,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.2,
         "pcr": 2.9,
+        "tgp": 29,
+        "tgo": 21,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -4584,6 +4662,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.3,
         "pcr": 3.2,
+        "tgp": 27,
+        "tgo": 19,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -4929,7 +5009,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 29,
+      "tgo": 21
     },
     "medicamentos": [
       {
@@ -5019,6 +5101,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.4,
         "pcr": 2.6,
+        "tgp": 29,
+        "tgo": 21,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -5041,6 +5125,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.3,
         "pcr": 2.9,
+        "tgp": 30,
+        "tgo": 22,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -5063,6 +5149,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.4,
         "pcr": 3.2,
+        "tgp": 28,
+        "tgo": 20,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -5408,7 +5496,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.9,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 56,
+      "tgo": 42
     },
     "medicamentos": [
       {
@@ -5511,6 +5601,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.9,
         "pcr": 2.6,
+        "tgp": 56,
+        "tgo": 42,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -5533,6 +5625,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.8,
         "pcr": 2.9,
+        "tgp": 52,
+        "tgo": 39,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -5555,6 +5649,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.9,
         "pcr": 3.2,
+        "tgp": 48,
+        "tgo": 37,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -5898,7 +5994,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 31,
+      "tgo": 23
     },
     "medicamentos": [
       {
@@ -5988,6 +6086,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4,
         "pcr": 2.6,
+        "tgp": 31,
+        "tgo": 23,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -6010,6 +6110,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.9,
         "pcr": 2.9,
+        "tgp": 32,
+        "tgo": 24,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -6032,6 +6134,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4,
         "pcr": 3.2,
+        "tgp": 30,
+        "tgo": 22,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -6356,7 +6460,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.1,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 18,
+      "tgo": 24
     },
     "medicamentos": [
       {
@@ -6446,6 +6552,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.1,
         "pcr": 2.6,
+        "tgp": 18,
+        "tgo": 24,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -6468,6 +6576,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4,
         "pcr": 2.9,
+        "tgp": 19,
+        "tgo": 25,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -6490,6 +6600,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.1,
         "pcr": 3.2,
+        "tgp": 17,
+        "tgo": 23,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -6848,7 +6960,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.2,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 19,
+      "tgo": 25
     },
     "medicamentos": [
       {
@@ -6938,6 +7052,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.2,
         "pcr": 2.6,
+        "tgp": 19,
+        "tgo": 25,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -6960,6 +7076,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.1,
         "pcr": 2.9,
+        "tgp": 20,
+        "tgo": 26,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -6982,6 +7100,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.2,
         "pcr": 3.2,
+        "tgp": 18,
+        "tgo": 24,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -7325,7 +7445,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.3,
       "pcr": 2.6,
       "glicemia": 142,
-      "hba1c": 7.2
+      "hba1c": 7.2,
+      "tgp": 20,
+      "tgo": 26
     },
     "medicamentos": [
       {
@@ -7428,6 +7550,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.3,
         "pcr": 2.6,
+        "tgp": 20,
+        "tgo": 26,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -7450,6 +7574,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.2,
         "pcr": 2.9,
+        "tgp": 21,
+        "tgo": 27,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -7472,6 +7598,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.3,
         "pcr": 3.2,
+        "tgp": 19,
+        "tgo": 25,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -7817,7 +7945,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 21,
+      "tgo": 27
     },
     "medicamentos": [
       {
@@ -7907,6 +8037,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.4,
         "pcr": 2.6,
+        "tgp": 21,
+        "tgo": 27,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -7929,6 +8061,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.3,
         "pcr": 2.9,
+        "tgp": 22,
+        "tgo": 28,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -7951,6 +8085,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.4,
         "pcr": 3.2,
+        "tgp": 20,
+        "tgo": 26,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -8296,7 +8432,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.9,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 22,
+      "tgo": 28
     },
     "medicamentos": [
       {
@@ -8386,6 +8524,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.9,
         "pcr": 2.6,
+        "tgp": 22,
+        "tgo": 28,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -8408,6 +8548,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.8,
         "pcr": 2.9,
+        "tgp": 23,
+        "tgo": 29,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -8430,6 +8572,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.9,
         "pcr": 3.2,
+        "tgp": 21,
+        "tgo": 27,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -8775,7 +8919,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 23,
+      "tgo": 29
     },
     "medicamentos": [
       {
@@ -8865,6 +9011,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4,
         "pcr": 2.6,
+        "tgp": 23,
+        "tgo": 29,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -8887,6 +9035,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.9,
         "pcr": 2.9,
+        "tgp": 24,
+        "tgo": 30,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -8909,6 +9059,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4,
         "pcr": 3.2,
+        "tgp": 22,
+        "tgo": 28,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -9267,7 +9419,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.1,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 24,
+      "tgo": 20
     },
     "medicamentos": [
       {
@@ -9370,6 +9524,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.1,
         "pcr": 2.6,
+        "tgp": 24,
+        "tgo": 20,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -9392,6 +9548,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4,
         "pcr": 2.9,
+        "tgp": 25,
+        "tgo": 21,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -9414,6 +9572,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.1,
         "pcr": 3.2,
+        "tgp": 23,
+        "tgo": 19,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -9759,7 +9919,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.2,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 25,
+      "tgo": 21
     },
     "medicamentos": [
       {
@@ -9849,6 +10011,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.2,
         "pcr": 2.6,
+        "tgp": 25,
+        "tgo": 21,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -9871,6 +10035,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.1,
         "pcr": 2.9,
+        "tgp": 26,
+        "tgo": 22,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -9893,6 +10059,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.2,
         "pcr": 3.2,
+        "tgp": 24,
+        "tgo": 20,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -10238,7 +10406,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.3,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 26,
+      "tgo": 22
     },
     "medicamentos": [
       {
@@ -10328,6 +10498,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.3,
         "pcr": 2.6,
+        "tgp": 26,
+        "tgo": 22,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -10350,6 +10522,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.2,
         "pcr": 2.9,
+        "tgp": 27,
+        "tgo": 23,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -10372,6 +10546,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.3,
         "pcr": 3.2,
+        "tgp": 25,
+        "tgo": 21,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -10715,7 +10891,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 27,
+      "tgo": 23
     },
     "medicamentos": [
       {
@@ -10805,6 +10983,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.4,
         "pcr": 2.6,
+        "tgp": 27,
+        "tgo": 23,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -10827,6 +11007,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.3,
         "pcr": 2.9,
+        "tgp": 28,
+        "tgo": 24,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -10849,6 +11031,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.4,
         "pcr": 3.2,
+        "tgp": 26,
+        "tgo": 22,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -11194,7 +11378,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.9,
       "pcr": 2.6,
       "glicemia": 142,
-      "hba1c": 7.2
+      "hba1c": 7.2,
+      "tgp": 56,
+      "tgo": 42
     },
     "medicamentos": [
       {
@@ -11297,6 +11483,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.9,
         "pcr": 2.6,
+        "tgp": 56,
+        "tgo": 42,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -11319,6 +11507,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.8,
         "pcr": 2.9,
+        "tgp": 52,
+        "tgo": 39,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -11341,6 +11531,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.9,
         "pcr": 3.2,
+        "tgp": 48,
+        "tgo": 37,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -11678,7 +11870,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 29,
+      "tgo": 25
     },
     "medicamentos": [
       {
@@ -11768,6 +11962,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4,
         "pcr": 2.6,
+        "tgp": 29,
+        "tgo": 25,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -11790,6 +11986,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.9,
         "pcr": 2.9,
+        "tgp": 30,
+        "tgo": 26,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -11812,6 +12010,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4,
         "pcr": 3.2,
+        "tgp": 28,
+        "tgo": 24,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -12155,7 +12355,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.1,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 30,
+      "tgo": 26
     },
     "medicamentos": [
       {
@@ -12245,6 +12447,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.1,
         "pcr": 2.6,
+        "tgp": 30,
+        "tgo": 26,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -12267,6 +12471,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4,
         "pcr": 2.9,
+        "tgp": 31,
+        "tgo": 27,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -12289,6 +12495,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.1,
         "pcr": 3.2,
+        "tgp": 29,
+        "tgo": 25,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -12613,7 +12821,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.2,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 31,
+      "tgo": 27
     },
     "medicamentos": [
       {
@@ -12703,6 +12913,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.2,
         "pcr": 2.6,
+        "tgp": 31,
+        "tgo": 27,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -12725,6 +12937,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.1,
         "pcr": 2.9,
+        "tgp": 32,
+        "tgo": 28,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -12747,6 +12961,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.2,
         "pcr": 3.2,
+        "tgp": 30,
+        "tgo": 26,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -13071,7 +13287,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.3,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 18,
+      "tgo": 28
     },
     "medicamentos": [
       {
@@ -13174,6 +13392,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.3,
         "pcr": 2.6,
+        "tgp": 18,
+        "tgo": 28,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -13196,6 +13416,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.2,
         "pcr": 2.9,
+        "tgp": 19,
+        "tgo": 29,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -13218,6 +13440,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.3,
         "pcr": 3.2,
+        "tgp": 17,
+        "tgo": 27,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -13563,7 +13787,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 19,
+      "tgo": 29
     },
     "medicamentos": [
       {
@@ -13653,6 +13879,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.4,
         "pcr": 2.6,
+        "tgp": 19,
+        "tgo": 29,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -13675,6 +13903,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.3,
         "pcr": 2.9,
+        "tgp": 20,
+        "tgo": 30,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -13697,6 +13927,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.4,
         "pcr": 3.2,
+        "tgp": 18,
+        "tgo": 28,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -14055,7 +14287,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.9,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 20,
+      "tgo": 20
     },
     "medicamentos": [
       {
@@ -14145,6 +14379,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.9,
         "pcr": 2.6,
+        "tgp": 20,
+        "tgo": 20,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -14167,6 +14403,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.8,
         "pcr": 2.9,
+        "tgp": 21,
+        "tgo": 21,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -14189,6 +14427,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.9,
         "pcr": 3.2,
+        "tgp": 19,
+        "tgo": 19,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -14534,7 +14774,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 21,
+      "tgo": 21
     },
     "medicamentos": [
       {
@@ -14624,6 +14866,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4,
         "pcr": 2.6,
+        "tgp": 21,
+        "tgo": 21,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -14646,6 +14890,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.9,
         "pcr": 2.9,
+        "tgp": 22,
+        "tgo": 22,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -14668,6 +14914,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4,
         "pcr": 3.2,
+        "tgp": 20,
+        "tgo": 20,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -15013,7 +15261,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.1,
       "pcr": 2.6,
       "glicemia": 142,
-      "hba1c": 7.2
+      "hba1c": 7.2,
+      "tgp": 22,
+      "tgo": 22
     },
     "medicamentos": [
       {
@@ -15116,6 +15366,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.1,
         "pcr": 2.6,
+        "tgp": 22,
+        "tgo": 22,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -15138,6 +15390,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4,
         "pcr": 2.9,
+        "tgp": 23,
+        "tgo": 23,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -15160,6 +15414,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.1,
         "pcr": 3.2,
+        "tgp": 21,
+        "tgo": 21,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -15503,7 +15759,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.2,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 23,
+      "tgo": 23
     },
     "medicamentos": [
       {
@@ -15593,6 +15851,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.2,
         "pcr": 2.6,
+        "tgp": 23,
+        "tgo": 23,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -15615,6 +15875,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.1,
         "pcr": 2.9,
+        "tgp": 24,
+        "tgo": 24,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -15637,6 +15899,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.2,
         "pcr": 3.2,
+        "tgp": 22,
+        "tgo": 22,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -15982,7 +16246,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.3,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 24,
+      "tgo": 24
     },
     "medicamentos": [
       {
@@ -16072,6 +16338,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.3,
         "pcr": 2.6,
+        "tgp": 24,
+        "tgo": 24,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -16094,6 +16362,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.2,
         "pcr": 2.9,
+        "tgp": 25,
+        "tgo": 25,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -16116,6 +16386,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.3,
         "pcr": 3.2,
+        "tgp": 23,
+        "tgo": 23,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -16453,7 +16725,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 25,
+      "tgo": 25
     },
     "medicamentos": [
       {
@@ -16543,6 +16817,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.4,
         "pcr": 2.6,
+        "tgp": 25,
+        "tgo": 25,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -16565,6 +16841,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.3,
         "pcr": 2.9,
+        "tgp": 26,
+        "tgo": 26,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -16587,6 +16865,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.4,
         "pcr": 3.2,
+        "tgp": 24,
+        "tgo": 24,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -16909,7 +17189,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.9,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 56,
+      "tgo": 42
     },
     "medicamentos": [
       {
@@ -17012,6 +17294,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.9,
         "pcr": 2.6,
+        "tgp": 56,
+        "tgo": 42,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -17034,6 +17318,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.8,
         "pcr": 2.9,
+        "tgp": 52,
+        "tgo": 39,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -17056,6 +17342,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.9,
         "pcr": 3.2,
+        "tgp": 48,
+        "tgo": 37,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -17380,7 +17668,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 27,
+      "tgo": 27
     },
     "medicamentos": [
       {
@@ -17470,6 +17760,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4,
         "pcr": 2.6,
+        "tgp": 27,
+        "tgo": 27,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -17492,6 +17784,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.9,
         "pcr": 2.9,
+        "tgp": 28,
+        "tgo": 28,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -17514,6 +17808,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4,
         "pcr": 3.2,
+        "tgp": 26,
+        "tgo": 26,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -17838,7 +18134,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 28,
+      "tgo": 28
     },
     "medicamentos": [
       {
@@ -17928,6 +18226,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.4,
         "pcr": 2.6,
+        "tgp": 28,
+        "tgo": 28,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -17950,6 +18250,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.3,
         "pcr": 2.9,
+        "tgp": 29,
+        "tgo": 29,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -17972,6 +18274,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.4,
         "pcr": 3.2,
+        "tgp": 27,
+        "tgo": 27,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -18317,7 +18621,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.2,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 29,
+      "tgo": 29
     },
     "medicamentos": [
       {
@@ -18407,6 +18713,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.2,
         "pcr": 2.6,
+        "tgp": 29,
+        "tgo": 29,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -18429,6 +18737,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.1,
         "pcr": 2.9,
+        "tgp": 30,
+        "tgo": 30,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -18451,6 +18761,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.2,
         "pcr": 3.2,
+        "tgp": 28,
+        "tgo": 28,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -18809,7 +19121,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.3,
       "pcr": 2.6,
       "glicemia": 142,
-      "hba1c": 7.2
+      "hba1c": 7.2,
+      "tgp": 30,
+      "tgo": 20
     },
     "medicamentos": [
       {
@@ -18912,6 +19226,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.3,
         "pcr": 2.6,
+        "tgp": 30,
+        "tgo": 20,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -18934,6 +19250,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.2,
         "pcr": 2.9,
+        "tgp": 31,
+        "tgo": 21,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -18956,6 +19274,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.3,
         "pcr": 3.2,
+        "tgp": 29,
+        "tgo": 19,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -19301,7 +19621,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 31,
+      "tgo": 21
     },
     "medicamentos": [
       {
@@ -19391,6 +19713,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.4,
         "pcr": 2.6,
+        "tgp": 31,
+        "tgo": 21,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -19413,6 +19737,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.3,
         "pcr": 2.9,
+        "tgp": 32,
+        "tgo": 22,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -19435,6 +19761,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.4,
         "pcr": 3.2,
+        "tgp": 30,
+        "tgo": 20,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -19780,7 +20108,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.9,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 18,
+      "tgo": 22
     },
     "medicamentos": [
       {
@@ -19870,6 +20200,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.9,
         "pcr": 2.6,
+        "tgp": 18,
+        "tgo": 22,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -19892,6 +20224,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.8,
         "pcr": 2.9,
+        "tgp": 19,
+        "tgo": 23,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -19914,6 +20248,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.9,
         "pcr": 3.2,
+        "tgp": 17,
+        "tgo": 21,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -20257,7 +20593,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 19,
+      "tgo": 23
     },
     "medicamentos": [
       {
@@ -20347,6 +20685,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4,
         "pcr": 2.6,
+        "tgp": 19,
+        "tgo": 23,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -20369,6 +20709,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.9,
         "pcr": 2.9,
+        "tgp": 20,
+        "tgo": 24,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -20391,6 +20733,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4,
         "pcr": 3.2,
+        "tgp": 18,
+        "tgo": 22,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -20736,7 +21080,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.1,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 20,
+      "tgo": 24
     },
     "medicamentos": [
       {
@@ -20839,6 +21185,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.1,
         "pcr": 2.6,
+        "tgp": 20,
+        "tgo": 24,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -20861,6 +21209,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4,
         "pcr": 2.9,
+        "tgp": 21,
+        "tgo": 25,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -20883,6 +21233,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.1,
         "pcr": 3.2,
+        "tgp": 19,
+        "tgo": 23,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -21241,7 +21593,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.2,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 21,
+      "tgo": 25
     },
     "medicamentos": [
       {
@@ -21331,6 +21685,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.2,
         "pcr": 2.6,
+        "tgp": 21,
+        "tgo": 25,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -21353,6 +21709,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.1,
         "pcr": 2.9,
+        "tgp": 22,
+        "tgo": 26,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -21375,6 +21733,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.2,
         "pcr": 3.2,
+        "tgp": 20,
+        "tgo": 24,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -21718,7 +22078,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.3,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 22,
+      "tgo": 26
     },
     "medicamentos": [
       {
@@ -21808,6 +22170,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.3,
         "pcr": 2.6,
+        "tgp": 22,
+        "tgo": 26,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -21830,6 +22194,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.2,
         "pcr": 2.9,
+        "tgp": 23,
+        "tgo": 27,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -21852,6 +22218,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.3,
         "pcr": 3.2,
+        "tgp": 21,
+        "tgo": 25,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -22197,7 +22565,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 23,
+      "tgo": 27
     },
     "medicamentos": [
       {
@@ -22287,6 +22657,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.4,
         "pcr": 2.6,
+        "tgp": 23,
+        "tgo": 27,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -22309,6 +22681,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.3,
         "pcr": 2.9,
+        "tgp": 24,
+        "tgo": 28,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -22331,6 +22705,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.4,
         "pcr": 3.2,
+        "tgp": 22,
+        "tgo": 26,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -22676,7 +23052,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.9,
       "pcr": 2.6,
       "glicemia": 142,
-      "hba1c": 7.2
+      "hba1c": 7.2,
+      "tgp": 56,
+      "tgo": 42
     },
     "medicamentos": [
       {
@@ -22779,6 +23157,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.9,
         "pcr": 2.6,
+        "tgp": 56,
+        "tgo": 42,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -22801,6 +23181,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.8,
         "pcr": 2.9,
+        "tgp": 52,
+        "tgo": 39,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -22823,6 +23205,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.9,
         "pcr": 3.2,
+        "tgp": 48,
+        "tgo": 37,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -23168,7 +23552,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 25,
+      "tgo": 29
     },
     "medicamentos": [
       {
@@ -23258,6 +23644,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4,
         "pcr": 2.6,
+        "tgp": 25,
+        "tgo": 29,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -23280,6 +23668,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.9,
         "pcr": 2.9,
+        "tgp": 26,
+        "tgo": 30,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -23302,6 +23692,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4,
         "pcr": 3.2,
+        "tgp": 24,
+        "tgo": 28,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -23660,7 +24052,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.1,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 26,
+      "tgo": 20
     },
     "medicamentos": [
       {
@@ -23750,6 +24144,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.1,
         "pcr": 2.6,
+        "tgp": 26,
+        "tgo": 20,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -23772,6 +24168,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4,
         "pcr": 2.9,
+        "tgp": 27,
+        "tgo": 21,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -23794,6 +24192,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.1,
         "pcr": 3.2,
+        "tgp": 25,
+        "tgo": 19,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -24139,7 +24539,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.2,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 27,
+      "tgo": 21
     },
     "medicamentos": [
       {
@@ -24229,6 +24631,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.2,
         "pcr": 2.6,
+        "tgp": 27,
+        "tgo": 21,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -24251,6 +24655,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.1,
         "pcr": 2.9,
+        "tgp": 28,
+        "tgo": 22,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -24273,6 +24679,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.2,
         "pcr": 3.2,
+        "tgp": 26,
+        "tgo": 20,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -24618,7 +25026,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.3,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 28,
+      "tgo": 22
     },
     "medicamentos": [
       {
@@ -24721,6 +25131,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.3,
         "pcr": 2.6,
+        "tgp": 28,
+        "tgo": 22,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -24743,6 +25155,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.2,
         "pcr": 2.9,
+        "tgp": 29,
+        "tgo": 23,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -24765,6 +25179,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.3,
         "pcr": 3.2,
+        "tgp": 27,
+        "tgo": 21,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -25108,7 +25524,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 29,
+      "tgo": 23
     },
     "medicamentos": [
       {
@@ -25198,6 +25616,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.4,
         "pcr": 2.6,
+        "tgp": 29,
+        "tgo": 23,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -25220,6 +25640,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.3,
         "pcr": 2.9,
+        "tgp": 30,
+        "tgo": 24,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -25242,6 +25664,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.4,
         "pcr": 3.2,
+        "tgp": 28,
+        "tgo": 22,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -25587,7 +26011,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.9,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 30,
+      "tgo": 24
     },
     "medicamentos": [
       {
@@ -25677,6 +26103,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.9,
         "pcr": 2.6,
+        "tgp": 30,
+        "tgo": 24,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -25699,6 +26127,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.8,
         "pcr": 2.9,
+        "tgp": 31,
+        "tgo": 25,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -25721,6 +26151,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.9,
         "pcr": 3.2,
+        "tgp": 29,
+        "tgo": 23,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -26079,7 +26511,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 31,
+      "tgo": 25
     },
     "medicamentos": [
       {
@@ -26169,6 +26603,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4,
         "pcr": 2.6,
+        "tgp": 31,
+        "tgo": 25,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -26191,6 +26627,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.9,
         "pcr": 2.9,
+        "tgp": 32,
+        "tgo": 26,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -26213,6 +26651,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4,
         "pcr": 3.2,
+        "tgp": 30,
+        "tgo": 24,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -26556,7 +26996,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.1,
       "pcr": 2.6,
       "glicemia": 142,
-      "hba1c": 7.2
+      "hba1c": 7.2,
+      "tgp": 18,
+      "tgo": 26
     },
     "medicamentos": [
       {
@@ -26659,6 +27101,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.1,
         "pcr": 2.6,
+        "tgp": 18,
+        "tgo": 26,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -26681,6 +27125,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4,
         "pcr": 2.9,
+        "tgp": 19,
+        "tgo": 27,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -26703,6 +27149,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.1,
         "pcr": 3.2,
+        "tgp": 17,
+        "tgo": 25,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -27048,7 +27496,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.2,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 19,
+      "tgo": 27
     },
     "medicamentos": [
       {
@@ -27138,6 +27588,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.2,
         "pcr": 2.6,
+        "tgp": 19,
+        "tgo": 27,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -27160,6 +27612,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.1,
         "pcr": 2.9,
+        "tgp": 20,
+        "tgo": 28,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -27182,6 +27636,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.2,
         "pcr": 3.2,
+        "tgp": 18,
+        "tgo": 26,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -27527,7 +27983,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.3,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 20,
+      "tgo": 28
     },
     "medicamentos": [
       {
@@ -27617,6 +28075,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.3,
         "pcr": 2.6,
+        "tgp": 20,
+        "tgo": 28,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -27639,6 +28099,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.2,
         "pcr": 2.9,
+        "tgp": 21,
+        "tgo": 29,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -27661,6 +28123,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.3,
         "pcr": 3.2,
+        "tgp": 19,
+        "tgo": 27,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -28006,7 +28470,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 4.4,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 21,
+      "tgo": 29
     },
     "medicamentos": [
       {
@@ -28096,6 +28562,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 4.4,
         "pcr": 2.6,
+        "tgp": 21,
+        "tgo": 29,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -28118,6 +28586,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 4.3,
         "pcr": 2.9,
+        "tgp": 22,
+        "tgo": 30,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -28140,6 +28610,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 4.4,
         "pcr": 3.2,
+        "tgp": 20,
+        "tgo": 28,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],
@@ -28498,7 +28970,9 @@ export const DEMO_PATIENTS_DATA = [
       "albumina": 3.9,
       "pcr": 2.6,
       "glicemia": 94,
-      "hba1c": 5.4
+      "hba1c": 5.4,
+      "tgp": 56,
+      "tgo": 42
     },
     "medicamentos": [
       {
@@ -28601,6 +29075,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.6,
         "albumina": 3.9,
         "pcr": 2.6,
+        "tgp": 56,
+        "tgo": 42,
         "observacoes": "Paciente estável com boa adesão terapêutica."
       },
       {
@@ -28623,6 +29099,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 9.8,
         "albumina": 3.8,
         "pcr": 2.9,
+        "tgp": 52,
+        "tgo": 39,
         "observacoes": "Rotina mensal de controle dialítico."
       },
       {
@@ -28645,6 +29123,8 @@ export const DEMO_PATIENTS_DATA = [
         "creatinina": 10.1,
         "albumina": 3.9,
         "pcr": 3.2,
+        "tgp": 48,
+        "tgo": 37,
         "observacoes": "Ajuste de doses de eritropoietina e quelantes."
       }
     ],

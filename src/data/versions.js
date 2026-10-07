@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.102",
+    "date": "07/10/2026",
+    "title": "Adiciona exibicao e rastreio de TGP e TGO no historico cronologico de exames ...",
+    "highlights": [
+      "✨ Adiciona exibicao e rastreio de TGP e TGO no historico cronologico de exames com badges de metas clinicas, graficos e exportacao"
+    ]
+  },
+  {
     "version": "1.1.101",
     "date": "05/10/2026",
     "title": "Adiciona recurso completo de Portabilidade e Backup Clínico no Perfil: export...",

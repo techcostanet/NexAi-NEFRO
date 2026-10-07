@@ -193,6 +193,18 @@ export function evaluateExam(examKey, rawValue) {
       return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
     }
 
+    // TGO / AST (Meta: ≤ 35 U/L)
+    case 'tgo':
+    case 'ast': {
+      if (num <= 35) {
+        return { ...EXAM_STATUS_STYLES.bom, numValue: num };
+      }
+      if (num > 35 && num <= 50) {
+        return { ...EXAM_STATUS_STYLES.medio, numValue: num };
+      }
+      return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
+    }
+
     // Bicarbonato Sérico / HCO3 (Meta: ≥ 22 mEq/L)
     case 'hco3':
     case 'bicarbonato': {

@@ -340,7 +340,9 @@ export function exportSystemToExcel(options = {}) {
         'Albumina (g/dL)',
         'PCR (mg/L)',
         'Glicemia (mg/dL)',
-        'HbA1c (%)'
+        'HbA1c (%)',
+        'TGP (U/L)',
+        'TGO (U/L)'
       ]
     ];
 
@@ -376,7 +378,9 @@ export function exportSystemToExcel(options = {}) {
         ex.albumina ?? '---',
         ex.pcr ?? '---',
         ex.glicemia ?? '---',
-        ex.hba1c ?? '---'
+        ex.hba1c ?? '---',
+        ex.tgp ?? '---',
+        ex.tgo ?? '---'
       ]);
     });
 
@@ -413,6 +417,10 @@ export function exportSystemToExcel(options = {}) {
         'Creatinina (mg/dL)',
         'Albumina (g/dL)',
         'PCR (mg/L)',
+        'Glicemia (mg/dL)',
+        'HbA1c (%)',
+        'TGP (U/L)',
+        'TGO (U/L)',
         'Observações do Laudo'
       ]
     ];
@@ -443,6 +451,10 @@ export function exportSystemToExcel(options = {}) {
           h.creatinina ?? '---',
           h.albumina ?? '---',
           h.pcr ?? '---',
+          h.glicemia ?? '---',
+          h.hba1c ?? '---',
+          h.tgp ?? '---',
+          h.tgo ?? '---',
           cleanText(h.observacoes)
         ]);
       });

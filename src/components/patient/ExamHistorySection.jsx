@@ -37,7 +37,8 @@ const BIOMARKERS_CONFIG = [
   { key: 'hba1c', label: 'Hemoglobina Glicada', shortLabel: 'HbA1c', unit: '%', targetMin: 4.5, targetMax: 7.0, targetText: '< 7.0%' },
   { key: 'ferritina', label: 'Ferritina', shortLabel: 'Ferritina', unit: 'ng/mL', targetMin: 200, targetMax: 800, targetText: '200 a 800 ng/mL' },
   { key: 'ist', label: 'IST', shortLabel: 'IST', unit: '%', targetMin: 20, targetMax: 50, targetText: '20% a 50%' },
-  { key: 'tgp', label: 'TGP (ALT)', shortLabel: 'TGP', unit: 'U/L', targetMin: 0, targetMax: 45, targetText: '< 45 U/L' }
+  { key: 'tgp', label: 'TGP (ALT)', shortLabel: 'TGP', unit: 'U/L', targetMin: 0, targetMax: 45, targetText: '≤ 45 U/L' },
+  { key: 'tgo', label: 'TGO (AST)', shortLabel: 'TGO', unit: 'U/L', targetMin: 0, targetMax: 35, targetText: '≤ 35 U/L' }
 ];
 
 /**
@@ -303,6 +304,7 @@ export default function ExamHistorySection({
                     <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Kt/V • UR%</th>
                     <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Alb / PCR</th>
                     <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Glic / HbA1c</th>
+                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }} title="TGP (ALT) e TGO (AST) - Enzimas Hepáticas">TGP</th>
                     <th style={{ padding: '0.65rem 0.8rem', textAlign: 'right', color: '#475569' }}>Ações</th>
                   </tr>
                 </thead>
@@ -389,6 +391,17 @@ export default function ExamHistorySection({
                             <>
                               <span style={{ color: '#cbd5e1' }}>/</span>
                               <ExamBadge examKey="hba1c" value={`${item.hba1c}%`} title="Hemoglobina Glicada" />
+                            </>
+                          )}
+                        </div>
+                      </td>
+                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <ExamBadge examKey="tgp" value={item.tgp} title="TGP (ALT) - Meta: ≤ 45 U/L" />
+                          {item.tgo !== undefined && item.tgo !== null && item.tgo !== '' && (
+                            <>
+                              <span style={{ color: '#cbd5e1' }}>/</span>
+                              <ExamBadge examKey="tgo" value={item.tgo} title="TGO (AST) - Meta: ≤ 35 U/L" />
                             </>
                           )}
                         </div>
@@ -692,7 +705,8 @@ export default function ExamHistorySection({
                   evaluateExam('ca', item.ca),
                   evaluateExam('k', item.k),
                   evaluateExam('ktv', item.ktv),
-                  evaluateExam('albumina', item.albumina)
+                  evaluateExam('albumina', item.albumina),
+                  evaluateExam('tgp', item.tgp)
                 ].filter(e => e.status !== 'neutro');
 
                 const totalValidos = evaluatedList.length;
@@ -770,7 +784,7 @@ export default function ExamHistorySection({
                     </div>
 
                     {/* Blocos de Biomarcadores */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.85rem' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem' }}>
                       {/* Bloco 1: Anemia & Ferro */}
                       <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex flex-col gap-1.5 text-xs">
                         <span className="font-bold text-2xs uppercase tracking-wider text-rose-800 flex items-center gap-1">
@@ -825,6 +839,25 @@ export default function ExamHistorySection({
                         <div className="flex justify-between items-center">
                           <span className="text-muted">Albumina:</span>
                           <ExamBadge examKey="albumina" value={item.albumina} suffix=" g/dL" />
+                        </div>
+                      </div>
+
+                      {/* Bloco 4: Função Hepática & Transaminases */}
+                      <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-100 flex flex-col gap-1.5 text-xs">
+                        <span className="font-bold text-2xs uppercase tracking-wider text-teal-800 flex items-center gap-1">
+                          <Activity size={11} /> Perfil Hepático
+                        </span>
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted">TGP (ALT):</span>
+                          <ExamBadge examKey="tgp" value={item.tgp} suffix=" U/L" />
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted">TGO (AST):</span>
+                          <ExamBadge examKey="tgo" value={item.tgo} suffix=" U/L" />
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-muted">Glicemia:</span>
+                          <ExamBadge examKey="glicemia" value={item.glicemia} suffix=" mg/dL" />
                         </div>
                       </div>
                     </div>
