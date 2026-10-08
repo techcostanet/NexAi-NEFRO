@@ -140,7 +140,11 @@ export default function AdminDashboard() {
     descontoTipo: 'nenhum', // 'nenhum' | 'fixo' | 'porcentagem'
     descontoValor: 0,
     valorMensalidade: 99.90,
-    vigenciaMeses: 1
+    vigenciaMeses: 1,
+    modulos: {
+      dialise: true,
+      consultorio: false
+    }
   });
 
   useEffect(() => {
@@ -342,7 +346,11 @@ export default function AdminDashboard() {
       descontoTipo: 'nenhum',
       descontoValor: 0,
       valorMensalidade: initialPrice,
-      vigenciaMeses: isAnual ? 12 : 1
+      vigenciaMeses: isAnual ? 12 : 1,
+      modulos: {
+        dialise: true,
+        consultorio: false
+      }
     });
     setIsModalOpen(true);
   };
@@ -427,7 +435,11 @@ export default function AdminDashboard() {
       descontoTipo: descontoTipo,
       descontoValor: descontoValor,
       valorMensalidade: valorAtual,
-      vigenciaMeses: (doctor.plano || '').toLowerCase().includes('anual') ? 12 : 1
+      vigenciaMeses: (doctor.plano || '').toLowerCase().includes('anual') ? 12 : 1,
+      modulos: {
+        dialise: true,
+        consultorio: doctor.modulos?.consultorio ?? (doctor.id === 'dr-marcelo')
+      }
     });
     setIsModalOpen(true);
   };
@@ -521,6 +533,10 @@ export default function AdminDashboard() {
         valorTotalContrato: Number(doctorForm.valorTotalContrato) || Number(doctorForm.valorMensalidade) || 0,
         valorParcela: Number(doctorForm.valorParcela) || Number(doctorForm.valorMensalidade) || 0,
         valorMensalidade: Number(doctorForm.valorMensalidade) || 0,
+        modulos: {
+          dialise: true,
+          consultorio: Boolean(doctorForm.modulos?.consultorio)
+        },
         dataInicioAssinatura: dataInicio,
         dataFimAssinatura: dataFim,
         atualizadoEm: new Date().toISOString()
@@ -1038,6 +1054,17 @@ export default function AdminDashboard() {
                                   {docItem.descontoTipo === 'porcentagem' 
                                     ? `-${docItem.descontoValor}% desc.` 
                                     : `-R$ ${Number(docItem.descontoValor).toFixed(2)} desc.`}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                              <span style={{ fontSize: '0.66rem', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold', background: '#eff6ff', color: '#1d4ed8', border: '1px solid #bfdbfe' }}>
+                                Diálise
+                              </span>
+                              {(docItem.modulos?.consultorio || docItem.id === 'dr-marcelo') && (
+                                <span style={{ fontSize: '0.66rem', padding: '1px 6px', borderRadius: '4px', fontWeight: 'bold', background: '#f5f3ff', color: '#6d28d9', border: '1px solid #ddd6fe', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                                  <Calendar size={10} /> Consultório
                                 </span>
                               )}
                             </div>
@@ -2244,6 +2271,62 @@ export default function AdminDashboard() {
                     </span>
                   </div>
                 )}
+              </div>
+
+              {/* Módulos Contratados (SaaS Modular) */}
+              <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+                <div className="flex justify-between items-center mb-2.5">
+                  <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <Sparkles size={14} color="#6366f1" /> Módulos Contratados
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-medium">SaaS Modular</span>
+                </div>
+
+                <div className="space-y-2">
+                  {/* Módulo Diálise */}
+                  <div className="p-2.5 rounded-lg bg-white border border-slate-200 flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <Activity size={13} color="#2563eb" /> Nefrologia & Diálise
+                      </div>
+                      <div className="text-[11px] text-slate-500">Prontuário nefrológico, turnos e LME (Plano base)</div>
+                    </div>
+                    <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '6px', fontWeight: 'bold', background: '#eff6ff', color: '#1d4ed8' }}>
+                      Incluso
+                    </span>
+                  </div>
+
+                  {/* Módulo Consultório */}
+                  <div 
+                    className="p-2.5 rounded-lg bg-white border flex items-center justify-between transition-all"
+                    style={{ borderColor: doctorForm.modulos?.consultorio ? '#c7d2fe' : '#e2e8f0', background: doctorForm.modulos?.consultorio ? '#f5f3ff' : '#ffffff' }}
+                  >
+                    <div>
+                      <div className="text-xs font-bold flex items-center gap-1.5" style={{ color: doctorForm.modulos?.consultorio ? '#4338ca' : '#334155' }}>
+                        <Calendar size={13} color={doctorForm.modulos?.consultorio ? '#6366f1' : '#64748b'} /> Módulo Consultório
+                      </div>
+                      <div className="text-[11px] text-slate-500">Agenda médica, WhatsApp, status de consulta e financeiro</div>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="sr-only peer"
+                        checked={Boolean(doctorForm.modulos?.consultorio)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setDoctorForm(prev => ({
+                            ...prev,
+                            modulos: {
+                              ...(prev.modulos || { dialise: true }),
+                              consultorio: checked
+                            }
+                          }));
+                        }}
+                      />
+                      <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                  </div>
+                </div>
               </div>
 
               <div>

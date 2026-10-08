@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.108",
+    "date": "08/10/2026",
+    "title": "feat: modulo consultorio saas fase 1 com agenda medica e controle no painel a...",
+    "highlights": [
+      "✨ feat: modulo consultorio saas fase 1 com agenda medica e controle no painel admin"
+    ]
+  },
+  {
     "version": "1.1.107",
     "date": "08/10/2026",
     "title": "feat: remover informacao duplicada na importacao e otimizar modal de laborato...",

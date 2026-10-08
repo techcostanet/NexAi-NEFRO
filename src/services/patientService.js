@@ -797,6 +797,10 @@ export async function seedDemoPatientsToFirestore(targetDoctorId = 'dr-marcelo')
       statusLicenca: "Ativo",
       tipoConta: "Médico Assinante",
       plano: "Profissional Ilimitado",
+      modulos: {
+        dialise: true,
+        consultorio: true
+      },
       pacientesCount: DEMO_PATIENTS_DATA.length,
       locaisAtuacao: [
         { 

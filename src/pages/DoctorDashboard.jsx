@@ -41,6 +41,9 @@ import ExamImportModal from '../components/ExamImportModal';
 import ReportsCenterModal from '../components/reports/ReportsCenterModal';
 import PatientDischargeModal from '../components/PatientDischargeModal';
 import LmeCentralModal from '../components/lme/LmeCentralModal';
+import AppointmentSchedule from '../components/consultorio/AppointmentSchedule';
+import AppointmentModal from '../components/consultorio/AppointmentModal';
+import { subscribeDoctorAppointments, createAppointment, updateAppointment, seedDemoAppointmentsIfEmpty } from '../services/appointmentService';
 import BrandLogo from '../components/BrandLogo';
 import { useAuth } from '../context/AuthContext';
 
@@ -75,11 +78,19 @@ export default function DoctorDashboard() {
   const [isReportsModalOpen, setIsReportsModalOpen] = useState(false);
   const [isLmeCentralOpen, setIsLmeCentralOpen] = useState(false);
 
+  // Módulo Consultório States
+  const [dashboardMode, setDashboardMode] = useState('dialise'); // 'dialise' | 'consultorio'
+  const [appointments, setAppointments] = useState([]);
+  const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
+  const [appointmentToEdit, setAppointmentToEdit] = useState(null);
+  const [appointmentInitialDate, setAppointmentInitialDate] = useState('');
+
   const currentDoctorId = activeDoctorId;
 
   useEffect(() => {
     if (!currentDoctorId) {
       setPatients([]);
+      setAppointments([]);
       return;
     }
 
@@ -99,6 +110,14 @@ export default function DoctorDashboard() {
       }
     });
 
+    // Escuta agendamentos do consultório em tempo real
+    const unsubAppointments = subscribeDoctorAppointments(currentDoctorId, (data) => {
+      setAppointments(data || []);
+      if (currentDoctorId === 'dr-marcelo' && (!data || data.length === 0)) {
+        seedDemoAppointmentsIfEmpty('dr-marcelo');
+      }
+    });
+
     // Escuta perfil do médico ativo
     const unsubDoc = subscribeDoctorProfile(currentDoctorId, (data) => {
       if (data) setDoctor(data);
@@ -107,6 +126,7 @@ export default function DoctorDashboard() {
     return () => {
       unsubDoc();
       unsubPatients();
+      unsubAppointments();
     };
   }, [currentDoctorId]);
 
@@ -130,6 +150,37 @@ export default function DoctorDashboard() {
     e.stopPropagation();
     setPatientForDischarge(patient);
     setIsDischargeModalOpen(true);
+  };
+
+  // Handlers do Módulo Consultório
+  const handleOpenNewAppointment = (dateStr = '') => {
+    setAppointmentToEdit(null);
+    setAppointmentInitialDate(dateStr || new Date().toISOString().split('T')[0]);
+    setIsAppointmentModalOpen(true);
+  };
+
+  const handleEditAppointment = (appointment) => {
+    setAppointmentToEdit(appointment);
+    setAppointmentInitialDate(appointment?.data || '');
+    setIsAppointmentModalOpen(true);
+  };
+
+  const handleSaveAppointment = async (payload) => {
+    try {
+      if (payload.id) {
+        await updateAppointment(payload.id, payload);
+      } else {
+        await createAppointment({
+          ...payload,
+          doctorId: currentDoctorId
+        });
+      }
+      setIsAppointmentModalOpen(false);
+      setAppointmentToEdit(null);
+    } catch (err) {
+      console.error("Erro ao salvar agendamento:", err);
+      alert("Não foi possível salvar o agendamento no momento.");
+    }
   };
 
   // Helper para verificar alertas de medicação no paciente
@@ -285,6 +336,11 @@ export default function DoctorDashboard() {
     return alerts.hasAlerts ? acc + 1 : acc;
   }, 0);
 
+  // Verificação de permissão do módulo SaaS Consultório
+  const hasConsultorioModule = Boolean(doctor?.modulos?.consultorio || currentDoctorId === 'dr-marcelo');
+  const todayIsoStr = new Date().toISOString().split('T')[0];
+  const appointmentsTodayCount = appointments.filter(a => a.data === todayIsoStr).length;
+
   return (
     <div className="container" style={{ paddingBottom: '5rem' }}>
       
@@ -430,22 +486,44 @@ export default function DoctorDashboard() {
             <span>Importar</span>
           </button>
 
-          <button 
-            className="btn btn-primary" 
-            onClick={handleOpenNewPatient}
-            disabled={doctor.statusLicenca === 'Suspenso' || doctor.statusLicenca === 'Cancelado'}
-            style={{ 
-              padding: '0.5rem 1rem', 
-              fontSize: '0.82rem', 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '6px',
-              borderRadius: '10px'
-            }}
-          >
-            <UserPlus size={15} />
-            <span>+ Paciente</span>
-          </button>
+          {dashboardMode === 'consultorio' ? (
+            <button 
+              className="btn btn-primary" 
+              onClick={() => handleOpenNewAppointment()}
+              disabled={doctor.statusLicenca === 'Suspenso' || doctor.statusLicenca === 'Cancelado'}
+              style={{ 
+                padding: '0.5rem 1rem', 
+                fontSize: '0.82rem', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '6px',
+                borderRadius: '10px',
+                background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
+                borderColor: '#6d28d9',
+                boxShadow: '0 2px 6px rgba(124, 58, 237, 0.25)'
+              }}
+            >
+              <Calendar size={15} />
+              <span>Agendar</span>
+            </button>
+          ) : (
+            <button 
+              className="btn btn-primary" 
+              onClick={handleOpenNewPatient}
+              disabled={doctor.statusLicenca === 'Suspenso' || doctor.statusLicenca === 'Cancelado'}
+              style={{ 
+                padding: '0.5rem 1rem', 
+                fontSize: '0.82rem', 
+                display: 'inline-flex', 
+                alignItems: 'center', 
+                gap: '6px',
+                borderRadius: '10px'
+              }}
+            >
+              <UserPlus size={15} />
+              <span>+ Paciente</span>
+            </button>
+          )}
 
           <button 
             className="btn btn-outline" 
@@ -485,7 +563,110 @@ export default function DoctorDashboard() {
         </div>
       )}
 
-      {/* BARRA DE SELEÇÃO RÁPIDA DE LOCAL DE ATUAÇÃO */}
+      {/* SELETOR DE MÓDULO (DIÁLISE / CONSULTÓRIO) */}
+      {hasConsultorioModule && (
+        <div 
+          className="glass-panel mb-4" 
+          style={{ 
+            padding: '0.45rem 0.6rem', 
+            borderRadius: '16px', 
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '0.5rem',
+            flexWrap: 'wrap',
+            boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)'
+          }}
+        >
+          <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-xl">
+            <button
+              type="button"
+              onClick={() => setDashboardMode('dialise')}
+              style={{
+                padding: '0.45rem 1rem',
+                borderRadius: '10px',
+                fontSize: '0.82rem',
+                fontWeight: dashboardMode === 'dialise' ? '700' : '600',
+                background: dashboardMode === 'dialise' ? '#ffffff' : 'transparent',
+                color: dashboardMode === 'dialise' ? '#1e40af' : '#64748b',
+                border: dashboardMode === 'dialise' ? '1px solid #bfdbfe' : '1px solid transparent',
+                boxShadow: dashboardMode === 'dialise' ? '0 2px 6px rgba(37, 99, 235, 0.12)' : 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '7px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <Activity size={15} color={dashboardMode === 'dialise' ? '#2563eb' : '#94a3b8'} />
+              <span>Diálise</span>
+              <span style={{
+                fontSize: '0.72rem',
+                padding: '1px 6px',
+                borderRadius: '10px',
+                background: dashboardMode === 'dialise' ? '#eff6ff' : '#e2e8f0',
+                color: dashboardMode === 'dialise' ? '#1d4ed8' : '#64748b',
+                fontWeight: '700'
+              }}>
+                {patients.length}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setDashboardMode('consultorio')}
+              style={{
+                padding: '0.45rem 1rem',
+                borderRadius: '10px',
+                fontSize: '0.82rem',
+                fontWeight: dashboardMode === 'consultorio' ? '700' : '600',
+                background: dashboardMode === 'consultorio' ? '#ffffff' : 'transparent',
+                color: dashboardMode === 'consultorio' ? '#6d28d9' : '#64748b',
+                border: dashboardMode === 'consultorio' ? '1px solid #ddd6fe' : '1px solid transparent',
+                boxShadow: dashboardMode === 'consultorio' ? '0 2px 6px rgba(124, 58, 237, 0.12)' : 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '7px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease'
+              }}
+            >
+              <Calendar size={15} color={dashboardMode === 'consultorio' ? '#7c3aed' : '#94a3b8'} />
+              <span>Consultório</span>
+              <span style={{
+                fontSize: '0.72rem',
+                padding: '1px 6px',
+                borderRadius: '10px',
+                background: dashboardMode === 'consultorio' ? '#f5f3ff' : '#e2e8f0',
+                color: dashboardMode === 'consultorio' ? '#7c3aed' : '#64748b',
+                fontWeight: '700'
+              }}>
+                {appointmentsTodayCount}
+              </span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 pr-2 text-xs text-slate-500 font-medium">
+            <Sparkles size={14} color="#6366f1" />
+            <span>Módulo SaaS Habilitado</span>
+          </div>
+        </div>
+      )}
+
+      {/* VISÃO CONDICIONAL: CONSULTÓRIO OU DIÁLISE */}
+      {dashboardMode === 'consultorio' ? (
+        <AppointmentSchedule
+          appointments={appointments}
+          patients={patients}
+          doctorInfo={doctor}
+          onOpenNewAppointment={handleOpenNewAppointment}
+          onEditAppointment={handleEditAppointment}
+        />
+      ) : (
+        <>
+          {/* BARRA DE SELEÇÃO RÁPIDA DE LOCAL DE ATUAÇÃO */}
       <div 
         className="glass-panel mb-4" 
         style={{ 
@@ -1516,6 +1697,8 @@ export default function DoctorDashboard() {
           )}
         </div>
       )}
+        </>
+      )}
 
       {/* Modais */}
       <PatientFormModal 
@@ -1565,6 +1748,19 @@ export default function DoctorDashboard() {
         patients={patients}
         doctor={doctor}
         doctorInfo={doctor}
+      />
+
+      <AppointmentModal
+        isOpen={isAppointmentModalOpen}
+        onClose={() => {
+          setIsAppointmentModalOpen(false);
+          setAppointmentToEdit(null);
+        }}
+        onSave={handleSaveAppointment}
+        appointmentToEdit={appointmentToEdit}
+        patients={patients}
+        doctorInfo={doctor}
+        initialDate={appointmentInitialDate}
       />
     </div>
   );
