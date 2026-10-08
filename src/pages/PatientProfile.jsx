@@ -1700,7 +1700,7 @@ export default function PatientProfile() {
             </section>
           </div>
 
-          {/* ================= COLUNA 2: TERAPÊUTICA & PESO ================= */}
+          {/* ================= COLUNA 2: PRESCRIÇÕES E TRANSPLANTE ================= */}
           <div className="flex flex-col gap-4">
             
             {/* Prescrições em Uso */}
@@ -1752,158 +1752,92 @@ export default function PatientProfile() {
               )}
             </section>
 
-            {/* Card Controle Ponderal */}
+            {/* Card Transplante Renal (Posicionado estrategicamente na Coluna 2) */}
             <section className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
               <div className="flex justify-between items-center mb-3">
                 <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
-                  <Scale size={16} color="#059669" />
-                  <span>Controle Ponderal ({historicoPesos.length})</span>
+                  <HeartHandshake size={16} color="#7c3aed" />
+                  <span>Transplante</span>
                 </h2>
-                <button 
-                  type="button"
-                  onClick={() => setIsWeightModalOpen(true)}
-                  className="btn btn-outline"
-                  style={{ padding: '0.25rem 0.65rem', fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '4px', borderRadius: '8px', color: '#059669', borderColor: '#a7f3d0', background: '#ecfdf5' }}
-                  title="Lançar novo peso"
-                >
-                  <Plus size={12} />
-                  <span>+ Peso</span>
-                </button>
+                <span style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '8px', background: transplantOpt.badgeBg, color: transplantOpt.color, border: `1px solid ${transplantOpt.border}`, fontWeight: 'bold' }}>
+                  {transplantOpt.label}
+                </span>
               </div>
 
-              {/* Destaque Atual: Último Peso vs Peso Seco */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem', marginBottom: '0.75rem' }}>
-                <div 
-                  className="p-2 rounded-xl text-center flex flex-col justify-center items-center"
-                  style={{ background: '#f8fafc', border: '1px solid #e2e8f0', minHeight: '68px' }}
-                >
-                  <span className="text-muted block mb-0.5 font-medium" style={{ fontSize: '0.70rem', lineHeight: '1.2' }}>Último Peso</span>
-                  <strong className="font-bold text-slate-800" style={{ fontSize: '0.90rem', lineHeight: '1.2' }}>
-                    {ultimoPeso ? `${ultimoPeso} kg` : '-'}
-                  </strong>
-                  <span className="text-slate-400 mt-0.5" style={{ fontSize: '0.65rem', lineHeight: '1.2' }}>
-                    {ultimoPeso ? 'Aferido' : 'Sem registro'}
+              <div className="flex flex-col gap-2.5 text-xs">
+                <div className="p-2.5 rounded-xl border" style={{ background: transplantOpt.badgeBg, borderColor: transplantOpt.border }}>
+                  <span className="font-semibold block mb-0.5" style={{ color: transplantOpt.color }}>
+                    Situação SNT: {transplantOpt.label}
                   </span>
+                  <p className="text-slate-600" style={{ fontSize: '0.70rem', lineHeight: '1.3' }}>
+                    {patient.statusTransplante === 'Contraindicação Provisória'
+                      ? 'Paciente com contraindicação clínica temporária/provisória para inscrição ativa no SNT.'
+                      : (patient.statusTransplante === 'Contraindicação Definitiva' || patient.statusTransplante === 'Contraindicado Clínico')
+                      ? 'Paciente com contraindicação clínica definitiva para transplante renal.'
+                      : patient.statusTransplante === 'Inscrito / Ativo'
+                      ? 'Inscrito na lista única do SNT. Manter sorologias e exames semestrais vigentes.'
+                      : patient.statusTransplante === 'Em Preparo / Avaliação'
+                      ? 'Em fase de exames e pareceres com equipe de transplante renal.'
+                      : patient.statusTransplante === 'Transplantado'
+                      ? 'Transplante renal realizado. Acompanhamento ambulatorial.'
+                      : 'Avaliação pré-transplante pendente de protocolo inicial.'}
+                  </p>
                 </div>
 
-                <div 
-                  className="p-2 rounded-xl text-center flex flex-col justify-center items-center"
-                  style={{ background: '#f8fafc', border: '1px solid #e2e8f0', minHeight: '68px' }}
-                >
-                  <span className="text-muted block mb-0.5 font-medium" style={{ fontSize: '0.70rem', lineHeight: '1.2' }}>Peso Seco</span>
-                  <strong className="font-bold text-slate-700" style={{ fontSize: '0.90rem', lineHeight: '1.2' }}>
-                    {patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}
-                  </strong>
-                  <span className="text-slate-400 mt-0.5" style={{ fontSize: '0.65rem', lineHeight: '1.2' }}>Meta</span>
-                </div>
-
-                <div 
-                  className="p-2 rounded-xl text-center flex flex-col justify-center items-center"
-                  style={{ 
-                    background: ganhoKg !== null && isHipervolemia ? '#fef2f2' : (ganhoKg !== null && isHipotensaoRisco ? '#eff6ff' : '#f8fafc'), 
-                    border: `1px solid ${ganhoKg !== null && isHipervolemia ? '#fecaca' : (ganhoKg !== null && isHipotensaoRisco ? '#bfdbfe' : '#e2e8f0')}`,
-                    minHeight: '68px'
-                  }}
-                >
-                  <span className="text-muted block mb-0.5 font-medium" style={{ fontSize: '0.70rem', lineHeight: '1.2' }}>Ganho (PIDG)</span>
-                  {ganhoKg !== null ? (
-                    <strong className="font-bold" style={{ fontSize: '0.90rem', lineHeight: '1.2', color: isHipervolemia ? '#dc2626' : (isHipotensaoRisco ? '#2563eb' : '#059669') }}>
-                      {ganhoKg > 0 ? `+${ganhoKg}` : ganhoKg} kg
-                    </strong>
-                  ) : (
-                    <strong className="font-bold text-slate-400" style={{ fontSize: '0.90rem', lineHeight: '1.2' }}>-</strong>
-                  )}
-                  <span className="mt-0.5" style={{ fontSize: '0.65rem', lineHeight: '1.2', color: ganhoKg !== null ? (isHipervolemia ? '#dc2626' : '#64748b') : '#94a3b8' }}>
-                    {ganhoKg !== null ? `${pidgPct}%` : 'Pendente'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Mini gráfico visual de tendência ponderal */}
-              {historicoPesos.length > 1 && (
-                <div className="mb-3 p-2 bg-slate-50 rounded-xl border border-slate-200">
-                  <div className="flex justify-between items-center mb-1.5">
-                    <span className="font-bold text-slate-500 uppercase flex items-center gap-1" style={{ fontSize: '0.65rem' }}>
-                      <TrendingUp size={11} color="var(--primary)" /> Tendência das Pesagens
+                <div className="flex flex-col gap-1.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsChecklistModalOpen(true)}
+                    className="btn btn-outline w-full"
+                    style={{ 
+                      padding: '0.45rem 0.75rem', 
+                      fontSize: '0.75rem', 
+                      fontWeight: '600', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between',
+                      borderRadius: '10px',
+                      borderColor: '#ddd6fe',
+                      background: '#f5f3ff',
+                      color: '#6d28d9'
+                    }}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <CheckSquare size={14} color="#7c3aed" />
+                      <span>Checklist SNT</span>
                     </span>
-                    <span className="text-muted" style={{ fontSize: '0.65rem' }}>Meta: {patient.pesoSeco || '-'}kg</span>
-                  </div>
-                  <div className="flex items-end justify-between gap-1.5 h-16 pt-2 px-1">
-                    {historicoPesos.slice(0, 6).reverse().map((rec, i) => {
-                      const minP = Math.min(...historicoPesos.slice(0, 6).map(r => r.peso), pesoSecoNum || 50) - 1;
-                      const maxP = Math.max(...historicoPesos.slice(0, 6).map(r => r.peso), pesoSecoNum || 70) + 1;
-                      const range = maxP - minP || 1;
-                      const heightPct = Math.max(15, Math.min(100, ((rec.peso - minP) / range) * 100));
-                      const isOver = pesoSecoNum && rec.peso > pesoSecoNum + 2.5;
-                      return (
-                        <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                          <span className="font-bold text-slate-700" style={{ fontSize: '0.60rem' }}>{rec.peso}</span>
-                          <div 
-                            style={{ 
-                              width: '100%', 
-                              height: `${heightPct}%`, 
-                              background: isOver ? '#fb7185' : '#38bdf8', 
-                              borderRadius: '4px 4px 0 0',
-                              transition: 'height 0.3s'
-                            }} 
-                            title={`${safeFormatDate(rec.data)} - ${rec.peso}kg (${rec.tipo})`}
-                          />
-                          <span className="text-muted" style={{ fontSize: '0.58rem' }}>{safeFormatDate(rec.data)}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+                    <ChevronRight size={13} />
+                  </button>
 
-              {/* Histórico Cronológico de Pesagens */}
-              {historicoPesos.length === 0 ? (
-                <div className="text-center py-4 text-xs text-muted">
-                  Nenhuma pesagem registrada.
+                  <button
+                    type="button"
+                    onClick={() => setIsTransplantReportOpen(true)}
+                    className="btn btn-outline w-full"
+                    style={{ 
+                      padding: '0.45rem 0.75rem', 
+                      fontSize: '0.75rem', 
+                      fontWeight: '600', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between',
+                      borderRadius: '10px',
+                      borderColor: '#bfdbfe',
+                      background: '#eff6ff',
+                      color: '#1d4ed8'
+                    }}
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <Printer size={14} color="#2563eb" />
+                      <span>Encaminhamento</span>
+                    </span>
+                    <ChevronRight size={13} />
+                  </button>
                 </div>
-              ) : (
-                <div className="flex flex-col gap-1.5 max-h-44 overflow-y-auto pr-1">
-                  {historicoPesos.slice(0, 6).map((rec) => (
-                    <div 
-                      key={rec.id} 
-                      className="p-1.5 px-2 rounded-lg bg-slate-50 border border-slate-200 flex justify-between items-center text-xs"
-                    >
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <strong className="text-slate-800">{rec.peso} kg</strong>
-                          <span style={{ fontSize: '0.65rem', padding: '1px 5px', borderRadius: '4px', background: '#e2e8f0', color: '#334155' }}>
-                            {rec.tipo}
-                          </span>
-                        </div>
-                        <span className="text-muted" style={{ fontSize: '0.65rem' }}>
-                          {safeFormatDate(rec.data)}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        {rec.ganhoInterdialitico !== null && (
-                          <span style={{ fontSize: '0.7rem', fontWeight: 'bold', color: rec.ganhoInterdialitico > 2.5 ? '#dc2626' : '#059669' }}>
-                            {rec.ganhoInterdialitico > 0 ? `+${rec.ganhoInterdialitico}` : rec.ganhoInterdialitico} kg
-                          </span>
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteWeight(rec.id)}
-                          className="text-slate-400 hover:text-red-600 transition"
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}
-                          title="Excluir pesagem"
-                        >
-                          <Trash2 size={12} />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              </div>
             </section>
           </div>
 
-          {/* ================= COLUNA 3: LABORATÓRIO & TRANSPLANTE (PREENCHE O VAZIO!) ================= */}
+          {/* ================= COLUNA 3: LABORATÓRIO E CONTROLE PONDERAL ================= */}
           <div className="flex flex-col gap-4">
             
             {/* Card Laboratório */}
@@ -2086,88 +2020,165 @@ export default function PatientProfile() {
               })()}
             </section>
 
-            {/* Card Transplante Renal (Preenche perfeitamente a 3ª Coluna) */}
+            {/* Card Controle Ponderal (Posicionado perfeitamente na Coluna 3 com overflow corrigido) */}
             <section className="glass-panel" style={{ padding: '1.25rem', borderRadius: '16px' }}>
               <div className="flex justify-between items-center mb-3">
                 <h2 className="font-bold text-sm text-slate-800 flex items-center gap-2">
-                  <HeartHandshake size={16} color="#7c3aed" />
-                  <span>Transplante</span>
+                  <Scale size={16} color="#059669" />
+                  <span>Controle Ponderal ({historicoPesos.length})</span>
                 </h2>
-                <span style={{ fontSize: '0.72rem', padding: '2px 8px', borderRadius: '8px', background: transplantOpt.badgeBg, color: transplantOpt.color, border: `1px solid ${transplantOpt.border}`, fontWeight: 'bold' }}>
-                  {transplantOpt.label}
-                </span>
+                <button 
+                  type="button"
+                  onClick={() => setIsWeightModalOpen(true)}
+                  className="btn btn-outline"
+                  style={{ padding: '0.25rem 0.65rem', fontSize: '0.72rem', display: 'inline-flex', alignItems: 'center', gap: '4px', borderRadius: '8px', color: '#059669', borderColor: '#a7f3d0', background: '#ecfdf5' }}
+                  title="Lançar novo peso"
+                >
+                  <Plus size={12} />
+                  <span>+ Peso</span>
+                </button>
               </div>
 
-              <div className="flex flex-col gap-2.5 text-xs">
-                <div className="p-2.5 rounded-xl border" style={{ background: transplantOpt.badgeBg, borderColor: transplantOpt.border }}>
-                  <span className="font-semibold block mb-0.5" style={{ color: transplantOpt.color }}>
-                    Situação SNT: {transplantOpt.label}
+              {/* Destaque Atual: Último Peso vs Peso Seco */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '0.5rem', marginBottom: '0.75rem' }}>
+                <div 
+                  className="p-2 rounded-xl text-center flex flex-col justify-center items-center"
+                  style={{ background: '#f8fafc', border: '1px solid #e2e8f0', minHeight: '68px', minWidth: 0 }}
+                >
+                  <span className="text-muted block mb-0.5 font-medium truncate" style={{ fontSize: '0.70rem', lineHeight: '1.2', width: '100%' }}>Último Peso</span>
+                  <strong className="font-bold text-slate-800 truncate" style={{ fontSize: '0.90rem', lineHeight: '1.2', width: '100%' }}>
+                    {ultimoPeso ? `${ultimoPeso} kg` : '-'}
+                  </strong>
+                  <span className="text-slate-400 mt-0.5 truncate" style={{ fontSize: '0.65rem', lineHeight: '1.2', width: '100%' }}>
+                    {ultimoPeso ? 'Aferido' : 'Sem registro'}
                   </span>
-                  <p className="text-slate-600" style={{ fontSize: '0.70rem', lineHeight: '1.3' }}>
-                    {patient.statusTransplante === 'Contraindicação Provisória'
-                      ? 'Paciente com contraindicação clínica temporária/provisória para inscrição ativa no SNT.'
-                      : (patient.statusTransplante === 'Contraindicação Definitiva' || patient.statusTransplante === 'Contraindicado Clínico')
-                      ? 'Paciente com contraindicação clínica definitiva para transplante renal.'
-                      : patient.statusTransplante === 'Inscrito / Ativo'
-                      ? 'Inscrito na lista única do SNT. Manter sorologias e exames semestrais vigentes.'
-                      : patient.statusTransplante === 'Em Preparo / Avaliação'
-                      ? 'Em fase de exames e pareceres com equipe de transplante renal.'
-                      : patient.statusTransplante === 'Transplantado'
-                      ? 'Transplante renal realizado. Acompanhamento ambulatorial.'
-                      : 'Avaliação pré-transplante pendente de protocolo inicial.'}
-                  </p>
                 </div>
 
-                <div className="flex flex-col gap-1.5 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => setIsChecklistModalOpen(true)}
-                    className="btn btn-outline w-full"
-                    style={{ 
-                      padding: '0.45rem 0.75rem', 
-                      fontSize: '0.75rem', 
-                      fontWeight: '600', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between',
-                      borderRadius: '10px',
-                      borderColor: '#ddd6fe',
-                      background: '#f5f3ff',
-                      color: '#6d28d9'
-                    }}
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <CheckSquare size={14} color="#7c3aed" />
-                      <span>Checklist SNT</span>
-                    </span>
-                    <ChevronRight size={13} />
-                  </button>
+                <div 
+                  className="p-2 rounded-xl text-center flex flex-col justify-center items-center"
+                  style={{ background: '#f8fafc', border: '1px solid #e2e8f0', minHeight: '68px', minWidth: 0 }}
+                >
+                  <span className="text-muted block mb-0.5 font-medium truncate" style={{ fontSize: '0.70rem', lineHeight: '1.2', width: '100%' }}>Peso Seco</span>
+                  <strong className="font-bold text-slate-700 truncate" style={{ fontSize: '0.90rem', lineHeight: '1.2', width: '100%' }}>
+                    {patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}
+                  </strong>
+                  <span className="text-slate-400 mt-0.5 truncate" style={{ fontSize: '0.65rem', lineHeight: '1.2', width: '100%' }}>Meta</span>
+                </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setIsTransplantReportOpen(true)}
-                    className="btn btn-outline w-full"
-                    style={{ 
-                      padding: '0.45rem 0.75rem', 
-                      fontSize: '0.75rem', 
-                      fontWeight: '600', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between',
-                      borderRadius: '10px',
-                      borderColor: '#bfdbfe',
-                      background: '#eff6ff',
-                      color: '#1d4ed8'
-                    }}
-                  >
-                    <span className="flex items-center gap-1.5">
-                      <Printer size={14} color="#2563eb" />
-                      <span>Encaminhamento</span>
-                    </span>
-                    <ChevronRight size={13} />
-                  </button>
+                <div 
+                  className="p-2 rounded-xl text-center flex flex-col justify-center items-center"
+                  style={{ 
+                    background: ganhoKg !== null && isHipervolemia ? '#fef2f2' : (ganhoKg !== null && isHipotensaoRisco ? '#eff6ff' : '#f8fafc'), 
+                    border: `1px solid ${ganhoKg !== null && isHipervolemia ? '#fecaca' : (ganhoKg !== null && isHipotensaoRisco ? '#bfdbfe' : '#e2e8f0')}`,
+                    minHeight: '68px',
+                    minWidth: 0
+                  }}
+                >
+                  <span className="text-muted block mb-0.5 font-medium truncate" style={{ fontSize: '0.70rem', lineHeight: '1.2', width: '100%' }}>Ganho (PIDG)</span>
+                  {ganhoKg !== null ? (
+                    <strong className="font-bold truncate" style={{ fontSize: '0.90rem', lineHeight: '1.2', width: '100%', color: isHipervolemia ? '#dc2626' : (isHipotensaoRisco ? '#2563eb' : '#059669') }}>
+                      {ganhoKg > 0 ? `+${ganhoKg}` : ganhoKg} kg
+                    </strong>
+                  ) : (
+                    <strong className="font-bold text-slate-400" style={{ fontSize: '0.90rem', lineHeight: '1.2' }}>-</strong>
+                  )}
+                  <span className="mt-0.5 truncate" style={{ fontSize: '0.65rem', lineHeight: '1.2', width: '100%', color: ganhoKg !== null ? (isHipervolemia ? '#dc2626' : '#64748b') : '#94a3b8' }}>
+                    {ganhoKg !== null ? `${pidgPct}%` : 'Pendente'}
+                  </span>
                 </div>
               </div>
+
+              {/* Mini gráfico visual de tendência ponderal */}
+              {historicoPesos.length > 1 && (
+                <div className="mb-3 p-2 bg-slate-50 rounded-xl border border-slate-200" style={{ overflow: 'hidden' }}>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="font-bold text-slate-500 uppercase flex items-center gap-1" style={{ fontSize: '0.65rem' }}>
+                      <TrendingUp size={11} color="var(--primary)" /> Tendência das Pesagens
+                    </span>
+                    <span className="text-muted" style={{ fontSize: '0.65rem' }}>Meta: {patient.pesoSeco || '-'}kg</span>
+                  </div>
+                  <div className="flex items-end justify-between gap-1 h-16 pt-2 px-0.5" style={{ width: '100%', minWidth: 0, boxSizing: 'border-box' }}>
+                    {historicoPesos.slice(0, 6).reverse().map((rec, i) => {
+                      const minP = Math.min(...historicoPesos.slice(0, 6).map(r => r.peso), pesoSecoNum || 50) - 1;
+                      const maxP = Math.max(...historicoPesos.slice(0, 6).map(r => r.peso), pesoSecoNum || 70) + 1;
+                      const range = maxP - minP || 1;
+                      const heightPct = Math.max(15, Math.min(100, ((rec.peso - minP) / range) * 100));
+                      const isOver = pesoSecoNum && rec.peso > pesoSecoNum + 2.5;
+                      return (
+                        <div key={i} className="flex-1 flex flex-col items-center gap-1" style={{ minWidth: 0 }}>
+                          <span className="font-bold text-slate-700 truncate" style={{ fontSize: '0.62rem', width: '100%', textAlign: 'center', lineHeight: 1.1 }}>
+                            {rec.peso}
+                          </span>
+                          <div 
+                            style={{ 
+                              width: '100%', 
+                              maxWidth: '18px', 
+                              height: `${heightPct}%`, 
+                              background: isOver ? '#fb7185' : '#38bdf8', 
+                              borderRadius: '4px 4px 0 0',
+                              transition: 'height 0.3s'
+                            }} 
+                            title={`${safeFormatDate(rec.data)} - ${rec.peso}kg (${rec.tipo})`}
+                          />
+                          <span 
+                            className="text-muted truncate" 
+                            style={{ fontSize: '0.58rem', width: '100%', textAlign: 'center', lineHeight: 1.1 }}
+                            title={safeFormatDate(rec.data)}
+                          >
+                            {safeFormatDate(rec.data, { day: '2-digit', month: '2-digit' })}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Histórico Cronológico de Pesagens */}
+              {historicoPesos.length === 0 ? (
+                <div className="text-center py-4 text-xs text-muted">
+                  Nenhuma pesagem registrada.
+                </div>
+              ) : (
+                <div className="flex flex-col gap-1.5 max-h-44 overflow-y-auto pr-1">
+                  {historicoPesos.slice(0, 6).map((rec) => (
+                    <div 
+                      key={rec.id} 
+                      className="p-1.5 px-2 rounded-lg bg-slate-50 border border-slate-200 flex justify-between items-center text-xs"
+                      style={{ minWidth: 0 }}
+                    >
+                      <div style={{ minWidth: 0 }}>
+                        <div className="flex items-center gap-1.5">
+                          <strong className="text-slate-800">{rec.peso} kg</strong>
+                          <span style={{ fontSize: '0.65rem', padding: '1px 5px', borderRadius: '4px', background: '#e2e8f0', color: '#334155' }}>
+                            {rec.tipo}
+                          </span>
+                        </div>
+                        <span className="text-muted" style={{ fontSize: '0.65rem' }}>
+                          {safeFormatDate(rec.data)}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2" style={{ flexShrink: 0 }}>
+                        {rec.ganhoInterdialitico !== null && (
+                          <span style={{ fontSize: '0.7rem', fontWeight: 'bold', color: rec.ganhoInterdialitico > 2.5 ? '#dc2626' : '#059669' }}>
+                            {rec.ganhoInterdialitico > 0 ? `+${rec.ganhoInterdialitico}` : rec.ganhoInterdialitico} kg
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteWeight(rec.id)}
+                          className="text-slate-400 hover:text-red-600 transition"
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px' }}
+                          title="Excluir pesagem"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
           </div>
 

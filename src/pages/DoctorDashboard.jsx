@@ -1010,8 +1010,10 @@ export default function DoctorDashboard() {
 
                     {medInfo.hasAlerts && (
                       <div 
-                        className="mt-2.5 p-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold"
+                        className="rounded-lg flex items-center gap-1.5 text-xs font-semibold"
                         style={{ 
+                          marginTop: '0.45rem',
+                          padding: '4px 8px',
                           background: medInfo.expired.length > 0 ? '#fee2e2' : '#fef3c7',
                           color: medInfo.expired.length > 0 ? '#b91c1c' : '#b45309',
                           border: '1px solid',

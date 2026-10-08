@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.104",
+    "date": "08/10/2026",
+    "title": "Ajuste de micro espaçamento em alertas de ciclo encerrado, correção de overfl...",
+    "highlights": [
+      "✨ Ajuste de micro espaçamento em alertas de ciclo encerrado, correção de overflow no card de controle ponderal e reposicionamento estratégico dos cards de transplante e controle ponderal no prontuário"
+    ]
+  },
+  {
     "version": "1.1.103",
     "date": "07/10/2026",
     "title": "Homologação e importação automática de laudos laboratoriais do DB Diagnósticos",

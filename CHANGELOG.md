@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.104] - 2026-10-08
+### Alterações
+- Ajuste de micro espaçamento em alertas de ciclo encerrado, correção de overflow no card de controle ponderal e reposicionamento estratégico dos cards de transplante e controle ponderal no prontuário
+
 ## [1.1.103] - 2026-10-07
 ### Alterações
 - Homologação e importação automática de laudos laboratoriais do DB Diagnósticos
