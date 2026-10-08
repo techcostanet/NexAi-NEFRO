@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.107] - 2026-10-08
+### Alterações
+- feat: remover informacao duplicada na importacao e otimizar modal de laboratorios homologados com siglas e busca
+
 ## [1.1.106] - 2026-10-08
 ### Alterações
 - fix: importar useMemo em LmePatientSection resolvendo ReferenceError em producao

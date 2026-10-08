@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.107",
+    "date": "08/10/2026",
+    "title": "feat: remover informacao duplicada na importacao e otimizar modal de laborato...",
+    "highlights": [
+      "✨ feat: remover informacao duplicada na importacao e otimizar modal de laboratorios homologados com siglas e busca"
+    ]
+  },
+  {
     "version": "1.1.106",
     "date": "08/10/2026",
     "title": "fix: importar useMemo em LmePatientSection resolvendo ReferenceError em producao",

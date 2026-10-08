@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { 
   X, 
   UploadCloud, 
@@ -14,7 +14,8 @@ import {
   CheckSquare,
   Square,
   Sparkles,
-  Trash2
+  Trash2,
+  Search
 } from 'lucide-react';
 import { parseExamFile, commitImportedExams } from '../services/examImportService';
 import { HOMOLOGATED_LABS } from '../data/labProfiles';
@@ -38,6 +39,19 @@ export default function ExamImportModal({
   const [progressPercent, setProgressPercent] = useState(0);
   const [error, setError] = useState('');
   const [showLabRegistryModal, setShowLabRegistryModal] = useState(false);
+  const [labSearchTerm, setLabSearchTerm] = useState('');
+
+  // Filtro de laboratórios homologados para o modal informativo
+  const filteredLabs = useMemo(() => {
+    if (!labSearchTerm.trim()) return HOMOLOGATED_LABS;
+    const term = labSearchTerm.toLowerCase();
+    return HOMOLOGATED_LABS.filter(lab => {
+      const matchName = lab.nome?.toLowerCase().includes(term);
+      const matchCity = lab.cidade?.toLowerCase().includes(term);
+      const matchExam = lab.examesHomologados?.some(ex => ex.toLowerCase().includes(term));
+      return matchName || matchCity || matchExam;
+    });
+  }, [labSearchTerm]);
 
   // Dados pós-processamento
   const [parsedData, setParsedData] = useState(null);
@@ -267,10 +281,10 @@ export default function ExamImportModal({
               onClick={() => setShowLabRegistryModal(true)} 
               className="btn btn-outline" 
               style={{ padding: '0.35rem 0.75rem', borderRadius: '10px', fontSize: '0.76rem', display: 'flex', alignItems: 'center', gap: '6px', background: '#ffffff' }}
-              title="Ver catálogo de laboratórios aprendidos e certificados pelo NexAi-NEFRO"
+              title="Ver laboratórios aprendidos e certificados"
             >
               <span>🧪</span>
-              <span className="font-semibold text-slate-700 hidden sm:inline">Laboratórios Homologados</span>
+              <span className="font-semibold text-slate-700 hidden sm:inline">Laboratórios</span>
               <span className="badge" style={{ background: '#dcfce7', color: '#15803d', fontSize: '0.68rem', padding: '1px 6px', fontWeight: 'bold' }}>
                 {HOMOLOGATED_LABS.length}
               </span>
@@ -362,17 +376,10 @@ export default function ExamImportModal({
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-2 flex-wrap text-center">
+            <div className="text-center">
               <span className="text-xs text-muted">
                 Vínculo automático por nome e CPF com conferência antes de salvar.
               </span>
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); setShowLabRegistryModal(true); }}
-                className="text-xs text-blue-600 hover:text-blue-800 font-semibold underline inline-flex items-center gap-1"
-              >
-                <span>🧪 Ver laboratórios aprendidos ({HOMOLOGATED_LABS.length})</span>
-              </button>
             </div>
           </div>
         )}
@@ -474,13 +481,6 @@ export default function ExamImportModal({
                     </p>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowLabRegistryModal(true)}
-                  style={{ background: 'transparent', border: 'none', color: '#047857', textDecoration: 'underline', fontSize: '0.75rem', cursor: 'pointer', fontWeight: '600' }}
-                >
-                  Ver laboratórios aprendidos
-                </button>
               </div>
             )}
 
@@ -742,12 +742,9 @@ export default function ExamImportModal({
         <div 
           style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(15, 23, 42, 0.85)',
-            backdropFilter: 'blur(8px)',
+            inset: 0,
+            backgroundColor: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(6px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -761,126 +758,204 @@ export default function ExamImportModal({
             style={{
               background: '#ffffff',
               width: '100%',
-              maxWidth: '850px',
-              maxHeight: '85vh',
+              maxWidth: '820px',
+              height: '85vh',
+              maxHeight: '740px',
               display: 'flex',
               flexDirection: 'column',
               borderRadius: '20px',
               overflow: 'hidden',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
+              border: '1px solid #e2e8f0'
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex justify-between items-center p-4 border-b bg-slate-50" style={{ borderColor: 'var(--border)' }}>
-              <div className="flex items-center gap-3">
-                <div style={{ background: '#ecfdf5', color: '#059669', padding: '10px', borderRadius: '14px', fontSize: '1.25rem' }}>
-                  🔬
+            <div 
+              style={{ 
+                padding: '1rem 1.25rem', 
+                borderBottom: '1px solid #e2e8f0', 
+                background: '#f8fafc',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexShrink: 0
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div style={{ background: '#ecfdf5', color: '#059669', padding: '8px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Sparkles size={19} color="#059669" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-800">
-                    Central de Laboratórios & Layouts Homologados
+                  <h3 style={{ margin: 0, fontSize: '0.98rem', fontWeight: '700', color: '#0f172a' }}>
+                    Laboratórios Homologados
                   </h3>
-                  <p className="text-xs text-muted">
-                    Formatos certificados e aprendidos pelo NexAi-NEFRO (Cloud Firestore · Smart Lab Registry)
+                  <p style={{ margin: 0, fontSize: '0.73rem', color: '#64748b' }}>
+                    Formatos certificados e reconhecidos automaticamente na nuvem.
                   </p>
                 </div>
               </div>
+
               <button
                 type="button"
                 onClick={() => setShowLabRegistryModal(false)}
                 className="btn btn-outline"
-                style={{ padding: '0.4rem', borderRadius: '50%' }}
+                style={{ padding: '0.35rem', borderRadius: '50%' }}
+                title="Fechar"
               >
-                <X size={18} />
+                <X size={17} />
               </button>
             </div>
 
-            {/* Content Scrollable */}
-            <div className="p-4 custom-scrollbar overflow-y-auto" style={{ maxHeight: 'calc(85vh - 130px)' }}>
-              {/* Informativo de aprendizado permanente */}
-              <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', padding: '0.85rem 1rem', borderRadius: '12px', marginBottom: '1rem', fontSize: '0.82rem', color: '#166534' }}>
-                <div className="font-bold flex items-center gap-1.5 mb-1">
-                  <span>💡</span>
-                  <span>Aprendizado Permanente & Transparente na Nuvem</span>
-                </div>
-                <p className="m-0 leading-relaxed text-slate-700">
-                  Cada modelo de exame aprendido é registrado de forma definitiva no <strong>Cloud Firestore (coleção <code style={{ background: '#dcfce7', padding: '1px 5px', borderRadius: '4px' }}>lab_templates</code>)</strong> e espelhado no sistema. Médicos e clínicas podem enviar laudos repetidos sem necessidade de novo treinamento.
-                </p>
+            {/* Barra de Busca e Métricas */}
+            <div 
+              style={{ 
+                padding: '0.65rem 1.25rem', 
+                borderBottom: '1px solid #f1f5f9', 
+                background: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '0.75rem',
+                flexShrink: 0
+              }}
+            >
+              <div style={{ position: 'relative', flex: 1, maxWidth: '380px' }}>
+                <Search size={14} color="#94a3b8" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+                <input
+                  type="text"
+                  value={labSearchTerm}
+                  onChange={(e) => setLabSearchTerm(e.target.value)}
+                  placeholder="Buscar por laboratório, cidade ou exame..."
+                  style={{
+                    width: '100%',
+                    padding: '0.4rem 0.6rem 0.4rem 2rem',
+                    fontSize: '0.78rem',
+                    borderRadius: '8px',
+                    border: '1px solid #cbd5e1',
+                    background: '#f8fafc',
+                    outline: 'none'
+                  }}
+                />
               </div>
 
-              {/* Lista de Laboratórios Homologados */}
-              <div className="flex flex-col gap-3">
-                {HOMOLOGATED_LABS.map((lab) => (
+              <span style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: '500' }}>
+                {filteredLabs.length} de {HOMOLOGATED_LABS.length} laboratórios
+              </span>
+            </div>
+
+            {/* Lista com Rolagem Fluida Garantida */}
+            <div 
+              style={{ 
+                flex: '1 1 0%', 
+                minHeight: 0, 
+                overflowY: 'auto', 
+                padding: '1rem 1.25rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.65rem'
+              }}
+            >
+              {filteredLabs.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '2.5rem 1rem', color: '#94a3b8', fontSize: '0.82rem' }}>
+                  Nenhum laboratório homologado encontrado para "{labSearchTerm}".
+                </div>
+              ) : (
+                filteredLabs.map((lab) => (
                   <div 
                     key={lab.id} 
                     style={{ 
-                      border: '1px solid var(--border)', 
-                      borderRadius: '14px', 
-                      padding: '1rem', 
+                      border: '1px solid #e2e8f0', 
+                      borderRadius: '12px', 
+                      padding: '0.75rem 0.95rem', 
                       background: '#ffffff',
-                      boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                      transition: 'border-color 0.15s ease'
                     }}
                   >
-                    <div className="flex justify-between items-start flex-wrap gap-2 mb-2">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="font-bold text-slate-900 text-sm">{lab.nome}</h4>
-                          <span style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0', padding: '1px 8px', borderRadius: '9999px', fontSize: '0.68rem', fontWeight: 'bold' }}>
-                            ✓ {lab.status} ({lab.confianca})
-                          </span>
-                        </div>
-                        <p className="text-2xs text-muted mt-0.5">
-                          {lab.cidade} · CNPJ: {lab.cnpj} {lab.cnes && `· CNES: ${lab.cnes}`}
-                        </p>
+                    {/* Linha Principal do Laboratório */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '0.45rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        <strong style={{ fontSize: '0.86rem', color: '#0f172a' }}>
+                          {lab.nome}
+                        </strong>
+                        <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                          · {lab.cidade}
+                        </span>
                       </div>
 
-                      <span className="badge" style={{ background: '#f1f5f9', color: '#475569', fontSize: '0.72rem' }}>
-                        {lab.totalExames} exames suportados
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span 
+                          style={{ 
+                            background: '#ecfdf5', 
+                            color: '#047857', 
+                            border: '1px solid #a7f3d0', 
+                            padding: '1px 7px', 
+                            borderRadius: '9999px', 
+                            fontSize: '0.66rem', 
+                            fontWeight: '700' 
+                          }}
+                        >
+                          ✓ {lab.confianca}
+                        </span>
+                        <span 
+                          style={{ 
+                            background: '#f1f5f9', 
+                            color: '#475569', 
+                            padding: '1px 7px', 
+                            borderRadius: '9999px', 
+                            fontSize: '0.66rem', 
+                            fontWeight: '600' 
+                          }}
+                        >
+                          {lab.examesHomologados.length} exames
+                        </span>
+                      </div>
                     </div>
 
-                    <p className="text-xs text-slate-600 mb-2">
-                      {lab.descricao}
-                    </p>
-
-                    <div className="flex flex-wrap gap-1.5">
-                      {lab.examesHomologados.map((ex, i) => (
+                    {/* Siglas dos Exames Suportados */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                      {lab.examesHomologados.map((sigla, i) => (
                         <span 
                           key={i} 
                           style={{ 
                             background: '#f8fafc', 
                             border: '1px solid #e2e8f0', 
                             color: '#334155', 
-                            fontSize: '0.68rem', 
-                            padding: '2px 7px', 
-                            borderRadius: '6px',
-                            fontWeight: '500'
+                            fontSize: '0.67rem', 
+                            padding: '1px 6px', 
+                            borderRadius: '4px', 
+                            fontWeight: '600',
+                            letterSpacing: '0.01em'
                           }}
                         >
-                          {ex}
+                          {sigla}
                         </span>
                       ))}
                     </div>
-
-                    <div className="mt-2.5 pt-2 border-t flex justify-between items-center text-2xs text-muted" style={{ borderColor: '#f1f5f9' }}>
-                      <span>Layout: {lab.tipoLayout}</span>
-                      <span>Homologado em: {lab.dataHomologacao}</span>
-                    </div>
                   </div>
-                ))}
-              </div>
+                ))
+              )}
             </div>
 
-            {/* Footer */}
-            <div className="p-3 border-t bg-slate-50 flex justify-end" style={{ borderColor: 'var(--border)' }}>
+            {/* Footer com Regra de Poucas Palavras */}
+            <div 
+              style={{ 
+                padding: '0.75rem 1.25rem', 
+                borderTop: '1px solid #e2e8f0', 
+                background: '#f8fafc', 
+                display: 'flex', 
+                justifyContent: 'flex-end',
+                flexShrink: 0
+              }}
+            >
               <button
                 type="button"
                 onClick={() => setShowLabRegistryModal(false)}
                 className="btn btn-primary"
-                style={{ fontSize: '0.82rem', padding: '0.45rem 1.25rem', borderRadius: '10px' }}
+                style={{ fontSize: '0.78rem', padding: '0.4rem 1.25rem', borderRadius: '8px' }}
               >
-                Entendido
+                Fechar
               </button>
             </div>
           </div>

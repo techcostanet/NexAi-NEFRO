@@ -41,30 +41,11 @@ export const HOMOLOGATED_LABS = [
       'Contagem / MG'
     ],
     examesHomologados: [
-      'Hemograma Completo (Hb, Ht, Leucócitos, Plaquetas, VCM, HCM, CHCM, RDW)',
-      'Dosagem Isolada de Hemoglobina & Hematócrito',
-      'Cálcio Sérico',
-      'Fósforo Sérico',
-      'Fosfatase Alcalina (FA)',
-      'Glicemia de Jejum',
-      'Hemoglobina Glicada (HbA1c)',
-      'Ferro Sérico',
-      'Índice de Saturação de Transferrina (IST %)',
-      'Proteínas Totais e Albumina',
-      'Transaminase Glutâmico Pirúvica (TGP / ALT)',
-      'Ureia Pré-diálise',
-      'Ureia Pós-diálise',
-      'Kt/V Daugirdas Calculado Automaticamente',
-      'Vitamina D 25-Dihidroxi',
-      'Ferritina',
-      'Paratormônio (PTH Intacto)',
-      'Potássio (K+)',
-      'Sódio (Na+)',
-      'HBsAg (Hepatite B)',
-      'Anti-HBs (Hepatite B - Quantitativo / Qualitativo)',
-      'Anti-HCV (Hepatite C)'
+      'Hb', 'Ht', 'Leucócitos', 'Plaquetas', 'Ca', 'P', 'FA', 'Glicemia',
+      'HbA1c', 'Ferro', 'IST', 'Alb', 'TGP', 'Ureia Pré', 'Ureia Pós',
+      'Kt/V', 'Vit D', 'Ferritina', 'PTH', 'K⁺', 'Na⁺', 'HBsAg', 'Anti-HBs', 'Anti-HCV'
     ],
-    totalExames: 22,
+    totalExames: 24,
     dataHomologacao: '2026-09-23',
     descricao: 'Laudos clínicos multi-páginas de rotina mensal e trimestral em pacientes de hemodiálise da clínica DialiZe.'
   },
@@ -88,11 +69,11 @@ export const HOMOLOGATED_LABS = [
       'MAPA DE EXAMES'
     ],
     examesHomologados: [
-      'Hb', 'Ht', 'Ferro', 'Ferritina', 'IST', 'Transferrina',
-      'Cálcio', 'Fósforo', 'Ca x P', 'PTH', 'Alumínio', 'FA',
-      'Creatinina', 'Ureia 1 (Pré)', 'Ureia 2 (Pós)', 'PRU', 'Kt/V', 'Potássio (K)',
-      'Albumina', 'TGP', 'Glicemia', 'Vitamina D', 'Hemoglobina Glicada',
-      'Sódio', 'HBsAg', 'Anti-HBs', 'Anti-HCV', 'HIV'
+      'Hb', 'Ht', 'Ferro', 'Ferritina', 'IST', 'Transf',
+      'Ca', 'P', 'Ca x P', 'PTH', 'Al', 'FA',
+      'Creatinina', 'Ureia Pré', 'Ureia Pós', 'PRU', 'Kt/V', 'K⁺',
+      'Alb', 'TGP', 'Glicemia', 'Vit D', 'HbA1c',
+      'Na⁺', 'HBsAg', 'Anti-HBs', 'Anti-HCV', 'HIV'
     ],
     totalExames: 28,
     dataHomologacao: '2026-09-20',
@@ -127,31 +108,14 @@ export const HOMOLOGATED_LABS = [
       '49.157.120/0001-95'
     ],
     examesHomologados: [
-      'Potássio (K+)',
-      'Sódio (Na+)',
-      'Cálcio Sérico',
-      'Fósforo Sérico',
-      'Ureia Pré-diálise',
-      'Ureia Pós-diálise',
-      'Kt/V Daugirdas e Taxa de Redução de Ureia (UR%)',
-      'Creatinina Sérica',
-      'Ferro Sérico & TIBC',
-      'Índice de Saturação da Transferrina (IST %)',
-      'Transaminase Glutâmico Pirúvica (TGP / ALT)',
-      'Transaminase Glutâmico Oxalacética (TGO / AST)',
-      'Fosfatase Alcalina (FA)',
-      'Proteínas Totais e Albumina',
-      'Glicemia de Jejum',
-      'Ferritina Sérica',
-      'Paratormônio Intacto (PTH Molécula Intacta)',
-      'Hemograma Completo (Hb, Ht, Leucócitos, Plaquetas)',
-      'Hemoglobina Glicada (HbA1c)',
-      'Vitamina D 25-OH',
-      'Alumínio Sérico',
-      'Bicarbonato Sérico',
-      'Sorologias (HBsAg, Anti-HBs, Anti-HCV, Anti-HBc, HIV)'
+      'K⁺', 'Na⁺', 'Ca', 'P', 'Ureia Pré', 'Ureia Pós',
+      'Kt/V', 'UR%', 'Creatinina', 'Ferro', 'TIBC', 'IST',
+      'TGP', 'TGO', 'FA', 'Alb', 'Glicemia', 'Ferritina',
+      'PTH', 'Hb', 'Ht', 'Leucócitos', 'Plaquetas',
+      'HbA1c', 'Vit D', 'Al', 'HCO₃⁻',
+      'HBsAg', 'Anti-HBs', 'Anti-HCV', 'Anti-HBc', 'HIV'
     ],
-    totalExames: 24,
+    totalExames: 32,
     dataHomologacao: '2026-10-07',
     descricao: 'Laudos clínicos multi-páginas do laboratório de apoio DB Diagnósticos com gráficos temporais de evolução e rotina de nefrologia.'
   },
@@ -171,8 +135,9 @@ export const HOMOLOGATED_LABS = [
       'GRUPO FLEURY PARDINI'
     ],
     examesHomologados: [
-      'Hemograma Completo', 'Ureia Pré/Pós', 'Creatinina', 'Potássio', 'Sódio',
-      'Cálcio Total e Iônico', 'Fósforo', 'PTH', 'Ferritina', 'Ferro', 'IST', 'Vitamina D'
+      'Hb', 'Ht', 'Leucócitos', 'Plaquetas', 'Ureia Pré', 'Ureia Pós',
+      'Creatinina', 'K⁺', 'Na⁺', 'Ca', 'P', 'PTH',
+      'Ferritina', 'Ferro', 'IST', 'Vit D'
     ],
     totalExames: 16,
     dataHomologacao: '2026-09-15',
