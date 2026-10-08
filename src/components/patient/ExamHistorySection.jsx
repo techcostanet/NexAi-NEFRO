@@ -11,18 +11,25 @@ import {
   CheckCircle2, 
   ArrowUpRight, 
   ArrowDownRight, 
-  Minus,
-  Sparkles,
-  Activity,
-  Droplet
+  Minus, 
+  Sparkles, 
+  Activity, 
+  Droplet,
+  Sliders,
+  ArrowUp,
+  ArrowDown,
+  RotateCcw,
+  Check,
+  X
 } from 'lucide-react';
 import { evaluateExam, parseExamNumber, calculateURR } from '../../utils/examRanges.js';
 import { safeFormatDate } from '../../utils/dateUtils.js';
+import { saveDoctorExamSequence, DEFAULT_DOCTOR_ID } from '../../services/doctorService.js';
 
 /**
  * Metadados dos biomarcadores para gráficos e matriz de metas
  */
-const BIOMARKERS_CONFIG = [
+export const BIOMARKERS_CONFIG = [
   { key: 'hb', label: 'Hemoglobina', shortLabel: 'Hb', unit: 'g/dL', targetMin: 10.0, targetMax: 12.0, targetText: '10.0 a 12.0 g/dL' },
   { key: 'pth', label: 'PTH Intacto', shortLabel: 'PTH', unit: 'pg/mL', targetMin: 150, targetMax: 600, targetText: '150 a 600 pg/mL' },
   { key: 'fa', label: 'Fosfatase Alcalina', shortLabel: 'FA', unit: 'U/L', targetMin: 40, targetMax: 130, targetText: '40 a 130 U/L' },
@@ -39,6 +46,18 @@ const BIOMARKERS_CONFIG = [
   { key: 'ist', label: 'IST', shortLabel: 'IST', unit: '%', targetMin: 20, targetMax: 50, targetText: '20% a 50%' },
   { key: 'tgp', label: 'TGP (ALT)', shortLabel: 'TGP', unit: 'U/L', targetMin: 0, targetMax: 45, targetText: '≤ 45 U/L' },
   { key: 'tgo', label: 'TGO (AST)', shortLabel: 'TGO', unit: 'U/L', targetMin: 0, targetMax: 35, targetText: '≤ 35 U/L' }
+];
+
+export const DEFAULT_COLUMN_ORDER = [
+  'hb',
+  'ist_ferritina',
+  'pth_fa',
+  'p_ca',
+  'k_hco3',
+  'ktv_ur',
+  'alb_pcr',
+  'glic_hba1c',
+  'tgp_tgo'
 ];
 
 /**
@@ -79,6 +98,184 @@ function ExamBadge({ examKey, value, suffix = '', title = '' }) {
 }
 
 /**
+ * Definição centralizada de cada coluna de exame da tabela
+ * Cada item mapeia o cabeçalho, a renderização da célula e os biomarcadores correspondentes na tendência
+ */
+export const EXAM_COLUMNS_DEFINITION = {
+  hb: {
+    id: 'hb',
+    label: 'Hb',
+    groupName: 'Hemoglobina',
+    bioKeys: ['hb'],
+    renderHeader: () => <th key="col-hb" style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Hb</th>,
+    renderCell: (item, idx) => (
+      <td key={`cell-hb-${idx}`} style={{ padding: '0.65rem 0.8rem' }}>
+        <ExamBadge examKey="hb" value={item.hb} />
+      </td>
+    )
+  },
+  ist_ferritina: {
+    id: 'ist_ferritina',
+    label: 'IST / Ferritina',
+    groupName: 'Perfil Férrico (IST e Ferritina)',
+    bioKeys: ['ist', 'ferritina'],
+    renderHeader: () => <th key="col-ist_ferritina" style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>IST / Ferritina</th>,
+    renderCell: (item, idx) => (
+      <td key={`cell-ist_ferritina-${idx}`} style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          <ExamBadge examKey="ist" value={item.ist} suffix="%" />
+          <span style={{ color: '#cbd5e1' }}>/</span>
+          <ExamBadge examKey="ferritina" value={item.ferritina} />
+        </div>
+      </td>
+    )
+  },
+  pth_fa: {
+    id: 'pth_fa',
+    label: 'PTH / FA',
+    groupName: 'Metabolismo Ósseo (PTH e Fosfatase)',
+    bioKeys: ['pth', 'fa'],
+    renderHeader: () => <th key="col-pth_fa" style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>PTH / FA</th>,
+    renderCell: (item, idx) => (
+      <td key={`cell-pth_fa-${idx}`} style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          <ExamBadge examKey="pth" value={item.pth} />
+          {item.fa && (
+            <>
+              <span style={{ color: '#cbd5e1' }}>/</span>
+              <ExamBadge examKey="fa" value={item.fa} title="Fosfatase Alcalina (U/L)" />
+            </>
+          )}
+        </div>
+      </td>
+    )
+  },
+  p_ca: {
+    id: 'p_ca',
+    label: 'P / Ca',
+    groupName: 'Fósforo e Cálcio Total',
+    bioKeys: ['fosforo', 'ca'],
+    renderHeader: () => <th key="col-p_ca" style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>P / Ca</th>,
+    renderCell: (item, idx) => (
+      <td key={`cell-p_ca-${idx}`} style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          <ExamBadge examKey="fosforo" value={item.fosforo} />
+          <span style={{ color: '#cbd5e1' }}>/</span>
+          <ExamBadge examKey="ca" value={item.ca} />
+        </div>
+      </td>
+    )
+  },
+  k_hco3: {
+    id: 'k_hco3',
+    label: 'K⁺ / HCO₃⁻',
+    groupName: 'Eletrólitos (Potássio e Bicarbonato)',
+    bioKeys: ['k', 'hco3'],
+    renderHeader: () => <th key="col-k_hco3" style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>K⁺ / HCO₃⁻</th>,
+    renderCell: (item, idx) => (
+      <td key={`cell-k_hco3-${idx}`} style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          <ExamBadge examKey="k" value={item.k} />
+          {item.hco3 && (
+            <>
+              <span style={{ color: '#cbd5e1' }}>/</span>
+              <ExamBadge examKey="hco3" value={item.hco3} title="Bicarbonato (mEq/L)" />
+            </>
+          )}
+        </div>
+      </td>
+    )
+  },
+  ktv_ur: {
+    id: 'ktv_ur',
+    label: 'Kt/V • UR%',
+    groupName: 'Adequação Dialítica (Kt/V e UR%)',
+    bioKeys: ['ktv'],
+    renderHeader: () => <th key="col-ktv_ur" style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Kt/V • UR%</th>,
+    renderCell: (item, idx) => {
+      const urr = calculateURR(item.ureiaPre, item.ureiaPos) || (item.ur ? parseExamNumber(item.ur) : null);
+      return (
+        <td key={`cell-ktv_ur-${idx}`} style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <ExamBadge examKey="ktv" value={item.ktv} title="Kt/V Dialítico (≥1.2)" />
+            {urr !== null && (
+              <>
+                <span style={{ color: '#cbd5e1' }}>/</span>
+                <ExamBadge 
+                  examKey="ur" 
+                  value={`${urr}%`} 
+                  title={`Taxa de Redução de Ureia (UR%): Pré ${item.ureiaPre || '-'} | Pós ${item.ureiaPos || '-'}`} 
+                />
+              </>
+            )}
+          </div>
+        </td>
+      );
+    }
+  },
+  alb_pcr: {
+    id: 'alb_pcr',
+    label: 'Alb / PCR',
+    groupName: 'Nutrição e Inflamação (Albumina e PCR)',
+    bioKeys: ['albumina', 'pcr'],
+    renderHeader: () => <th key="col-alb_pcr" style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Alb / PCR</th>,
+    renderCell: (item, idx) => (
+      <td key={`cell-alb_pcr-${idx}`} style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          <ExamBadge examKey="albumina" value={item.albumina} suffix=" g/dL" />
+          {item.pcr !== undefined && item.pcr !== null && item.pcr !== '' && (
+            <>
+              <span style={{ color: '#cbd5e1' }}>/</span>
+              <ExamBadge examKey="pcr" value={item.pcr} title="PCR (mg/L)" />
+            </>
+          )}
+        </div>
+      </td>
+    )
+  },
+  glic_hba1c: {
+    id: 'glic_hba1c',
+    label: 'Glic / HbA1c',
+    groupName: 'Perfil Glicêmico (Glicemia e HbA1c)',
+    bioKeys: ['glicemia', 'hba1c'],
+    renderHeader: () => <th key="col-glic_hba1c" style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Glic / HbA1c</th>,
+    renderCell: (item, idx) => (
+      <td key={`cell-glic_hba1c-${idx}`} style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          <ExamBadge examKey="glicemia" value={item.glicemia} />
+          {item.hba1c && (
+            <>
+              <span style={{ color: '#cbd5e1' }}>/</span>
+              <ExamBadge examKey="hba1c" value={`${item.hba1c}%`} title="Hemoglobina Glicada" />
+            </>
+          )}
+        </div>
+      </td>
+    )
+  },
+  tgp_tgo: {
+    id: 'tgp_tgo',
+    label: 'TGP',
+    groupName: 'Função Hepática (TGP e TGO)',
+    bioKeys: ['tgp', 'tgo'],
+    renderHeader: () => <th key="col-tgp_tgo" style={{ padding: '0.65rem 0.8rem', color: '#475569' }} title="TGP (ALT) e TGO (AST) - Enzimas Hepáticas">TGP</th>,
+    renderCell: (item, idx) => (
+      <td key={`cell-tgp_tgo-${idx}`} style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+          <ExamBadge examKey="tgp" value={item.tgp} title="TGP (ALT) - Meta: ≤ 45 U/L" />
+          {item.tgo !== undefined && item.tgo !== null && item.tgo !== '' && (
+            <>
+              <span style={{ color: '#cbd5e1' }}>/</span>
+              <ExamBadge examKey="tgo" value={item.tgo} title="TGO (AST) - Meta: ≤ 35 U/L" />
+            </>
+          )}
+        </div>
+      </td>
+    )
+  }
+};
+
+/**
  * Formata data de exame para exibição limpa
  */
 function formatExamDate(dateStr) {
@@ -88,6 +285,8 @@ function formatExamDate(dateStr) {
 export default function ExamHistorySection({
   historicoExames = [],
   sortedHistoricoExames = [],
+  doctorInfo = null,
+  activeDoctorId = null,
   onEditExam,
   onDeleteExam
 }) {
@@ -96,13 +295,105 @@ export default function ExamHistorySection({
   // Parâmetro selecionado na aba de Tendência
   const [selectedBioKey, setSelectedBioKey] = useState('hb');
 
+  // Estado do modal de reorganização de sequência de exames
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [tempColumnOrder, setTempColumnOrder] = useState([]);
+  const [isSavingOrder, setIsSavingOrder] = useState(false);
+  const [orderSaveSuccess, setOrderSaveSuccess] = useState(false);
+
+  // Ordem ativa de colunas configurada pelo médico no Firestore (ou padrão)
+  const activeColumnOrder = useMemo(() => {
+    const saved = doctorInfo?.ordemExames;
+    if (Array.isArray(saved) && saved.length > 0) {
+      const valid = saved.filter(id => EXAM_COLUMNS_DEFINITION[id]);
+      const missing = DEFAULT_COLUMN_ORDER.filter(id => !valid.includes(id));
+      return [...valid, ...missing];
+    }
+    return DEFAULT_COLUMN_ORDER;
+  }, [doctorInfo?.ordemExames]);
+
+  // Lista ordenada de biomarcadores para a Tendência e Metas com base na ordem das colunas
+  const activeBiomarkersConfig = useMemo(() => {
+    const keysInOrder = [];
+    activeColumnOrder.forEach(colId => {
+      const def = EXAM_COLUMNS_DEFINITION[colId];
+      if (def?.bioKeys) {
+        def.bioKeys.forEach(k => {
+          if (!keysInOrder.includes(k)) {
+            keysInOrder.push(k);
+          }
+        });
+      }
+    });
+    BIOMARKERS_CONFIG.forEach(b => {
+      if (!keysInOrder.includes(b.key)) {
+        keysInOrder.push(b.key);
+      }
+    });
+
+    return keysInOrder.map(k => BIOMARKERS_CONFIG.find(b => b.key === k)).filter(Boolean);
+  }, [activeColumnOrder]);
+
   // Coletas cronológicas em ordem temporal crescente (antiga -> mais recente) para gráficos
   const chronologicalExamsAsc = useMemo(() => {
     return [...sortedHistoricoExames].reverse();
   }, [sortedHistoricoExames]);
 
   // Configuração ativa para gráfico
-  const currentBio = BIOMARKERS_CONFIG.find(b => b.key === selectedBioKey) || BIOMARKERS_CONFIG[0];
+  const currentBio = useMemo(() => {
+    return activeBiomarkersConfig.find(b => b.key === selectedBioKey) || activeBiomarkersConfig[0] || BIOMARKERS_CONFIG[0];
+  }, [activeBiomarkersConfig, selectedBioKey]);
+
+  // Handlers para reordenação de colunas
+  const handleOpenOrderModal = () => {
+    setTempColumnOrder([...activeColumnOrder]);
+    setOrderSaveSuccess(false);
+    setIsOrderModalOpen(true);
+  };
+
+  const handleMoveUp = (index) => {
+    if (index <= 0) return;
+    setTempColumnOrder(prev => {
+      const copy = [...prev];
+      const temp = copy[index - 1];
+      copy[index - 1] = copy[index];
+      copy[index] = temp;
+      return copy;
+    });
+  };
+
+  const handleMoveDown = (index) => {
+    if (index >= tempColumnOrder.length - 1) return;
+    setTempColumnOrder(prev => {
+      const copy = [...prev];
+      const temp = copy[index + 1];
+      copy[index + 1] = copy[index];
+      copy[index] = temp;
+      return copy;
+    });
+  };
+
+  const handleResetOrder = () => {
+    setTempColumnOrder([...DEFAULT_COLUMN_ORDER]);
+  };
+
+  const handleSaveOrder = async () => {
+    const doctorId = activeDoctorId || doctorInfo?.id || DEFAULT_DOCTOR_ID;
+    try {
+      setIsSavingOrder(true);
+      await saveDoctorExamSequence(doctorId, tempColumnOrder);
+      setOrderSaveSuccess(true);
+      setTimeout(() => {
+        setIsOrderModalOpen(false);
+        setOrderSaveSuccess(false);
+      }, 700);
+    } catch (err) {
+      console.error("Erro ao salvar sequência dos exames:", err);
+      alert("Erro ao salvar sequência no Firestore: " + (err.message || "Tente novamente"));
+    } finally {
+      setIsSavingOrder(false);
+    }
+  };
 
   // Dados filtrados do biomarcador ativo com valores válidos
   const chartPoints = useMemo(() => {
@@ -158,7 +449,31 @@ export default function ExamHistorySection({
           </h3>
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {/* Botão de Organizar Sequência */}
+          <button
+            type="button"
+            onClick={handleOpenOrderModal}
+            className="btn btn-outline"
+            style={{
+              padding: '4px 10px',
+              fontSize: '0.75rem',
+              fontWeight: '600',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              borderColor: '#bfdbfe',
+              background: '#eff6ff',
+              color: '#1d4ed8',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+            title="Personalizar a sequência dos exames na tabela e na tendência"
+          >
+            <Sliders size={13} color="#2563eb" />
+            <span>Sequência</span>
+          </button>
+
           {/* Segmented Pill Control (1 palavra por botão) */}
           <div 
             style={{ 
@@ -296,15 +611,7 @@ export default function ExamHistorySection({
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border)' }}>
                     <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Data</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Hb</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>IST / Ferritina</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>PTH / FA</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>P / Ca</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>K⁺ / HCO₃⁻</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Kt/V • UR%</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Alb / PCR</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }}>Glic / HbA1c</th>
-                    <th style={{ padding: '0.65rem 0.8rem', color: '#475569' }} title="TGP (ALT) e TGO (AST) - Enzimas Hepáticas">TGP</th>
+                    {activeColumnOrder.map(colId => EXAM_COLUMNS_DEFINITION[colId]?.renderHeader())}
                     <th style={{ padding: '0.65rem 0.8rem', textAlign: 'right', color: '#475569' }}>Ações</th>
                   </tr>
                 </thead>
@@ -314,98 +621,7 @@ export default function ExamHistorySection({
                       <td style={{ padding: '0.65rem 0.8rem', fontWeight: 'bold', color: '#1e293b', whiteSpace: 'nowrap' }}>
                         {formatExamDate(item.dataExame)}
                       </td>
-                      <td style={{ padding: '0.65rem 0.8rem' }}>
-                        <ExamBadge examKey="hb" value={item.hb} />
-                      </td>
-                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <ExamBadge examKey="ist" value={item.ist} suffix="%" />
-                          <span style={{ color: '#cbd5e1' }}>/</span>
-                          <ExamBadge examKey="ferritina" value={item.ferritina} />
-                        </div>
-                      </td>
-                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <ExamBadge examKey="pth" value={item.pth} />
-                          {item.fa && (
-                            <>
-                              <span style={{ color: '#cbd5e1' }}>/</span>
-                              <ExamBadge examKey="fa" value={item.fa} title="Fosfatase Alcalina (U/L)" />
-                            </>
-                          )}
-                        </div>
-                      </td>
-                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <ExamBadge examKey="fosforo" value={item.fosforo} />
-                          <span style={{ color: '#cbd5e1' }}>/</span>
-                          <ExamBadge examKey="ca" value={item.ca} />
-                        </div>
-                      </td>
-                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <ExamBadge examKey="k" value={item.k} />
-                          {item.hco3 && (
-                            <>
-                              <span style={{ color: '#cbd5e1' }}>/</span>
-                              <ExamBadge examKey="hco3" value={item.hco3} title="Bicarbonato (mEq/L)" />
-                            </>
-                          )}
-                        </div>
-                      </td>
-                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
-                        {(() => {
-                          const urr = calculateURR(item.ureiaPre, item.ureiaPos) || (item.ur ? parseExamNumber(item.ur) : null);
-                          return (
-                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                              <ExamBadge examKey="ktv" value={item.ktv} title="Kt/V Dialítico (≥1.2)" />
-                              {urr !== null && (
-                                <>
-                                  <span style={{ color: '#cbd5e1' }}>/</span>
-                                  <ExamBadge 
-                                    examKey="ur" 
-                                    value={`${urr}%`} 
-                                    title={`Taxa de Redução de Ureia (UR%): Pré ${item.ureiaPre || '-'} | Pós ${item.ureiaPos || '-'}`} 
-                                  />
-                                </>
-                              )}
-                            </div>
-                          );
-                        })()}
-                      </td>
-                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <ExamBadge examKey="albumina" value={item.albumina} suffix=" g/dL" />
-                          {item.pcr !== undefined && item.pcr !== null && item.pcr !== '' && (
-                            <>
-                              <span style={{ color: '#cbd5e1' }}>/</span>
-                              <ExamBadge examKey="pcr" value={item.pcr} title="PCR (mg/L)" />
-                            </>
-                          )}
-                        </div>
-                      </td>
-                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <ExamBadge examKey="glicemia" value={item.glicemia} />
-                          {item.hba1c && (
-                            <>
-                              <span style={{ color: '#cbd5e1' }}>/</span>
-                              <ExamBadge examKey="hba1c" value={`${item.hba1c}%`} title="Hemoglobina Glicada" />
-                            </>
-                          )}
-                        </div>
-                      </td>
-                      <td style={{ padding: '0.65rem 0.8rem', whiteSpace: 'nowrap' }}>
-                        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <ExamBadge examKey="tgp" value={item.tgp} title="TGP (ALT) - Meta: ≤ 45 U/L" />
-                          {item.tgo !== undefined && item.tgo !== null && item.tgo !== '' && (
-                            <>
-                              <span style={{ color: '#cbd5e1' }}>/</span>
-                              <ExamBadge examKey="tgo" value={item.tgo} title="TGO (AST) - Meta: ≤ 35 U/L" />
-                            </>
-                          )}
-                        </div>
-                      </td>
+                      {activeColumnOrder.map(colId => EXAM_COLUMNS_DEFINITION[colId]?.renderCell(item, idx))}
                       <td style={{ padding: '0.65rem 0.8rem', textAlign: 'right' }}>
                         <div className="flex justify-end gap-1">
                           <button 
@@ -440,7 +656,7 @@ export default function ExamHistorySection({
             <div className="flex flex-col gap-4">
               {/* Seletor de Biomarcador em Chips de 1 palavra */}
               <div className="flex items-center gap-1.5 flex-wrap">
-                {BIOMARKERS_CONFIG.map(b => {
+                {activeBiomarkersConfig.map(b => {
                   const isSelected = b.key === selectedBioKey;
                   return (
                     <button
@@ -903,7 +1119,7 @@ export default function ExamHistorySection({
                   </tr>
                 </thead>
                 <tbody>
-                  {BIOMARKERS_CONFIG.map((bio) => {
+                  {activeBiomarkersConfig.map((bio) => {
                     // Valores em ordem cronológica (sortedHistoricoExames está mais novo -> mais antigo)
                     const vals = sortedHistoricoExames.map(item => item[bio.key]);
                     const hasAnyVal = vals.some(v => v !== null && v !== undefined && v !== '');
@@ -978,6 +1194,282 @@ export default function ExamHistorySection({
             </div>
           )}
         </>
+      )}
+
+      {/* ============================================================== */}
+      {/* MODAL: ORGANIZAR SEQUÊNCIA DE EXAMES (PERSISTÊNCIA FIRESTORE)   */}
+      {/* ============================================================== */}
+      {isOrderModalOpen && (
+        <div 
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(4px)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem'
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget && !isSavingOrder) {
+              setIsOrderModalOpen(false);
+            }
+          }}
+        >
+          <div 
+            style={{
+              background: '#ffffff',
+              borderRadius: '16px',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+              maxWidth: '520px',
+              width: '100%',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              border: '1px solid #e2e8f0'
+            }}
+          >
+            {/* Cabeçalho do Modal */}
+            <div 
+              style={{
+                padding: '1rem 1.25rem',
+                borderBottom: '1px solid #e2e8f0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                background: '#f8fafc'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <div 
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    background: '#eff6ff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: '1px solid #bfdbfe'
+                  }}
+                >
+                  <Sliders size={17} color="#2563eb" />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '0.95rem', fontWeight: '700', color: '#0f172a' }}>
+                    Sequência dos Exames
+                  </h3>
+                  <p style={{ margin: 0, fontSize: '0.72rem', color: '#64748b' }}>
+                    Personalize a ordem das colunas da tabela e dos biomarcadores.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => !isSavingOrder && setIsOrderModalOpen(false)}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  padding: '6px',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  color: '#94a3b8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Lista Reordenável de Colunas */}
+            <div 
+              style={{
+                padding: '1rem 1.25rem',
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+                flex: 1
+              }}
+            >
+              <div 
+                style={{
+                  fontSize: '0.72rem',
+                  color: '#475569',
+                  background: '#f1f5f9',
+                  padding: '8px 10px',
+                  borderRadius: '8px',
+                  border: '1px solid #e2e8f0',
+                  marginBottom: '0.25rem'
+                }}
+              >
+                💡 Use as setas para definir a ordem das colunas e dos gráficos.
+              </div>
+
+              {tempColumnOrder.map((colId, index) => {
+                const def = EXAM_COLUMNS_DEFINITION[colId];
+                if (!def) return null;
+                const isFirst = index === 0;
+                const isLast = index === tempColumnOrder.length - 1;
+
+                return (
+                  <div
+                    key={colId}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '0.55rem 0.75rem',
+                      borderRadius: '10px',
+                      background: '#ffffff',
+                      border: '1px solid #e2e8f0',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                      <span 
+                        style={{
+                          width: '22px',
+                          height: '22px',
+                          borderRadius: '6px',
+                          background: '#f1f5f9',
+                          color: '#475569',
+                          fontSize: '0.7rem',
+                          fontWeight: '700',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        {index + 1}
+                      </span>
+                      <div>
+                        <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#1e293b' }}>
+                          {def.label}
+                        </div>
+                        <div style={{ fontSize: '0.68rem', color: '#64748b' }}>
+                          {def.groupName}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveUp(index)}
+                        disabled={isFirst || isSavingOrder}
+                        title="Mover para cima"
+                        style={{
+                          padding: '4px 6px',
+                          borderRadius: '6px',
+                          border: '1px solid #cbd5e1',
+                          background: isFirst ? '#f8fafc' : '#ffffff',
+                          color: isFirst ? '#cbd5e1' : '#334155',
+                          cursor: isFirst ? 'not-allowed' : 'pointer'
+                        }}
+                      >
+                        <ArrowUp size={13} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveDown(index)}
+                        disabled={isLast || isSavingOrder}
+                        title="Mover para baixo"
+                        style={{
+                          padding: '4px 6px',
+                          borderRadius: '6px',
+                          border: '1px solid #cbd5e1',
+                          background: isLast ? '#f8fafc' : '#ffffff',
+                          color: isLast ? '#cbd5e1' : '#334155',
+                          cursor: isLast ? 'not-allowed' : 'pointer'
+                        }}
+                      >
+                        <ArrowDown size={13} />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Rodapé de Ações (Regra de poucas palavras) */}
+            <div 
+              style={{
+                padding: '0.85rem 1.25rem',
+                borderTop: '1px solid #e2e8f0',
+                background: '#f8fafc',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '0.5rem'
+              }}
+            >
+              <button
+                type="button"
+                onClick={handleResetOrder}
+                disabled={isSavingOrder}
+                className="btn btn-outline"
+                style={{
+                  fontSize: '0.75rem',
+                  padding: '0.45rem 0.85rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '5px'
+                }}
+              >
+                <RotateCcw size={13} />
+                <span>Restaurar</span>
+              </button>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setIsOrderModalOpen(false)}
+                  disabled={isSavingOrder}
+                  className="btn btn-outline"
+                  style={{
+                    fontSize: '0.75rem',
+                    padding: '0.45rem 0.85rem'
+                  }}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleSaveOrder}
+                  disabled={isSavingOrder}
+                  className="btn btn-primary"
+                  style={{
+                    fontSize: '0.75rem',
+                    padding: '0.45rem 1.1rem',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px'
+                  }}
+                >
+                  {isSavingOrder ? (
+                    <span>Salvando...</span>
+                  ) : orderSaveSuccess ? (
+                    <>
+                      <Check size={14} />
+                      <span>Salvo!</span>
+                    </>
+                  ) : (
+                    <span>Salvar</span>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

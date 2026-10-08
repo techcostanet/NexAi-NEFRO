@@ -20,7 +20,8 @@ import {
   Sliders,
   FileText,
   AlertOctagon,
-  Droplet
+  Droplet,
+  Syringe
 } from 'lucide-react';
 import { 
   TIPOS_EVENTO_ACESSO, 
@@ -168,83 +169,61 @@ export default function VascularAccessTab({
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* ================= BARRA SUPERIOR DE AÇÕES ================= */}
-      <div 
-        className="glass-panel"
-        style={{
-          padding: '1.25rem 1.5rem',
-          borderRadius: '16px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '1rem',
-          background: 'linear-gradient(to right, rgba(255,255,255,0.95), rgba(248,250,252,0.95))'
-        }}
-      >
-        <div className="flex items-center gap-3">
-          <div 
-            style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
-            }}
-          >
-            <Activity size={22} />
-          </div>
-          <div>
-            <h1 className="font-bold text-base text-slate-800 tracking-tight">
-              Acesso Vascular
-            </h1>
-            <p className="text-xs text-slate-500">
-              Vigilância hemodinâmica, cirurgias e histórico de manutenções
-            </p>
-          </div>
+    <div className="flex flex-col gap-4">
+      {/* ================= CABEÇALHO PADRONIZADO DA ABA ACESSO ================= */}
+      <div className="flex justify-between items-center flex-wrap gap-2">
+        <div>
+          <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
+            <Syringe size={18} color="var(--primary)" />
+            <span>Acesso Vascular</span>
+          </h2>
+          <p className="text-xs text-muted">
+            Vigilância hemodinâmica, cirurgias e histórico de manutenções
+          </p>
         </div>
 
         <div className="flex items-center gap-2">
           {isCatheter && onOpenLockTherapy && (
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-outline"
               onClick={onOpenLockTherapy}
               style={{
-                padding: '0.45rem 1rem',
-                fontSize: '0.82rem',
+                padding: '0.45rem 0.95rem',
+                fontSize: '0.8rem',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
-                borderRadius: '10px'
+                gap: '5px',
+                borderColor: '#fde68a',
+                background: '#fffbeb',
+                color: '#b45309',
+                fontWeight: '600'
               }}
               title="Protocolo de Lock Therapy para Cateter"
             >
-              <Droplet size={15} color="#0284c7" />
+              <Sparkles size={14} color="#d97706" />
               <span>Protocolo</span>
             </button>
           )}
 
           <button
             type="button"
-            className="btn btn-secondary"
+            className="btn btn-outline"
             onClick={() => setIsParametersModalOpen(true)}
             style={{
-              padding: '0.45rem 1rem',
-              fontSize: '0.82rem',
+              padding: '0.45rem 0.95rem',
+              fontSize: '0.8rem',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px',
-              borderRadius: '10px'
+              gap: '5px',
+              borderColor: '#cbd5e1',
+              background: '#f8fafc',
+              color: '#334155',
+              fontWeight: '600'
             }}
             title="Ajustar parâmetros vigentes"
           >
-            <Sliders size={15} />
+            <Sliders size={14} color="#475569" />
             <span>Editar</span>
           </button>
 
@@ -256,17 +235,15 @@ export default function VascularAccessTab({
               setIsInterventionModalOpen(true);
             }}
             style={{
-              padding: '0.45rem 1.15rem',
-              fontSize: '0.82rem',
+              padding: '0.45rem 0.95rem',
+              fontSize: '0.8rem',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '6px',
-              borderRadius: '10px',
-              boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)'
+              gap: '5px'
             }}
           >
-            <Plus size={16} />
-            <span>Registrar</span>
+            <Plus size={14} />
+            <span>+ Registro</span>
           </button>
         </div>
       </div>

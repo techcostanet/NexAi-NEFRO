@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.105",
+    "date": "08/10/2026",
+    "title": "feat: padronizacao de design nas abas Acesso e LME e ordenacao personalizada ...",
+    "highlights": [
+      "✨ feat: padronizacao de design nas abas Acesso e LME e ordenacao personalizada de exames no Firestore"
+    ]
+  },
+  {
     "version": "1.1.104",
     "date": "08/10/2026",
     "title": "Ajuste de micro espaçamento em alertas de ciclo encerrado, correção de overfl...",

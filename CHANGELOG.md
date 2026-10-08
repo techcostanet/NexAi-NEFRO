@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.105] - 2026-10-08
+### Alterações
+- feat: padronizacao de design nas abas Acesso e LME e ordenacao personalizada de exames no Firestore
+
 ## [1.1.104] - 2026-10-08
 ### Alterações
 - Ajuste de micro espaçamento em alertas de ciclo encerrado, correção de overflow no card de controle ponderal e reposicionamento estratégico dos cards de transplante e controle ponderal no prontuário

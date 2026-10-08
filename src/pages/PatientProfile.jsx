@@ -2190,6 +2190,7 @@ export default function PatientProfile() {
               onOpenNewLme={handleOpenNewLme}
               onEditLme={handleEditLme}
               onRenewLme={handleRenewLme}
+              isFullTab={false}
             />
           </div>
         </div>
@@ -2588,6 +2589,8 @@ export default function PatientProfile() {
           <ExamHistorySection
             historicoExames={historicoExames}
             sortedHistoricoExames={sortedHistoricoExames}
+            doctorInfo={doctorInfo}
+            activeDoctorId={activeDoctorId}
             onEditExam={(item, originalIndex) => handleEditExam(item, originalIndex)}
             onDeleteExam={(originalIndex) => handleDeleteExam(originalIndex)}
           />
@@ -3183,12 +3186,34 @@ export default function PatientProfile() {
       {/* ================= ABA 6: LME & MEDICAMENTOS DE ALTO CUSTO ================= */}
       {activeTab === 'lme' && (
         <div className="flex flex-col gap-4 animate-in">
+          {/* Cabeçalho Padronizado da Aba LME */}
+          <div className="flex justify-between items-center flex-wrap gap-2">
+            <div>
+              <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
+                <ClipboardList size={18} color="var(--primary)" />
+                <span>Gestão de LME</span>
+              </h2>
+              <p className="text-xs text-muted">Medicamentos de alto custo SUS • Vigência e renovações</p>
+            </div>
+
+            <button 
+              type="button" 
+              className="btn btn-primary" 
+              onClick={handleOpenNewLme} 
+              style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}
+            >
+              <Plus size={14} />
+              <span>+ LME</span>
+            </button>
+          </div>
+
           <LmePatientSection
             patient={patient}
             doctorInfo={doctorInfo}
             onOpenNewLme={handleOpenNewLme}
             onEditLme={handleEditLme}
             onRenewLme={handleRenewLme}
+            isFullTab={true}
           />
         </div>
       )}

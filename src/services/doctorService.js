@@ -548,3 +548,22 @@ export async function addDoctorPaymentRecord(doctorId, paymentData, adminEmail =
   return historico;
 }
 
+/**
+ * Salva a sequência personalizada de exibição de exames do médico no Firestore
+ * @param {string} doctorId - ID do médico responsável
+ * @param {Array<string>} examOrder - Lista ordenada com os IDs das colunas de exames
+ */
+export async function saveDoctorExamSequence(doctorId, examOrder) {
+  if (!db) throw new Error("Firestore não inicializado");
+  if (!doctorId) throw new Error("ID do médico não informado");
+
+  const docRef = doc(db, DOCTORS_COLLECTION, doctorId);
+  await setDoc(docRef, {
+    ordemExames: examOrder,
+    atualizadoEm: new Date().toISOString()
+  }, { merge: true });
+
+  return examOrder;
+}
+
+
