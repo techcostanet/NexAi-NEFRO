@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.106",
+    "date": "08/10/2026",
+    "title": "fix: importar useMemo em LmePatientSection resolvendo ReferenceError em producao",
+    "highlights": [
+      "✨ fix: importar useMemo em LmePatientSection resolvendo ReferenceError em producao"
+    ]
+  },
+  {
     "version": "1.1.105",
     "date": "08/10/2026",
     "title": "feat: padronizacao de design nas abas Acesso e LME e ordenacao personalizada ...",

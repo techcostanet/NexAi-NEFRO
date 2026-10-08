@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.106] - 2026-10-08
+### Alterações
+- fix: importar useMemo em LmePatientSection resolvendo ReferenceError em producao
+
 ## [1.1.105] - 2026-10-08
 ### Alterações
 - feat: padronizacao de design nas abas Acesso e LME e ordenacao personalizada de exames no Firestore
