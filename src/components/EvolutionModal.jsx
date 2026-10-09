@@ -1,15 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { X, Save, FileText, Activity, AlertTriangle, Clock, User, Loader2 } from 'lucide-react';
-import { savePatientEvolution, addPatientWeightRecord } from '../services/patientService';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  X, 
+  Save, 
+  FileText, 
+  Activity, 
+  AlertTriangle, 
+  Clock, 
+  User, 
+  Loader2, 
+  Sparkles, 
+  Printer, 
+  CheckCircle2, 
+  ShieldCheck 
+} from 'lucide-react';
+import { savePatientEvolution, addPatientWeightRecord, getPatientById } from '../services/patientService';
+import { auditPatientEvolutionData, generateMonthlyEvolutionText } from '../utils/monthlyEvolutionGenerator';
+import EvolutionChecklistModal from './EvolutionChecklistModal';
+import EvolutionPrintDocument from './EvolutionPrintDocument';
+import { printElement } from '../utils/printUtils';
 
 export default function EvolutionModal({ 
   isOpen, 
   onClose, 
+  patient = null,
   patientId, 
   evolutionToEdit = null, 
   doctorInfo = null,
   onSaved 
 }) {
+  const [currentPatient, setCurrentPatient] = useState(patient);
   const [formData, setFormData] = useState({
     dataHora: '',
     tipoAtendimento: 'Hemodiálise',
@@ -27,6 +46,22 @@ export default function EvolutionModal({
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [feedbackMsg, setFeedbackMsg] = useState('');
+  const [isChecklistOpen, setIsChecklistOpen] = useState(false);
+  const [auditResult, setAuditResult] = useState(null);
+
+  // Sincroniza o paciente completo para alimentar o motor de evolução
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (patient) {
+      setCurrentPatient(patient);
+    } else if (patientId) {
+      getPatientById(patientId).then(p => {
+        if (p) setCurrentPatient(p);
+      });
+    }
+  }, [patient, patientId, isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -49,7 +84,6 @@ export default function EvolutionModal({
       });
     } else {
       const now = new Date();
-      // Formato YYYY-MM-DDTHH:MM para input datetime-local
       const localIso = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
       
       setFormData({
@@ -58,19 +92,74 @@ export default function EvolutionModal({
         intercorrencias: 'Nenhuma',
         paPre: '130/80',
         paPos: '120/80',
-        pesoPre: '',
+        pesoPre: currentPatient?.pesoSeco ? String(currentPatient.pesoSeco) : '',
         pesoPos: '',
         ufRetirada: '2000',
-        qbEfetivo: '300',
+        qbEfetivo: currentPatient?.acessoVascular?.fluxoSangue ? String(currentPatient.acessoVascular.fluxoSangue) : '300',
         condutaClinica: '',
         medicoNome: doctorInfo?.nome || 'Médico(a) Responsável',
         medicoCrm: doctorInfo?.crm ? `${doctorInfo.crm}/${doctorInfo.ufCrm || 'SP'}` : ''
       });
     }
     setError('');
-  }, [evolutionToEdit, isOpen, doctorInfo]);
+    setFeedbackMsg('');
+  }, [evolutionToEdit, isOpen, doctorInfo, currentPatient]);
 
   if (!isOpen) return null;
+
+  // Disparo do Motor de Evolução com Auditoria Prévia
+  const handleGenerateEvolution = () => {
+    setError('');
+    if (!currentPatient) {
+      setError('Aguardando carregamento da ficha do paciente...');
+      return;
+    }
+
+    const audit = auditPatientEvolutionData(currentPatient);
+    setAuditResult(audit);
+
+    if (!audit.isComplete) {
+      // Abre o modal de checklist de dados faltantes (Quick Fill)
+      setIsChecklistOpen(true);
+    } else {
+      // Prontuário 100% completo: gera o texto imediatamente
+      executeGeneration(currentPatient);
+    }
+  };
+
+  const executeGeneration = (targetPatient) => {
+    const generatedText = generateMonthlyEvolutionText(targetPatient, doctorInfo, {
+      qbEfetivo: formData.qbEfetivo,
+      pesoSeco: targetPatient.pesoSeco
+    });
+
+    setFormData(prev => ({
+      ...prev,
+      condutaClinica: generatedText,
+      pesoPre: prev.pesoPre || (targetPatient.pesoSeco ? String(targetPatient.pesoSeco) : prev.pesoPre),
+      qbEfetivo: prev.qbEfetivo || (targetPatient.acessoVascular?.fluxoSangue ? String(targetPatient.acessoVascular.fluxoSangue) : '350')
+    }));
+
+    setFeedbackMsg('Evolução gerada com dados do prontuário.');
+    setTimeout(() => setFeedbackMsg(''), 4500);
+  };
+
+  const handleChecklistCompleted = (updatedFields) => {
+    const mergedPatient = {
+      ...currentPatient,
+      ...updatedFields
+    };
+    setCurrentPatient(mergedPatient);
+    executeGeneration(mergedPatient);
+  };
+
+  const handlePrint = async () => {
+    if (!formData.condutaClinica.trim()) {
+      setError('Preencha a evolução clínica antes de imprimir.');
+      return;
+    }
+    await printElement('printable-evolution-modal-area', `NexAi-NEFRO - Evolucao - ${currentPatient?.nome || 'Paciente'}`);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -82,12 +171,13 @@ export default function EvolutionModal({
     try {
       setSaving(true);
       setError('');
-      await savePatientEvolution(patientId, formData, evolutionToEdit?.id);
+      const targetPatId = patientId || currentPatient?.id;
+      await savePatientEvolution(targetPatId, formData, evolutionToEdit?.id);
 
       // Sincroniza aferição de peso com o histórico ponderal do paciente
       if (formData.pesoPre && !isNaN(parseFloat(String(formData.pesoPre).replace(',', '.')))) {
         try {
-          await addPatientWeightRecord(patientId, {
+          await addPatientWeightRecord(targetPatId, {
             data: formData.dataHora,
             peso: formData.pesoPre,
             tipo: formData.tipoAtendimento === 'Internação' ? 'Internação' : 'Pré-HD',
@@ -109,218 +199,297 @@ export default function EvolutionModal({
   };
 
   return (
-    <div 
-      style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        right: 0, 
-        bottom: 0, 
-        backgroundColor: 'rgba(15, 23, 42, 0.65)', 
-        backdropFilter: 'blur(6px)', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        zIndex: 9999,
-        padding: '1rem'
-      }}
-      onClick={onClose}
-    >
+    <>
       <div 
-        className="glass-panel animate-in" 
         style={{ 
-          background: 'var(--surface-solid)', 
-          width: '100%', 
-          maxWidth: '650px', 
-          maxHeight: '90vh', 
-          overflowY: 'auto', 
-          padding: '1.75rem',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
-          borderRadius: '20px'
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          bottom: 0, 
+          backgroundColor: 'rgba(15, 23, 42, 0.65)', 
+          backdropFilter: 'blur(6px)', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          zIndex: 9999,
+          padding: '1rem'
         }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={onClose}
       >
-        <div className="flex justify-between items-center mb-4 border-b pb-3" style={{ borderColor: 'var(--border)' }}>
-          <div className="flex items-center gap-2">
-            <FileText size={22} color="var(--primary)" />
-            <div>
-              <h2 className="text-lg font-bold">
-                {evolutionToEdit ? 'Editar Evolução' : 'Nova Evolução'}
-              </h2>
+        <div 
+          className="glass-panel animate-in" 
+          style={{ 
+            background: 'var(--surface-solid, #ffffff)', 
+            width: '100%', 
+            maxWidth: '680px', 
+            maxHeight: '92vh', 
+            overflowY: 'auto', 
+            padding: '1.75rem',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.25)',
+            borderRadius: '20px'
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Cabeçalho */}
+          <div className="flex justify-between items-center mb-4 border-b pb-3" style={{ borderColor: 'var(--border, #e2e8f0)' }}>
+            <div className="flex items-center gap-2">
+              <FileText size={22} color="var(--primary, #2563eb)" />
+              <div>
+                <h2 className="text-lg font-bold text-slate-800">
+                  {evolutionToEdit ? 'Editar Evolução' : 'Nova Evolução'}
+                </h2>
+                {currentPatient?.nome && (
+                  <p className="text-xs text-slate-500">
+                    Paciente: <strong>{currentPatient.nome}</strong>
+                  </p>
+                )}
+              </div>
             </div>
+            <button 
+              type="button" 
+              onClick={onClose} 
+              className="p-1 rounded-full text-slate-400 hover:text-slate-600 transition"
+              style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
+            >
+              <X size={20} />
+            </button>
           </div>
-          <button 
-            type="button" 
-            onClick={onClose} 
-            className="p-1 rounded-full text-slate-400 hover:text-slate-600 transition"
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}
-          >
-            <X size={20} />
-          </button>
-        </div>
 
-        {error && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', padding: '0.75rem', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.85rem' }}>
-            {error}
-          </div>
-        )}
+          {error && (
+            <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#dc2626', padding: '0.75rem', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.85rem' }}>
+              {error}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.75rem' }}>
-            <div>
-              <label className="text-xs font-semibold mb-1 block text-slate-700">Data e Hora *</label>
-              <input 
-                type="datetime-local" 
-                className="input-field" 
-                value={formData.dataHora}
-                onChange={(e) => setFormData(prev => ({ ...prev, dataHora: e.target.value }))}
-                required
-              />
+          {feedbackMsg && (
+            <div style={{ background: 'rgba(34, 197, 94, 0.1)', color: '#15803d', padding: '0.65rem 0.85rem', borderRadius: '10px', marginBottom: '1rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <CheckCircle2 size={16} />
+              <span>{feedbackMsg}</span>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.75rem' }}>
+              <div>
+                <label className="text-xs font-semibold mb-1 block text-slate-700">Data e Hora *</label>
+                <input 
+                  type="datetime-local" 
+                  className="input-field" 
+                  value={formData.dataHora}
+                  onChange={(e) => setFormData(prev => ({ ...prev, dataHora: e.target.value }))}
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold mb-1 block text-slate-700">Tipo de Atendimento</label>
+                <select 
+                  className="input-field"
+                  value={formData.tipoAtendimento}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tipoAtendimento: e.target.value }))}
+                >
+                  <option value="Hemodiálise">🏥 Sessão de Hemodiálise</option>
+                  <option value="Internação">🛏️ Internação</option>
+                  <option value="Consulta Ambulatorial">🩺 Consulta Ambulatorial</option>
+                  <option value="Interconsulta Hospitalar">🏨 Interconsulta Hospitalar</option>
+                  <option value="Avaliação de Acesso Vascular">🩸 Avaliação de Acesso</option>
+                </select>
+              </div>
             </div>
 
             <div>
-              <label className="text-xs font-semibold mb-1 block text-slate-700">Tipo de Atendimento</label>
+              <label className="text-xs font-semibold mb-1 block text-slate-700">Intercorrências da Sessão</label>
               <select 
                 className="input-field"
-                value={formData.tipoAtendimento}
-                onChange={(e) => setFormData(prev => ({ ...prev, tipoAtendimento: e.target.value }))}
+                value={formData.intercorrencias}
+                onChange={(e) => setFormData(prev => ({ ...prev, intercorrencias: e.target.value }))}
               >
-                <option value="Hemodiálise">🏥 Sessão de Hemodiálise</option>
-                <option value="Internação">🛏️ Internação</option>
-                <option value="Consulta Ambulatorial">🩺 Consulta Ambulatorial</option>
-                <option value="Interconsulta Hospitalar">🏨 Interconsulta Hospitalar</option>
-                <option value="Avaliação de Acesso Vascular">🩸 Avaliação de Acesso</option>
+                <option value="Nenhuma">🟢 Nenhuma intercorrência (Sessão estável)</option>
+                <option value="Hipotensão Intradilítica">⚠️ Hipotensão Intradilítica</option>
+                <option value="Coagulação de Sistema / Capilar">🩸 Coagulação de Sistema</option>
+                <option value="Câimbras Musculares Intensas">⚡ Câimbras Musculares</option>
+                <option value="Febre / Calafrios (Suspeita Infecciosa)">🌡️ Febre ou Calafrios</option>
+                <option value="Sangramento no Sítio de Punção">🩹 Sangramento em Acesso</option>
+                <option value="Outra Intercorrência">ℹ️ Outra intercorrência</option>
               </select>
             </div>
-          </div>
 
-          <div>
-            <label className="text-xs font-semibold mb-1 block text-slate-700">Intercorrências da Sessão</label>
-            <select 
-              className="input-field"
-              value={formData.intercorrencias}
-              onChange={(e) => setFormData(prev => ({ ...prev, intercorrencias: e.target.value }))}
-            >
-              <option value="Nenhuma">🟢 Nenhuma intercorrência (Sessão estável)</option>
-              <option value="Hipotensão Intradilítica">⚠️ Hipotensão Intradilítica</option>
-              <option value="Coagulação de Sistema / Capilar">🩸 Coagulação de Sistema</option>
-              <option value="Câimbras Musculares Intensas">⚡ Câimbras Musculares</option>
-              <option value="Febre / Calafrios (Suspeita Infecciosa)">🌡️ Febre ou Calafrios</option>
-              <option value="Sangramento no Sítio de Punção">🩹 Sangramento em Acesso</option>
-              <option value="Outra Intercorrência">ℹ️ Outra intercorrência</option>
-            </select>
-          </div>
+            {/* Parâmetros Dialíticos da Sessão */}
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
+              <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">
+                Sinais Vitais
+              </span>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.5rem' }}>
+                <div>
+                  <label className="text-xs text-muted block mb-0.5">PA Pré</label>
+                  <input 
+                    type="text" 
+                    className="input-field" 
+                    placeholder="130/80" 
+                    value={formData.paPre}
+                    onChange={(e) => setFormData(prev => ({ ...prev, paPre: e.target.value }))}
+                  />
+                </div>
 
-          {/* Parâmetros Dialíticos da Sessão */}
-          <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-            <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-2">
-              Sinais Vitais
-            </span>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '0.5rem' }}>
+                <div>
+                  <label className="text-xs text-muted block mb-0.5">PA Pós</label>
+                  <input 
+                    type="text" 
+                    className="input-field" 
+                    placeholder="120/80" 
+                    value={formData.paPos}
+                    onChange={(e) => setFormData(prev => ({ ...prev, paPos: e.target.value }))}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-muted block mb-0.5">Peso Pré (kg)</label>
+                  <input 
+                    type="number" 
+                    step="0.1" 
+                    className="input-field" 
+                    placeholder="Ex: 72.5" 
+                    value={formData.pesoPre}
+                    onChange={(e) => setFormData(prev => ({ ...prev, pesoPre: e.target.value }))}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-muted block mb-0.5">UF (ml)</label>
+                  <input 
+                    type="number" 
+                    className="input-field" 
+                    placeholder="Ex: 2200" 
+                    value={formData.ufRetirada}
+                    onChange={(e) => setFormData(prev => ({ ...prev, ufRetirada: e.target.value }))}
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs text-muted block mb-0.5">Qb (ml/min)</label>
+                  <input 
+                    type="number" 
+                    className="input-field" 
+                    placeholder="Ex: 300" 
+                    value={formData.qbEfetivo}
+                    onChange={(e) => setFormData(prev => ({ ...prev, qbEfetivo: e.target.value }))}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Texto da Evolução e Conduta com Botão de Gerar */}
+            <div>
+              <div className="flex justify-between items-center mb-1.5">
+                <label className="text-xs font-semibold block text-slate-700">
+                  Evolução Clínica *
+                </label>
+                <button 
+                  type="button" 
+                  onClick={handleGenerateEvolution}
+                  className="btn btn-outline"
+                  style={{
+                    padding: '0.3rem 0.75rem',
+                    fontSize: '0.75rem',
+                    color: '#2563eb',
+                    borderColor: '#bfdbfe',
+                    background: '#eff6ff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    fontWeight: '700',
+                    borderRadius: '8px'
+                  }}
+                  title="Audita prontuário e gera evolução mensal completa"
+                >
+                  <Sparkles size={14} color="#2563eb" />
+                  <span>Gerar</span>
+                </button>
+              </div>
+
+              <textarea 
+                className="input-field" 
+                rows={9}
+                placeholder="Evolução clínica, estabilidade hemodinâmica e conduta..."
+                value={formData.condutaClinica}
+                onChange={(e) => setFormData(prev => ({ ...prev, condutaClinica: e.target.value }))}
+                required
+                style={{ resize: 'vertical', lineHeight: '1.5', fontSize: '0.82rem', fontFamily: 'monospace' }}
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '0.75rem' }}>
               <div>
-                <label className="text-xs text-muted block mb-0.5">PA Pré</label>
+                <label className="text-xs text-muted block mb-0.5">Médico Responsável</label>
                 <input 
                   type="text" 
                   className="input-field" 
-                  placeholder="130/80" 
-                  value={formData.paPre}
-                  onChange={(e) => setFormData(prev => ({ ...prev, paPre: e.target.value }))}
+                  value={formData.medicoNome}
+                  onChange={(e) => setFormData(prev => ({ ...prev, medicoNome: e.target.value }))}
                 />
               </div>
-
               <div>
-                <label className="text-xs text-muted block mb-0.5">PA Pós</label>
+                <label className="text-xs text-muted block mb-0.5">CRM</label>
                 <input 
                   type="text" 
                   className="input-field" 
-                  placeholder="120/80" 
-                  value={formData.paPos}
-                  onChange={(e) => setFormData(prev => ({ ...prev, paPos: e.target.value }))}
-                />
-              </div>
-
-              <div>
-                <label className="text-xs text-muted block mb-0.5">Peso Pré (kg)</label>
-                <input 
-                  type="number" 
-                  step="0.1" 
-                  className="input-field" 
-                  placeholder="Ex: 72.5" 
-                  value={formData.pesoPre}
-                  onChange={(e) => setFormData(prev => ({ ...prev, pesoPre: e.target.value }))}
-                />
-              </div>
-
-              <div>
-                <label className="text-xs text-muted block mb-0.5">UF (ml)</label>
-                <input 
-                  type="number" 
-                  className="input-field" 
-                  placeholder="Ex: 2200" 
-                  value={formData.ufRetirada}
-                  onChange={(e) => setFormData(prev => ({ ...prev, ufRetirada: e.target.value }))}
-                />
-              </div>
-
-              <div>
-                <label className="text-xs text-muted block mb-0.5">Qb (ml/min)</label>
-                <input 
-                  type="number" 
-                  className="input-field" 
-                  placeholder="Ex: 300" 
-                  value={formData.qbEfetivo}
-                  onChange={(e) => setFormData(prev => ({ ...prev, qbEfetivo: e.target.value }))}
+                  value={formData.medicoCrm}
+                  onChange={(e) => setFormData(prev => ({ ...prev, medicoCrm: e.target.value }))}
                 />
               </div>
             </div>
-          </div>
 
-          {/* Texto da Evolução e Conduta */}
-          <div>
-            <label className="text-xs font-semibold mb-1 block text-slate-700">Evolução Clínica *</label>
-            <textarea 
-              className="input-field" 
-              rows={4}
-              placeholder="Evolução clínica, estabilidade hemodinâmica e conduta..."
-              value={formData.condutaClinica}
-              onChange={(e) => setFormData(prev => ({ ...prev, condutaClinica: e.target.value }))}
-              required
-              style={{ resize: 'vertical' }}
-            />
-          </div>
+            <div className="flex justify-between items-center pt-2 border-t mt-1">
+              <div>
+                <button 
+                  type="button" 
+                  className="btn btn-outline" 
+                  onClick={handlePrint}
+                  disabled={!formData.condutaClinica.trim()}
+                  style={{ fontSize: '0.82rem', padding: '0.45rem 0.85rem', display: 'flex', alignItems: 'center', gap: '5px' }}
+                  title="Imprimir evolução médica em folha A4"
+                >
+                  <Printer size={15} />
+                  <span>Imprimir</span>
+                </button>
+              </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '0.75rem' }}>
-            <div>
-              <label className="text-xs text-muted block mb-0.5">Médico Responsável</label>
-              <input 
-                type="text" 
-                className="input-field" 
-                value={formData.medicoNome}
-                onChange={(e) => setFormData(prev => ({ ...prev, medicoNome: e.target.value }))}
-              />
+              <div className="flex gap-2">
+                <button type="button" className="btn btn-outline" onClick={onClose}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary" disabled={saving}>
+                  {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                  <span>{saving ? 'Salvando...' : 'Salvar'}</span>
+                </button>
+              </div>
             </div>
-            <div>
-              <label className="text-xs text-muted block mb-0.5">CRM</label>
-              <input 
-                type="text" 
-                className="input-field" 
-                value={formData.medicoCrm}
-                onChange={(e) => setFormData(prev => ({ ...prev, medicoCrm: e.target.value }))}
-              />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 pt-2 border-t mt-1">
-            <button type="button" className="btn btn-outline" onClick={onClose}>
-              Cancelar
-            </button>
-            <button type="submit" className="btn btn-primary" disabled={saving}>
-              {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-              {saving ? 'Salvando...' : 'Salvar'}
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
+
+      {/* Modal de Auditoria e Preenchimento Rápido (Quick Fill) */}
+      {isChecklistOpen && (
+        <EvolutionChecklistModal 
+          isOpen={isChecklistOpen}
+          onClose={() => setIsChecklistOpen(false)}
+          patient={currentPatient}
+          auditResult={auditResult}
+          onComplete={handleChecklistCompleted}
+        />
+      )}
+
+      {/* Área Oculta para Impressão Isolada de Alta Precisão */}
+      <div style={{ display: 'none' }}>
+        <div id="printable-evolution-modal-area">
+          <EvolutionPrintDocument 
+            evolution={formData}
+            patient={currentPatient || {}}
+            doctorInfo={doctorInfo}
+          />
+        </div>
+      </div>
+    </>
   );
 }

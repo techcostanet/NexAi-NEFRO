@@ -66,6 +66,7 @@ import PatientFormModal from '../components/PatientFormModal';
 import ExamFormModal from '../components/ExamFormModal';
 import MedicationModal from '../components/MedicationModal';
 import EvolutionModal from '../components/EvolutionModal';
+import EvolutionPrintDocument from '../components/EvolutionPrintDocument';
 import ExamImportModal from '../components/ExamImportModal';
 import PrescriptionModal from '../components/PrescriptionModal';
 import PrescriptionPrintModal from '../components/PrescriptionPrintModal';
@@ -145,6 +146,7 @@ export default function PatientProfile() {
 
   const [isEvolutionModalOpen, setIsEvolutionModalOpen] = useState(false);
   const [evolutionToEdit, setEvolutionToEdit] = useState(null);
+  const [evolutionToPrint, setEvolutionToPrint] = useState(null);
 
   // Modais de Receituário / Emissão de Receitas
   const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
@@ -314,6 +316,13 @@ export default function PatientProfile() {
     if (window.confirm("Deseja realmente excluir este registro de evolução médica?")) {
       await deletePatientEvolution(patient.id, evoId);
     }
+  };
+
+  const handlePrintSingleEvolution = async (evo) => {
+    setEvolutionToPrint(evo);
+    setTimeout(async () => {
+      await printElement('printable-single-evolution-area', `NexAi-NEFRO - Evolucao - ${patient?.nome || 'Paciente'}`);
+    }, 150);
   };
 
   // Ações de LME (Alto Custo SUS)
@@ -2910,7 +2919,7 @@ export default function PatientProfile() {
 
             <button className="btn btn-primary" onClick={handleOpenNewEvolution} style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
               <Plus size={14} />
-              <span>+ Evolução</span>
+              <span>Evoluir</span>
             </button>
           </div>
 
@@ -2919,7 +2928,7 @@ export default function PatientProfile() {
               <FileText size={32} style={{ margin: '0 auto 0.5rem', opacity: 0.4 }} />
               <p className="text-sm">Nenhuma evolução registrada para este paciente.</p>
               <button className="btn btn-outline mt-3" onClick={handleOpenNewEvolution} style={{ fontSize: '0.8rem' }}>
-                + Evolução
+                Evoluir
               </button>
             </div>
           ) : (
@@ -2952,6 +2961,15 @@ export default function PatientProfile() {
                     </div>
 
                     <div className="flex items-center gap-1.5">
+                      <button 
+                        type="button"
+                        className="btn btn-outline" 
+                        onClick={() => handlePrintSingleEvolution(evo)}
+                        style={{ padding: '0.25rem 0.5rem', fontSize: '0.72rem' }}
+                        title="Imprimir evolução"
+                      >
+                        <Printer size={12} color="var(--primary)" />
+                      </button>
                       <button 
                         type="button"
                         className="btn btn-outline" 
@@ -3272,10 +3290,24 @@ export default function PatientProfile() {
         <EvolutionModal 
           isOpen={isEvolutionModalOpen}
           onClose={() => setIsEvolutionModalOpen(false)}
+          patient={patient}
           patientId={patient.id}
           evolutionToEdit={evolutionToEdit}
           doctorInfo={doctorInfo}
         />
+      )}
+
+      {/* Área Oculta para Impressão Isolada de Evolução Individual */}
+      {evolutionToPrint && (
+        <div style={{ display: 'none' }}>
+          <div id="printable-single-evolution-area">
+            <EvolutionPrintDocument 
+              evolution={evolutionToPrint}
+              patient={patient}
+              doctorInfo={doctorInfo}
+            />
+          </div>
+        </div>
       )}
 
       {isImportModalOpen && (

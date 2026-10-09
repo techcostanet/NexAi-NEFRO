@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.110] - 2026-10-09
+### Alterações
+- Evolução médica mensal inteligente com checklist de conformidade e impressão formal A4
+
 ## [1.1.109] - 2026-10-09
 ### Alterações
 - feat: logomarca medica no perfil com emissao em relatorios PDF e planilhas Excel exceto LME

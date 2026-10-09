@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.110",
+    "date": "09/10/2026",
+    "title": "Evolução médica mensal inteligente com checklist de conformidade e impressão ...",
+    "highlights": [
+      "✨ Evolução médica mensal inteligente com checklist de conformidade e impressão formal A4"
+    ]
+  },
+  {
     "version": "1.1.109",
     "date": "09/10/2026",
     "title": "feat: logomarca medica no perfil com emissao em relatorios PDF e planilhas Ex...",

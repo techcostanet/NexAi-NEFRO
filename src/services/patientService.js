@@ -1395,5 +1395,40 @@ export async function updatePatientAccessVascular(patientId, acessoVascularData)
   return novoAcesso;
 }
 
+/**
+ * Atualiza campos parciais do prontuário do paciente diretamente no Cloud Firestore
+ */
+export async function updatePatientPartial(patientId, fieldsToUpdate = {}) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  if (!patientId) throw new Error("ID do paciente não informado.");
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  const dataToSave = {
+    ...fieldsToUpdate,
+    atualizadoEm: new Date().toISOString()
+  };
+
+  // Se foram alterados tipo de acesso ou posição, sincroniza o objeto estruturado acessoVascular
+  if (fieldsToUpdate.tipoAcesso || fieldsToUpdate.posicaoAcesso) {
+    try {
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        const currentData = snap.data();
+        dataToSave.acessoVascular = {
+          ...(currentData.acessoVascular || {}),
+          tipo: fieldsToUpdate.tipoAcesso || currentData.tipoAcesso || currentData.acessoVascular?.tipo || 'FAV',
+          ladoMembro: fieldsToUpdate.posicaoAcesso || currentData.posicaoAcesso || currentData.acessoVascular?.ladoMembro || ''
+        };
+      }
+    } catch (err) {
+      console.warn("Sincronização de acessoVascular na atualização parcial:", err);
+    }
+  }
+
+  await updateDoc(docRef, dataToSave);
+  return dataToSave;
+}
+
+
 
 
