@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, 
   Save, 
@@ -7,7 +7,9 @@ import {
   Sparkles, 
   Printer, 
   CheckCircle2, 
-  Sliders
+  Sliders,
+  Copy,
+  Check
 } from 'lucide-react';
 import { savePatientEvolution, addPatientWeightRecord, getPatientById } from '../services/patientService';
 import { auditPatientEvolutionData, generateMonthlyEvolutionText } from '../utils/monthlyEvolutionGenerator';
@@ -43,15 +45,22 @@ export default function EvolutionModal({
   });
 
   const [saving, setSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
   const [feedbackMsg, setFeedbackMsg] = useState('');
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [auditResult, setAuditResult] = useState(null);
 
+  // Controla inicialização única para nunca sobrescrever a conduta gerada
+  const initializedRef = useRef(false);
+
   // Sincroniza o paciente completo para alimentar o motor de evolução
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      initializedRef.current = false;
+      return;
+    }
 
     if (patient) {
       setCurrentPatient(patient);
@@ -68,8 +77,11 @@ export default function EvolutionModal({
     }
   }, [doctorInfo]);
 
+  // Inicializa o formulário exatamente uma vez ao abrir o modal
   useEffect(() => {
     if (!isOpen) return;
+    if (initializedRef.current) return;
+    initializedRef.current = true;
 
     if (evolutionToEdit) {
       setFormData({
@@ -84,7 +96,7 @@ export default function EvolutionModal({
         ufRetirada: evolutionToEdit.ufRetirada || '',
         qbEfetivo: evolutionToEdit.qbEfetivo || '',
         condutaClinica: evolutionToEdit.condutaClinica || '',
-        medicoNome: evolutionToEdit.medicoNome || currentDoctorInfo?.nome || 'Médico(a) Responsável',
+        medicoNome: evolutionToEdit.medicoNome || currentDoctorInfo?.nome || doctorInfo?.nome || 'Médico(a) Responsável',
         medicoCrm: evolutionToEdit.medicoCrm || (currentDoctorInfo?.crm ? `${currentDoctorInfo.crm}/${currentDoctorInfo?.ufCrm || 'SP'}` : '')
       });
     } else {
@@ -97,18 +109,18 @@ export default function EvolutionModal({
         intercorrencias: 'Nenhuma',
         paPre: '130/80',
         paPos: '120/80',
-        pesoPre: currentPatient?.pesoSeco ? String(currentPatient.pesoSeco) : '',
+        pesoPre: (patient?.pesoSeco || currentPatient?.pesoSeco) ? String(patient?.pesoSeco || currentPatient?.pesoSeco) : '',
         pesoPos: '',
         ufRetirada: '2000',
-        qbEfetivo: currentPatient?.acessoVascular?.fluxoSangue ? String(currentPatient.acessoVascular.fluxoSangue) : '300',
+        qbEfetivo: (patient?.acessoVascular?.fluxoSangue || currentPatient?.acessoVascular?.fluxoSangue) ? String(patient?.acessoVascular?.fluxoSangue || currentPatient?.acessoVascular?.fluxoSangue) : '300',
         condutaClinica: '',
-        medicoNome: currentDoctorInfo?.nome || 'Médico(a) Responsável',
-        medicoCrm: currentDoctorInfo?.crm ? `${currentDoctorInfo.crm}/${currentDoctorInfo.ufCrm || 'SP'}` : ''
+        medicoNome: currentDoctorInfo?.nome || doctorInfo?.nome || 'Médico(a) Responsável',
+        medicoCrm: currentDoctorInfo?.crm ? `${currentDoctorInfo.crm}/${currentDoctorInfo.ufCrm || 'SP'}` : (doctorInfo?.crm ? `${doctorInfo.crm}/${doctorInfo.ufCrm || 'SP'}` : '')
       });
     }
     setError('');
     setFeedbackMsg('');
-  }, [evolutionToEdit, isOpen, currentDoctorInfo, currentPatient]);
+  }, [isOpen, evolutionToEdit]);
 
   if (!isOpen) return null;
 
@@ -116,12 +128,13 @@ export default function EvolutionModal({
   // SEMPRE abre o modal de auditoria / confirmação de parâmetros (mesmo se 100%)
   const handleGenerateEvolution = () => {
     setError('');
-    if (!currentPatient) {
+    const targetPatient = currentPatient || patient;
+    if (!targetPatient) {
       setError('Aguardando carregamento da ficha do paciente...');
       return;
     }
 
-    const audit = auditPatientEvolutionData(currentPatient);
+    const audit = auditPatientEvolutionData(targetPatient);
     setAuditResult(audit);
     setIsChecklistOpen(true);
   };
@@ -129,37 +142,78 @@ export default function EvolutionModal({
   const executeGeneration = (targetPatient, doctorOverride = null) => {
     const docToUse = doctorOverride || currentDoctorInfo || doctorInfo;
     const generatedText = generateMonthlyEvolutionText(targetPatient, docToUse, {
-      qbEfetivo: formData.qbEfetivo,
-      pesoSeco: targetPatient.pesoSeco
+      qbEfetivo: formData.qbEfetivo || (targetPatient?.acessoVascular?.fluxoSangue ? String(targetPatient.acessoVascular.fluxoSangue) : '350'),
+      pesoSeco: targetPatient?.pesoSeco
     });
 
     setFormData(prev => ({
       ...prev,
-      condutaClinica: generatedText,
-      pesoPre: prev.pesoPre || (targetPatient.pesoSeco ? String(targetPatient.pesoSeco) : prev.pesoPre),
-      qbEfetivo: prev.qbEfetivo || (targetPatient.acessoVascular?.fluxoSangue ? String(targetPatient.acessoVascular.fluxoSangue) : '350')
+      condutaClinica: generatedText || prev.condutaClinica,
+      pesoPre: prev.pesoPre || (targetPatient?.pesoSeco ? String(targetPatient.pesoSeco) : prev.pesoPre),
+      qbEfetivo: prev.qbEfetivo || (targetPatient?.acessoVascular?.fluxoSangue ? String(targetPatient.acessoVascular.fluxoSangue) : '350')
     }));
 
-    setFeedbackMsg('Evolução gerada com dados do prontuário.');
-    setTimeout(() => setFeedbackMsg(''), 4500);
+    setFeedbackMsg('Evolução gerada com sucesso! Pronto para revisão ou cópia.');
+    setTimeout(() => setFeedbackMsg(''), 5000);
   };
 
   const handleChecklistCompleted = (updatedFields) => {
+    const basePatient = currentPatient || patient || {};
     const mergedPatient = {
-      ...currentPatient,
-      ...updatedFields
+      ...basePatient,
+      ...updatedFields,
+      acessoVascular: {
+        ...(basePatient?.acessoVascular || {}),
+        tipo: updatedFields.tipoAcesso || basePatient?.tipoAcesso || 'FAV',
+        ladoMembro: updatedFields.posicaoAcesso || basePatient?.posicaoAcesso || ''
+      }
     };
     setCurrentPatient(mergedPatient);
     executeGeneration(mergedPatient);
   };
 
   const handleDoctorConfigUpdated = (newConfig) => {
-    setCurrentDoctorInfo(prev => ({
-      ...(prev || {}),
+    const updatedDoc = {
+      ...(currentDoctorInfo || doctorInfo || {}),
       configuracaoEvolucao: newConfig
-    }));
+    };
+    setCurrentDoctorInfo(updatedDoc);
     setFeedbackMsg('Padrão de evolução atualizado.');
     setTimeout(() => setFeedbackMsg(''), 3500);
+
+    // Se já havia gerado ou se o modal estiver aberto, pode re-executar com o novo modelo
+    if (formData.condutaClinica && currentPatient) {
+      executeGeneration(currentPatient, updatedDoc);
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!formData.condutaClinica.trim()) {
+      setError('Gere ou preencha a evolução antes de copiar.');
+      return;
+    }
+
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(formData.condutaClinica);
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = formData.condutaClinica;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      setCopied(true);
+      setFeedbackMsg('Evolução copiada com sucesso para a área de transferência!');
+      setTimeout(() => {
+        setCopied(false);
+        setFeedbackMsg('');
+      }, 3500);
+    } catch (err) {
+      console.warn("Falha ao copiar:", err);
+      setError('Não foi possível copiar automaticamente para a área de transferência.');
+    }
   };
 
   const handlePrint = async () => {
@@ -173,7 +227,7 @@ export default function EvolutionModal({
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.condutaClinica.trim()) {
-      setError('Por favor, descreva a evolução e a conduta médica.');
+      setError('Por favor, gere ou descreva a evolução e a conduta médica antes de salvar.');
       return;
     }
 
@@ -388,7 +442,7 @@ export default function EvolutionModal({
               </div>
             </div>
 
-            {/* Texto da Evolução e Conduta com Botões de Configurar e Gerar */}
+            {/* Texto da Evolução e Conduta com Botões de Copiar, Configurar e Gerar */}
             <div>
               <div className="flex justify-between items-center mb-1.5 flex-wrap gap-1">
                 <label className="text-xs font-semibold block text-slate-700">
@@ -396,6 +450,29 @@ export default function EvolutionModal({
                 </label>
 
                 <div className="flex items-center gap-1.5">
+                  <button 
+                    type="button" 
+                    onClick={handleCopy}
+                    disabled={!formData.condutaClinica.trim()}
+                    className="btn btn-outline"
+                    style={{
+                      padding: '0.28rem 0.65rem',
+                      fontSize: '0.74rem',
+                      color: copied ? '#15803d' : '#334155',
+                      borderColor: copied ? '#86efac' : '#cbd5e1',
+                      background: copied ? '#f0fdf4' : '#ffffff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontWeight: '600',
+                      borderRadius: '8px'
+                    }}
+                    title="Copiar texto da evolução para colar em outros sistemas"
+                  >
+                    {copied ? <Check size={13} color="#16a34a" /> : <Copy size={13} />}
+                    <span>{copied ? 'Copiado' : 'Copiar'}</span>
+                  </button>
+
                   <button 
                     type="button" 
                     onClick={() => setIsTemplateModalOpen(true)}
@@ -442,7 +519,7 @@ export default function EvolutionModal({
 
               <textarea 
                 className="input-field" 
-                rows={9}
+                rows={12}
                 placeholder="Evolução clínica, estabilidade hemodinâmica e conduta..."
                 value={formData.condutaClinica}
                 onChange={(e) => setFormData(prev => ({ ...prev, condutaClinica: e.target.value }))}
@@ -473,7 +550,19 @@ export default function EvolutionModal({
             </div>
 
             <div className="flex justify-between items-center pt-2 border-t mt-1">
-              <div>
+              <div className="flex items-center gap-1.5">
+                <button 
+                  type="button" 
+                  className="btn btn-outline" 
+                  onClick={handleCopy}
+                  disabled={!formData.condutaClinica.trim()}
+                  style={{ fontSize: '0.82rem', padding: '0.45rem 0.85rem', display: 'flex', alignItems: 'center', gap: '5px' }}
+                  title="Copiar texto da evolução"
+                >
+                  {copied ? <Check size={14} color="#16a34a" /> : <Copy size={14} />}
+                  <span>{copied ? 'Copiado' : 'Copiar'}</span>
+                </button>
+
                 <button 
                   type="button" 
                   className="btn btn-outline" 

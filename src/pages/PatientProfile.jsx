@@ -41,6 +41,7 @@ import {
   FileCheck,
   Eye,
   Copy,
+  Check,
   Trophy,
   Syringe,
   ClipboardList
@@ -147,6 +148,7 @@ export default function PatientProfile() {
   const [isEvolutionModalOpen, setIsEvolutionModalOpen] = useState(false);
   const [evolutionToEdit, setEvolutionToEdit] = useState(null);
   const [evolutionToPrint, setEvolutionToPrint] = useState(null);
+  const [copiedEvoId, setCopiedEvoId] = useState(null);
 
   // Modais de Receituário / Emissão de Receitas
   const [isPrescriptionModalOpen, setIsPrescriptionModalOpen] = useState(false);
@@ -323,6 +325,40 @@ export default function PatientProfile() {
     setTimeout(async () => {
       await printElement('printable-single-evolution-area', `NexAi-NEFRO - Evolucao - ${patient?.nome || 'Paciente'}`);
     }, 150);
+  };
+
+  const handleCopyEvolutionText = async (evo) => {
+    const textToCopy = evo?.condutaClinica || '';
+    if (!textToCopy.trim()) return;
+
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(textToCopy);
+      } else {
+        const textArea = document.createElement('textarea');
+        textArea.value = textToCopy;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+      }
+      setCopiedEvoId(evo.id);
+      setTimeout(() => setCopiedEvoId(null), 3000);
+    } catch (err) {
+      console.warn("Falha ao copiar evolução:", err);
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = textToCopy;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        setCopiedEvoId(evo.id);
+        setTimeout(() => setCopiedEvoId(null), 3000);
+      } catch (fallbackErr) {
+        console.error("Falha fatal no fallback de cópia:", fallbackErr);
+      }
+    }
   };
 
   // Ações de LME (Alto Custo SUS)
@@ -2961,6 +2997,26 @@ export default function PatientProfile() {
                     </div>
 
                     <div className="flex items-center gap-1.5">
+                      <button 
+                        type="button"
+                        className="btn btn-outline" 
+                        onClick={() => handleCopyEvolutionText(evo)}
+                        style={{ 
+                          padding: '0.25rem 0.55rem', 
+                          fontSize: '0.72rem',
+                          color: copiedEvoId === evo.id ? '#15803d' : '#334155',
+                          borderColor: copiedEvoId === evo.id ? '#86efac' : '#cbd5e1',
+                          background: copiedEvoId === evo.id ? '#f0fdf4' : '#ffffff',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontWeight: '600'
+                        }}
+                        title="Copiar texto da evolução para o prontuário da clínica"
+                      >
+                        {copiedEvoId === evo.id ? <Check size={12} color="#16a34a" /> : <Copy size={12} />}
+                        <span>{copiedEvoId === evo.id ? 'Copiado' : 'Copiar'}</span>
+                      </button>
                       <button 
                         type="button"
                         className="btn btn-outline" 
