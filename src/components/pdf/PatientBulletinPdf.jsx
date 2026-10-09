@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Svg, Path, Circle } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Svg, Path, Circle, Image } from '@react-pdf/renderer';
 
 /**
  * Utilitários de higienização de strings para o motor de PDF (Helvetica)
@@ -202,6 +202,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
+  },
+  logo: {
+    maxHeight: 38,
+    maxWidth: 90,
+    objectFit: 'contain',
+    marginRight: 10
   },
   headerLeft: {
     flex: 1
@@ -595,17 +601,22 @@ export default function PatientBulletinPdf({
         
         {/* ================= 1. CABEÇALHO IDÊNTICO À TELA ================= */}
         <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <View style={styles.clinicRow}>
-              <Text style={styles.clinicName}>{clinica.toUpperCase()}</Text>
-              <View style={styles.pillBadge}>
-                <Text style={styles.pillBadgeText}>Boletim Nefrológico</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+            {doctorInfo?.logoUrl ? (
+              <Image src={doctorInfo.logoUrl} style={styles.logo} />
+            ) : null}
+            <View style={styles.headerLeft}>
+              <View style={styles.clinicRow}>
+                <Text style={styles.clinicName}>{clinica.toUpperCase()}</Text>
+                <View style={styles.pillBadge}>
+                  <Text style={styles.pillBadgeText}>Boletim Nefrológico</Text>
+                </View>
               </View>
+              <Text style={styles.docTitle}>Boletim de Saúde</Text>
+              <Text style={styles.patientNameRow}>
+                Paciente: <Text style={{ fontWeight: 'bold', color: '#0f172a' }}>{pacienteNome}</Text>
+              </Text>
             </View>
-            <Text style={styles.docTitle}>Boletim de Saúde</Text>
-            <Text style={styles.patientNameRow}>
-              Paciente: <Text style={{ fontWeight: 'bold', color: '#0f172a' }}>{pacienteNome}</Text>
-            </Text>
           </View>
 
           <View style={styles.headerRight}>

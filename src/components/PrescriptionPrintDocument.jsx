@@ -84,13 +84,22 @@ export default function PrescriptionPrintDocument({
       {/* ================= BLOCO SUPERIOR: CABEÇALHO, PACIENTE E MEDICAMENTOS ================= */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {/* ================= CABEÇALHO DA CLÍNICA ================= */}
-        <div style={{ borderBottom: '2px solid #1e3a8a', paddingBottom: '8px', marginBottom: '12px' }}>
-          <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e3a8a', letterSpacing: '0.4px', textTransform: 'uppercase' }}>
-            {clinicaNome}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #1e3a8a', paddingBottom: '8px', marginBottom: '12px' }}>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#1e3a8a', letterSpacing: '0.4px', textTransform: 'uppercase' }}>
+              {clinicaNome}
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>
+              {enderecoClinica} • {doctorEspecialidade}
+            </div>
           </div>
-          <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '2px' }}>
-            {enderecoClinica} • {doctorEspecialidade}
-          </div>
+          {(docInfo.logoUrl || doctorInfo?.logoUrl) && (
+            <img 
+              src={docInfo.logoUrl || doctorInfo?.logoUrl} 
+              alt="Logomarca Médica" 
+              style={{ maxHeight: '48px', maxWidth: '120px', objectFit: 'contain', marginLeft: '16px' }} 
+            />
+          )}
         </div>
 
         {/* ================= TÍTULO DO DOCUMENTO ================= */}

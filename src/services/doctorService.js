@@ -22,6 +22,7 @@ export const DEFAULT_DOCTORS = [
     hospitalVinculo: "Hospital Santa Casa",
     unidadeDialise: "Unidade de Hemodiálise Renalis",
     bio: "Coordenador Clínico de Terapia Renal com foco em adequação dialítica (Kt/V), vigilância de acessos vasculares (FAV/Permcath) e controle de distúrbio mineral ósseo e anemia.",
+    logoUrl: "",
     statusLicenca: "Ativo",
     tipoConta: "Médico Assinante",
     plano: "Profissional Ilimitado",
@@ -163,6 +164,21 @@ export async function saveDoctorProfile(doctorId, data) {
   
   await setDoc(docRef, updatedData, { merge: true });
   return updatedData;
+}
+
+/**
+ * Atualiza especificamente a logomarca do médico no Firestore
+ * @param {string} doctorId - ID do médico
+ * @param {string} logoUrl - URL ou Base64 da logomarca
+ */
+export async function saveDoctorLogo(doctorId, logoUrl) {
+  if (!db) throw new Error("Firestore não inicializado");
+  const docRef = doc(db, DOCTORS_COLLECTION, doctorId);
+  await updateDoc(docRef, {
+    logoUrl: logoUrl || "",
+    atualizadoEm: new Date().toISOString()
+  });
+  return { logoUrl: logoUrl || "" };
 }
 
 /**

@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.109",
+    "date": "09/10/2026",
+    "title": "feat: logomarca medica no perfil com emissao em relatorios PDF e planilhas Ex...",
+    "highlights": [
+      "✨ feat: logomarca medica no perfil com emissao em relatorios PDF e planilhas Excel exceto LME"
+    ]
+  },
+  {
     "version": "1.1.108",
     "date": "08/10/2026",
     "title": "feat: modulo consultorio saas fase 1 com agenda medica e controle no painel a...",

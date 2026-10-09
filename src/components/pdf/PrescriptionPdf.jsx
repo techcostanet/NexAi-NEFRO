@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { safeFormatDateExtenso } from '../../utils/dateUtils';
 
 const styles = StyleSheet.create({
@@ -18,7 +18,19 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1.5,
     borderBottomColor: '#1e3a8a',
     paddingBottom: 8,
-    marginBottom: 10
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  headerTextCol: {
+    flex: 1
+  },
+  logo: {
+    maxHeight: 46,
+    maxWidth: 120,
+    objectFit: 'contain',
+    marginLeft: 12
   },
   clinicName: {
     fontSize: 14,
@@ -246,8 +258,13 @@ export default function PrescriptionPdf({
       <Page size="A4" style={styles.page}>
         {/* Cabeçalho */}
         <View style={styles.header}>
-          <Text style={styles.clinicName}>{clinicaNome.toUpperCase()}</Text>
-          <Text style={styles.clinicSub}>{enderecoClinica} • {doctorEspecialidade}</Text>
+          <View style={styles.headerTextCol}>
+            <Text style={styles.clinicName}>{clinicaNome.toUpperCase()}</Text>
+            <Text style={styles.clinicSub}>{enderecoClinica} • {doctorEspecialidade}</Text>
+          </View>
+          {(docInfo.logoUrl || doctorInfo?.logoUrl) ? (
+            <Image src={docInfo.logoUrl || doctorInfo?.logoUrl} style={styles.logo} />
+          ) : null}
         </View>
 
         {/* Título do Documento */}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { safeFormatDate } from '../../utils/dateUtils.js';
 import { normalizeMedicamentosList } from '../../data/dialysisMedications.js';
 
@@ -32,6 +32,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
+  },
+  bannerLogo: {
+    maxHeight: 34,
+    maxWidth: 90,
+    objectFit: 'contain',
+    backgroundColor: '#ffffff',
+    padding: 2,
+    borderRadius: 3,
+    marginRight: 8
   },
   headerBrand: {
     color: '#ffffff',
@@ -226,9 +235,14 @@ export default function SystemExportPdf({
       {/* ==================================================== */}
       <Page orientation="landscape" size="A4" style={styles.page}>
         <View style={styles.headerBanner}>
-          <View>
-            <Text style={styles.headerBrand}>NexAi-NEFRO • PLATAFORMA DE GESTÃO CLÍNICA NEFROLÓGICA</Text>
-            <Text style={styles.headerSubtitle}>RELATÓRIO OFICIAL DE PORTABILIDADE E BACKUP DE DADOS CLÍNICOS</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {doctor.logoUrl && (
+              <Image src={doctor.logoUrl} style={styles.bannerLogo} />
+            )}
+            <View>
+              <Text style={styles.headerBrand}>NexAi-NEFRO • PLATAFORMA DE GESTÃO CLÍNICA NEFROLÓGICA</Text>
+              <Text style={styles.headerSubtitle}>RELATÓRIO OFICIAL DE PORTABILIDADE E BACKUP DE DADOS CLÍNICOS</Text>
+            </View>
           </View>
           <View style={styles.headerMeta}>
             <Text style={styles.headerMetaText}>PORTABILIDADE AUTORIZADA</Text>
@@ -339,9 +353,14 @@ export default function SystemExportPdf({
       {activeModules.pacientes && (
         <Page orientation="landscape" size="A4" style={styles.page}>
           <View style={styles.headerBanner}>
-            <View>
-              <Text style={styles.headerBrand}>NexAi-NEFRO • CENSO CADASTRAL E PRONTUÁRIOS NEFROLÓGICOS</Text>
-              <Text style={styles.headerSubtitle}>Mapeamento de pacientes, convênios, escalas dialíticas e acessos vasculares</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              {doctor.logoUrl && (
+                <Image src={doctor.logoUrl} style={styles.bannerLogo} />
+              )}
+              <View>
+                <Text style={styles.headerBrand}>NexAi-NEFRO • CENSO CADASTRAL E PRONTUÁRIOS NEFROLÓGICOS</Text>
+                <Text style={styles.headerSubtitle}>Mapeamento de pacientes, convênios, escalas dialíticas e acessos vasculares</Text>
+              </View>
             </View>
             <View style={styles.headerMeta}>
               <Text style={styles.headerMetaText}>TOTAL: {patients.length} PACIENTES</Text>

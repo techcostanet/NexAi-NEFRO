@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, Svg, Path, Circle } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Svg, Path, Circle, Image } from '@react-pdf/renderer';
 import { GOAL_STATUS } from '../../services/patientEducationService';
 import { getVisualDataForCard } from '../patientBulletin/bulletinVisualCatalog';
 
@@ -231,6 +231,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'
+  },
+  logo: {
+    maxHeight: 38,
+    maxWidth: 90,
+    objectFit: 'contain',
+    marginRight: 10
   },
   headerLeft: {
     flex: 1
@@ -607,16 +613,21 @@ export default function PatientBulletinVisualPdf({
         
         {/* CABEÇALHO */}
         <View style={styles.header}>
-          <View style={styles.headerLeft}>
-            <View style={styles.clinicRow}>
-              <Text style={styles.clinicName}>{doctorClinica.toUpperCase()}</Text>
-              <View style={styles.pillBadge}>
-                <Text style={styles.pillBadgeText}>Boletim Ilustrado</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+            {doctorInfo?.logoUrl ? (
+              <Image src={doctorInfo.logoUrl} style={styles.logo} />
+            ) : null}
+            <View style={styles.headerLeft}>
+              <View style={styles.clinicRow}>
+                <Text style={styles.clinicName}>{doctorClinica.toUpperCase()}</Text>
+                <View style={styles.pillBadge}>
+                  <Text style={styles.pillBadgeText}>Boletim Ilustrado</Text>
+                </View>
               </View>
+              <Text style={styles.patientNameRow}>
+                Paciente: {cleanPdfText(pacienteNome)}
+              </Text>
             </View>
-            <Text style={styles.patientNameRow}>
-              Paciente: {cleanPdfText(pacienteNome)}
-            </Text>
           </View>
 
           <View style={styles.headerRight}>

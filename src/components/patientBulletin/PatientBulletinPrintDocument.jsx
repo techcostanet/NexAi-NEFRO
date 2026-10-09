@@ -120,20 +120,29 @@ export default function PatientBulletinPrintDocument({
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '13px', fontWeight: '800', color: '#1e40af', letterSpacing: '0.5px' }}>
-                {doctorClinica.toUpperCase()}
-              </span>
-              <span style={{ fontSize: '10px', background: '#dbeafe', color: '#1e40af', padding: '1px 6px', borderRadius: '8px', fontWeight: 'bold' }}>
-                Boletim Nefrológico
-              </span>
-            </div>
-            <h1 style={{ margin: '2px 0 0 0', fontSize: '18px', fontWeight: '900', color: '#0f172a', letterSpacing: '-0.3px' }}>
-              Boletim de Saúde
-            </h1>
-            <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px' }}>
-              Paciente: <strong style={{ color: '#0f172a', fontSize: '13px' }}>{pacienteNome}</strong>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {doctorInfo?.logoUrl && (
+              <img 
+                src={doctorInfo.logoUrl} 
+                alt="Logomarca Médica" 
+                style={{ maxHeight: '44px', maxWidth: '100px', objectFit: 'contain' }} 
+              />
+            )}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '13px', fontWeight: '800', color: '#1e40af', letterSpacing: '0.5px' }}>
+                  {doctorClinica.toUpperCase()}
+                </span>
+                <span style={{ fontSize: '10px', background: '#dbeafe', color: '#1e40af', padding: '1px 6px', borderRadius: '8px', fontWeight: 'bold' }}>
+                  Boletim Nefrológico
+                </span>
+              </div>
+              <h1 style={{ margin: '2px 0 0 0', fontSize: '18px', fontWeight: '900', color: '#0f172a', letterSpacing: '-0.3px' }}>
+                Boletim de Saúde
+              </h1>
+              <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px' }}>
+                Paciente: <strong style={{ color: '#0f172a', fontSize: '13px' }}>{pacienteNome}</strong>
+              </div>
             </div>
           </div>
 

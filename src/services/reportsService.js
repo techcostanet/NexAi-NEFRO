@@ -1,4 +1,6 @@
 import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import { resolveImageForExcel, addDoctorLogoToExcelSheet, saveWorkbookBrowser } from '../utils/excelLogoUtils.js';
 import { getAnticoagulacaoInfo } from './patientService.js';
 import { getLmeExpirationStatus } from './lmeService.js';
 
@@ -1839,13 +1841,166 @@ export function generateReportData(reportId, filteredPatients = [], auditLogs = 
 
 /**
  * Exporta o relatório filtrado diretamente para uma planilha Excel (.xlsx) estruturada
+ * com incorporação da logomarca oficial do médico nefrologista
  */
-export function exportReportToExcel(report, rows = [], kpis = [], metadata = {}) {
+export async function exportReportToExcel(report, rows = [], kpis = [], metadata = {}) {
   const doctorName = metadata.doctorName || 'Médico Nefrologista';
   const doctorCrm = metadata.doctorCrm ? `CRM/${metadata.doctorUf || 'SP'} ${metadata.doctorCrm}` : '';
   const emissionDate = new Date().toLocaleString('pt-BR');
+  const cleanId = (report.id || 'relatorio').replace(/_/g, '-');
+  const dateStamp = new Date().toISOString().slice(0, 10);
+  const fileName = `relatorio-${cleanId}-${dateStamp}.xlsx`;
 
-  // Cabeçalho institucional do Excel
+  try {
+    const wb = new ExcelJS.Workbook();
+    wb.creator = 'NexAi-NEFRO';
+    wb.lastModifiedBy = doctorName;
+    wb.created = new Date();
+    wb.modified = new Date();
+
+    const safeSheetTitle = (report.title || 'Relatório').slice(0, 31).replace(/[\\/?*\[\]:]/g, ' ');
+    const ws = wb.addWorksheet(safeSheetTitle, {
+      views: [{ showGridLines: true }]
+    });
+
+    const hasLogo = Boolean(metadata.doctorLogo);
+    let logoData = null;
+    if (hasLogo) {
+      logoData = await resolveImageForExcel(metadata.doctorLogo);
+    }
+
+    let currentRow = 1;
+
+    // Se houver logomarca do médico, insere no topo
+    if (logoData) {
+      ws.getRow(1).height = 48;
+      addDoctorLogoToExcelSheet(wb, ws, logoData, {
+        col: 0.1,
+        row: 0.1,
+        width: 140,
+        height: 44
+      });
+      currentRow = 2;
+    }
+
+    // Título institucional
+    const brandRow = ws.getRow(currentRow++);
+    brandRow.getCell(1).value = 'Nex-Ai.NEFRO — PLATAFORMA ESPECIALIZADA EM GESTÃO CLÍNICA NEFROLÓGICA';
+    brandRow.getCell(1).font = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FF0F172A' } };
+
+    // Título do Relatório
+    const titleRow = ws.getRow(currentRow++);
+    titleRow.getCell(1).value = report.title.toUpperCase();
+    titleRow.getCell(1).font = { name: 'Calibri', size: 13, bold: true, color: { argb: 'FF0284C7' } };
+
+    // Metadados de Emissão
+    const metaRow = ws.getRow(currentRow++);
+    metaRow.getCell(1).value = `Emitido em: ${emissionDate}   •   Médico: ${doctorName} ${doctorCrm}   •   Unidade: ${metadata.clinica || 'Geral'}`;
+    metaRow.getCell(1).font = { name: 'Calibri', size: 9.5, italic: true, color: { argb: 'FF475569' } };
+
+    // Filtros
+    const filterRow = ws.getRow(currentRow++);
+    filterRow.getCell(1).value = `Filtros: ${metadata.filtersDesc || 'Todos os registros'}`;
+    filterRow.getCell(1).font = { name: 'Calibri', size: 9, color: { argb: 'FF64748B' } };
+
+    // Linha de respiro
+    currentRow++;
+
+    // Bloco de KPIs se existirem
+    if (kpis && kpis.length > 0) {
+      const kpiHeaderRow = ws.getRow(currentRow++);
+      kpiHeaderRow.getCell(1).value = 'RESUMO CLÍNICO / INDICADORES:';
+      kpiHeaderRow.getCell(1).font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FF0369A1' } };
+
+      const kpiLabels = ws.getRow(currentRow++);
+      const kpiValues = ws.getRow(currentRow++);
+      kpiLabels.height = 18;
+      kpiValues.height = 22;
+
+      kpis.forEach((k, i) => {
+        const colIdx = i + 1;
+        const labelCell = kpiLabels.getCell(colIdx);
+        labelCell.value = k.label;
+        labelCell.font = { name: 'Calibri', size: 9, bold: true, color: { argb: 'FF334155' } };
+        labelCell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFF1F5F9' }
+        };
+        labelCell.alignment = { horizontal: 'center', vertical: 'middle' };
+
+        const valCell = kpiValues.getCell(colIdx);
+        valCell.value = k.value;
+        valCell.font = { name: 'Calibri', size: 11, bold: true, color: { argb: 'FF0284C7' } };
+        valCell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FFF8FAFC' }
+        };
+        valCell.alignment = { horizontal: 'center', vertical: 'middle' };
+      });
+
+      currentRow++; // Respiro pós KPI
+    }
+
+    // Cabeçalho da Tabela
+    const tableHeaderRow = ws.getRow(currentRow++);
+    tableHeaderRow.height = 24;
+    report.columns.forEach((colDef, idx) => {
+      const cell = tableHeaderRow.getCell(idx + 1);
+      cell.value = colDef.header;
+      cell.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF0284C7' }
+      };
+      cell.alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+      cell.border = {
+        top: { style: 'thin', color: { argb: 'FF0284C7' } },
+        bottom: { style: 'medium', color: { argb: 'FF0369A1' } }
+      };
+    });
+
+    // Linhas com dados
+    rows.forEach((r, rIdx) => {
+      const dataRow = ws.getRow(currentRow++);
+      dataRow.height = 20;
+      const isEven = rIdx % 2 === 0;
+
+      report.columns.forEach((colDef, cIdx) => {
+        const cell = dataRow.getCell(cIdx + 1);
+        const rawVal = r[colDef.id] ?? '';
+        cell.value = rawVal;
+        cell.font = { name: 'Calibri', size: 9.5, color: { argb: 'FF1E293B' } };
+        cell.alignment = { vertical: 'middle', horizontal: typeof rawVal === 'number' ? 'right' : 'left' };
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: isEven ? 'FFFFFFFF' : 'FFF8FAFC' }
+        };
+        cell.border = {
+          bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+        };
+      });
+    });
+
+    // Auto-largura de colunas
+    report.columns.forEach((colDef, idx) => {
+      const col = ws.getColumn(idx + 1);
+      const headerLen = colDef.header ? colDef.header.length : 10;
+      const baseWidth = colDef.width ? Math.round(colDef.width * 0.95) : 18;
+      col.width = Math.max(baseWidth, headerLen + 5);
+    });
+
+    const buffer = await wb.xlsx.writeBuffer();
+    saveWorkbookBrowser(buffer, fileName);
+    return;
+  } catch (excelJsError) {
+    console.warn('[reportsService] Erro ao exportar com ExcelJS, aplicando fallback SheetJS:', excelJsError);
+  }
+
+  // Fallback seguro via SheetJS
   const aoa = [
     ['Nex-Ai.NEFRO — PLATAFORMA ESPECIALIZADA EM GESTÃO CLÍNICA NEFROLÓGICA'],
     [report.title.toUpperCase()],
@@ -1854,7 +2009,6 @@ export function exportReportToExcel(report, rows = [], kpis = [], metadata = {})
     []
   ];
 
-  // Bloco de KPIs se existirem
   if (kpis && kpis.length > 0) {
     aoa.push(['RESUMO CLÍNICO / INDICADORES:']);
     const kpiRow1 = kpis.map(k => k.label);
@@ -1864,31 +2018,20 @@ export function exportReportToExcel(report, rows = [], kpis = [], metadata = {})
     aoa.push([]);
   }
 
-  // Cabeçalhos das Colunas
   const headerCols = report.columns.map(c => c.header);
   aoa.push(headerCols);
 
-  // Linhas com os dados
   rows.forEach(r => {
     const rowData = report.columns.map(c => r[c.id] ?? '');
     aoa.push(rowData);
   });
 
-  // Criar planilha
   const ws = XLSX.utils.aoa_to_sheet(aoa);
-
-  // Definir larguras de colunas
   ws['!cols'] = report.columns.map(c => ({
     wch: Math.max((c.width || 18), (c.header.length + 3))
   }));
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Relatório');
-
-  // Gerar nome de arquivo amigável e limpo
-  const cleanId = report.id.replace(/_/g, '-');
-  const dateStamp = new Date().toISOString().slice(0, 10);
-  const fileName = `relatorio-${cleanId}-${dateStamp}.xlsx`;
-
   XLSX.writeFile(wb, fileName);
 }

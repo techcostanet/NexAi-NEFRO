@@ -163,7 +163,7 @@ export default function ReportsCenterModal({
   }, [filters]);
 
   // Exportação para Excel (.xlsx)
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     const descParts = [];
     if (filters.unidade !== 'todos') descParts.push(`Unidade: ${filters.unidade}`);
     if (filters.turno !== 'todos') descParts.push(`Turno: ${filters.turno}`);
@@ -176,10 +176,11 @@ export default function ReportsCenterModal({
 
     const filtersDesc = descParts.length > 0 ? descParts.join(' • ') : 'Todos os registros';
 
-    exportReportToExcel(currentReport, rows, kpis, {
+    await exportReportToExcel(currentReport, rows, kpis, {
       doctorName: doctor.nome,
       doctorCrm: doctor.crm,
       doctorUf: doctor.ufCrm,
+      doctorLogo: doctor.logoUrl,
       clinica: filters.unidade !== 'todos' ? filters.unidade : doctor.clinicaPrincipal,
       filtersDesc
     });

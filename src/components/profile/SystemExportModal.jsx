@@ -131,7 +131,7 @@ export default function SystemExportModal({
     try {
       setIsExportingExcel(true);
       setFeedback(null);
-      const res = exportSystemToExcel({
+      const res = await exportSystemToExcel({
         patients: finalPatientsToExport,
         doctor,
         locais,

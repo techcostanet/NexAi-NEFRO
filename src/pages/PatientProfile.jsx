@@ -3507,13 +3507,22 @@ export default function PatientProfile() {
 
             {/* Documento Timbrado */}
             <div id="printable-transplant-report-doc" className="printable-transplant-area transplant-a4-sheet p-6 bg-white border border-slate-200 rounded-xl flex flex-col gap-5 text-sm" style={{ fontFamily: 'system-ui, sans-serif' }}>
-              <div className="border-b pb-4 flex justify-between items-start">
-                <div>
-                  <h1 className="text-xl font-black text-blue-900 tracking-tight">Nex-Ai.NEFRO</h1>
-                  <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider block">
-                    Sistema de Prontuário Eletrônico em Nuvem
-                  </span>
-                  <span className="text-xs text-slate-600">Unidade: {patient.clinica || 'Centro Nefrológico'} • Hospital: {patient.hospital || 'Hospital do Rim'}</span>
+              <div className="border-b pb-4 flex justify-between items-center">
+                <div className="flex items-center gap-3">
+                  {doctorInfo?.logoUrl && (
+                    <img 
+                      src={doctorInfo.logoUrl} 
+                      alt="Logomarca Médica" 
+                      style={{ maxHeight: '48px', maxWidth: '120px', objectFit: 'contain' }} 
+                    />
+                  )}
+                  <div>
+                    <h1 className="text-xl font-black text-blue-900 tracking-tight">Nex-Ai.NEFRO</h1>
+                    <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider block">
+                      Sistema de Prontuário Eletrônico em Nuvem
+                    </span>
+                    <span className="text-xs text-slate-600">Unidade: {patient.clinica || 'Centro Nefrológico'} • Hospital: {patient.hospital || 'Hospital do Rim'}</span>
+                  </div>
                 </div>
                 <div className="text-right text-xs text-slate-500">
                   <span>Data de Emissão: <strong>{new Date().toLocaleDateString('pt-BR')}</strong></span>

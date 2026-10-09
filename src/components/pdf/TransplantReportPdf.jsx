@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 import { safeFormatDate } from '../../utils/dateUtils';
 
 const styles = StyleSheet.create({
@@ -13,11 +13,17 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     borderBottomWidth: 1.5,
     borderBottomColor: '#1e3a8a',
     paddingBottom: 8,
     marginBottom: 10
+  },
+  logo: {
+    maxHeight: 44,
+    maxWidth: 100,
+    objectFit: 'contain',
+    marginRight: 10
   },
   brand: {
     fontSize: 14,
@@ -150,12 +156,17 @@ export default function TransplantReportPdf({
       <Page size="A4" style={styles.page}>
         {/* Topo */}
         <View style={styles.header}>
-          <View>
-            <Text style={styles.brand}>Nex-Ai.NEFRO</Text>
-            <Text style={styles.subBrand}>Prontuário Eletrônico em Nuvem</Text>
-            <Text style={{ fontSize: 7.5, color: '#475569', marginTop: 1 }}>
-              Unidade: {patient.clinica || 'Centro Nefrológico'} • Hospital: {patient.hospital || 'Hospital Vinculado'}
-            </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            {doctorInfo?.logoUrl ? (
+              <Image src={doctorInfo.logoUrl} style={styles.logo} />
+            ) : null}
+            <View>
+              <Text style={styles.brand}>Nex-Ai.NEFRO</Text>
+              <Text style={styles.subBrand}>Prontuário Eletrônico em Nuvem</Text>
+              <Text style={{ fontSize: 7.5, color: '#475569', marginTop: 1 }}>
+                Unidade: {patient.clinica || 'Centro Nefrológico'} • Hospital: {patient.hospital || 'Hospital Vinculado'}
+              </Text>
+            </View>
           </View>
           <View style={styles.emissionInfo}>
             <Text>Data: {dataEmissao}</Text>

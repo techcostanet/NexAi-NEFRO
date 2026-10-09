@@ -1,4 +1,6 @@
 import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
+import { resolveImageForExcel, addDoctorLogoToExcelSheet, saveWorkbookBrowser } from '../utils/excelLogoUtils.js';
 import React from 'react';
 import { normalizeMedicamentosList } from '../data/dialysisMedications.js';
 import { safeFormatDate } from '../utils/dateUtils.js';
@@ -135,10 +137,11 @@ export function prepareExportData({
 
 /**
  * Exporta os prontuários e registros em planilha Excel (.xlsx) estruturada multi-abas
+ * com incorporação da logomarca oficial do médico nefrologista
  */
-export function exportSystemToExcel(options = {}) {
+export async function exportSystemToExcel(options = {}) {
   const data = prepareExportData(options);
-  const { filteredPatients, doctor, locais, stats, scopeLabel, activeModules, emissionDate } = data;
+  const { filteredPatients, doctor, locais, stats, scope, scopeLabel, activeModules, emissionDate } = data;
 
   const wb = XLSX.utils.book_new();
   const dateFormatted = emissionDate.toLocaleString('pt-BR');
@@ -696,6 +699,83 @@ export function exportSystemToExcel(options = {}) {
   // Disparo do Download do Arquivo XLSX
   const cleanScope = scope === 'total' ? 'Integral' : 'Parcial';
   const fileName = `NexAi-NEFRO-Portabilidade-${cleanScope}-${dateStamp}.xlsx`;
+
+  try {
+    const excelWb = new ExcelJS.Workbook();
+    excelWb.creator = 'NexAi-NEFRO';
+    excelWb.lastModifiedBy = doctorName;
+    excelWb.created = new Date();
+
+    let logoData = null;
+    if (doctor.logoUrl) {
+      logoData = await resolveImageForExcel(doctor.logoUrl);
+    }
+
+    const sheetsToExport = [
+      { name: 'Resumo do Sistema', aoa: resumoAoa, hasLogo: true },
+      activeModules.locais ? { name: 'Locais de Atendimento', aoa: locaisAoa } : null,
+      activeModules.demografia ? { name: 'Prontuários e Demografia', aoa: demoAoa } : null,
+      activeModules.acessoPrescricao ? { name: 'Acesso e Prescrição HD', aoa: hdAoa } : null,
+      activeModules.laboratorio ? { name: 'Histórico Laboratorial', aoa: labsAoa } : null,
+      activeModules.medicamentos ? { name: 'Medicamentos em Uso', aoa: medsAoa } : null,
+      activeModules.lme ? { name: 'Laudos LME', aoa: lmeAoa } : null
+    ].filter(Boolean);
+
+    for (const sheetDef of sheetsToExport) {
+      const ws = excelWb.addWorksheet(sheetDef.name, {
+        views: [{ showGridLines: true }]
+      });
+
+      let startRow = 1;
+      if (sheetDef.hasLogo && logoData) {
+        ws.getRow(1).height = 48;
+        addDoctorLogoToExcelSheet(excelWb, ws, logoData, {
+          col: 0.1,
+          row: 0.1,
+          width: 140,
+          height: 44
+        });
+        startRow = 2;
+      }
+
+      sheetDef.aoa.forEach((rowArr) => {
+        const addedRow = ws.getRow(startRow++);
+        if (Array.isArray(rowArr)) {
+          rowArr.forEach((cellVal, cIdx) => {
+            const cell = addedRow.getCell(cIdx + 1);
+            cell.value = cellVal ?? '';
+            cell.font = { name: 'Calibri', size: 9.5 };
+          });
+        }
+      });
+
+      // Auto-largura de colunas
+      const colMaxLens = [];
+      sheetDef.aoa.forEach((rowArr) => {
+        if (!Array.isArray(rowArr)) return;
+        rowArr.forEach((cVal, cIdx) => {
+          const len = cVal ? String(cVal).length : 0;
+          colMaxLens[cIdx] = Math.max(colMaxLens[cIdx] || 12, len + 3);
+        });
+      });
+      colMaxLens.forEach((w, cIdx) => {
+        ws.getColumn(cIdx + 1).width = Math.min(Math.max(w, 12), 60);
+      });
+    }
+
+    const buffer = await excelWb.xlsx.writeBuffer();
+    saveWorkbookBrowser(buffer, fileName);
+
+    return {
+      success: true,
+      fileName,
+      totalPatients: filteredPatients.length
+    };
+  } catch (excelErr) {
+    console.warn('[systemExportService] Erro ao exportar com ExcelJS, executando fallback SheetJS:', excelErr);
+  }
+
+  // Fallback seguro via SheetJS
   XLSX.writeFile(wb, fileName);
 
   return {

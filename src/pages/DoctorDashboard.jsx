@@ -458,9 +458,17 @@ export default function DoctorDashboard() {
               gap: '6px',
               borderRadius: '10px'
             }}
-            title="Dados e locais de atendimento"
+            title="Dados, logomarca e locais de atendimento"
           >
-            <UserCog size={15} color="var(--primary)" />
+            {doctor?.logoUrl ? (
+              <img 
+                src={doctor.logoUrl} 
+                alt="Logo" 
+                style={{ width: '18px', height: '18px', borderRadius: '4px', objectFit: 'contain' }} 
+              />
+            ) : (
+              <UserCog size={15} color="var(--primary)" />
+            )}
             <span>Perfil</span>
           </button>
 

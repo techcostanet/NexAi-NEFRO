@@ -145,25 +145,33 @@ export default function PatientBulletinVisualDocument({
           justifyContent: 'space-between',
           alignItems: 'center'
         }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '13px', fontWeight: '900', color: '#1e40af', letterSpacing: '0.5px' }}>
-                {doctorClinica.toUpperCase()}
-              </span>
-              <span style={{ 
-                fontSize: '10px', 
-                background: '#dbeafe', 
-                color: '#1d4ed8', 
-                padding: '2px 8px', 
-                borderRadius: '12px', 
-                fontWeight: '800',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}>
-                <Sparkles size={11} color="#2563eb" /> Boletim Ilustrado
-              </span>
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {doctorInfo?.logoUrl && (
+              <img 
+                src={doctorInfo.logoUrl} 
+                alt="Logomarca Médica" 
+                style={{ maxHeight: '44px', maxWidth: '100px', objectFit: 'contain' }} 
+              />
+            )}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '13px', fontWeight: '900', color: '#1e40af', letterSpacing: '0.5px' }}>
+                  {doctorClinica.toUpperCase()}
+                </span>
+                <span style={{ 
+                  fontSize: '10px', 
+                  background: '#dbeafe', 
+                  color: '#1d4ed8', 
+                  padding: '2px 8px', 
+                  borderRadius: '12px', 
+                  fontWeight: '800',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}>
+                  <Sparkles size={11} color="#2563eb" /> Boletim Ilustrado
+                </span>
+              </div>
             
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginTop: '2px' }}>
               <span style={{ fontSize: '12px', color: '#475569', fontWeight: '600' }}>Paciente:</span>
@@ -172,8 +180,9 @@ export default function PatientBulletinVisualDocument({
               </h1>
             </div>
           </div>
+        </div>
 
-          <div style={{ textAlign: 'right' }}>
+        <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: '12px', fontWeight: '800', color: '#1e3a8a' }}>
               {mesFormatado}
             </div>

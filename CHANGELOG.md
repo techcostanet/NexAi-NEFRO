@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.109] - 2026-10-09
+### Alterações
+- feat: logomarca medica no perfil com emissao em relatorios PDF e planilhas Excel exceto LME
+
 ## [1.1.108] - 2026-10-08
 ### Alterações
 - feat: modulo consultorio saas fase 1 com agenda medica e controle no painel admin

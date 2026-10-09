@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
@@ -30,11 +30,15 @@ import {
   Database,
   FileSpreadsheet,
   FileText,
-  Download
+  Download,
+  Image as ImageIcon,
+  Upload,
+  ImagePlus
 } from 'lucide-react';
 import { 
   subscribeDoctorProfile, 
   saveDoctorProfile, 
+  saveDoctorLogo,
   addDoctorLocation, 
   updateDoctorLocation,
   toggleDoctorLocationStatus,
@@ -46,6 +50,7 @@ import SystemExportModal from '../components/profile/SystemExportModal';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { changeUserPassword, changeUserEmail } from '../services/authService';
+import { optimizeLogoImage } from '../utils/imageUtils';
 
 export default function DoctorProfile() {
   const navigate = useNavigate();
@@ -66,12 +71,15 @@ export default function DoctorProfile() {
     hospitalVinculo: '',
     unidadeDialise: '',
     bio: '',
+    logoUrl: '',
     locaisAtuacao: []
   });
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState(null);
+  const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const logoInputRef = useRef(null);
 
   // Estados para Troca de E-mail e Senha
   const [emailFormData, setEmailFormData] = useState({ novoEmail: '', senhaAtual: '' });
@@ -121,7 +129,7 @@ export default function DoctorProfile() {
   const handleQuickExportExcel = async () => {
     try {
       setIsQuickExportingExcel(true);
-      const res = exportSystemToExcel({
+      const res = await exportSystemToExcel({
         patients,
         doctor: profile,
         locais: profile.locaisAtuacao || [],
@@ -166,6 +174,58 @@ export default function DoctorProfile() {
 
   const handleChange = (field, value) => {
     setProfile(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleLogoFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploadingLogo(true);
+      const optimized = await optimizeLogoImage(file, 600, 300);
+      
+      await saveDoctorLogo(currentDoctorId, optimized.dataUrl);
+      setProfile(prev => ({ ...prev, logoUrl: optimized.dataUrl }));
+
+      setFeedbackMessage({
+        type: 'success',
+        text: 'Logomarca salva com sucesso no Firestore!'
+      });
+      setTimeout(() => setFeedbackMessage(null), 4000);
+    } catch (err) {
+      console.error(err);
+      setFeedbackMessage({
+        type: 'error',
+        text: err.message || 'Erro ao processar imagem da logomarca.'
+      });
+      setTimeout(() => setFeedbackMessage(null), 4000);
+    } finally {
+      setIsUploadingLogo(false);
+      if (logoInputRef.current) logoInputRef.current.value = '';
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    if (!window.confirm("Deseja realmente remover a logomarca do médico?")) return;
+    try {
+      setIsUploadingLogo(true);
+      await saveDoctorLogo(currentDoctorId, "");
+      setProfile(prev => ({ ...prev, logoUrl: "" }));
+      setFeedbackMessage({
+        type: 'success',
+        text: 'Logomarca removida com sucesso.'
+      });
+      setTimeout(() => setFeedbackMessage(null), 4000);
+    } catch (err) {
+      console.error(err);
+      setFeedbackMessage({
+        type: 'error',
+        text: 'Erro ao remover logomarca.'
+      });
+      setTimeout(() => setFeedbackMessage(null), 4000);
+    } finally {
+      setIsUploadingLogo(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -370,23 +430,47 @@ export default function DoctorProfile() {
 
       {/* Cartão de Resumo */}
       <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap' }}>
-        <div 
-          style={{ 
-            width: '68px', 
-            height: '68px', 
-            borderRadius: '50%', 
-            background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            color: 'white',
-            boxShadow: '0 8px 16px rgba(37, 99, 235, 0.25)',
-            fontSize: '1.5rem',
-            fontWeight: 'bold'
-          }}
-        >
-          {profile.nome ? profile.nome.replace('Dra. ', '').replace('Dr. ', '').charAt(0) : 'M'}
-        </div>
+        {profile.logoUrl ? (
+          <div 
+            style={{ 
+              width: '84px', 
+              height: '84px', 
+              borderRadius: '16px', 
+              background: '#ffffff', 
+              border: '2px solid rgba(37, 99, 235, 0.2)',
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              padding: '6px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+              overflow: 'hidden'
+            }}
+          >
+            <img 
+              src={profile.logoUrl} 
+              alt="Logomarca Médica" 
+              style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} 
+            />
+          </div>
+        ) : (
+          <div 
+            style={{ 
+              width: '68px', 
+              height: '68px', 
+              borderRadius: '50%', 
+              background: 'linear-gradient(135deg, #2563eb, #1d4ed8)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              color: 'white',
+              boxShadow: '0 8px 16px rgba(37, 99, 235, 0.25)',
+              fontSize: '1.5rem',
+              fontWeight: 'bold'
+            }}
+          >
+            {profile.nome ? profile.nome.replace('Dra. ', '').replace('Dr. ', '').charAt(0) : 'M'}
+          </div>
+        )}
         <div style={{ flex: '1 1 250px' }}>
           <h2 className="text-xl font-bold">{profile.nome || 'Médico Nefrologista'}</h2>
           <p className="text-muted text-sm" style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
@@ -411,6 +495,110 @@ export default function DoctorProfile() {
             </span>
           </div>
         </div>
+      </div>
+
+      {/* SEÇÃO: LOGOMARCA MÉDICA (IDENTIDADE VISUAL EM RELATÓRIOS E PLANILHAS EXCEL) */}
+      <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
+        <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
+          <div>
+            <h3 className="font-bold text-base flex items-center gap-2" style={{ color: 'var(--primary)' }}>
+              <ImageIcon size={18} /> Logomarca
+            </h3>
+            <p className="text-muted text-xs mt-0.5">
+              Aplicada automaticamente em todos os relatórios PDF e planilhas Excel (exceto LME)
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input 
+              ref={logoInputRef}
+              type="file" 
+              accept="image/png,image/jpeg,image/webp,image/svg+xml"
+              onChange={handleLogoFileChange}
+              style={{ display: 'none' }} 
+            />
+            
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => logoInputRef.current?.click()}
+              disabled={isUploadingLogo}
+              style={{ padding: '0.45rem 1rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+            >
+              {isUploadingLogo ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+              <span>{profile.logoUrl ? 'Alterar' : 'Upload'}</span>
+            </button>
+
+            {profile.logoUrl && (
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={handleRemoveLogo}
+                disabled={isUploadingLogo}
+                style={{ padding: '0.45rem 0.85rem', fontSize: '0.82rem', color: '#dc2626', borderColor: '#fca5a5' }}
+              >
+                <span>Remover</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Pré-visualização da Logomarca */}
+        {profile.logoUrl ? (
+          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1.25rem' }}>
+            <span style={{ fontSize: '0.72rem', fontWeight: '700', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '8px' }}>
+              Pré-visualização do Cabeçalho Timbrado
+            </span>
+            <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '8px', padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ maxHeight: '60px', maxWidth: '160px', display: 'flex', alignItems: 'center' }}>
+                  <img 
+                    src={profile.logoUrl} 
+                    alt="Logomarca Médica" 
+                    style={{ maxHeight: '56px', maxWidth: '150px', objectFit: 'contain' }} 
+                  />
+                </div>
+                <div style={{ borderLeft: '2px solid #e2e8f0', paddingLeft: '1rem' }}>
+                  <div style={{ fontWeight: '800', color: '#0f172a', fontSize: '0.95rem' }}>
+                    {profile.nome || 'Médico Nefrologista'}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: '#475569' }}>
+                    CRM {profile.crm || '---'}/{profile.ufCrm || 'UF'}{profile.rqe ? ` • RQE ${profile.rqe}` : ''}
+                  </div>
+                  <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                    {profile.clinicaPrincipal || 'Clínica de Hemodiálise e Nefrologia'}
+                  </div>
+                </div>
+              </div>
+              <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#166534', padding: '3px 8px', borderRadius: '10px', fontWeight: '600' }}>
+                Ativa em Relatórios e Excel
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div 
+            onClick={() => logoInputRef.current?.click()}
+            style={{ 
+              border: '2px dashed #cbd5e1', 
+              borderRadius: '12px', 
+              padding: '1.75rem 1rem', 
+              textAlign: 'center', 
+              background: '#f8fafc',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', borderRadius: '50%', background: '#eff6ff', marginBottom: '8px' }}>
+              <ImagePlus size={24} color="#2563eb" />
+            </div>
+            <div style={{ fontWeight: '600', color: '#1e293b', fontSize: '0.88rem' }}>
+              Adicionar Logomarca do Médico ou Clínica
+            </div>
+            <p style={{ color: '#64748b', fontSize: '0.75rem', marginTop: '2px' }}>
+              Clique aqui ou use o botão Upload acima (PNG com fundo transparente, JPG ou WebP)
+            </p>
+          </div>
+        )}
       </div>
 
       {/* SEÇÃO PRINCIPAL: LOCAIS DE ATUAÇÃO COM RT & CONTATOS */}

@@ -94,29 +94,43 @@ export default function ReportPrintDocument({
         paddingBottom: '10px',
         marginBottom: '12px'
       }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.5px' }}>
-              Nex-<span style={{ color: '#0284c7', fontWeight: '900' }}>Ai</span>.NEFRO
-            </span>
-            <span style={{
-              background: '#e0f2fe',
-              color: '#0369a1',
-              fontSize: '9px',
-              fontWeight: '700',
-              padding: '2px 6px',
-              borderRadius: '4px',
-              textTransform: 'uppercase'
-            }}>
-              Relatório Clínico
-            </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          {doctor.logoUrl ? (
+            <img
+              src={doctor.logoUrl}
+              alt="Logomarca"
+              style={{
+                maxHeight: '46px',
+                maxWidth: '130px',
+                objectFit: 'contain',
+                display: 'block'
+              }}
+            />
+          ) : null}
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', letterSpacing: '-0.5px' }}>
+                Nex-<span style={{ color: '#0284c7', fontWeight: '900' }}>Ai</span>.NEFRO
+              </span>
+              <span style={{
+                background: '#e0f2fe',
+                color: '#0369a1',
+                fontSize: '9px',
+                fontWeight: '700',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                textTransform: 'uppercase'
+              }}>
+                Relatório Clínico
+              </span>
+            </div>
+            <p style={{ margin: '2px 0 0 0', fontSize: '10px', color: '#64748b' }}>
+              Vigilância Nefrológica e Hemodiálise em Nuvem
+            </p>
+            <p style={{ margin: '2px 0 0 0', fontSize: '10px', color: '#334155', fontWeight: '600' }}>
+              {clinicaNome}
+            </p>
           </div>
-          <p style={{ margin: '2px 0 0 0', fontSize: '10px', color: '#64748b' }}>
-            Vigilância Nefrológica e Hemodiálise em Nuvem
-          </p>
-          <p style={{ margin: '2px 0 0 0', fontSize: '10px', color: '#334155', fontWeight: '600' }}>
-            {clinicaNome}
-          </p>
         </div>
 
         <div style={{ textAlign: 'right', fontSize: '10px', color: '#475569' }}>
