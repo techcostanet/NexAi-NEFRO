@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.111",
+    "date": "09/10/2026",
+    "title": "Personalização modular de evolução médica por médico e cockpit universal de a...",
+    "highlights": [
+      "✨ Personalização modular de evolução médica por médico e cockpit universal de auditoria"
+    ]
+  },
+  {
     "version": "1.1.110",
     "date": "09/10/2026",
     "title": "Evolução médica mensal inteligente com checklist de conformidade e impressão ...",

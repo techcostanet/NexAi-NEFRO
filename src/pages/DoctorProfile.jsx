@@ -33,7 +33,8 @@ import {
   Download,
   Image as ImageIcon,
   Upload,
-  ImagePlus
+  ImagePlus,
+  Sliders
 } from 'lucide-react';
 import { 
   subscribeDoctorProfile, 
@@ -47,6 +48,8 @@ import {
 import { subscribeToPatients } from '../services/patientService';
 import { exportSystemToExcel, exportSystemToPdf } from '../services/systemExportService';
 import SystemExportModal from '../components/profile/SystemExportModal';
+import EvolutionTemplateModal from '../components/EvolutionTemplateModal';
+import { DEFAULT_EVOLUTION_SECTIONS } from '../utils/monthlyEvolutionGenerator';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import { changeUserPassword, changeUserEmail } from '../services/authService';
@@ -80,6 +83,7 @@ export default function DoctorProfile() {
   const [feedbackMessage, setFeedbackMessage] = useState(null);
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const logoInputRef = useRef(null);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 
   // Estados para Troca de E-mail e Senha
   const [emailFormData, setEmailFormData] = useState({ novoEmail: '', senhaAtual: '' });
@@ -599,6 +603,52 @@ export default function DoctorProfile() {
             </p>
           </div>
         )}
+      </div>
+
+      {/* SEÇÃO: MODELO DE EVOLUÇÃO MÉDICA */}
+      <div className="glass-panel" style={{ padding: '1.5rem', marginBottom: '1.5rem' }}>
+        <div className="flex justify-between items-center flex-wrap gap-2">
+          <div>
+            <h3 className="font-bold text-base flex items-center gap-2" style={{ color: 'var(--primary)' }}>
+              <FileText size={18} /> Modelo de Evolução
+            </h3>
+            <p className="text-muted text-xs mt-0.5">
+              Personalize o título, as seções e a ordem das informações da evolução mensal
+            </p>
+          </div>
+
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setIsTemplateModalOpen(true)}
+            style={{ padding: '0.45rem 1rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
+          >
+            <Sliders size={14} />
+            <span>Configurar</span>
+          </button>
+        </div>
+
+        {/* Resumo da Configuração Atual */}
+        <div style={{ marginTop: '1rem', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '1rem' }}>
+          <div className="flex items-center justify-between mb-2">
+            <span style={{ fontSize: '0.78rem', fontWeight: '700', color: '#1e3a8a', textTransform: 'uppercase' }}>
+              {profile.configuracaoEvolucao?.titulo || 'EVOLUÇÃO MÉDICA MENSAL - HEMODIÁLISE CRÔNICA'}
+            </span>
+            <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#166534', padding: '2px 8px', borderRadius: '8px', fontWeight: '600' }}>
+              {profile.configuracaoEvolucao ? 'Personalizado' : 'Padrão SBN'}
+            </span>
+          </div>
+
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {(profile.configuracaoEvolucao?.secoes || DEFAULT_EVOLUTION_SECTIONS)
+              .filter(s => s.ativo !== false)
+              .map((s, idx) => (
+                <span key={s.id} style={{ fontSize: '0.72rem', background: '#ffffff', border: '1px solid #cbd5e1', color: '#334155', padding: '3px 8px', borderRadius: '6px', fontWeight: '500' }}>
+                  {idx + 1}. {s.label}
+                </span>
+              ))}
+          </div>
+        </div>
       </div>
 
       {/* SEÇÃO PRINCIPAL: LOCAIS DE ATUAÇÃO COM RT & CONTATOS */}
@@ -1415,6 +1465,20 @@ export default function DoctorProfile() {
         doctor={profile}
         locais={locaisList}
       />
+
+      {/* MODAL DE CONFIGURAÇÃO DE EVOLUÇÃO MÉDICA */}
+      {isTemplateModalOpen && (
+        <EvolutionTemplateModal
+          isOpen={isTemplateModalOpen}
+          onClose={() => setIsTemplateModalOpen(false)}
+          doctorInfo={profile}
+          onSaved={(newConfig) => {
+            setProfile(prev => ({ ...prev, configuracaoEvolucao: newConfig }));
+            setFeedbackMessage({ type: 'success', text: 'Padrão de evolução atualizado com sucesso!' });
+            setTimeout(() => setFeedbackMessage(null), 4000);
+          }}
+        />
+      )}
     </div>
   );
 }

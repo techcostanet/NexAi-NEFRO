@@ -1,5 +1,5 @@
 import React from 'react';
-import { safeFormatDate, safeFormatDateExtenso } from '../utils/dateUtils';
+import { safeFormatDate } from '../utils/dateUtils';
 
 /**
  * Documento de Impressão A4 de Evolução Médica de Hemodiálise

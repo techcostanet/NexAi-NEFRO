@@ -182,6 +182,19 @@ export async function saveDoctorLogo(doctorId, logoUrl) {
 }
 
 /**
+ * Salva a configuração personalizada de seções e ordem da evolução médica do profissional no Cloud Firestore
+ */
+export async function saveDoctorEvolutionConfig(doctorId, configuracaoEvolucao) {
+  if (!db) throw new Error("Firestore não inicializado");
+  const docRef = doc(db, DOCTORS_COLLECTION, doctorId);
+  await updateDoc(docRef, {
+    configuracaoEvolucao,
+    atualizadoEm: new Date().toISOString()
+  });
+  return configuracaoEvolucao;
+}
+
+/**
  * Altera o status da licença médica com registro imutável na trilha de auditoria
  * @param {string} doctorId - ID do médico
  * @param {string} newStatus - 'Ativo' | 'Trial' | 'Suspenso' | 'Cancelado'

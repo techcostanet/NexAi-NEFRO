@@ -1,21 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, 
   Save, 
   FileText, 
-  Activity, 
-  AlertTriangle, 
-  Clock, 
-  User, 
   Loader2, 
   Sparkles, 
   Printer, 
   CheckCircle2, 
-  ShieldCheck 
+  Sliders
 } from 'lucide-react';
 import { savePatientEvolution, addPatientWeightRecord, getPatientById } from '../services/patientService';
 import { auditPatientEvolutionData, generateMonthlyEvolutionText } from '../utils/monthlyEvolutionGenerator';
 import EvolutionChecklistModal from './EvolutionChecklistModal';
+import EvolutionTemplateModal from './EvolutionTemplateModal';
 import EvolutionPrintDocument from './EvolutionPrintDocument';
 import { printElement } from '../utils/printUtils';
 
@@ -29,6 +26,7 @@ export default function EvolutionModal({
   onSaved 
 }) {
   const [currentPatient, setCurrentPatient] = useState(patient);
+  const [currentDoctorInfo, setCurrentDoctorInfo] = useState(doctorInfo);
   const [formData, setFormData] = useState({
     dataHora: '',
     tipoAtendimento: 'Hemodiálise',
@@ -48,6 +46,7 @@ export default function EvolutionModal({
   const [error, setError] = useState('');
   const [feedbackMsg, setFeedbackMsg] = useState('');
   const [isChecklistOpen, setIsChecklistOpen] = useState(false);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [auditResult, setAuditResult] = useState(null);
 
   // Sincroniza o paciente completo para alimentar o motor de evolução
@@ -62,6 +61,12 @@ export default function EvolutionModal({
       });
     }
   }, [patient, patientId, isOpen]);
+
+  useEffect(() => {
+    if (doctorInfo) {
+      setCurrentDoctorInfo(doctorInfo);
+    }
+  }, [doctorInfo]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -79,8 +84,8 @@ export default function EvolutionModal({
         ufRetirada: evolutionToEdit.ufRetirada || '',
         qbEfetivo: evolutionToEdit.qbEfetivo || '',
         condutaClinica: evolutionToEdit.condutaClinica || '',
-        medicoNome: evolutionToEdit.medicoNome || doctorInfo?.nome || 'Médico(a) Responsável',
-        medicoCrm: evolutionToEdit.medicoCrm || (doctorInfo?.crm ? `${doctorInfo.crm}/${doctorInfo?.ufCrm || 'SP'}` : '')
+        medicoNome: evolutionToEdit.medicoNome || currentDoctorInfo?.nome || 'Médico(a) Responsável',
+        medicoCrm: evolutionToEdit.medicoCrm || (currentDoctorInfo?.crm ? `${currentDoctorInfo.crm}/${currentDoctorInfo?.ufCrm || 'SP'}` : '')
       });
     } else {
       const now = new Date();
@@ -97,17 +102,18 @@ export default function EvolutionModal({
         ufRetirada: '2000',
         qbEfetivo: currentPatient?.acessoVascular?.fluxoSangue ? String(currentPatient.acessoVascular.fluxoSangue) : '300',
         condutaClinica: '',
-        medicoNome: doctorInfo?.nome || 'Médico(a) Responsável',
-        medicoCrm: doctorInfo?.crm ? `${doctorInfo.crm}/${doctorInfo.ufCrm || 'SP'}` : ''
+        medicoNome: currentDoctorInfo?.nome || 'Médico(a) Responsável',
+        medicoCrm: currentDoctorInfo?.crm ? `${currentDoctorInfo.crm}/${currentDoctorInfo.ufCrm || 'SP'}` : ''
       });
     }
     setError('');
     setFeedbackMsg('');
-  }, [evolutionToEdit, isOpen, doctorInfo, currentPatient]);
+  }, [evolutionToEdit, isOpen, currentDoctorInfo, currentPatient]);
 
   if (!isOpen) return null;
 
   // Disparo do Motor de Evolução com Auditoria Prévia
+  // SEMPRE abre o modal de auditoria / confirmação de parâmetros (mesmo se 100%)
   const handleGenerateEvolution = () => {
     setError('');
     if (!currentPatient) {
@@ -117,18 +123,12 @@ export default function EvolutionModal({
 
     const audit = auditPatientEvolutionData(currentPatient);
     setAuditResult(audit);
-
-    if (!audit.isComplete) {
-      // Abre o modal de checklist de dados faltantes (Quick Fill)
-      setIsChecklistOpen(true);
-    } else {
-      // Prontuário 100% completo: gera o texto imediatamente
-      executeGeneration(currentPatient);
-    }
+    setIsChecklistOpen(true);
   };
 
-  const executeGeneration = (targetPatient) => {
-    const generatedText = generateMonthlyEvolutionText(targetPatient, doctorInfo, {
+  const executeGeneration = (targetPatient, doctorOverride = null) => {
+    const docToUse = doctorOverride || currentDoctorInfo || doctorInfo;
+    const generatedText = generateMonthlyEvolutionText(targetPatient, docToUse, {
       qbEfetivo: formData.qbEfetivo,
       pesoSeco: targetPatient.pesoSeco
     });
@@ -151,6 +151,15 @@ export default function EvolutionModal({
     };
     setCurrentPatient(mergedPatient);
     executeGeneration(mergedPatient);
+  };
+
+  const handleDoctorConfigUpdated = (newConfig) => {
+    setCurrentDoctorInfo(prev => ({
+      ...(prev || {}),
+      configuracaoEvolucao: newConfig
+    }));
+    setFeedbackMsg('Padrão de evolução atualizado.');
+    setTimeout(() => setFeedbackMsg(''), 3500);
   };
 
   const handlePrint = async () => {
@@ -379,33 +388,56 @@ export default function EvolutionModal({
               </div>
             </div>
 
-            {/* Texto da Evolução e Conduta com Botão de Gerar */}
+            {/* Texto da Evolução e Conduta com Botões de Configurar e Gerar */}
             <div>
-              <div className="flex justify-between items-center mb-1.5">
+              <div className="flex justify-between items-center mb-1.5 flex-wrap gap-1">
                 <label className="text-xs font-semibold block text-slate-700">
                   Evolução Clínica *
                 </label>
-                <button 
-                  type="button" 
-                  onClick={handleGenerateEvolution}
-                  className="btn btn-outline"
-                  style={{
-                    padding: '0.3rem 0.75rem',
-                    fontSize: '0.75rem',
-                    color: '#2563eb',
-                    borderColor: '#bfdbfe',
-                    background: '#eff6ff',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px',
-                    fontWeight: '700',
-                    borderRadius: '8px'
-                  }}
-                  title="Audita prontuário e gera evolução mensal completa"
-                >
-                  <Sparkles size={14} color="#2563eb" />
-                  <span>Gerar</span>
-                </button>
+
+                <div className="flex items-center gap-1.5">
+                  <button 
+                    type="button" 
+                    onClick={() => setIsTemplateModalOpen(true)}
+                    className="btn btn-outline"
+                    style={{
+                      padding: '0.28rem 0.65rem',
+                      fontSize: '0.74rem',
+                      color: '#475569',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      fontWeight: '600',
+                      borderRadius: '8px'
+                    }}
+                    title="Personalizar seções e sequência da evolução"
+                  >
+                    <Sliders size={13} />
+                    <span>Configurar</span>
+                  </button>
+
+                  <button 
+                    type="button" 
+                    onClick={handleGenerateEvolution}
+                    className="btn btn-outline"
+                    style={{
+                      padding: '0.28rem 0.75rem',
+                      fontSize: '0.74rem',
+                      color: '#2563eb',
+                      borderColor: '#bfdbfe',
+                      background: '#eff6ff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      fontWeight: '700',
+                      borderRadius: '8px'
+                    }}
+                    title="Audita prontuário e abre revisão de parâmetros para gerar"
+                  >
+                    <Sparkles size={13} color="#2563eb" />
+                    <span>Gerar</span>
+                  </button>
+                </div>
               </div>
 
               <textarea 
@@ -461,7 +493,7 @@ export default function EvolutionModal({
                 </button>
                 <button type="submit" className="btn btn-primary" disabled={saving}>
                   {saving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-                  <span>{saving ? 'Salvando...' : 'Salvar'}</span>
+                  <span>{saving ? 'Gravando...' : 'Salvar'}</span>
                 </button>
               </div>
             </div>
@@ -469,14 +501,26 @@ export default function EvolutionModal({
         </div>
       </div>
 
-      {/* Modal de Auditoria e Preenchimento Rápido (Quick Fill) */}
+      {/* Modal de Auditoria e Preenchimento Rápido (Quick Fill / Revisão 100%) */}
       {isChecklistOpen && (
         <EvolutionChecklistModal 
           isOpen={isChecklistOpen}
           onClose={() => setIsChecklistOpen(false)}
           patient={currentPatient}
+          doctorInfo={currentDoctorInfo || doctorInfo}
           auditResult={auditResult}
           onComplete={handleChecklistCompleted}
+          onDoctorConfigUpdated={handleDoctorConfigUpdated}
+        />
+      )}
+
+      {/* Modal de Configuração do Modelo do Médico */}
+      {isTemplateModalOpen && (
+        <EvolutionTemplateModal
+          isOpen={isTemplateModalOpen}
+          onClose={() => setIsTemplateModalOpen(false)}
+          doctorInfo={currentDoctorInfo || doctorInfo}
+          onSaved={handleDoctorConfigUpdated}
         />
       )}
 
@@ -486,7 +530,7 @@ export default function EvolutionModal({
           <EvolutionPrintDocument 
             evolution={formData}
             patient={currentPatient || {}}
-            doctorInfo={doctorInfo}
+            doctorInfo={currentDoctorInfo || doctorInfo}
           />
         </div>
       </div>

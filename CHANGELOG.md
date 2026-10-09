@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.111] - 2026-10-09
+### Alterações
+- Personalização modular de evolução médica por médico e cockpit universal de auditoria
+
 ## [1.1.110] - 2026-10-09
 ### Alterações
 - Evolução médica mensal inteligente com checklist de conformidade e impressão formal A4
