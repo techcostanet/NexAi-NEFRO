@@ -23,6 +23,27 @@ function bumpVersion(currentVersion) {
   return parts.join('.');
 }
 
+function humanizeMessage(text) {
+  if (!text) return 'Melhorias contínuas e otimizações na plataforma';
+  let clean = text.trim();
+  clean = clean.replace(/^[✨🚀📌🛠️🔧⚡🎨🔒•\-\s]+/, '');
+  clean = clean
+    .replace(/^feat(?:\([^)]*\))?:\s*/i, '')
+    .replace(/^fix(?:\([^)]*\))?:\s*/i, '')
+    .replace(/^bugfix(?:\([^)]*\))?:\s*/i, '')
+    .replace(/^perf(?:\([^)]*\))?:\s*/i, '')
+    .replace(/^refactor(?:\([^)]*\))?:\s*/i, '')
+    .replace(/^style(?:\([^)]*\))?:\s*/i, '')
+    .replace(/^chore(?:\([^)]*\))?:\s*/i, '')
+    .replace(/^docs(?:\([^)]*\))?:\s*/i, '')
+    .replace(/^build(?:\([^)]*\))?:\s*/i, '')
+    .trim();
+  if (clean.length > 0) {
+    clean = clean.charAt(0).toUpperCase() + clean.slice(1);
+  }
+  return clean;
+}
+
 async function main() {
   const args = process.argv.slice(2);
   let explicitVersion = null;
@@ -39,7 +60,8 @@ async function main() {
     }
   }
 
-  const changeMessage = filteredArgs.join(' ') || 'Melhorias gerais e correções no sistema';
+  const rawChangeMessage = filteredArgs.join(' ') || 'Melhorias gerais e correções no sistema';
+  const changeMessage = humanizeMessage(rawChangeMessage);
 
   console.log('=====================================================');
   console.log('🚀 Nex-Ai.NEFRO - Pipeline Automático de Release');
@@ -104,11 +126,9 @@ async function main() {
       const datePt = `${day}/${month}/${year}`;
 
       // Divide mensagem em tópicos caso contenha separadores ou usa como destaque
-      const rawParts = changeMessage.split(/(?:;|\. )+/).map(p => p.trim()).filter(Boolean);
+      const rawParts = changeMessage.split(/(?:;|\. )+/).map(p => humanizeMessage(p.trim())).filter(Boolean);
       const title = rawParts[0].length > 80 ? rawParts[0].slice(0, 77) + '...' : rawParts[0];
-      const highlights = rawParts.length > 1 
-        ? rawParts.map(r => r.startsWith('•') || r.startsWith('-') ? r.replace(/^[-•]\s*/, '') : `✨ ${r}`)
-        : [`✨ ${changeMessage}`];
+      const highlights = rawParts.length > 0 ? rawParts : [changeMessage];
 
       const newVersionObject = {
         version: newVersion,

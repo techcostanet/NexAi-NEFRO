@@ -1,13 +1,15 @@
-import { doc, getDoc, setDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc, setDoc, onSnapshot, collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../config/firebase.js";
 import { logAuditEvent } from "./auditService.js";
 import { APP_VERSION } from "../version.js";
+import { humanizeChangeText, categorizeChange } from "../utils/versionUtils.js";
+import { SYSTEM_CHANGELOG } from "../data/versions.js";
 
 const SETTINGS_COLLECTION = "settings";
 const NOTIFICATION_DOC_ID = "release_notifications";
 
 export const DEFAULT_NOTIFICATION_SETTINGS = {
-  periodicidade: "manual", // 'manual' | 'release' | 'semanal' | 'mensal'
+  periodicidade: "release", // 'release' | 'manual' | 'semanal' | 'mensal'
   destinatariosModo: "todos", // 'todos' | 'teste'
   emailTeste: "",
   ultimoEnvio: null,
@@ -60,23 +62,35 @@ export async function saveNotificationSettings(newSettings) {
 }
 
 /**
- * Gera o template de e-mail HTML elegante e conciso com a identidade do NexAi-NEFRO
+ * Gera o template de e-mail HTML elegante, conciso e 100% humanizado
+ * Remove quaisquer jargões técnicos (feat, fix, etc.) e inclui badges visuais.
  */
 export function generateReleaseEmailHtml(versionData, doctorName = "Doutor(a)") {
   const version = versionData?.version || APP_VERSION;
-  const date = versionData?.date || new Date().toLocaleDateString('pt-BR');
-  const title = versionData?.title || "Atualização e Novas Funcionalidades";
-  const highlights = versionData?.highlights || [
+  const rawTitle = versionData?.title || "Atualização e Novas Funcionalidades";
+  const title = humanizeChangeText(rawTitle) || "Atualização e Novas Funcionalidades";
+
+  const rawHighlights = versionData?.highlights || [
     "Melhorias contínuas de usabilidade e agilidade clínica",
     "Aprimoramentos de segurança e estabilidade dos dados em nuvem"
   ];
 
-  const highlightsHtml = highlights.map(item => {
-    const cleanText = item.replace(/^[✨🚀📌•\s]+/, '').trim();
+  const highlightsHtml = rawHighlights.map(item => {
+    const rawText = typeof item === 'object' ? item.text || item.original : item;
+    const cleanText = humanizeChangeText(rawText);
+    const cat = categorizeChange(rawText);
+
     return `
-      <li style="margin-bottom: 8px; color: #334155; font-size: 14px; line-height: 1.5;">
-        <span style="color: #2563eb; font-weight: bold; margin-right: 6px;">●</span>${cleanText}
-      </li>
+      <tr style="border-bottom: 1px solid #f1f5f9;">
+        <td style="padding: 10px 0; vertical-align: top; width: 85px;">
+          <span style="display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background-color: ${cat.badgeBg}; border: 1px solid ${cat.badgeBorder}; color: ${cat.badgeColor};">
+            ${cat.label}
+          </span>
+        </td>
+        <td style="padding: 10px 0 10px 10px; vertical-align: top; color: #334155; font-size: 14px; line-height: 1.5;">
+          ${cleanText}
+        </td>
+      </tr>
     `;
   }).join('');
 
@@ -126,17 +140,17 @@ export function generateReleaseEmailHtml(versionData, doctorName = "Doutor(a)") 
               </h1>
 
               <p style="font-size: 14px; color: #475569; line-height: 1.6; margin: 0 0 20px 0;">
-                Preparamos novas melhorias para tornar sua rotina clínica ainda mais prática e precisa. Confira o resumo do que há de novo:
+                Preparamos novas atualizações para aprimorar sua rotina clínica e a gestão de pacientes. Confira os destaques desta versão:
               </p>
 
               <!-- Card de Destaques -->
               <div style="background-color: #f8fafc; border-left: 4px solid #2563eb; border-radius: 8px; padding: 18px 20px; margin-bottom: 24px;">
-                <div style="font-weight: 700; font-size: 14px; color: #1e293b; margin-bottom: 10px;">
+                <div style="font-weight: 700; font-size: 15px; color: #1e293b; margin-bottom: 12px;">
                   ${title}
                 </div>
-                <ul style="margin: 0; padding-left: 12px; list-style: none;">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse;">
                   ${highlightsHtml}
-                </ul>
+                </table>
               </div>
 
               <!-- Botão de Ação CTA -->
@@ -163,7 +177,7 @@ export function generateReleaseEmailHtml(versionData, doctorName = "Doutor(a)") 
                 Nex-Ai.NEFRO • Software de Gestão Médica em Terapia Renal Substitutiva
               </p>
               <p style="font-size: 11px; color: #94a3b8; margin: 0;">
-                Você recebe este e-mail conforme a periodicidade configurada em sua conta médica.
+                Você recebe este e-mail como médico cadastrado na plataforma NexAi-NEFRO.
               </p>
             </td>
           </tr>
@@ -178,7 +192,8 @@ export function generateReleaseEmailHtml(versionData, doctorName = "Doutor(a)") 
 }
 
 /**
- * Registra o disparo de notificação de versão para os clientes ou e-mail de teste
+ * Registra o disparo de notificação de versão para os clientes ou e-mail de teste.
+ * Enfileira as mensagens na coleção `mail` do Cloud Firestore para disparo real de e-mails.
  */
 export async function dispatchReleaseNotification({
   versionData,
@@ -191,18 +206,74 @@ export async function dispatchReleaseNotification({
   const docRef = doc(db, SETTINGS_COLLECTION, NOTIFICATION_DOC_ID);
 
   const version = versionData?.version || APP_VERSION;
-  const recipients = isTest 
-    ? [settings.emailTeste || adminEmail]
-    : targetDoctors.filter(d => d.id !== 'dr-marcelo').map(d => d.email).filter(Boolean);
+  const rawTitle = versionData?.title || `Atualização v${version}`;
+  const cleanTitle = humanizeChangeText(rawTitle);
 
+  // Destinatários: Todos os médicos cadastrados com e-mail válido (não bloqueia Dr. Marcelo ou outros médicos)
+  let recipientList = [];
+  if (isTest) {
+    const testEmail = (settings.emailTeste || adminEmail).trim();
+    if (testEmail) {
+      recipientList.push({
+        email: testEmail,
+        nome: "Administrador (Teste)"
+      });
+    }
+  } else {
+    // Produção: Todos os médicos com e-mail cadastrado e licença não cancelada
+    const emailSet = new Set();
+    targetDoctors.forEach(doc => {
+      const email = (doc.email || "").trim().toLowerCase();
+      if (email && email.includes("@") && doc.statusLicenca !== 'Cancelado' && !emailSet.has(email)) {
+        emailSet.add(email);
+        recipientList.push({
+          id: doc.id,
+          email,
+          nome: doc.nome || "Doutor(a)"
+        });
+      }
+    });
+  }
+
+  // 1. Enfileirar cada e-mail na coleção 'mail' do Cloud Firestore (Trigger Email)
+  const mailCollection = collection(db, "mail");
+  let emailsQueued = 0;
+
+  for (const recipient of recipientList) {
+    try {
+      const htmlContent = generateReleaseEmailHtml(versionData, recipient.nome);
+      await addDoc(mailCollection, {
+        to: [recipient.email],
+        message: {
+          subject: `NexAi-NEFRO v${version} • ${cleanTitle}`,
+          html: htmlContent,
+          text: `A versão v${version} do NexAi-NEFRO já está disponível na nuvem com novas melhorias e recursos.`
+        },
+        metadata: {
+          versao: version,
+          doctorId: recipient.id || null,
+          destinatarioNome: recipient.nome,
+          tipo: 'release_notification',
+          isTest: Boolean(isTest),
+          enviadoEm: new Date().toISOString()
+        }
+      });
+      emailsQueued++;
+    } catch (mailErr) {
+      console.warn(`Erro ao enfileirar e-mail na coleção 'mail' para ${recipient.email}:`, mailErr);
+    }
+  }
+
+  // 2. Registrar no documento de configurações do Firestore
   const novoEnvio = {
     id: `disp-${Date.now()}`,
     data: new Date().toISOString(),
     versao: version,
-    periodicidade: settings.periodicidade || "manual",
-    destinatariosCount: recipients.length,
-    destinatarios: recipients,
-    titulo: versionData?.title || `Atualização v${version}`,
+    periodicidade: settings.periodicidade || "release",
+    destinatariosCount: recipientList.length,
+    destinatarios: recipientList.map(r => r.email),
+    emailsQueued,
+    titulo: cleanTitle,
     modo: isTest ? 'Teste' : 'Produção',
     status: 'Concluído'
   };
@@ -214,18 +285,81 @@ export async function dispatchReleaseNotification({
     ...settings,
     ultimoEnvio: new Date().toISOString(),
     ultimaVersaoEnviada: version,
-    historicoEnvios: historico.slice(0, 30),
+    historicoEnvios: historico.slice(0, 50),
     atualizadoEm: new Date().toISOString()
   };
 
   await setDoc(docRef, updatedSettings, { merge: true });
 
+  // 3. Registrar auditoria de segurança
   await logAuditEvent({
     tipoAcao: 'RELEASE_EMAIL_DISPATCHED',
-    descricao: `Disparo de e-mail de novidades da versão v${version} (${isTest ? 'Teste para ' + recipients.join(', ') : recipients.length + ' médicos destinatários'}) - Periodicidade: ${settings.periodicidade}`,
+    descricao: `Disparo de e-mail de novidades da versão v${version} (${isTest ? 'Teste para ' + recipientList.map(r => r.email).join(', ') : recipientList.length + ' médicos cadastrados'})`,
     adminEmail,
     detalhes: novoEnvio
   });
 
-  return { success: true, count: recipients.length, details: novoEnvio };
+  return { 
+    success: true, 
+    count: recipientList.length, 
+    emailsQueued,
+    details: novoEnvio 
+  };
+}
+
+/**
+ * Verifica e executa o disparo automático para nova versão.
+ * Garante idempotência: só dispara se a versão atual do app (APP_VERSION)
+ * for diferente da última versão registrada no Firestore (ultimaVersaoEnviada).
+ */
+export async function checkAndAutoDispatchNewRelease({ adminEmail = "sistema@nexai-nefro.com" } = {}) {
+  if (!db) return { triggered: false, reason: "Sem conexão com Firestore" };
+
+  try {
+    const docRef = doc(db, SETTINGS_COLLECTION, NOTIFICATION_DOC_ID);
+    const snap = await getDoc(docRef);
+    const currentSettings = snap.exists() ? snap.data() : DEFAULT_NOTIFICATION_SETTINGS;
+
+    const periodicidade = currentSettings.periodicidade || "release";
+    const ultimaEnviada = currentSettings.ultimaVersaoEnviada;
+
+    // Se não estiver configurado para 'release' (instantâneo a cada versão) ou se já foi enviada
+    if (periodicidade !== "release") {
+      return { triggered: false, reason: `Periodicidade é '${periodicidade}' (não é automática por release)` };
+    }
+
+    if (ultimaEnviada === APP_VERSION) {
+      return { triggered: false, reason: `A versão v${APP_VERSION} já teve seu disparo executado anteriormente.` };
+    }
+
+    // Busca médicos cadastrados no Firestore
+    const doctorsSnap = await getDocs(collection(db, "doctors"));
+    const doctors = [];
+    doctorsSnap.forEach(d => {
+      doctors.push({ id: d.id, ...d.data() });
+    });
+
+    // Encontra os dados da versão atual
+    const versionItem = SYSTEM_CHANGELOG.find(v => v.version === APP_VERSION) || SYSTEM_CHANGELOG[0];
+
+    console.log(`🚀 [Automação] Detectada nova versão v${APP_VERSION} não notificada! Disparando e-mails para ${doctors.length} médicos cadastrados...`);
+
+    const result = await dispatchReleaseNotification({
+      versionData: versionItem,
+      targetDoctors: doctors,
+      settings: currentSettings,
+      adminEmail,
+      isTest: false
+    });
+
+    return { 
+      triggered: true, 
+      version: APP_VERSION, 
+      count: result.count, 
+      emailsQueued: result.emailsQueued 
+    };
+  } catch (err) {
+    console.error("❌ Falha na auto-verificação de disparo de nova versão:", err);
+    return { triggered: false, error: err.message };
+  }
 }

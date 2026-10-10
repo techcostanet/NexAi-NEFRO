@@ -62,8 +62,10 @@ import {
   saveNotificationSettings, 
   dispatchReleaseNotification, 
   generateReleaseEmailHtml, 
+  checkAndAutoDispatchNewRelease,
   DEFAULT_NOTIFICATION_SETTINGS 
 } from '../services/releaseNotificationService';
+import { humanizeChangeText, categorizeChange } from '../utils/versionUtils';
 import { SYSTEM_CHANGELOG } from '../data/versions';
 import { APP_VERSION } from '../version';
 import { useAuth } from '../context/AuthContext';
@@ -173,6 +175,15 @@ export default function AdminDashboard() {
     fetchRealPatientsForTelemetry().then((pts) => {
       setRealPatients(pts || []);
     });
+
+    // Automação: Verifica se há nova versão pendente de envio aos médicos cadastrados
+    checkAndAutoDispatchNewRelease({ adminEmail: currentUser?.email || 'admin@nefroapp.com' })
+      .then((res) => {
+        if (res && res.triggered) {
+          console.log(`🚀 [Automação NexAi-NEFRO] Nova versão v${res.version} notificada para ${res.count} médicos!`);
+        }
+      })
+      .catch(console.error);
 
     return () => {
       unsubDocs();
@@ -1728,21 +1739,41 @@ export default function AdminDashboard() {
                     >
                       {SYSTEM_CHANGELOG.map((rel, idx) => (
                         <option key={rel.version || idx} value={idx}>
-                          v{rel.version} ({rel.date}) — {rel.title?.slice(0, 45)}...
+                          v{rel.version} ({rel.date}) — {humanizeChangeText(rel.title)?.slice(0, 50)}...
                         </option>
                       ))}
                     </select>
                   </div>
 
                   <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs">
-                    <div className="font-bold text-slate-700 mb-1">
-                      v{SYSTEM_CHANGELOG[selectedVersionIdx]?.version || APP_VERSION} • {SYSTEM_CHANGELOG[selectedVersionIdx]?.title}
+                    <div className="font-bold text-slate-800 mb-2">
+                      v{SYSTEM_CHANGELOG[selectedVersionIdx]?.version || APP_VERSION} • {humanizeChangeText(SYSTEM_CHANGELOG[selectedVersionIdx]?.title)}
                     </div>
-                    <ul className="list-disc pl-4 text-muted flex flex-col gap-1">
-                      {SYSTEM_CHANGELOG[selectedVersionIdx]?.highlights?.map((h, i) => (
-                        <li key={i}>{h.replace(/^[✨🚀📌•\s]+/, '')}</li>
-                      ))}
-                    </ul>
+                    <div className="flex flex-col gap-1.5">
+                      {SYSTEM_CHANGELOG[selectedVersionIdx]?.highlights?.map((h, i) => {
+                        const cat = categorizeChange(h);
+                        const clean = humanizeChangeText(h);
+                        return (
+                          <div key={i} className="flex items-start gap-2">
+                            <span
+                              style={{
+                                fontSize: '0.65rem',
+                                fontWeight: '700',
+                                padding: '1px 5px',
+                                borderRadius: '4px',
+                                background: cat.badgeBg,
+                                border: `1px solid ${cat.badgeBorder}`,
+                                color: cat.badgeColor,
+                                marginTop: '1px'
+                              }}
+                            >
+                              {cat.label}
+                            </span>
+                            <span className="text-slate-600 flex-1">{clean}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   <div className="flex gap-2 pt-2 flex-wrap">
@@ -1790,12 +1821,12 @@ export default function AdminDashboard() {
                       style={{ fontSize: '0.8rem', padding: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                       disabled={isDispatchingEmail}
                       onClick={async () => {
-                        const targetList = doctors.filter(d => d.id !== 'dr-marcelo' && d.statusLicenca === 'Ativo');
+                        const targetList = doctors.filter(d => d.email && d.statusLicenca !== 'Cancelado');
                         if (targetList.length === 0) {
-                          alert('Nenhum médico cliente ativo (não-demo) encontrado para envio.');
+                          alert('Nenhum médico com e-mail cadastrado encontrado para envio.');
                           return;
                         }
-                        if (window.confirm(`Deseja disparar o e-mail de novidades da versão v${SYSTEM_CHANGELOG[selectedVersionIdx]?.version} para ${targetList.length} médico(s) ativo(s)?`)) {
+                        if (window.confirm(`Deseja disparar o e-mail de novidades da versão v${SYSTEM_CHANGELOG[selectedVersionIdx]?.version} para todos os ${targetList.length} médico(s) cadastrado(s)?`)) {
                           setIsDispatchingEmail(true);
                           try {
                             await dispatchReleaseNotification({
@@ -1805,7 +1836,7 @@ export default function AdminDashboard() {
                               adminEmail: currentUser?.email || 'admin@nefroapp.com',
                               isTest: false
                             });
-                            setFeedback({ type: 'success', text: `Novidades enviadas para ${targetList.length} médicos clientes com sucesso!` });
+                            setFeedback({ type: 'success', text: `Novidades enviadas para ${targetList.length} médicos cadastrados com sucesso!` });
                             setTimeout(() => setFeedback(null), 4000);
                           } catch (err) {
                             setFeedback({ type: 'error', text: 'Erro ao disparar e-mails para os clientes.' });

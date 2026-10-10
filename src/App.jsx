@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -14,6 +14,7 @@ import BrandLogo from './components/BrandLogo';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { APP_VERSION } from './version';
 import { Sparkles, Loader2 } from 'lucide-react';
+import { checkAndAutoDispatchNewRelease } from './services/releaseNotificationService';
 
 function ProtectedRoute({ children }) {
   const { currentUser } = useAuth();
@@ -25,7 +26,15 @@ function ProtectedRoute({ children }) {
 
 function AppContent() {
   const [isChangelogOpen, setIsChangelogOpen] = useState(false);
-  const { loading } = useAuth();
+  const { loading, currentUser } = useAuth();
+
+  useEffect(() => {
+    // Automação: se o usuário estiver logado ou em sessão ativa, verifica se há nova release pendente
+    if (currentUser) {
+      checkAndAutoDispatchNewRelease({ adminEmail: currentUser.email || 'sistema@nexai-nefro.com' })
+        .catch(console.error);
+    }
+  }, [currentUser]);
 
   if (loading) {
     return (

@@ -1,18 +1,26 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.115",
+    "date": "09/10/2026",
+    "title": "Automação no disparo de novidades por e-mail e novo visual com categorias de ...",
+    "highlights": [
+      "Automação no disparo de novidades por e-mail e novo visual com categorias de melhorias"
+    ]
+  },
+  {
     "version": "1.1.114",
     "date": "09/10/2026",
-    "title": "feat: atualizacao dos ranges laboratoriais de PTH, Ferritina e IST",
+    "title": "Atualização dos parâmetros ideais de PTH, Ferritina e IST",
     "highlights": [
-      "✨ feat: atualizacao dos ranges laboratoriais de PTH, Ferritina e IST"
+      "✨ Atualização dos parâmetros ideais de PTH, Ferritina e IST"
     ]
   },
   {
     "version": "1.1.113",
     "date": "09/10/2026",
-    "title": "feat: consolidacao automatica e exibicao do ultimo resultado de cada exame na...",
+    "title": "Consolidação automática do último resultado de cada exame na evolução mensal",
     "highlights": [
-      "✨ feat: consolidacao automatica e exibicao do ultimo resultado de cada exame na evolucao mensal"
+      "✨ Consolidação automática do último resultado de cada exame na evolução mensal evolucao mensal"
     ]
   },
   {
@@ -42,41 +50,41 @@ export const SYSTEM_CHANGELOG = [
   {
     "version": "1.1.109",
     "date": "09/10/2026",
-    "title": "feat: logomarca medica no perfil com emissao em relatorios PDF e planilhas Ex...",
+    "title": "Logomarca médica no perfil com emissão em laudos PDF e planilhas",
     "highlights": [
-      "✨ feat: logomarca medica no perfil com emissao em relatorios PDF e planilhas Excel exceto LME"
+      "✨ Logomarca médica no perfil com emissão em laudos PDF e planilhascel exceto LME"
     ]
   },
   {
     "version": "1.1.108",
     "date": "08/10/2026",
-    "title": "feat: modulo consultorio saas fase 1 com agenda medica e controle no painel a...",
+    "title": "Módulo consultório com agenda médica e controle no painel administrativo",
     "highlights": [
-      "✨ feat: modulo consultorio saas fase 1 com agenda medica e controle no painel admin"
+      "✨ Módulo consultório com agenda médica e controle no painel administrativodmin"
     ]
   },
   {
     "version": "1.1.107",
     "date": "08/10/2026",
-    "title": "feat: remover informacao duplicada na importacao e otimizar modal de laborato...",
+    "title": "Otimização na importação de laudos e laboratórios homologados",
     "highlights": [
-      "✨ feat: remover informacao duplicada na importacao e otimizar modal de laboratorios homologados com siglas e busca"
+      "✨ Otimização na importação de laudos e laboratórios homologadosrios homologados com siglas e busca"
     ]
   },
   {
     "version": "1.1.106",
     "date": "08/10/2026",
-    "title": "fix: importar useMemo em LmePatientSection resolvendo ReferenceError em producao",
+    "title": "Correção no carregamento e visualização de pacientes em LME",
     "highlights": [
-      "✨ fix: importar useMemo em LmePatientSection resolvendo ReferenceError em producao"
+      "✨ Correção no carregamento e visualização de pacientes em LME"
     ]
   },
   {
     "version": "1.1.105",
     "date": "08/10/2026",
-    "title": "feat: padronizacao de design nas abas Acesso e LME e ordenacao personalizada ...",
+    "title": "Padronização visual nas abas Acesso e LME e ordenação de exames",
     "highlights": [
-      "✨ feat: padronizacao de design nas abas Acesso e LME e ordenacao personalizada de exames no Firestore"
+      "✨ Padronização visual nas abas Acesso e LME e ordenação de examesde exames no Firestore"
     ]
   },
   {
@@ -203,9 +211,9 @@ export const SYSTEM_CHANGELOG = [
   {
     "version": "1.1.89",
     "date": "28/09/2026",
-    "title": "feat: inclusao e edicao de prescricoes no Boletim de Saude com gravacao de hi...",
+    "title": "Inclusão e edição de prescrições no Boletim de Saúde com gravação de histórico",
     "highlights": [
-      "✨ feat: inclusao e edicao de prescricoes no Boletim de Saude com gravacao de historico"
+      "✨ Inclusão e edição de prescrições no Boletim de Saúde com gravação de históricostorico"
     ]
   },
   {
@@ -404,9 +412,9 @@ export const SYSTEM_CHANGELOG = [
   {
     "version": "1.1.65",
     "date": "20/09/2026",
-    "title": "Fix: ancoragem do rodape e bloco final da receita na base da folha A4 ao impr...",
+    "title": "Ajuste na ancoragem do rodapé e bloco final da receita na folha A4",
     "highlights": [
-      "✨ Fix: ancoragem do rodape e bloco final da receita na base da folha A4 ao imprimir"
+      "✨ Ajuste na ancoragem do rodapé e bloco final da receita na folha A4imir"
     ]
   },
   {
