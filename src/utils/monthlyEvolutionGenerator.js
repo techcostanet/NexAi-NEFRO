@@ -375,11 +375,33 @@ function buildSectionBlock(sectionId, num, ctx) {
       if (hb) {
         const hbNum = parseFloat(String(hb).replace(',', '.'));
         if (hbNum < 10.0) {
-          t += `• Avaliação: Hemoglobina abaixo do alvo terapêutico (meta 10.0 a 12.0 g/dL); indicada titulação de dose de agente estimulador da eritropoese e/ou ferro endovenoso.\n`;
+          t += `• Avaliação da Hemoglobina: Hemoglobina abaixo do alvo terapêutico (meta 10.0 a 12.0 g/dL); indicada titulação de dose de agente estimulador da eritropoese e/ou ferro endovenoso.\n`;
         } else if (hbNum > 12.0) {
-          t += `• Avaliação: Hemoglobina no limite superior alvo; avaliar ajuste cauteloso de eritropoetina para prevenir riscos cardiovasculares.\n`;
+          t += `• Avaliação da Hemoglobina: Hemoglobina no limite superior alvo; avaliar ajuste cauteloso de eritropoetina para prevenir riscos cardiovasculares.\n`;
         } else {
-          t += `• Avaliação: Hemoglobina dentro da faixa alvo preconizada pela SBN/KDIGO (10.0 a 12.0 g/dL).\n`;
+          t += `• Avaliação da Hemoglobina: Hemoglobina dentro da faixa alvo preconizada pela SBN/KDIGO (10.0 a 12.0 g/dL).\n`;
+        }
+      }
+
+      if (ferritina) {
+        const ferNum = parseFloat(String(ferritina).replace(',', '.'));
+        if (ferNum < 200) {
+          t += `• Avaliação da Ferritina: Nível abaixo do alvo (${ferritina} ng/mL, meta 200 a 500 ng/mL); indicada reposição de ferro parenteral.\n`;
+        } else if (ferNum > 500) {
+          t += `• Avaliação da Ferritina: Nível acima do alvo (${ferritina} ng/mL, meta 200 a 500 ng/mL); considerar espaçamento ou pausa temporária de ferro parenteral.\n`;
+        } else {
+          t += `• Avaliação da Ferritina: Estoque de ferro adequado dentro da meta terapêutica (200 a 500 ng/mL).\n`;
+        }
+      }
+
+      if (ist) {
+        const istNum = parseFloat(String(ist).replace(',', '.'));
+        if (istNum < 20) {
+          t += `• Avaliação do IST: Saturação de transferrina abaixo do alvo (${ist}%, meta 20% a 30%); carência funcional de ferro para eritropoiese.\n`;
+        } else if (istNum > 30) {
+          t += `• Avaliação do IST: Saturação de transferrina acima do alvo estrito (${ist}%, meta 20% a 30%); vigilância e adequação posológica de ferro venoso.\n`;
+        } else {
+          t += `• Avaliação do IST: Índice de saturação adequado dentro da meta (20% a 30%).\n`;
         }
       }
       t += `\n`;
@@ -422,10 +444,21 @@ function buildSectionBlock(sectionId, num, ctx) {
         t += `• Terapêutica ativa: ${nomes}.\n`;
       }
 
+      if (pth) {
+        const pthNum = parseFloat(String(pth).replace(',', '.'));
+        if (pthNum < 150) {
+          t += `• Avaliação do PTH: Nível suprimido (${pth} pg/mL, meta 150 a 350 pg/mL); vigilância para doença óssea adinâmica.\n`;
+        } else if (pthNum > 350) {
+          t += `• Avaliação do PTH: Nível acima do alvo estrito (${pth} pg/mL, meta 150 a 350 pg/mL); vigilância para hiperparatireoidismo secundário e ajuste terapêutico.\n`;
+        } else {
+          t += `• Avaliação do PTH: Nível paratireoidiano adequado dentro da meta terapêutica (150 a 350 pg/mL).\n`;
+        }
+      }
+
       if (fosforo) {
         const pNum = parseFloat(String(fosforo).replace(',', '.'));
         if (pNum > 5.5) {
-          t += `• Avaliação: Hiperfosfatemia; reforçadas orientações de restrição dietética e otimização da posologia do quelante de fósforo.\n`;
+          t += `• Avaliação do Fósforo: Hiperfosfatemia (${fosforo} mg/dL, meta 3.5 a 5.5 mg/dL); reforçadas orientações de restrição dietética e otimização da posologia do quelante de fósforo.\n`;
         }
       }
       t += `\n`;

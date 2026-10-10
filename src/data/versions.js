@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.114",
+    "date": "09/10/2026",
+    "title": "feat: atualizacao dos ranges laboratoriais de PTH, Ferritina e IST",
+    "highlights": [
+      "✨ feat: atualizacao dos ranges laboratoriais de PTH, Ferritina e IST"
+    ]
+  },
+  {
     "version": "1.1.113",
     "date": "09/10/2026",
     "title": "feat: consolidacao automatica e exibicao do ultimo resultado de cada exame na...",

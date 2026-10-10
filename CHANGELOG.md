@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.114] - 2026-10-10
+### Alterações
+- feat: atualizacao dos ranges laboratoriais de PTH, Ferritina e IST
+
 ## [1.1.113] - 2026-10-10
 ### Alterações
 - feat: consolidacao automatica e exibicao do ultimo resultado de cada exame na evolucao mensal

@@ -88,13 +88,13 @@ export function evaluateExam(examKey, rawValue) {
       return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
     }
 
-    // PTH Intacto (Meta SBN/KDIGO em diálise: 150 a 600 pg/mL)
+    // PTH Intacto (Meta clínica em hemodiálise: 150 a 350 pg/mL)
     case 'pth':
     case 'pthintacto': {
-      if (num >= 150 && num <= 600) {
+      if (num >= 150 && num <= 350) {
         return { ...EXAM_STATUS_STYLES.bom, numValue: num };
       }
-      if ((num > 600 && num <= 800) || (num >= 100 && num < 150)) {
+      if ((num >= 100 && num < 150) || (num > 350 && num <= 600)) {
         return { ...EXAM_STATUS_STYLES.medio, numValue: num };
       }
       return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
@@ -147,23 +147,23 @@ export function evaluateExam(examKey, rawValue) {
       return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
     }
 
-    // Índice de Saturação de Transferrina (Meta: 20% a 50%)
+    // Índice de Saturação de Transferrina (Meta: 20% a 30%)
     case 'ist': {
-      if (num >= 20 && num <= 50) {
+      if (num >= 20 && num <= 30) {
         return { ...EXAM_STATUS_STYLES.bom, numValue: num };
       }
-      if ((num >= 15 && num < 20) || (num > 50 && num <= 60)) {
+      if ((num >= 15 && num < 20) || (num > 30 && num <= 50)) {
         return { ...EXAM_STATUS_STYLES.medio, numValue: num };
       }
       return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
     }
 
-    // Ferritina Sérica (Meta em diálise: 200 a 800 ng/mL)
+    // Ferritina Sérica (Meta em diálise: 200 a 500 ng/mL)
     case 'ferritina': {
-      if (num >= 200 && num <= 800) {
+      if (num >= 200 && num <= 500) {
         return { ...EXAM_STATUS_STYLES.bom, numValue: num };
       }
-      if ((num >= 100 && num < 200) || (num > 800 && num <= 1200)) {
+      if ((num >= 100 && num < 200) || (num > 500 && num <= 800)) {
         return { ...EXAM_STATUS_STYLES.medio, numValue: num };
       }
       return { ...EXAM_STATUS_STYLES.ruim, numValue: num };
