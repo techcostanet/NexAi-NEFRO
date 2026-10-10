@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.113",
+    "date": "09/10/2026",
+    "title": "feat: consolidacao automatica e exibicao do ultimo resultado de cada exame na...",
+    "highlights": [
+      "✨ feat: consolidacao automatica e exibicao do ultimo resultado de cada exame na evolucao mensal"
+    ]
+  },
+  {
     "version": "1.1.112",
     "date": "09/10/2026",
     "title": "Correcao da geracao de evolucao medica e botao de copia rapida para prontuario",

@@ -11,9 +11,12 @@ import {
   HeartPulse,
   Info,
   Sliders,
-  Check
+  Check,
+  FlaskConical
 } from 'lucide-react';
 import { updatePatientPartial, ETIOLOGIAS_DRC_PADRAO, LOCALIZACOES_ACESSO_COMUNS } from '../services/patientService';
+import { evaluateExam } from '../utils/examRanges';
+import { safeFormatDate } from '../utils/dateUtils';
 import EvolutionTemplateModal from './EvolutionTemplateModal';
 
 export default function EvolutionChecklistModal({
@@ -54,6 +57,38 @@ export default function EvolutionChecklistModal({
   const clinicalAlerts = auditResult?.clinicalAlerts || [];
   const score = auditResult?.score || 0;
   const isAllComplete = score === 100;
+  const consolidatedExams = auditResult?.consolidatedExams || {};
+  const examDates = auditResult?.examDates || {};
+
+  const EXAM_PREVIEW_LIST = [
+    { key: 'hb', label: 'Hb', unit: 'g/dL' },
+    { key: 'ht', label: 'Ht', unit: '%' },
+    { key: 'ferritina', label: 'Ferritina', unit: 'ng/mL' },
+    { key: 'ist', label: 'IST', unit: '%' },
+    { key: 'ferro', label: 'Ferro', unit: 'mcg/dL' },
+    { key: 'pth', label: 'PTH', unit: 'pg/mL' },
+    { key: 'ca', label: 'Cálcio', unit: 'mg/dL' },
+    { key: 'fosforo', label: 'Fósforo', unit: 'mg/dL' },
+    { key: 'fa', label: 'FA', unit: 'U/L' },
+    { key: 'vitD', label: 'Vit D', unit: 'ng/mL' },
+    { key: 'ktv', label: 'Kt/V', unit: '' },
+    { key: 'ur', label: 'URR', unit: '%' },
+    { key: 'ureiaPre', label: 'Ureia Pré', unit: 'mg/dL' },
+    { key: 'ureiaPos', label: 'Ureia Pós', unit: 'mg/dL' },
+    { key: 'creatinina', label: 'Creatinina', unit: 'mg/dL' },
+    { key: 'k', label: 'Potássio', unit: 'mEq/L' },
+    { key: 'na', label: 'Sódio', unit: 'mEq/L' },
+    { key: 'hco3', label: 'HCO3', unit: 'mEq/L' },
+    { key: 'albumina', label: 'Albumina', unit: 'g/dL' },
+    { key: 'pcr', label: 'PCR', unit: 'mg/L' },
+    { key: 'glicemia', label: 'Glicemia', unit: 'mg/dL' },
+    { key: 'hba1c', label: 'HbA1c', unit: '%' }
+  ];
+
+  const detectedExams = EXAM_PREVIEW_LIST.filter(item => {
+    const v = consolidatedExams[item.key];
+    return v !== undefined && v !== null && v !== '' && v !== '-';
+  });
 
   const handleChange = (key, value) => {
     setFormData(prev => ({ ...prev, [key]: value }));
@@ -434,6 +469,62 @@ export default function EvolutionChecklistModal({
                 <span className="text-[11px] text-slate-500 block mt-1">Dias fixos de hemodiálise.</span>
               </div>
             </div>
+
+            {/* Quadro de Exames Detectados no Prontuário */}
+            {detectedExams.length > 0 && (
+              <div style={{
+                background: '#f8fafc',
+                border: '1px solid #e2e8f0',
+                borderRadius: '12px',
+                padding: '0.85rem 1rem',
+                marginTop: '0.4rem'
+              }}>
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-slate-700">
+                    <FlaskConical size={14} className="text-emerald-600" />
+                    <span>Exames Consolidados do Prontuário</span>
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-medium">
+                    {detectedExams.length} {detectedExams.length === 1 ? 'exame detectado' : 'exames detectados'}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {detectedExams.map(item => {
+                    const val = consolidatedExams[item.key];
+                    const evaluation = evaluateExam(item.key, val);
+                    const dateStr = examDates[item.key] ? safeFormatDate(examDates[item.key]) : null;
+                    return (
+                      <span
+                        key={item.key}
+                        title={dateStr ? `Coleta em ${dateStr}` : 'Último resultado consolidado'}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          padding: '3px 8px',
+                          borderRadius: '8px',
+                          fontSize: '0.72rem',
+                          fontWeight: '600',
+                          backgroundColor: evaluation.bg || '#f1f5f9',
+                          border: `1px solid ${evaluation.border || '#cbd5e1'}`,
+                          color: evaluation.color || '#334155'
+                        }}
+                      >
+                        <span style={{ opacity: 0.85 }}>{item.label}:</span>
+                        <strong style={{ fontWeight: '700' }}>
+                          {val}{item.unit ? ` ${item.unit}` : ''}
+                        </strong>
+                        {dateStr && (
+                          <span style={{ fontSize: '0.65rem', opacity: 0.65, marginLeft: '2px' }}>
+                            ({dateStr})
+                          </span>
+                        )}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* Avisos Clínicos Laboratoriais (se houver) */}
             {clinicalAlerts.length > 0 && (

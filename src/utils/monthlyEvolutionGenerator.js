@@ -18,14 +18,28 @@ export const DEFAULT_EVOLUTION_SECTIONS = [
   { id: 'acessoVascular', label: 'Acesso Vascular', descricao: 'Tipo de acesso, localização, integridade e fluxo Qb', ativo: true },
   { id: 'estadoClinico', label: 'Estado Clínico e Volêmico', descricao: 'Peso seco meta, ganho ponderal, exame físico e alergias', ativo: true },
   { id: 'adequacao', label: 'Adequação Dialítica', descricao: 'Kt/V com meta KDIGO/SBN, URR e ureias pré/pós', ativo: true },
-  { id: 'anemia', label: 'Anemia e Cinética do Ferro', descricao: 'Hb, Ht, Ferritina, IST e doses de Alfaepoetina/Noripurum', ativo: true },
-  { id: 'dmo', label: 'Metabolismo Ósseo (DMO)', descricao: 'PTH, Cálcio Corrigido, Fósforo, FA e quelantes/análogos', ativo: true },
-  { id: 'eletrolitos', label: 'Eletrólitos e Ácido-Básico', descricao: 'Potássio (alerta hipercalemia), Sódio e Bicarbonato', ativo: true },
-  { id: 'nutricao', label: 'Nutrição e Inflamação', descricao: 'Albumina sérica e PCR com interpretação prognóstica', ativo: true },
-  { id: 'sorologias', label: 'Sorologias Periódicas', descricao: 'Rastreio de Anti-HCV, HBsAg e HIV', ativo: true },
+  { id: 'anemia', label: 'Anemia e Metabolismo Férreo', descricao: 'Hb, Ht, Ferritina, IST, Ferro e doses de EPO/Ferro', ativo: true },
+  { id: 'dmo', label: 'Metabolismo Ósseo', descricao: 'PTH, Cálcio Corrigido, Fósforo, FA e quelantes/análogos', ativo: true },
+  { id: 'eletrolitos', label: 'Eletrólitos e Ácido Básico', descricao: 'Potássio, Sódio e Bicarbonato séricos', ativo: true },
+  { id: 'nutricao', label: 'Nutrição e Inflamação', descricao: 'Albumina, PCR, Glicemia, HbA1c e enzimas hepáticas', ativo: true },
+  { id: 'sorologias', label: 'Sorologias Periódicas', descricao: 'Rastreio de Anti-HCV, HBsAg, Anti-HBs e HIV', ativo: true },
+  { id: 'exames', label: 'Exames Consolidados', descricao: 'Quadro analítico completo com todos os últimos exames do prontuário', ativo: true },
   { id: 'transplante', label: 'Transplante Renal', descricao: 'Status em lista de espera ou contraindicações', ativo: true },
   { id: 'conduta', label: 'Conduta e Plano Terapêutico', descricao: 'Recomendações dialíticas, ponderais e medicamentosas', ativo: true }
 ];
+
+/**
+ * Extrai os exames consolidados e respectivas datas do paciente com segurança
+ */
+export function getConsolidatedPatientExams(patient) {
+  if (!patient || typeof patient !== 'object') {
+    return { consolidados: {}, datas: {} };
+  }
+  const raw = consolidatePatientExams(patient.historicoExames || [], patient.exames || {});
+  const consolidados = (raw && typeof raw === 'object' && raw.consolidados) ? raw.consolidados : (raw || {});
+  const datas = (raw && typeof raw === 'object' && raw.datas) ? raw.datas : {};
+  return { consolidados, datas };
+}
 
 /**
  * Calcula o tempo decorrido de diálise em formato textual legível
@@ -66,7 +80,9 @@ export function auditPatientEvolutionData(patient) {
       score: 0,
       missingFields: [],
       clinicalAlerts: [],
-      allFields: []
+      allFields: [],
+      consolidatedExams: {},
+      examDates: {}
     };
   }
 
@@ -178,7 +194,7 @@ export function auditPatientEvolutionData(patient) {
   if (!isDiaSemanaOk) missingFields.push(diaSemanaField);
 
   // Verificação de Exames Recentes (Alertas Clínicos Não Bloqueantes)
-  const consolidated = consolidatePatientExams(patient.historicoExames || [], patient.exames || {});
+  const { consolidados: consolidated, datas: examDates } = getConsolidatedPatientExams(patient);
   
   if (!consolidated.ktv && !consolidated.ureiaPre) {
     clinicalAlerts.push('Adequação: Sem registro recente de Kt/V ou Ureia no prontuário.');
@@ -206,12 +222,13 @@ export function auditPatientEvolutionData(patient) {
     missingFields,
     allFields,
     clinicalAlerts,
-    consolidatedExams: consolidated
+    consolidatedExams: consolidated,
+    examDates: examDates
   };
 }
 
 /**
- * Construtores modulares de conteúdo para cada seção
+ * Construtores modulares de conteúdo para cada seção da evolução
  */
 function buildSectionBlock(sectionId, num, ctx) {
   const { 
@@ -228,8 +245,13 @@ function buildSectionBlock(sectionId, num, ctx) {
     qb, 
     pesoSeco, 
     consolidated, 
+    examDates = {},
     medicamentos 
   } = ctx;
+
+  const formatDateSuffix = (key) => {
+    return examDates[key] ? ` (${safeFormatDate(examDates[key])})` : '';
+  };
 
   switch (sectionId) {
     case 'identificacao': {
@@ -275,15 +297,31 @@ function buildSectionBlock(sectionId, num, ctx) {
       const urr = consolidated.ur || consolidated.urr;
       const ureiaPre = consolidated.ureiaPre;
       const ureiaPos = consolidated.ureiaPos;
+      const creatinina = consolidated.creatinina;
 
+      const adeqTxt = [];
       if (ktv) {
         const ktvNum = parseFloat(String(ktv).replace(',', '.'));
-        const ktvStatus = ktvNum >= 1.20 ? 'adequado (meta KDIGO/SBN >= 1.20 atingida)' : 'abaixo da meta recomendada (meta >= 1.20), otimizar diálise';
-        t += `• Kt/V: ${ktv} - ${ktvStatus}.\n`;
+        const ktvStatus = ktvNum >= 1.20 ? 'adequado (meta KDIGO/SBN >= 1.20 atingida)' : 'abaixo da meta recomendada (meta >= 1.20)';
+        adeqTxt.push(`Kt/V: ${ktv}${formatDateSuffix('ktv')} - ${ktvStatus}`);
       }
-      if (urr) t += `• Taxa de Redução de Ureia (URR): ${urr}%.\n`;
-      if (ureiaPre && ureiaPos) t += `• Ureia Pré: ${ureiaPre} mg/dL | Ureia Pós: ${ureiaPos} mg/dL.\n`;
-      if (!ktv && !urr && !ureiaPre) {
+      if (urr) {
+        adeqTxt.push(`Taxa de Redução de Ureia (URR): ${urr}%${formatDateSuffix('ur') || formatDateSuffix('urr')}`);
+      }
+      if (ureiaPre || ureiaPos) {
+        const dPre = formatDateSuffix('ureiaPre');
+        const dPos = formatDateSuffix('ureiaPos');
+        adeqTxt.push(`Ureia Pré: ${ureiaPre || '-'} mg/dL${dPre} | Ureia Pós: ${ureiaPos || '-'} mg/dL${dPos}`);
+      }
+      if (creatinina) {
+        adeqTxt.push(`Creatinina Sérica: ${creatinina} mg/dL${formatDateSuffix('creatinina')}`);
+      }
+
+      if (adeqTxt.length > 0) {
+        adeqTxt.forEach(item => {
+          t += `• ${item}.\n`;
+        });
+      } else {
         t += `• Rotina de adequação dialítica em acompanhamento regular conforme calendário mensal da unidade.\n`;
       }
       t += `\n`;
@@ -296,12 +334,20 @@ function buildSectionBlock(sectionId, num, ctx) {
       const ht = consolidated.ht;
       const ferritina = consolidated.ferritina;
       const ist = consolidated.ist;
+      const ferro = consolidated.ferro;
+      const transferrina = consolidated.transferrina;
+      const leucocitos = consolidated.leucocitos;
+      const plaquetas = consolidated.plaquetas;
 
       let anemiaTxt = [];
-      if (hb) anemiaTxt.push(`Hb: ${hb} g/dL`);
-      if (ht) anemiaTxt.push(`Ht: ${ht}%`);
-      if (ferritina) anemiaTxt.push(`Ferritina: ${ferritina} ng/mL`);
-      if (ist) anemiaTxt.push(`IST: ${ist}%`);
+      if (hb) anemiaTxt.push(`Hb: ${hb} g/dL${formatDateSuffix('hb')}`);
+      if (ht) anemiaTxt.push(`Ht: ${ht}%${formatDateSuffix('ht')}`);
+      if (ferritina) anemiaTxt.push(`Ferritina: ${ferritina} ng/mL${formatDateSuffix('ferritina')}`);
+      if (ist) anemiaTxt.push(`IST: ${ist}%${formatDateSuffix('ist')}`);
+      if (ferro) anemiaTxt.push(`Ferro Sérico: ${ferro} mcg/dL${formatDateSuffix('ferro')}`);
+      if (transferrina) anemiaTxt.push(`Transferrina: ${transferrina} mg/dL${formatDateSuffix('transferrina')}`);
+      if (leucocitos) anemiaTxt.push(`Leucócitos: ${leucocitos}/mm³${formatDateSuffix('leucocitos')}`);
+      if (plaquetas) anemiaTxt.push(`Plaquetas: ${plaquetas}/mm³${formatDateSuffix('plaquetas')}`);
 
       if (anemiaTxt.length > 0) {
         t += `• Parâmetros laboratoriais: ${anemiaTxt.join(' | ')}.\n`;
@@ -319,8 +365,8 @@ function buildSectionBlock(sectionId, num, ctx) {
       if (medEpo || medFerro) {
         t += `• Terapêutica em curso: `;
         const tratamentos = [];
-        if (medEpo) tratamentos.push(`${medEpo.nome || 'Alfaepoetina'} ${medEpo.posologia || medEpo.dose || ''}`);
-        if (medFerro) tratamentos.push(`${medFerro.nome || 'Noripurum'} ${medFerro.posologia || medFerro.dose || ''}`);
+        if (medEpo) tratamentos.push(`${medEpo.nome || 'Alfaepoetina'} ${medEpo.posologia || medEpo.dose || medEpo.dosagem || ''}`);
+        if (medFerro) tratamentos.push(`${medFerro.nome || 'Noripurum'} ${medFerro.posologia || medFerro.dose || medFerro.dosagem || ''}`);
         t += `${tratamentos.join('; ')}.\n`;
       } else {
         t += `• Monitoramento sob protocolo institucional de anemia em TRS.\n`;
@@ -329,7 +375,7 @@ function buildSectionBlock(sectionId, num, ctx) {
       if (hb) {
         const hbNum = parseFloat(String(hb).replace(',', '.'));
         if (hbNum < 10.0) {
-          t += `• Avaliação: Hemoglobina abaixo do alvo terapêutico (meta 10.0 a 11.5 g/dL); indicada titulação de dose de agente estimulador da eritropoese e/ou ferro endovenoso.\n`;
+          t += `• Avaliação: Hemoglobina abaixo do alvo terapêutico (meta 10.0 a 12.0 g/dL); indicada titulação de dose de agente estimulador da eritropoese e/ou ferro endovenoso.\n`;
         } else if (hbNum > 12.0) {
           t += `• Avaliação: Hemoglobina no limite superior alvo; avaliar ajuste cauteloso de eritropoetina para prevenir riscos cardiovasculares.\n`;
         } else {
@@ -345,15 +391,15 @@ function buildSectionBlock(sectionId, num, ctx) {
       const pth = consolidated.pth;
       const ca = consolidated.ca;
       const fosforo = consolidated.fosforo;
-      const fa = consolidated.fa;
-      const vitD = consolidated.vitD;
+      const fa = consolidated.fa || consolidated.fosfAlcalina;
+      const vitD = consolidated.vitD || consolidated.vitaminaD;
 
       let dmoTxt = [];
-      if (pth) dmoTxt.push(`PTH: ${pth} pg/mL`);
-      if (ca) dmoTxt.push(`Cálcio: ${ca} mg/dL`);
-      if (fosforo) dmoTxt.push(`Fósforo: ${fosforo} mg/dL`);
-      if (fa) dmoTxt.push(`Fosfatase Alcalina: ${fa} U/L`);
-      if (vitD) dmoTxt.push(`Vitamina D (25-OH): ${vitD} ng/mL`);
+      if (pth) dmoTxt.push(`PTH: ${pth} pg/mL${formatDateSuffix('pth')}`);
+      if (ca) dmoTxt.push(`Cálcio: ${ca} mg/dL${formatDateSuffix('ca')}`);
+      if (fosforo) dmoTxt.push(`Fósforo: ${fosforo} mg/dL${formatDateSuffix('fosforo')}`);
+      if (fa) dmoTxt.push(`Fosfatase Alcalina: ${fa} U/L${formatDateSuffix('fa') || formatDateSuffix('fosfAlcalina')}`);
+      if (vitD) dmoTxt.push(`Vitamina D (25-OH): ${vitD} ng/mL${formatDateSuffix('vitD') || formatDateSuffix('vitaminaD')}`);
 
       if (dmoTxt.length > 0) {
         t += `• Parâmetros laboratoriais: ${dmoTxt.join(' | ')}.\n`;
@@ -372,7 +418,7 @@ function buildSectionBlock(sectionId, num, ctx) {
                n.includes('paricalcitol') || n.includes('cinacalcete') || n.includes('quelante');
       });
       if (medDmo.length > 0) {
-        const nomes = medDmo.map(m => `${m.nome || m.medicamento} ${m.posologia || m.dose || ''}`).join('; ');
+        const nomes = medDmo.map(m => `${m.nome || m.medicamento} ${m.posologia || m.dose || m.dosagem || ''}`).join('; ');
         t += `• Terapêutica ativa: ${nomes}.\n`;
       }
 
@@ -393,9 +439,9 @@ function buildSectionBlock(sectionId, num, ctx) {
       const hco3 = consolidated.hco3;
 
       let eletroTxt = [];
-      if (k) eletroTxt.push(`Potássio (K): ${k} mEq/L`);
-      if (na) eletroTxt.push(`Sódio (Na): ${na} mEq/L`);
-      if (hco3) eletroTxt.push(`Bicarbonato: ${hco3} mEq/L`);
+      if (k) eletroTxt.push(`Potássio (K): ${k} mEq/L${formatDateSuffix('k')}`);
+      if (na) eletroTxt.push(`Sódio (Na): ${na} mEq/L${formatDateSuffix('na')}`);
+      if (hco3) eletroTxt.push(`Bicarbonato: ${hco3} mEq/L${formatDateSuffix('hco3')}`);
 
       if (eletroTxt.length > 0) {
         t += `• Parâmetros laboratoriais: ${eletroTxt.join(' | ')}.\n`;
@@ -415,10 +461,18 @@ function buildSectionBlock(sectionId, num, ctx) {
       let t = `${num}. NUTRIÇÃO E INFLAMAÇÃO:\n`;
       const albumina = consolidated.albumina;
       const pcr = consolidated.pcr;
+      const glicemia = consolidated.glicemia;
+      const hba1c = consolidated.hba1c;
+      const tgp = consolidated.tgp;
+      const tgo = consolidated.tgo;
 
       let nutTxt = [];
-      if (albumina) nutTxt.push(`Albumina: ${albumina} g/dL`);
-      if (pcr) nutTxt.push(`PCR: ${pcr} mg/L`);
+      if (albumina) nutTxt.push(`Albumina: ${albumina} g/dL${formatDateSuffix('albumina')}`);
+      if (pcr) nutTxt.push(`PCR: ${pcr} mg/L${formatDateSuffix('pcr')}`);
+      if (glicemia) nutTxt.push(`Glicemia: ${glicemia} mg/dL${formatDateSuffix('glicemia')}`);
+      if (hba1c) nutTxt.push(`HbA1c: ${hba1c}%${formatDateSuffix('hba1c')}`);
+      if (tgp) nutTxt.push(`TGP: ${tgp} U/L${formatDateSuffix('tgp')}`);
+      if (tgo) nutTxt.push(`TGO: ${tgo} U/L${formatDateSuffix('tgo')}`);
 
       if (nutTxt.length > 0) {
         t += `• Marcadores séricos: ${nutTxt.join(' | ')}.\n`;
@@ -441,7 +495,86 @@ function buildSectionBlock(sectionId, num, ctx) {
       const antiHcv = consolidated.antiHcv || 'Não Reagente';
       const hbsag = consolidated.hbsag || 'Não Reagente';
       const hiv = consolidated.hiv || 'Não Reagente';
-      t += `• Rastreio Sorológico Periódico: Anti-HCV (${antiHcv}), HBsAg (${hbsag}), HIV (${hiv}). Paciente alocado em sala/máquina habitual conforme rotina institucional.\n\n`;
+      const antiHbs = consolidated.antiHbs || null;
+      const antiHbc = consolidated.antiHbc || null;
+
+      let soroList = [
+        `Anti-HCV: ${antiHcv}${formatDateSuffix('antiHcv')}`,
+        `HBsAg: ${hbsag}${formatDateSuffix('hbsag')}`,
+        `HIV: ${hiv}${formatDateSuffix('hiv')}`
+      ];
+      if (antiHbs) soroList.push(`Anti-HBs: ${antiHbs}${formatDateSuffix('antiHbs')}`);
+      if (antiHbc) soroList.push(`Anti-HBc: ${antiHbc}${formatDateSuffix('antiHbc')}`);
+
+      t += `• Rastreio Sorológico Periódico: ${soroList.join(' | ')}. Paciente alocado em sala e máquina habitual conforme rotina institucional.\n\n`;
+      return t;
+    }
+
+    case 'exames': {
+      let t = `${num}. QUADRO LABORATORIAL CONSOLIDADO (ÚLTIMOS RESULTADOS):\n`;
+      const linhas = [];
+
+      // Anemia e Cinética do Ferro
+      const hbTxt = consolidated.hb ? `Hb: ${consolidated.hb} g/dL${formatDateSuffix('hb')}` : null;
+      const htTxt = consolidated.ht ? `Ht: ${consolidated.ht}%${formatDateSuffix('ht')}` : null;
+      const ferTxt = consolidated.ferritina ? `Ferritina: ${consolidated.ferritina} ng/mL${formatDateSuffix('ferritina')}` : null;
+      const istTxt = consolidated.ist ? `IST: ${consolidated.ist}%${formatDateSuffix('ist')}` : null;
+      const ferroTxt = consolidated.ferro ? `Ferro: ${consolidated.ferro} mcg/dL${formatDateSuffix('ferro')}` : null;
+      const plaqTxt = consolidated.plaquetas ? `Plaquetas: ${consolidated.plaquetas}/mm³${formatDateSuffix('plaquetas')}` : null;
+      const leucTxt = consolidated.leucocitos ? `Leucócitos: ${consolidated.leucocitos}/mm³${formatDateSuffix('leucocitos')}` : null;
+      const anemiaPartes = [hbTxt, htTxt, ferTxt, istTxt, ferroTxt, leucTxt, plaqTxt].filter(Boolean);
+      if (anemiaPartes.length > 0) {
+        linhas.push(`• Série Vermelha e Ferro: ${anemiaPartes.join(' | ')}`);
+      }
+
+      // Metabolismo Ósseo e Mineral
+      const pthTxt = consolidated.pth ? `PTH: ${consolidated.pth} pg/mL${formatDateSuffix('pth')}` : null;
+      const caTxt = consolidated.ca ? `Cálcio: ${consolidated.ca} mg/dL${formatDateSuffix('ca')}` : null;
+      const pTxt = consolidated.fosforo ? `Fósforo: ${consolidated.fosforo} mg/dL${formatDateSuffix('fosforo')}` : null;
+      const faTxt = (consolidated.fa || consolidated.fosfAlcalina) ? `FA: ${consolidated.fa || consolidated.fosfAlcalina} U/L${formatDateSuffix('fa') || formatDateSuffix('fosfAlcalina')}` : null;
+      const vitDTxt = (consolidated.vitD || consolidated.vitaminaD) ? `Vit D: ${consolidated.vitD || consolidated.vitaminaD} ng/mL${formatDateSuffix('vitD') || formatDateSuffix('vitaminaD')}` : null;
+      const dmoPartes = [pthTxt, caTxt, pTxt, faTxt, vitDTxt].filter(Boolean);
+      if (dmoPartes.length > 0) {
+        linhas.push(`• Metabolismo Ósseo: ${dmoPartes.join(' | ')}`);
+      }
+
+      // Adequação e Renal
+      const ktvTxt = consolidated.ktv ? `Kt/V: ${consolidated.ktv}${formatDateSuffix('ktv')}` : null;
+      const urrTxt = (consolidated.ur || consolidated.urr) ? `URR: ${consolidated.ur || consolidated.urr}%${formatDateSuffix('ur') || formatDateSuffix('urr')}` : null;
+      const uPreTxt = consolidated.ureiaPre ? `Ureia Pré: ${consolidated.ureiaPre} mg/dL${formatDateSuffix('ureiaPre')}` : null;
+      const uPosTxt = consolidated.ureiaPos ? `Ureia Pós: ${consolidated.ureiaPos} mg/dL${formatDateSuffix('ureiaPos')}` : null;
+      const creatTxt = consolidated.creatinina ? `Creatinina: ${consolidated.creatinina} mg/dL${formatDateSuffix('creatinina')}` : null;
+      const adeqPartes = [ktvTxt, urrTxt, uPreTxt, uPosTxt, creatTxt].filter(Boolean);
+      if (adeqPartes.length > 0) {
+        linhas.push(`• Adequação Dialítica: ${adeqPartes.join(' | ')}`);
+      }
+
+      // Eletrólitos
+      const kTxt = consolidated.k ? `K: ${consolidated.k} mEq/L${formatDateSuffix('k')}` : null;
+      const naTxt = consolidated.na ? `Na: ${consolidated.na} mEq/L${formatDateSuffix('na')}` : null;
+      const hco3Txt = consolidated.hco3 ? `Bicarbonato: ${consolidated.hco3} mEq/L${formatDateSuffix('hco3')}` : null;
+      const eletroPartes = [kTxt, naTxt, hco3Txt].filter(Boolean);
+      if (eletroPartes.length > 0) {
+        linhas.push(`• Eletrólitos: ${eletroPartes.join(' | ')}`);
+      }
+
+      // Nutrição e Metabolismo
+      const albTxt = consolidated.albumina ? `Albumina: ${consolidated.albumina} g/dL${formatDateSuffix('albumina')}` : null;
+      const pcrTxt = consolidated.pcr ? `PCR: ${consolidated.pcr} mg/L${formatDateSuffix('pcr')}` : null;
+      const glicTxt = consolidated.glicemia ? `Glicemia: ${consolidated.glicemia} mg/dL${formatDateSuffix('glicemia')}` : null;
+      const glicadaTxt = consolidated.hba1c ? `HbA1c: ${consolidated.hba1c}%${formatDateSuffix('hba1c')}` : null;
+      const tgpTxt = consolidated.tgp ? `TGP: ${consolidated.tgp} U/L${formatDateSuffix('tgp')}` : null;
+      const tgoTxt = consolidated.tgo ? `TGO: ${consolidated.tgo} U/L${formatDateSuffix('tgo')}` : null;
+      const nutPartes = [albTxt, pcrTxt, glicTxt, glicadaTxt, tgpTxt, tgoTxt].filter(Boolean);
+      if (nutPartes.length > 0) {
+        linhas.push(`• Nutrição e Metabolismo: ${nutPartes.join(' | ')}`);
+      }
+
+      if (linhas.length > 0) {
+        t += linhas.join('\n') + '\n\n';
+      } else {
+        t += `• Sem exames laboratoriais consolidados registrados no prontuário.\n\n`;
+      }
       return t;
     }
 
@@ -474,7 +607,7 @@ function buildSectionBlock(sectionId, num, ctx) {
 export function generateMonthlyEvolutionText(patient, doctorInfo = null, customParams = {}) {
   if (!patient) return '';
 
-  const consolidated = consolidatePatientExams(patient.historicoExames || [], patient.exames || {});
+  const { consolidados: consolidated, datas: examDates } = getConsolidatedPatientExams(patient);
   const idade = patient.idade || calculateAge(patient.dataNascimento) || (patient.dataNascimento ? `${calculateAge(patient.dataNascimento)} anos` : '');
   const tempoTRS = calculateDialysisDurationText(patient.dataInicioDialise) || 'tempo não especificado';
   const dataInicioFormatada = patient.dataInicioDialise ? safeFormatDate(patient.dataInicioDialise) : '';
@@ -521,6 +654,7 @@ export function generateMonthlyEvolutionText(patient, doctorInfo = null, customP
     qb,
     pesoSeco,
     consolidated,
+    examDates,
     medicamentos
   };
 
@@ -539,3 +673,4 @@ export function generateMonthlyEvolutionText(patient, doctorInfo = null, customP
 
   return texto;
 }
+
