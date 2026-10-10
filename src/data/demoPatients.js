@@ -6,6 +6,10 @@
  * - Clínica Renalis (20 pacientes)
  * - Clínica Nefrovita (20 pacientes)
  * - Clínica Hemovida (20 pacientes)
+ * Contém cenários clínicos normais e casos críticos para testes:
+ * - Pacientes com prontuários incompletos (<100% no checklist de evolução)
+ * - Pacientes com pesos hipervolêmicos e hipovolêmicos/desidratados
+ * - Pacientes com anemia severa, hipercalemia de risco, hiperparatireoidismo e desnutrição
  */
 
 export const DEMO_PATIENTS_DATA = [
@@ -521,14 +525,14 @@ export const DEMO_PATIENTS_DATA = [
     "status": "Ativo",
     "statusTransplante": "Encaminhar / Em Triagem",
     "etiologiaDRC": "Glomerulonefrite Crônica (GNC)",
-    "pesoSeco": 57.5,
+    "pesoSeco": null,
     "altura": 177,
     "dataInicioDialise": "2023-03-15",
     "dataInicioClinica": "2023-03-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "observacoesClinicas": "Paciente com quadro frequente de sobrecarga hídrica volumétrica interdialítica grave e má adesão à restrição de sódio e líquidos. Edema periférico e picos hipertensivos intradialíticos.",
     "anticoagulacao": {
       "tipo": "heparina_padrao",
       "doseAtaque": 1000,
@@ -538,7 +542,7 @@ export const DEMO_PATIENTS_DATA = [
     },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSE (Radiocefálica)",
+      "ladoMembro": "",
       "fluxoSangue": 370,
       "fluxoDialisato": 500,
       "agulha": "15G",
@@ -584,16 +588,16 @@ export const DEMO_PATIENTS_DATA = [
       "ht": 32.7,
       "ist": 28,
       "ferritina": 436,
-      "pth": 298,
-      "fosforo": 5.8,
+      "pth": 780,
+      "fosforo": 8.2,
       "ca": 9.1,
       "vitD": 36,
       "fa": 82,
-      "k": 5.3,
+      "k": 6.2,
       "na": 138,
       "hco3": 23,
       "ktv": 1.48,
-      "ureiaPre": 120,
+      "ureiaPre": 198,
       "ureiaPos": 35,
       "creatinina": 9.6,
       "albumina": 4.1,
@@ -747,123 +751,63 @@ export const DEMO_PATIENTS_DATA = [
     "historicoPesos": [
       {
         "id": "peso-02-1-pre",
-        "data": "2026-10-02T08:00:00.000Z",
-        "peso": 59.5,
+        "data": "2026-10-03T08:00:00.000Z",
+        "peso": 62.8,
         "tipo": "Pré-HD",
         "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 2,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
-        "registradoEm": "2026-10-02T08:00:00.000Z"
+        "ganhoInterdialitico": 5.3,
+        "observacoes": "Hipervolemia severa (+5.3kg). Dispneia ao repouso, PA 180/100 mmHg, edema MMII 3+/4+.",
+        "registradoEm": "2026-10-03T08:00:00.000Z"
       },
       {
         "id": "peso-02-1-pos",
-        "data": "2026-10-02T12:00:00.000Z",
-        "peso": 57.5,
+        "data": "2026-10-03T12:00:00.000Z",
+        "peso": 59.2,
         "tipo": "Pós-HD",
         "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 0,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
-        "registradoEm": "2026-10-02T12:00:00.000Z"
+        "ganhoInterdialitico": 1.7,
+        "observacoes": "Hipervolemia residual (+1.7kg). UF suspensa antes do término devido a câimbras severas.",
+        "registradoEm": "2026-10-03T12:00:00.000Z"
       },
       {
         "id": "peso-02-2-pre",
-        "data": "2026-09-30T08:00:00.000Z",
-        "peso": 59.8,
+        "data": "2026-10-01T08:00:00.000Z",
+        "peso": 62.1,
         "tipo": "Pré-HD",
         "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 2.3,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
-        "registradoEm": "2026-09-30T08:00:00.000Z"
+        "ganhoInterdialitico": 4.6,
+        "observacoes": "Ganho interdialítico crítico (>8% peso seco). Ortopneia.",
+        "registradoEm": "2026-10-01T08:00:00.000Z"
       },
       {
         "id": "peso-02-2-pos",
-        "data": "2026-09-30T12:00:00.000Z",
-        "peso": 57.6,
+        "data": "2026-10-01T12:00:00.000Z",
+        "peso": 58.8,
         "tipo": "Pós-HD",
         "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 0.1,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
-        "registradoEm": "2026-09-30T12:00:00.000Z"
+        "ganhoInterdialitico": 1.3,
+        "observacoes": "UF parcial tolerada. Persiste edema leve bimaleolar.",
+        "registradoEm": "2026-10-01T12:00:00.000Z"
       },
       {
         "id": "peso-02-3-pre",
-        "data": "2026-09-28T08:00:00.000Z",
-        "peso": 60.1,
+        "data": "2026-09-29T08:00:00.000Z",
+        "peso": 61.9,
         "tipo": "Pré-HD",
         "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 2.6,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
-        "registradoEm": "2026-09-28T08:00:00.000Z"
+        "ganhoInterdialitico": 4.4,
+        "observacoes": "Hipervolemia reincidente. Orientada restrição rigorosa de sal.",
+        "registradoEm": "2026-09-29T08:00:00.000Z"
       },
       {
         "id": "peso-02-3-pos",
-        "data": "2026-09-28T12:00:00.000Z",
-        "peso": 57.5,
+        "data": "2026-09-29T12:00:00.000Z",
+        "peso": 58.5,
         "tipo": "Pós-HD",
         "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 0,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
-        "registradoEm": "2026-09-28T12:00:00.000Z"
-      },
-      {
-        "id": "peso-02-4-pre",
-        "data": "2026-09-25T08:00:00.000Z",
-        "peso": 60.4,
-        "tipo": "Pré-HD",
-        "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 2.9,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
-        "registradoEm": "2026-09-25T08:00:00.000Z"
-      },
-      {
-        "id": "peso-02-4-pos",
-        "data": "2026-09-25T12:00:00.000Z",
-        "peso": 57.6,
-        "tipo": "Pós-HD",
-        "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 0.1,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
-        "registradoEm": "2026-09-25T12:00:00.000Z"
-      },
-      {
-        "id": "peso-02-5-pre",
-        "data": "2026-09-23T08:00:00.000Z",
-        "peso": 60.7,
-        "tipo": "Pré-HD",
-        "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 3.2,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
-        "registradoEm": "2026-09-23T08:00:00.000Z"
-      },
-      {
-        "id": "peso-02-5-pos",
-        "data": "2026-09-23T12:00:00.000Z",
-        "peso": 57.5,
-        "tipo": "Pós-HD",
-        "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 0,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
-        "registradoEm": "2026-09-23T12:00:00.000Z"
-      },
-      {
-        "id": "peso-02-6-pre",
-        "data": "2026-09-21T08:00:00.000Z",
-        "peso": 59.5,
-        "tipo": "Pré-HD",
-        "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 2,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
-        "registradoEm": "2026-09-21T08:00:00.000Z"
-      },
-      {
-        "id": "peso-02-6-pos",
-        "data": "2026-09-21T12:00:00.000Z",
-        "peso": 57.6,
-        "tipo": "Pós-HD",
-        "pesoSecoReferencia": 57.5,
-        "ganhoInterdialitico": 0.1,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
-        "registradoEm": "2026-09-21T12:00:00.000Z"
+        "ganhoInterdialitico": 1,
+        "observacoes": "Pós-HD com peso acima da meta estimada.",
+        "registradoEm": "2026-09-29T12:00:00.000Z"
       }
     ],
     "ultimoPesoAferido": 59.5,
@@ -981,7 +925,8 @@ export const DEMO_PATIENTS_DATA = [
         }
       }
     ],
-    "hemoculturas": []
+    "hemoculturas": [],
+    "posicaoAcesso": ""
   },
   {
     "id": "paciente-demo-03",
@@ -1015,7 +960,7 @@ export const DEMO_PATIENTS_DATA = [
     "alergias": [
       "Penicilina"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Policística Autossômica Dominante (DRPAD). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "observacoesClinicas": "Paciente com episódios frequentes de hipotensão intradialítica sintomática e desidratação pós-sessão. Apresenta perda de apetite e episódios diarreicos intermitentes.",
     "anticoagulacao": {
       "tipo": "sem_heparina",
       "motivoSemHeparina": "Risco de Sangramento / Pós-operatório Recente",
@@ -1076,12 +1021,12 @@ export const DEMO_PATIENTS_DATA = [
       "fa": 82,
       "k": 5.6,
       "na": 138,
-      "hco3": 23,
+      "hco3": 15,
       "ktv": 1.53,
       "ureiaPre": 120,
       "ureiaPos": 35,
-      "creatinina": 9.6,
-      "albumina": 4.2,
+      "creatinina": 6.2,
+      "albumina": 2.8,
       "pcr": 2.6,
       "glicemia": 94,
       "hba1c": 5.4,
@@ -1233,122 +1178,62 @@ export const DEMO_PATIENTS_DATA = [
       {
         "id": "peso-03-1-pre",
         "data": "2026-10-03T08:00:00.000Z",
-        "peso": 76.1,
+        "peso": 73.1,
         "tipo": "Pré-HD",
         "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 2.1,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "ganhoInterdialitico": -0.9,
+        "observacoes": "Paciente desidratado em domicílio (-0.9kg abaixo do seco). Mucosas secas.",
         "registradoEm": "2026-10-03T08:00:00.000Z"
       },
       {
         "id": "peso-03-1-pos",
         "data": "2026-10-03T12:00:00.000Z",
-        "peso": 74,
+        "peso": 71.2,
         "tipo": "Pós-HD",
         "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 0,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "ganhoInterdialitico": -2.8,
+        "observacoes": "Intercorrência grave de choque hipotensivo intradialítico (PA 75/45 mmHg), vômitos e tontura. Necessitou suspensão de UF e expansão volêmica com 500 mL de SF 0.9%.",
         "registradoEm": "2026-10-03T12:00:00.000Z"
       },
       {
         "id": "peso-03-2-pre",
         "data": "2026-10-01T08:00:00.000Z",
-        "peso": 76.4,
+        "peso": 73.3,
         "tipo": "Pré-HD",
         "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 2.4,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "ganhoInterdialitico": -0.7,
+        "observacoes": "Peso pré abaixo da meta do peso seco.",
         "registradoEm": "2026-10-01T08:00:00.000Z"
       },
       {
         "id": "peso-03-2-pos",
         "data": "2026-10-01T12:00:00.000Z",
-        "peso": 74.1,
+        "peso": 71.8,
         "tipo": "Pós-HD",
         "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 0.1,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "ganhoInterdialitico": -2.2,
+        "observacoes": "Hipotensão sintomática ao final da sessão.",
         "registradoEm": "2026-10-01T12:00:00.000Z"
       },
       {
         "id": "peso-03-3-pre",
         "data": "2026-09-29T08:00:00.000Z",
-        "peso": 76.7,
+        "peso": 73.6,
         "tipo": "Pré-HD",
         "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 2.7,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
+        "ganhoInterdialitico": -0.4,
+        "observacoes": "Queixa de astenia e redução do apetite.",
         "registradoEm": "2026-09-29T08:00:00.000Z"
       },
       {
         "id": "peso-03-3-pos",
         "data": "2026-09-29T12:00:00.000Z",
-        "peso": 74,
+        "peso": 72.1,
         "tipo": "Pós-HD",
         "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 0,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
+        "ganhoInterdialitico": -1.9,
+        "observacoes": "Hipotensão postural ao levantar.",
         "registradoEm": "2026-09-29T12:00:00.000Z"
-      },
-      {
-        "id": "peso-03-4-pre",
-        "data": "2026-09-26T08:00:00.000Z",
-        "peso": 77,
-        "tipo": "Pré-HD",
-        "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 3,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
-        "registradoEm": "2026-09-26T08:00:00.000Z"
-      },
-      {
-        "id": "peso-03-4-pos",
-        "data": "2026-09-26T12:00:00.000Z",
-        "peso": 74.1,
-        "tipo": "Pós-HD",
-        "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 0.1,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
-        "registradoEm": "2026-09-26T12:00:00.000Z"
-      },
-      {
-        "id": "peso-03-5-pre",
-        "data": "2026-09-24T08:00:00.000Z",
-        "peso": 75.8,
-        "tipo": "Pré-HD",
-        "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 1.8,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
-        "registradoEm": "2026-09-24T08:00:00.000Z"
-      },
-      {
-        "id": "peso-03-5-pos",
-        "data": "2026-09-24T12:00:00.000Z",
-        "peso": 74,
-        "tipo": "Pós-HD",
-        "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 0,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
-        "registradoEm": "2026-09-24T12:00:00.000Z"
-      },
-      {
-        "id": "peso-03-6-pre",
-        "data": "2026-09-22T08:00:00.000Z",
-        "peso": 76.1,
-        "tipo": "Pré-HD",
-        "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 2.1,
-        "observacoes": "Paciente eupneico, sem queixas de dispneia ou dor torácica.",
-        "registradoEm": "2026-09-22T08:00:00.000Z"
-      },
-      {
-        "id": "peso-03-6-pos",
-        "data": "2026-09-22T12:00:00.000Z",
-        "peso": 74.1,
-        "tipo": "Pós-HD",
-        "pesoSecoReferencia": 74,
-        "ganhoInterdialitico": 0.1,
-        "observacoes": "Meta de UF atingida sem intercorrências ou câimbras.",
-        "registradoEm": "2026-09-22T12:00:00.000Z"
       }
     ],
     "ultimoPesoAferido": 76.1,
@@ -1492,15 +1377,15 @@ export const DEMO_PATIENTS_DATA = [
     "modalidade": "HD",
     "status": "Ativo",
     "statusTransplante": "Contraindicação Provisória",
-    "etiologiaDRC": "Nefropatia Lúpica / Doenças Autoimunes",
+    "etiologiaDRC": "",
     "pesoSeco": 59.5,
     "altura": 171,
-    "dataInicioDialise": "2021-05-15",
+    "dataInicioDialise": "",
     "dataInicioClinica": "2021-05-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefropatia Lúpica / Doenças Autoimunes. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "observacoesClinicas": "Paciente com quadro de anemia ferropênica e refratária de difícil manejo. Fadiga incapacitante, dispneia aos médios esforços. LME CEAF vencida há 15 dias aguardando renovação.",
     "anticoagulacao": {
       "tipo": "heparina_padrao",
       "doseAtaque": 1000,
@@ -1552,10 +1437,10 @@ export const DEMO_PATIENTS_DATA = [
       }
     ],
     "exames": {
-      "hb": 11.5,
-      "ht": 34.5,
-      "ist": 30,
-      "ferritina": 522,
+      "hb": 7.1,
+      "ht": 21.4,
+      "ist": 9.5,
+      "ferritina": 38,
       "pth": 356,
       "fosforo": 5.4,
       "ca": 9.1,
@@ -1573,7 +1458,8 @@ export const DEMO_PATIENTS_DATA = [
       "glicemia": 94,
       "hba1c": 5.4,
       "tgp": 22,
-      "tgo": 24
+      "tgo": 24,
+      "ferro": 24
     },
     "medicamentos": [
       {
@@ -1992,7 +1878,7 @@ export const DEMO_PATIENTS_DATA = [
     "alergias": [
       "Iodo / Contrastes Iodados"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Uropatia Obstrutiva / Litíase Renal. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio Unimed.",
+    "observacoesClinicas": "Paciente com Hiperparatireoidismo Terciário severo com alto turnover ósseo e dores ósseas intensas. Produto Ca x P > 90 com elevado risco de calcificação vascular e cardiovascular.",
     "anticoagulacao": {
       "tipo": "heparina_padrao",
       "doseAtaque": 1000,
@@ -2048,11 +1934,11 @@ export const DEMO_PATIENTS_DATA = [
       "ht": 35.4,
       "ist": 31,
       "ferritina": 565,
-      "pth": 385,
-      "fosforo": 6.1,
-      "ca": 9.1,
+      "pth": 1520,
+      "fosforo": 8.7,
+      "ca": 10.9,
       "vitD": 36,
-      "fa": 82,
+      "fa": 430,
       "k": 5,
       "na": 138,
       "hco3": 23,
@@ -2479,7 +2365,7 @@ export const DEMO_PATIENTS_DATA = [
     "alergias": [
       "AINEs (Anti-inflamatórios)"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Nefrite Túbulo-Intersticial Crônica (NTIC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HDF sob convênio Bradesco Saúde.",
+    "observacoesClinicas": "Paciente com má adequação dialítica crônica (Kt/V < 1.0). Sintomas urêmicos subclínicos como inapetência e náuseas matinais. Indicado aumento do tempo de sessão e fluxo.",
     "anticoagulacao": {
       "tipo": "enoxaparina",
       "doseEnoxaparina": "40",
@@ -2487,7 +2373,7 @@ export const DEMO_PATIENTS_DATA = [
     },
     "acessoVascular": {
       "tipo": "FAV",
-      "ladoMembro": "MSD (Braquiocefálica)",
+      "ladoMembro": "",
       "fluxoSangue": 350,
       "fluxoDialisato": 500,
       "agulha": "15G",
@@ -2541,16 +2427,17 @@ export const DEMO_PATIENTS_DATA = [
       "k": 5.3,
       "na": 138,
       "hco3": 23,
-      "ktv": 1.38,
-      "ureiaPre": 120,
-      "ureiaPos": 35,
-      "creatinina": 9.6,
+      "ktv": 0.92,
+      "ureiaPre": 230,
+      "ureiaPos": 118,
+      "creatinina": 13.8,
       "albumina": 3.9,
       "pcr": 2.6,
       "glicemia": 94,
       "hba1c": 5.4,
       "tgp": 24,
-      "tgo": 26
+      "tgo": 26,
+      "ur": 49
     },
     "medicamentos": [
       {
@@ -2930,7 +2817,8 @@ export const DEMO_PATIENTS_DATA = [
         }
       }
     ],
-    "hemoculturas": []
+    "hemoculturas": [],
+    "posicaoAcesso": ""
   },
   {
     "id": "paciente-demo-07",
@@ -2964,7 +2852,7 @@ export const DEMO_PATIENTS_DATA = [
     "alergias": [
       "Sulfas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Doença Renal Indeterminada / Desconhecida. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SulAmérica.",
+    "observacoesClinicas": "Paciente com transgressões dietéticas recorrentes ricas em potássio (frutas tropicais, água de coco). Risco imediato de arritmia maligna e parada cardíaca. Indicado banho de K 1.0 mEq/L.",
     "anticoagulacao": {
       "tipo": "heparina_padrao",
       "doseAtaque": 1000,
@@ -3025,11 +2913,11 @@ export const DEMO_PATIENTS_DATA = [
       "ca": 9.1,
       "vitD": 36,
       "fa": 82,
-      "k": 5.6,
+      "k": 6.9,
       "na": 138,
-      "hco3": 23,
+      "hco3": 13,
       "ktv": 1.43,
-      "ureiaPre": 120,
+      "ureiaPre": 210,
       "ureiaPos": 35,
       "creatinina": 9.6,
       "albumina": 4,
@@ -3442,16 +3330,16 @@ export const DEMO_PATIENTS_DATA = [
     "convenio": "SUS",
     "modalidade": "HD",
     "status": "Ativo",
-    "statusTransplante": "Encaminhado / Em Avaliação",
-    "etiologiaDRC": "Diabetes Mellitus / Nefropatia Diabética",
-    "pesoSeco": 63.5,
+    "statusTransplante": "Contraindicado / Inapto",
+    "etiologiaDRC": "",
+    "pesoSeco": null,
     "altura": 159,
     "dataInicioDialise": "2021-09-15",
     "dataInicioClinica": "2021-09-15",
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Diabetes Mellitus / Nefropatia Diabética. Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "observacoesClinicas": "Paciente inapta para transplante renal devido a neoplasia mamária em seguimento oncológico e cardiopatia isquêmica grave multiarterial não revascularizável. Prontuário com dados cadastrais pendentes de revisão.",
     "anticoagulacao": {
       "tipo": "heparina_padrao",
       "doseAtaque": 1000,
@@ -3460,7 +3348,7 @@ export const DEMO_PATIENTS_DATA = [
       "observacoes": "Heparinização plena. Interromper infusão na 4ª hora de diálise."
     },
     "acessoVascular": {
-      "tipo": "FAV",
+      "tipo": "",
       "ladoMembro": "MSE (Radiocefálica)",
       "fluxoSangue": 370,
       "fluxoDialisato": 500,
@@ -3917,7 +3805,8 @@ export const DEMO_PATIENTS_DATA = [
         }
       }
     ],
-    "hemoculturas": []
+    "hemoculturas": [],
+    "tipoAcesso": ""
   },
   {
     "id": "paciente-demo-09",
@@ -3951,7 +3840,7 @@ export const DEMO_PATIENTS_DATA = [
     "alergias": [
       "Dipirona"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Hipertensão Arterial Sistêmica (HAS). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "observacoesClinicas": "Cateter Permcath apresentando fluxos insuficientes (Qb máximo 200 mL/min), pressões venosas anormais e necessidade de inversão frequente de linhas. Histórico recente de bacteremia tratada.",
     "anticoagulacao": {
       "tipo": "heparina_padrao",
       "doseAtaque": 1000,
@@ -3962,7 +3851,7 @@ export const DEMO_PATIENTS_DATA = [
     "acessoVascular": {
       "tipo": "Permcath",
       "ladoMembro": "Jugular Interna Esquerda (JIE)",
-      "fluxoSangue": 310,
+      "fluxoSangue": 200,
       "fluxoDialisato": 500,
       "agulha": "14.5 Fr",
       "dataConfeccao": "2022-01-10",
@@ -4015,7 +3904,7 @@ export const DEMO_PATIENTS_DATA = [
       "k": 5,
       "na": 138,
       "hco3": 23,
-      "ktv": 1.53,
+      "ktv": 1.05,
       "ureiaPre": 120,
       "ureiaPos": 35,
       "creatinina": 9.6,
@@ -4417,7 +4306,8 @@ export const DEMO_PATIENTS_DATA = [
         "conduta": "Vigilância de óstio mantida. Ausência de febre intra-dialítica ou sinais flogísticos locais.",
         "registradoEm": "2026-08-20T14:30:00Z"
       }
-    ]
+    ],
+    "tipoAcesso": "Permcath"
   },
   {
     "id": "paciente-demo-10",
@@ -4451,7 +4341,7 @@ export const DEMO_PATIENTS_DATA = [
     "alergias": [
       "Nega alergias conhecidas"
     ],
-    "observacoesClinicas": "Paciente portador de DRC estágio 5D secundária a Glomerulonefrite Crônica (GNC). Em acompanhamento regular na Clínica Renalis com rotina de 3 sessões semanais de 4 horas. Modalidade HD sob convênio SUS.",
+    "observacoesClinicas": "Paciente com síndrome de desnutrição-inflamação-aterosclerose (Síndrome MIA). Perda de peso não intencional e sarcopenia evidente. Diabetes mellitus muito descompensado.",
     "anticoagulacao": {
       "tipo": "heparina_padrao",
       "doseAtaque": 1000,
@@ -4519,10 +4409,10 @@ export const DEMO_PATIENTS_DATA = [
       "ureiaPre": 120,
       "ureiaPos": 35,
       "creatinina": 9.6,
-      "albumina": 4.3,
-      "pcr": 2.6,
-      "glicemia": 94,
-      "hba1c": 5.4,
+      "albumina": 2.6,
+      "pcr": 38.5,
+      "glicemia": 295,
+      "hba1c": 11.2,
       "tgp": 28,
       "tgo": 20
     },

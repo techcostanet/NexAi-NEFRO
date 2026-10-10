@@ -1,6 +1,7 @@
 import { doc, getDoc, setDoc, getDocs, collection, onSnapshot, updateDoc, deleteDoc, writeBatch } from "firebase/firestore";
 import { db } from "../config/firebase.js";
 import { logAuditEvent } from "./auditService.js";
+import { DR_MARCELO_LOGO } from "../data/drMarceloLogo.js";
 
 const DOCTORS_COLLECTION = "doctors";
 export const DEFAULT_DOCTOR_ID = "dr-marcelo";
@@ -22,7 +23,7 @@ export const DEFAULT_DOCTORS = [
     hospitalVinculo: "Hospital Santa Casa",
     unidadeDialise: "Unidade de Hemodiálise Renalis",
     bio: "Coordenador Clínico de Terapia Renal com foco em adequação dialítica (Kt/V), vigilância de acessos vasculares (FAV/Permcath) e controle de distúrbio mineral ósseo e anemia.",
-    logoUrl: "",
+    logoUrl: DR_MARCELO_LOGO,
     statusLicenca: "Ativo",
     tipoConta: "Médico Assinante",
     plano: "Profissional Ilimitado",

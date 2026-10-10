@@ -1,5 +1,14 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.116",
+    "date": "10/10/2026",
+    "title": "Logomarca oficial do Dr",
+    "highlights": [
+      "Logomarca oficial do Dr",
+      "Marcelo, cenarios clinicos com casos fora da meta para evolucao e redesign do grafico de peso"
+    ]
+  },
+  {
     "version": "1.1.115",
     "date": "09/10/2026",
     "title": "Automação no disparo de novidades por e-mail e novo visual com categorias de ...",

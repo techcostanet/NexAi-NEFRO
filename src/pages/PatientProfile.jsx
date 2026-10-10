@@ -2133,51 +2133,198 @@ export default function PatientProfile() {
                 </div>
               </div>
 
-              {/* Mini gráfico visual de tendência ponderal */}
-              {historicoPesos.length > 1 && (
-                <div className="mb-3 p-2 bg-slate-50 rounded-xl border border-slate-200" style={{ overflow: 'hidden' }}>
-                  <div className="flex justify-between items-center mb-1.5">
-                    <span className="font-bold text-slate-500 uppercase flex items-center gap-1" style={{ fontSize: '0.65rem' }}>
-                      <TrendingUp size={11} color="var(--primary)" /> Tendência das Pesagens
-                    </span>
-                    <span className="text-muted" style={{ fontSize: '0.65rem' }}>Meta: {patient.pesoSeco || '-'}kg</span>
-                  </div>
-                  <div className="flex items-end justify-between gap-1 h-16 pt-2 px-0.5" style={{ width: '100%', minWidth: 0, boxSizing: 'border-box' }}>
-                    {historicoPesos.slice(0, 6).reverse().map((rec, i) => {
-                      const minP = Math.min(...historicoPesos.slice(0, 6).map(r => r.peso), pesoSecoNum || 50) - 1;
-                      const maxP = Math.max(...historicoPesos.slice(0, 6).map(r => r.peso), pesoSecoNum || 70) + 1;
-                      const range = maxP - minP || 1;
-                      const heightPct = Math.max(15, Math.min(100, ((rec.peso - minP) / range) * 100));
-                      const isOver = pesoSecoNum && rec.peso > pesoSecoNum + 2.5;
-                      return (
-                        <div key={i} className="flex-1 flex flex-col items-center gap-1" style={{ minWidth: 0 }}>
-                          <span className="font-bold text-slate-700 truncate" style={{ fontSize: '0.62rem', width: '100%', textAlign: 'center', lineHeight: 1.1 }}>
-                            {rec.peso}
-                          </span>
+              {/* Gráfico visual aprimorado e espaçoso de tendência ponderal */}
+              {historicoPesos.length > 1 && (() => {
+                const recentWeights = historicoPesos.slice(0, 6).reverse();
+                const allPValues = [
+                  ...recentWeights.map(r => Number(r.peso) || 0),
+                  ...(pesoSecoNum ? [pesoSecoNum] : [])
+                ].filter(v => v > 0);
+
+                const minP = allPValues.length > 0 ? Math.min(...allPValues) - 1.2 : 50;
+                const maxP = allPValues.length > 0 ? Math.max(...allPValues) + 1.2 : 75;
+                const range = Math.max(1, maxP - minP);
+                const targetLineBottomPct = pesoSecoNum 
+                  ? Math.max(8, Math.min(92, ((pesoSecoNum - minP) / range) * 100))
+                  : null;
+
+                return (
+                  <div className="mb-3 p-3 bg-slate-50/90 rounded-2xl border border-slate-200 shadow-xs">
+                    {/* Header do Gráfico com Título e Meta */}
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-bold text-slate-700 flex items-center gap-1.5" style={{ fontSize: '0.72rem' }}>
+                        <TrendingUp size={13} color="var(--primary, #2563eb)" /> Tendência Ponderal
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span 
+                          style={{ 
+                            fontSize: '0.65rem', 
+                            padding: '1px 6px', 
+                            borderRadius: '6px', 
+                            background: '#e0f2fe', 
+                            color: '#0369a1',
+                            fontWeight: '600'
+                          }}
+                        >
+                          Meta: {patient.pesoSeco ? `${patient.pesoSeco} kg` : '-'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Legenda compacta e informativa */}
+                    <div className="flex items-center justify-between text-muted mb-2 px-1" style={{ fontSize: '0.60rem' }}>
+                      <div className="flex items-center gap-2">
+                        <span className="flex items-center gap-1">
+                          <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#3b82f6', display: 'inline-block' }} />
+                          Pré-HD
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
+                          Pós-HD
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#ef4444', display: 'inline-block' }} />
+                          Alerta
+                        </span>
+                      </div>
+                      {targetLineBottomPct !== null && (
+                        <span className="text-slate-400 font-medium">--- Meta Seco</span>
+                      )}
+                    </div>
+
+                    {/* Área Gráfica com Altura Confortável e Linha de Meta */}
+                    <div 
+                      className="relative flex items-end justify-between gap-1.5 pt-1 px-1" 
+                      style={{ 
+                        width: '100%', 
+                        minHeight: '115px', 
+                        boxSizing: 'border-box'
+                      }}
+                    >
+                      {/* Linha Tracejada de Referência da Meta (Peso Seco) */}
+                      {targetLineBottomPct !== null && (
+                        <div 
+                          style={{
+                            position: 'absolute',
+                            left: '4px',
+                            right: '4px',
+                            bottom: `calc(30px + (70px * ${targetLineBottomPct / 100}))`,
+                            borderTop: '1.5px dashed #94a3b8',
+                            zIndex: 1,
+                            pointerEvents: 'none',
+                            opacity: 0.65
+                          }}
+                        />
+                      )}
+
+                      {recentWeights.map((rec, i) => {
+                        const pNum = Number(rec.peso) || 0;
+                        const heightPct = Math.max(12, Math.min(100, ((pNum - minP) / range) * 100));
+                        const isPre = (rec.tipo || '').toLowerCase().includes('pré');
+                        const isPos = (rec.tipo || '').toLowerCase().includes('pós');
+                        const deltaMeta = pesoSecoNum ? Number((pNum - pesoSecoNum).toFixed(1)) : null;
+                        const isOverPre = isPre && deltaMeta !== null && deltaMeta > 2.5;
+                        const isUnderPos = isPos && deltaMeta !== null && deltaMeta < -0.6;
+                        const isGoodPos = isPos && deltaMeta !== null && Math.abs(deltaMeta) <= 0.6;
+
+                        // Cor da Barra com gradiente harmonioso
+                        let barBg = '#3b82f6';
+                        if (isOverPre) {
+                          barBg = 'linear-gradient(180deg, #f87171 0%, #ef4444 100%)';
+                        } else if (isGoodPos) {
+                          barBg = 'linear-gradient(180deg, #34d399 0%, #059669 100%)';
+                        } else if (isUnderPos) {
+                          barBg = 'linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%)';
+                        } else if (isPos) {
+                          barBg = 'linear-gradient(180deg, #6ee7b7 0%, #10b981 100%)';
+                        } else {
+                          barBg = 'linear-gradient(180deg, #60a5fa 0%, #2563eb 100%)';
+                        }
+
+                        // Cor do texto superior
+                        let valColor = '#1e293b';
+                        if (isOverPre) valColor = '#dc2626';
+                        else if (isGoodPos) valColor = '#059669';
+                        else if (isUnderPos) valColor = '#7c3aed';
+
+                        const formattedDate = safeFormatDate(rec.data, { day: '2-digit', month: '2-digit' });
+                        const tooltipText = `${safeFormatDate(rec.data)} • ${rec.tipo}: ${rec.peso}kg${deltaMeta !== null ? ` (${deltaMeta > 0 ? `+${deltaMeta}` : deltaMeta}kg vs meta)` : ''}`;
+
+                        return (
                           <div 
-                            style={{ 
-                              width: '100%', 
-                              maxWidth: '18px', 
-                              height: `${heightPct}%`, 
-                              background: isOver ? '#fb7185' : '#38bdf8', 
-                              borderRadius: '4px 4px 0 0',
-                              transition: 'height 0.3s'
-                            }} 
-                            title={`${safeFormatDate(rec.data)} - ${rec.peso}kg (${rec.tipo})`}
-                          />
-                          <span 
-                            className="text-muted truncate" 
-                            style={{ fontSize: '0.58rem', width: '100%', textAlign: 'center', lineHeight: 1.1 }}
-                            title={safeFormatDate(rec.data)}
+                            key={i} 
+                            className="flex-1 flex flex-col items-center justify-end" 
+                            style={{ minWidth: 0, position: 'relative', zIndex: 2 }}
+                            title={tooltipText}
                           >
-                            {safeFormatDate(rec.data, { day: '2-digit', month: '2-digit' })}
-                          </span>
-                        </div>
-                      );
-                    })}
+                            {/* Valor numérico do peso */}
+                            <span 
+                              className="font-bold truncate mb-1" 
+                              style={{ 
+                                fontSize: '0.70rem', 
+                                width: '100%', 
+                                textAlign: 'center', 
+                                lineHeight: '1.2',
+                                color: valColor
+                              }}
+                            >
+                              {rec.peso}
+                            </span>
+
+                            {/* Pista e Barra de Altura */}
+                            <div 
+                              style={{ 
+                                width: '100%', 
+                                maxWidth: '22px', 
+                                height: '70px', 
+                                background: 'rgba(226, 232, 240, 0.45)',
+                                borderRadius: '6px',
+                                display: 'flex',
+                                alignItems: 'flex-end',
+                                padding: '1px'
+                              }}
+                            >
+                              <div 
+                                style={{ 
+                                  width: '100%', 
+                                  height: `${heightPct}%`, 
+                                  background: barBg, 
+                                  borderRadius: '5px',
+                                  transition: 'height 0.35s ease',
+                                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+                                }} 
+                              />
+                            </div>
+
+                            {/* Data e Badge de Tipo */}
+                            <div className="flex flex-col items-center mt-1 w-full" style={{ gap: '2px' }}>
+                              <span 
+                                className="text-slate-600 font-semibold truncate" 
+                                style={{ fontSize: '0.62rem', width: '100%', textAlign: 'center', lineHeight: 1.1 }}
+                              >
+                                {formattedDate}
+                              </span>
+                              <span 
+                                style={{ 
+                                  fontSize: '0.55rem', 
+                                  fontWeight: '700',
+                                  padding: '0.5px 4px', 
+                                  borderRadius: '4px',
+                                  lineHeight: 1.1,
+                                  background: isPre ? '#dbeafe' : (isGoodPos ? '#d1fae5' : '#f1f5f9'),
+                                  color: isPre ? '#1d4ed8' : (isGoodPos ? '#047857' : '#475569')
+                                }}
+                              >
+                                {isPre ? 'Pré' : (isPos ? 'Pós' : rec.tipo?.slice(0, 3))}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Histórico Cronológico de Pesagens */}
               {historicoPesos.length === 0 ? (

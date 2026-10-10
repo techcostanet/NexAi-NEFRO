@@ -15,6 +15,7 @@ import {
 import { db } from "../config/firebase.js";
 import { normalizeMedicamentosList } from "../data/dialysisMedications.js";
 import { DEMO_PATIENTS_DATA } from "../data/demoPatients.js";
+import { DR_MARCELO_LOGO } from "../data/drMarceloLogo.js";
 import { logAuditEvent } from "./auditService.js";
 import { getExamTime } from "../utils/dateUtils.js";
 
@@ -794,6 +795,7 @@ export async function seedDemoPatientsToFirestore(targetDoctorId = 'dr-marcelo')
       clinicaPrincipal: "Clínica Renalis",
       hospitalVinculo: "Hospital Santa Casa",
       unidadeDialise: "Unidade de Hemodiálise Renalis",
+      logoUrl: DR_MARCELO_LOGO,
       statusLicenca: "Ativo",
       tipoConta: "Médico Assinante",
       plano: "Profissional Ilimitado",

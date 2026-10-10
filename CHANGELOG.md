@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.116] - 2026-10-10
+### Alterações
+- Logomarca oficial do Dr. Marcelo, cenarios clinicos com casos fora da meta para evolucao e redesign do grafico de peso
+
 ## [1.1.115] - 2026-10-10
 ### Alterações
 - Automação no disparo de novidades por e-mail e novo visual com categorias de melhorias
