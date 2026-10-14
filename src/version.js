@@ -1,2 +1,2 @@
-export const APP_VERSION = "1.1.117";
-export const LAST_DEPLOY = "2026-10-14T13:07:45.055Z";
+export const APP_VERSION = "1.1.118";
+export const LAST_DEPLOY = "2026-10-14T14:39:30.024Z";

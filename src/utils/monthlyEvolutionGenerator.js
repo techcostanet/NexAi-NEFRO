@@ -242,6 +242,8 @@ function buildSectionBlock(sectionId, num, ctx) {
     tipoAcesso, 
     posicaoAcesso, 
     agulha, 
+    isCateter,
+    calibreCateter,
     qb, 
     pesoSeco, 
     consolidated, 
@@ -264,7 +266,11 @@ function buildSectionBlock(sectionId, num, ctx) {
     case 'acessoVascular': {
       let t = `${num}. ACESSO VASCULAR:\n`;
       t += `Acesso vascular em uso: ${tipoAcesso} em ${posicaoAcesso}.\n`;
-      t += `Acesso pérvio e funcionante, com sopro e frêmito presentes e adequados, sem sinais de hiperfluxo, dilatações aneurismáticas com risco trófico ou sinais flogísticos locais. Punção habitual com agulhas ${agulha}, mantendo fluxo sanguíneo efetivo (Qb) de ${qb} mL/min e pressões do circuito dentro da normalidade.\n\n`;
+      if (isCateter) {
+        t += `Cateter venoso central tunelizado (Permcath) pérvio e bem posicionado. Óstio de inserção sem secreção purulenta, hiperemia ou dor local; curativo estéril oclusivo limpo e seco. Conexão asséptica Luer-Lock mantendo fluxo sanguíneo efetivo (Qb) de ${qb} mL/min e pressões do circuito dentro da normalidade, com infusão de selo profilático ao término da diálise.\n\n`;
+      } else {
+        t += `Acesso pérvio e funcionante, com sopro e frêmito presentes e adequados, sem sinais de hiperfluxo, dilatações aneurismáticas com risco trófico ou sinais flogísticos locais. Punção habitual com agulhas ${agulha}, mantendo fluxo sanguíneo efetivo (Qb) de ${qb} mL/min e pressões do circuito dentro da normalidade.\n\n`;
+      }
       return t;
     }
 
@@ -646,8 +652,10 @@ export function generateMonthlyEvolutionText(patient, doctorInfo = null, customP
   const dataInicioFormatada = patient.dataInicioDialise ? safeFormatDate(patient.dataInicioDialise) : '';
   const pesoSeco = patient.pesoSeco || customParams.pesoSeco || '-';
   const tipoAcesso = patient.tipoAcesso || patient.acessoVascular?.tipo || 'FAV';
-  const posicaoAcesso = patient.posicaoAcesso || patient.acessoVascular?.ladoMembro || 'membro superior';
+  const isCateter = /permcath|cateter|cdl|shaldon|duplo/i.test(tipoAcesso);
+  const posicaoAcesso = patient.posicaoAcesso || patient.acessoVascular?.ladoMembro || (isCateter ? 'Jugular Interna' : 'membro superior');
   const qb = patient.acessoVascular?.fluxoSangue || customParams.qbEfetivo || '350';
+  const calibreCateter = patient.acessoVascular?.calibre || (patient.acessoVascular?.agulha && patient.acessoVascular.agulha.includes('Fr') ? patient.acessoVascular.agulha : '14.5 Fr');
   const agulha = patient.acessoVascular?.agulha || '16G';
   const turno = patient.turno || 'Manhã';
   const diaSemana = patient.diaSemana || 'Seg/Qua/Sex';
@@ -683,6 +691,8 @@ export function generateMonthlyEvolutionText(patient, doctorInfo = null, customP
     turno,
     tipoAcesso,
     posicaoAcesso,
+    isCateter,
+    calibreCateter,
     agulha,
     qb,
     pesoSeco,

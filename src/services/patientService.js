@@ -522,6 +522,64 @@ export async function savePatientExam(patientId, examData, examIndex = null) {
 }
 
 /**
+ * Salva o cálculo mensal de Kt/V (spKt/V Daugirdas) com Ureia Pré/Pós e Pesos no Firestore
+ */
+export async function savePatientKtvCalculation(patientId, ktvData) {
+  if (!db) throw new Error("Cloud Firestore não inicializado.");
+  const patient = await getPatientById(patientId);
+  if (!patient) throw new Error("Paciente não encontrado no Firestore");
+
+  const historico = Array.isArray(patient.historicoExames) ? [...patient.historicoExames] : [];
+  const dataExame = ktvData.dataColeta || new Date().toISOString().split("T")[0];
+
+  // Verifica se já existe um registro de exame com esta mesma data para mesclar ou criar novo
+  const existingIndex = historico.findIndex(h => h.dataExame === dataExame);
+
+  const examPayload = {
+    ktv: ktvData.ktv,
+    pru: ktvData.pru,
+    uf: ktvData.uf,
+    ureiaPre: ktvData.ureiaPre,
+    ureiaPos: ktvData.ureiaPos,
+    pesoPre: ktvData.pesoPre,
+    pesoPos: ktvData.pesoPos,
+    duracaoSessao: ktvData.duracaoHoras,
+    metodoKtv: ktvData.metodoCalculo || 'Daugirdas 2ª Geração (spKt/V)',
+    dataExame,
+    observacaoKtv: ktvData.observacao || undefined,
+    registradoEm: new Date().toISOString()
+  };
+
+  if (existingIndex >= 0) {
+    historico[existingIndex] = {
+      ...historico[existingIndex],
+      ...examPayload
+    };
+  } else {
+    historico.unshift(examPayload);
+  }
+
+  historico.sort((a, b) => getExamTime(b?.dataExame) - getExamTime(a?.dataExame));
+  const { consolidados } = consolidatePatientExams(historico, patient.exames);
+
+  const updatePayload = {
+    historicoExames: historico,
+    exames: {
+      ...consolidados,
+      ktv: ktvData.ktv,
+      pru: ktvData.pru,
+      ureiaPre: ktvData.ureiaPre,
+      ureiaPos: ktvData.ureiaPos
+    },
+    atualizadoEm: new Date().toISOString()
+  };
+
+  const docRef = doc(db, PATIENTS_COLLECTION, patientId);
+  await updateDoc(docRef, updatePayload);
+  return { ...patient, ...updatePayload };
+}
+
+/**
  * Remove um exame do histórico do paciente no Firestore
  */
 export async function deletePatientExam(patientId, examIndex) {

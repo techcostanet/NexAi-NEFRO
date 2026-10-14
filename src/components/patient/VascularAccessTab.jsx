@@ -348,12 +348,27 @@ export default function VascularAccessTab({
                 {acessoVascular.fluxoDialisato ? `${acessoVascular.fluxoDialisato} ml/min` : '-'}
               </strong>
             </div>
-            <div className="flex justify-between items-center gap-3">
-              <span className="text-muted shrink-0">Calibre:</span>
-              <strong className="text-slate-800 font-semibold text-right">
-                {acessoVascular.agulha || (isCatheter ? 'Permcath Duplo' : '16G')}
-              </strong>
-            </div>
+            {isCatheter ? (
+              <>
+                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                  <span className="text-muted shrink-0">Calibre:</span>
+                  <strong className="text-slate-800 font-semibold text-right">
+                    {acessoVascular.calibre || (acessoVascular.agulha && acessoVascular.agulha.includes('Fr') ? acessoVascular.agulha : '14.5 Fr')}
+                  </strong>
+                </div>
+                <div className="flex justify-between items-center gap-3">
+                  <span className="text-muted shrink-0">Conexão:</span>
+                  <strong className="text-slate-800 font-semibold text-right">Luer-Lock</strong>
+                </div>
+              </>
+            ) : (
+              <div className="flex justify-between items-center gap-3">
+                <span className="text-muted shrink-0">Agulha:</span>
+                <strong className="text-slate-800 font-semibold text-right">
+                  {acessoVascular.agulha || '16G'}
+                </strong>
+              </div>
+            )}
           </div>
         </div>
 

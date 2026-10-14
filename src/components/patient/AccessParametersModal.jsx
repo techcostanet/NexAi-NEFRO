@@ -207,12 +207,12 @@ export default function AccessParametersModal({
 
             <div>
               <label className="text-xs font-semibold text-slate-700 mb-1 block">
-                Agulha ou Calibre
+                {/permcath|cateter|cdl|shaldon|duplo/i.test(formData.tipo) ? 'Calibre' : 'Agulha'}
               </label>
               <input 
                 type="text"
                 className="input-field w-full text-xs"
-                placeholder="Ex: 15G, 16G"
+                placeholder={/permcath|cateter|cdl|shaldon|duplo/i.test(formData.tipo) ? 'Ex: 14.5 Fr' : 'Ex: 15G, 16G'}
                 value={formData.agulha}
                 onChange={(e) => setFormData(prev => ({ ...prev, agulha: e.target.value }))}
               />

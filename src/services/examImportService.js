@@ -258,6 +258,97 @@ export function matchHeaderToExamKey(headerName) {
 }
 
 /**
+ * Interpreta com segurança resultados de sorologias e testes qualitativos/quantitativos
+ * (HBsAg, Anti-HBs, Anti-HCV, Anti-HBc, HIV) blindando contra linhas de valores de referência.
+ */
+export function parseSerologyValue(line, examKey) {
+  if (!line) return null;
+  const raw = String(line).trim();
+  const norm = raw.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+
+  // Ignora imediatamente linhas que sejam cabeçalhos ou notas de referência
+  if (
+    (norm.startsWith("VALOR") && norm.includes("REFERENCIA")) ||
+    norm.startsWith("REF:") ||
+    norm.startsWith("REFERENCIA:") ||
+    norm.startsWith("VALORES DE REFERENCIA")
+  ) {
+    return null;
+  }
+
+  // Se a linha descrever apenas faixa de referência sem prefixo de resultado (ex: "Não Reagente: Inferior a 10,0")
+  if (
+    (/(?:inferior|menor|superior|maior|igual)\s+a/i.test(raw) || /indetect[aá]vel/i.test(raw)) &&
+    !/(?:resultado|valor)[.:_\s]+/i.test(raw)
+  ) {
+    return null;
+  }
+
+  // 1. Detecção Especial Quantitativa para ANTI-HBS (títulos em mUI/mL)
+  // Em laudos laboratoriais (Labicon, DB, etc.):
+  // Ex: "Resultado: > 1000,0 mUI/mL", "> 1000 mUI/mL", "SUPERIOR A 1000 mUI/mL", "350 mUI/mL", "< 2.0 mUI/mL"
+  if (examKey === 'antiHbs') {
+    const hasResPrefix = /(?:resultado|valor)[.:_\s]+/i.test(raw);
+    const hasUnit = /mUI\s*\/\s*m[lL]|UI\s*\/\s*m[lL]|mUI\s*\/\s*[lL]/i.test(raw);
+
+    // Se tiver sinal de superior/maior (> 1000, > 10, SUPERIOR A)
+    if (/>\s*\d+|SUPERIOR\s+A\s+\d+|MAIOR\s+QUE\s+\d+/i.test(norm)) {
+      return 'Reagente';
+    }
+
+    // Se tiver sinal de inferior/menor (< 10, < 2, INFERIOR A 10)
+    if (/<\s*(?:10|[0-9](?:[.,]\d+)?)\b|INFERIOR\s+A\s+10|MENOR\s+QUE\s+10/i.test(norm)) {
+      return 'Não Reagente';
+    }
+
+    // Se tiver valor numérico com prefixo de resultado ou unidade mUI/mL
+    if (hasResPrefix || hasUnit) {
+      const matchNum = raw.match(/(?:(?:resultado|valor)[.:_\s]+)?([0-9]+(?:[.,][0-9]+)?)\s*(?:mUI\s*\/\s*m[lL]|UI\s*\/\s*m[lL])?/i);
+      if (matchNum) {
+        const val = parseExamNumber(matchNum[1]);
+        if (val !== null) {
+          // Na sorologia Anti-HBs, títulos >= 10.0 mUI/mL indicam imunidade conferida (Reagente)
+          return val >= 10 ? 'Reagente' : 'Não Reagente';
+        }
+      }
+    }
+  }
+
+  // 2. Não Reagente explícito (com ou sem prefixo "Resultado:")
+  // ex: "Resultado: Não Reagente", "NÃO REATIVO", "NEGATIVO", "AMOSTRA NÃO REAGENTE"
+  if (
+    /N[AÃ]O\s+REAGENTE/i.test(raw) ||
+    /N[AÃ]O\s+REATIVO/i.test(raw) ||
+    /\bNEGATIVO\b/i.test(raw) ||
+    /N[AÃ]O\s+DETECT[AÁ]VEL/i.test(raw) ||
+    /\bAUSENTE\b/i.test(raw)
+  ) {
+    return 'Não Reagente';
+  }
+
+  // 3. Reagente explícito
+  // ex: "Resultado: Reagente", "REATIVO", "POSITIVO", "DETECTÁVEL", "PRESENTE"
+  if (
+    /(?:^|\b)(?:REAGENTE|REATIVO|POSITIVO|DETECT[AÁ]VEL|PRESENTE)\b/i.test(raw)
+  ) {
+    return 'Reagente';
+  }
+
+  // 4. Índices de corte (Cut-off / S/CO) para HBsAg, Anti-HCV, HIV
+  // Ex: "Índice: 0.15" (< 1.0 = Não Reagente, >= 1.0 = Reagente)
+  const isCutoffExam = ['hbsag', 'antiHcv', 'antiHbc', 'hiv'].includes(examKey);
+  if (isCutoffExam && /(?:indice|index|s\/co|co)[.:_\s]+([0-9]+[.,]?[0-9]*)/i.test(raw)) {
+    const m = raw.match(/(?:indice|index|s\/co|co)[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+    const val = parseExamNumber(m[1]);
+    if (val !== null) {
+      return val < 1.0 ? 'Não Reagente' : 'Reagente';
+    }
+  }
+
+  return null;
+}
+
+/**
  * Calcula similaridade fonética e por tokens entre dois nomes, com suporte avançado
  * a preposições brasileiras, iniciais (ex: J., M., C.) e abreviações (ex: Ap., Rodrig.).
  * Retorna valor entre 0 e 1
@@ -908,15 +999,35 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
       const line = bucket.allLines[i];
       const normLine = line.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
 
-      // Encerra exame ativo ao encontrar blocos de histórico anterior ou assinaturas
+      // Encerra exame ativo ao encontrar blocos de histórico anterior, referências ou assinaturas
       if (
         normLine.includes("RESULTADOS ANTERIORES") || 
         normLine.includes("LIBERADO ELETRONICAMENTE") || 
         normLine.includes("ESTE EXAME POSSUI ASSINATURA") ||
-        normLine.includes("RT ISABEL DE LOURDES")
+        normLine.includes("RT ISABEL DE LOURDES") ||
+        normLine.includes("VALORES DE REFERENCIA") ||
+        normLine.includes("VALOR DE REFERENCIA") ||
+        normLine.includes("VALORES DE REFERÊNCIA") ||
+        normLine.includes("VALOR DE REFERÊNCIA")
       ) {
         activeExamKey = null;
         continue;
+      }
+
+      // Tipagem Sanguínea (Grupo Sanguíneo e Fator Rh)
+      if (normLine.includes("GRUPO SANGUINEO") || normLine.includes("GRUPO SANGUÍNEO")) {
+        const match = line.match(/GRUPO\s+SANGU[IÍ]NEO[\s.:_]+["']?\s*([ABO0][\+-]?)\s*["']?/i);
+        if (match) exames.grupoSanguineo = match[1].replace('0', 'O');
+      }
+      if (normLine.includes("FATOR RH")) {
+        const match = line.match(/FATOR\s+RH[\s.:_]+["']?\s*([A-Za-z]+)\s*["']?/i);
+        if (match) exames.fatorRh = match[1];
+      }
+
+      // Kt/V expresso no laudo
+      const matchKtvInline = line.match(/(?:KT\s*\/\s*V|KTV)(?:\s*SP)?[\s.:_]+([0-9]+[.,]?[0-9]*)/i);
+      if (matchKtvInline && exames.ktv === undefined) {
+        exames.ktv = parseExamNumber(matchKtvInline[1]);
       }
 
       // Hemograma
@@ -988,7 +1099,13 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
         activeExamKey = "creatinina";
         continue;
       }
-      if (normLine.includes("UREIA POS DIALISE") || normLine.includes("UREIA POS-DIALISE") || normLine.includes("UREIA APOS DIALISE")) {
+      if (
+        normLine.includes("UREIA POS") ||
+        normLine.includes("UREIA PÓS") ||
+        normLine.includes("UREIA-POS") ||
+        normLine.includes("UREIA FINAL") ||
+        normLine.includes("UREIA APOS DIALISE")
+      ) {
         activeExamKey = "ureiaPos";
         continue;
       }
@@ -1018,6 +1135,10 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
       }
       if (normLine.includes("SODIO") || normLine.includes("SÓDIO")) {
         activeExamKey = "na";
+        continue;
+      }
+      if (normLine.includes("ALUMINIO") || normLine.includes("ALUMÍNIO")) {
+        activeExamKey = "aluminio";
         continue;
       }
       if (normLine.includes("PROTEINA C REATIVA") || normLine === "PCR" || normLine.startsWith("PCR ")) {
@@ -1065,13 +1186,9 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
       // Resultados de exame ativo
       if (activeExamKey) {
         if (["hbsag", "antiHbs", "antiHcv", "antiHbc", "hiv"].includes(activeExamKey)) {
-          if (/Resultado[.:_\s]+N[aã]o\s+reagente/i.test(line) || /N[aã]o\s+reagente/i.test(line)) {
-            exames[activeExamKey] = "Não Reagente";
-            activeExamKey = null;
-            continue;
-          }
-          if (/Resultado[.:_\s]+Reagente/i.test(line) || /\bReagente\b/i.test(line)) {
-            exames[activeExamKey] = "Reagente";
+          const seroVal = parseSerologyValue(line, activeExamKey);
+          if (seroVal) {
+            exames[activeExamKey] = seroVal;
             activeExamKey = null;
             continue;
           }
@@ -1208,7 +1325,7 @@ export function parseDbDiagnosticosReport(pagesLines, patientsList = [], detecte
       const line = bucket.allLines[i];
       const normLine = line.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
 
-      // Encerra exame ativo e ignora blocos de histórico anterior, gráficos ou assinaturas
+      // Encerra exame ativo e ignora blocos de histórico anterior, referências, gráficos ou assinaturas
       if (
         normLine.includes("EVOLUCAO DO PACIENTE") ||
         normLine.includes("RESULTADOS ANTERIORES") ||
@@ -1221,23 +1338,33 @@ export function parseDbDiagnosticosReport(pagesLines, patientsList = [], detecte
         normLine.includes("DIRETRIZ") ||
         normLine.includes("METODO..:") ||
         normLine.includes("MATERIAL:") ||
+        normLine.includes("VALORES DE REFERENCIA") ||
+        normLine.includes("VALOR DE REFERENCIA") ||
+        normLine.includes("VALORES DE REFERÊNCIA") ||
+        normLine.includes("VALOR DE REFERÊNCIA") ||
         normLine.startsWith("PAGINA ")
       ) {
         activeExamKey = null;
         continue;
       }
 
+      // Tipagem Sanguínea
+      if (normLine.includes("GRUPO SANGUINEO") || normLine.includes("GRUPO SANGUÍNEO")) {
+        const match = line.match(/GRUPO\s+SANGU[IÍ]NEO[\s.:_]+["']?\s*([ABO0][\+-]?)\s*["']?/i);
+        if (match) exames.grupoSanguineo = match[1].replace('0', 'O');
+      }
+      if (normLine.includes("FATOR RH")) {
+        const match = line.match(/FATOR\s+RH[\s.:_]+["']?\s*([A-Za-z]+)\s*["']?/i);
+        if (match) exames.fatorRh = match[1];
+      }
+
       // Se há um exame ativo aguardando resultado, prioriza leitura da linha de resultado
       if (activeExamKey) {
         // Exames sorológicos ou qualitativos
         if (["hbsag", "antiHbs", "antiHcv", "antiHbc", "hiv"].includes(activeExamKey)) {
-          if (/Resultado[.:_\s]+N[aã]o\s+reagente/i.test(line) || /N[aã]o\s+reagente/i.test(line)) {
-            exames[activeExamKey] = "Não Reagente";
-            activeExamKey = null;
-            continue;
-          }
-          if (/Resultado[.:_\s]+Reagente/i.test(line) || /\bReagente\b/i.test(line)) {
-            exames[activeExamKey] = "Reagente";
+          const seroVal = parseSerologyValue(line, activeExamKey);
+          if (seroVal) {
+            exames[activeExamKey] = seroVal;
             activeExamKey = null;
             continue;
           }
@@ -1741,8 +1868,9 @@ export async function parsePdfFile(file, patientsList = []) {
           currentExamKey = null;
         }
 
-        // A linha "valores de referencia" não deve travar o bloco se vier no topo (como no Labicon)
-        if (normLine === 'valores de referencia' || normLine === 'valor de referencia') {
+        // A linha "valores de referencia" encerra exame ativo para evitar falsos positivos
+        if (normLine === 'valores de referencia' || normLine === 'valor de referencia' || normLine.startsWith('valores de referencia') || normLine.startsWith('valor de referencia')) {
+          currentExamKey = null;
           continue;
         }
 
@@ -1846,13 +1974,11 @@ export async function parsePdfFile(file, patientsList = []) {
             if (v !== null) currentReport.exames.ureiaPos = v;
           }
 
-          // Sorologias qualitativas quando há exame ativo
+          // Sorologias qualitativas e quantitativas (Anti-HBs) quando há exame ativo
           if (currentExamKey && ['hbsag', 'antiHbs', 'antiHcv', 'antiHbc', 'hiv'].includes(currentExamKey)) {
-            if (/Resultado[.:_\s]+N[aã]o\s+reagente/i.test(line) || /^N[aã]o\s+reagente\b/i.test(line.trim())) {
-              currentReport.exames[currentExamKey] = 'Não Reagente';
-              currentExamKey = null;
-            } else if (/Resultado[.:_\s]+Reagente/i.test(line) || /^Reagente\b/i.test(line.trim())) {
-              currentReport.exames[currentExamKey] = 'Reagente';
+            const seroVal = parseSerologyValue(line, currentExamKey);
+            if (seroVal) {
+              currentReport.exames[currentExamKey] = seroVal;
               currentExamKey = null;
             }
           }

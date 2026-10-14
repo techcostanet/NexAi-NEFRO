@@ -751,11 +751,13 @@ export default function PatientFormModal({ isOpen, onClose, patientToEdit, onSav
               </div>
 
               <div>
-                <label className="text-sm font-semibold mb-1 block">Calibre da Agulha</label>
+                <label className="text-sm font-semibold mb-1 block">
+                  {/permcath|cateter|cdl|shaldon|duplo/i.test(formData.tipoAcesso || formData.acessoVascular?.tipo) ? 'Calibre do Cateter' : 'Calibre da Agulha'}
+                </label>
                 <input 
                   type="text" 
                   className="input-field" 
-                  placeholder="Ex: 15G, 16G, 17G" 
+                  placeholder={/permcath|cateter|cdl|shaldon|duplo/i.test(formData.tipoAcesso || formData.acessoVascular?.tipo) ? 'Ex: 14.5 Fr, 13.5 Fr' : 'Ex: 15G, 16G, 17G'} 
                   value={formData.acessoVascular.agulha}
                   onChange={(e) => setFormData(prev => ({ 
                     ...prev, 

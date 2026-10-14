@@ -44,7 +44,8 @@ import {
   Check,
   Trophy,
   Syringe,
-  ClipboardList
+  ClipboardList,
+  Calculator
 } from 'lucide-react';
 import { 
   subscribeToPatientById, 
@@ -58,7 +59,8 @@ import {
   deletePatientBloodCulture,
   STATUS_TRANSPLANTE_OPTIONS,
   getAnticoagulacaoInfo,
-  consolidatePatientExams
+  consolidatePatientExams,
+  savePatientKtvCalculation
 } from '../services/patientService';
 import { subscribeDoctorProfile } from '../services/doctorService';
 import { normalizeMedicamentosList, getMedicationStatus } from '../data/dialysisMedications';
@@ -78,6 +80,7 @@ import LmeModal from '../components/lme/LmeModal';
 import LmePatientSection from '../components/lme/LmePatientSection';
 import ExamHistorySection from '../components/patient/ExamHistorySection';
 import VascularAccessTab from '../components/patient/VascularAccessTab';
+import KtvCalculatorModal from '../components/patient/KtvCalculatorModal';
 import TransplantReportPdf from '../components/pdf/TransplantReportPdf';
 import { downloadPdfDocument } from '../services/pdfService';
 import { printElement } from '../utils/printUtils';
@@ -197,6 +200,7 @@ export default function PatientProfile() {
   const [isLockTherapyModalOpen, setIsLockTherapyModalOpen] = useState(false);
   const [isChecklistModalOpen, setIsChecklistModalOpen] = useState(false);
   const [isBulletinModalOpen, setIsBulletinModalOpen] = useState(false);
+  const [isKtvModalOpen, setIsKtvModalOpen] = useState(false);
   const [isDownloadingTransplantPdf, setIsDownloadingTransplantPdf] = useState(false);
 
   const handleDownloadTransplantPdf = async () => {
@@ -275,6 +279,19 @@ export default function PatientProfile() {
   const handleDeleteExam = async (index) => {
     if (window.confirm("Deseja realmente remover este registro de exame?")) {
       await deletePatientExam(patient.id, index);
+    }
+  };
+
+  const handleSaveKtv = async (ktvData) => {
+    if (!patient?.id) return;
+    try {
+      const updated = await savePatientKtvCalculation(patient.id, ktvData);
+      if (updated) {
+        setPatient(prev => ({ ...prev, ...updated }));
+      }
+    } catch (err) {
+      console.error("Erro ao salvar cálculo de Kt/V:", err);
+      alert("Não foi possível salvar o cálculo de Kt/V. Tente novamente.");
     }
   };
 
@@ -1634,10 +1651,25 @@ export default function PatientProfile() {
                   <span className="text-muted shrink-0">Qd (Dialisato):</span>
                   <strong className="text-slate-800 font-semibold text-right">{acessoVascular.fluxoDialisato ? `${acessoVascular.fluxoDialisato} ml/min` : '-'}</strong>
                 </div>
-                <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
-                  <span className="text-muted shrink-0">Agulha:</span>
-                  <strong className="text-slate-800 font-semibold text-right">{acessoVascular.agulha || '-'}</strong>
-                </div>
+                {/permcath|cateter|cdl|shaldon|duplo/i.test(acessoVascular.tipo || patient.tipoAcesso || '') ? (
+                  <>
+                    <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                      <span className="text-muted shrink-0">Calibre:</span>
+                      <strong className="text-slate-800 font-semibold text-right">
+                        {acessoVascular.calibre || (acessoVascular.agulha && acessoVascular.agulha.includes('Fr') ? acessoVascular.agulha : '14.5 Fr')}
+                      </strong>
+                    </div>
+                    <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                      <span className="text-muted shrink-0">Conexão:</span>
+                      <strong className="text-slate-800 font-semibold text-right">Luer-Lock</strong>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted shrink-0">Agulha:</span>
+                    <strong className="text-slate-800 font-semibold text-right">{acessoVascular.agulha || '-'}</strong>
+                  </div>
+                )}
                 <div className="flex justify-between items-start gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
                   <span className="text-muted shrink-0">Anticoagulação:</span>
                   <strong className="text-slate-800 font-semibold text-right" style={{ color: anticoagulacaoInfo.isSemHeparina ? '#dc2626' : 'inherit' }}>
@@ -2437,6 +2469,26 @@ export default function PatientProfile() {
 
               <button 
                 className="btn btn-outline" 
+                onClick={() => setIsKtvModalOpen(true)}
+                style={{ 
+                  padding: '0.45rem 0.95rem', 
+                  fontSize: '0.8rem', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '6px',
+                  borderColor: '#c7d2fe',
+                  background: '#eef2ff',
+                  color: '#4338ca',
+                  fontWeight: '600'
+                }}
+                title="Calcular adequação dialítica (spKt/V de Daugirdas e PRU)"
+              >
+                <Calculator size={14} color="#4f46e5" />
+                <span>Adequação</span>
+              </button>
+
+              <button 
+                className="btn btn-outline" 
                 onClick={() => setIsImportModalOpen(true)}
                 style={{ 
                   padding: '0.45rem 0.95rem', 
@@ -2591,9 +2643,20 @@ export default function PatientProfile() {
 
             {/* 3. Adequação Dialítica & Cinética de Ureia */}
             <div className="glass-panel" style={{ padding: '1rem', borderRadius: '14px', background: 'rgba(255, 255, 255, 0.95)' }}>
-              <div className="flex items-center gap-2 font-bold text-xs uppercase tracking-wider text-emerald-800 mb-2.5" style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                <ShieldCheck size={15} color="#059669" style={{ flexShrink: 0 }} />
-                <span>Adequação Dialítica</span>
+              <div className="flex items-center justify-between font-bold text-xs uppercase tracking-wider text-emerald-800 mb-2.5">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+                  <ShieldCheck size={15} color="#059669" style={{ flexShrink: 0 }} />
+                  <span>Adequação Dialítica</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsKtvModalOpen(true)}
+                  className="text-xs text-emerald-700 hover:text-emerald-900 font-semibold hover:underline flex items-center gap-1 cursor-pointer"
+                  title="Calcular spKt/V de Daugirdas e PRU da diálise"
+                >
+                  <Calculator size={13} />
+                  <span>Calcular</span>
+                </button>
               </div>
               
               <div className="flex flex-col gap-1.5 text-xs">
@@ -4069,6 +4132,16 @@ export default function PatientProfile() {
           doctorInfo={doctorInfo}
           lmeToEdit={lmeToEdit}
           isRenovacao={isRenovacaoLme}
+        />
+      )}
+
+      {/* Modal de Adequação Dialítica (spKt/V de Daugirdas & PRU) */}
+      {isKtvModalOpen && (
+        <KtvCalculatorModal
+          isOpen={isKtvModalOpen}
+          onClose={() => setIsKtvModalOpen(false)}
+          onSave={handleSaveKtv}
+          patient={patient}
         />
       )}
     </div>

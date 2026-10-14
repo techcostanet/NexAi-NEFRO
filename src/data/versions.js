@@ -1,5 +1,15 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.118",
+    "date": "14/10/2026",
+    "title": "Correcao no leitor de Anti-HBs e Ureia Pos Labicon",
+    "highlights": [
+      "Correcao no leitor de Anti-HBs e Ureia Pos Labicon",
+      "Calculadora clinica de Kt/V sp Daugirdas 2a geracao com pesos",
+      "Diferenciacao de Permcath sem agulha com conexao Luer-Lock"
+    ]
+  },
+  {
     "version": "1.1.117",
     "date": "14/10/2026",
     "title": "Busca automática da clínica no cadastro do paciente em receitas, boletins e d...",
