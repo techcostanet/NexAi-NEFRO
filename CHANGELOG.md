@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.120] - 2026-10-14
+### Alterações
+- Correcao de importacao de Sparkles no DoctorDashboard
+
 ## [1.1.119] - 2026-10-14
 ### Alterações
 - Remocao de rotulos desnecessarios e portabilidade como ultima opcao no perfil

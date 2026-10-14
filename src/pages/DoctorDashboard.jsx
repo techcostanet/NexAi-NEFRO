@@ -11,6 +11,7 @@ import {
   ChevronRight, 
   Activity, 
   Calendar, 
+  Sparkles,
   Pill,
   Clock,
   AlertTriangle,

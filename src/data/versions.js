@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.120",
+    "date": "14/10/2026",
+    "title": "Correcao de importacao de Sparkles no DoctorDashboard",
+    "highlights": [
+      "Correcao de importacao de Sparkles no DoctorDashboard"
+    ]
+  },
+  {
     "version": "1.1.119",
     "date": "14/10/2026",
     "title": "Remocao de rotulos desnecessarios e portabilidade como ultima opcao no perfil",
