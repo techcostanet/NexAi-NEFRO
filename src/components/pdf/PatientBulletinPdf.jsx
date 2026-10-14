@@ -531,6 +531,7 @@ const styles = StyleSheet.create({
 
 export default function PatientBulletinPdf({
   bulletinData,
+  patient,
   doctorInfo,
   customNote = '',
   selectedCardIds = null,
@@ -569,7 +570,7 @@ export default function PatientBulletinPdf({
 
   const docName = doctorInfo?.nome || 'Dr. Marcelo Ramos';
   const docCrm = doctorInfo?.crm ? `CRM-${doctorInfo?.ufCrm || 'SP'} ${doctorInfo?.crm}` : 'CRM-SP 654321';
-  const clinica = doctorInfo?.clinicaPrincipal || 'CLÍNICA RENALIS';
+  const clinica = patient?.clinica || bulletinData?.pacienteClinica || bulletinData?.clinicaNome || doctorInfo?.clinicaPrincipal || 'CLÍNICA DE HEMODIÁLISE';
 
   const dataObj = dataReferencia ? new Date(dataReferencia + 'T12:00:00') : new Date();
   const mesFormatado = dataObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });

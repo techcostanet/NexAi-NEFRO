@@ -121,7 +121,7 @@ export default function LmeModal({
       setFomeOssea(Boolean(lmeToEdit.fomeOssea));
       setOutrasInformacoes(lmeToEdit.outrasInformacoes || '');
 
-      setClinicaNome(lmeToEdit.clinicaNome || patient?.clinica || doctorInfo?.clinicaPrincipal || 'DIALIZE SAUDE');
+      setClinicaNome(patient?.clinica || lmeToEdit.clinicaNome || doctorInfo?.clinicaPrincipal || 'DIALIZE SAUDE');
       setCnes(lmeToEdit.cnes || doctorInfo?.cnes || '5920574');
       setClinicaEndereco(lmeToEdit.clinicaEndereco || 'AV EDMEIA MATTOS LAZZAROTTI 1655');
       setClinicaBairro(lmeToEdit.clinicaBairro || 'ANGOLA');

@@ -20,8 +20,8 @@ export default function PrescriptionPrintDocument({
   const doctorCrm = docInfo.crm ? `CRM-${doctorUf} ${docInfo.crm}` : 'CRM/SP';
   const doctorRqe = docInfo.rqe ? ` • RQE ${docInfo.rqe}` : '';
   const doctorEspecialidade = docInfo.especialidade || docInfo.titulo || 'Nefrologia Clínica e Hemodiálise';
-  const clinicaNome = docInfo.clinica || docInfo.clinicaPrincipal || patient.clinica || 'Clínica de Nefrologia';
-  const enderecoClinica = docInfo.endereco || (patient.clinica ? `${patient.clinica}` : 'São Paulo - SP');
+  const clinicaNome = patient.clinica || docInfo.clinica || docInfo.clinicaPrincipal || doctorInfo?.clinicaPrincipal || 'Clínica de Nefrologia';
+  const enderecoClinica = patient.clinica ? patient.clinica : (docInfo.endereco || 'São Paulo - SP');
 
   const tipoReceita = prescription.tipoReceita || 'simples';
   const isControleEspecial = tipoReceita === 'controle_especial';

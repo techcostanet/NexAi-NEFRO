@@ -1578,7 +1578,7 @@ export default function LmeReportPdf({
   };
 
   const estabelecimento = {
-    nome: lmeData?.clinicaNome || patient?.clinica || doctorInfo?.clinicaPrincipal || 'DIALIZE SAUDE',
+    nome: patient?.clinica || lmeData?.clinicaNome || doctorInfo?.clinicaPrincipal || 'Unidade de Hemodiálise',
     cnes: lmeData?.cnes || doctorInfo?.cnes || patient?.cnes || '5920574',
     endereco: lmeData?.clinicaEndereco || 'AV EDMEIA MATTOS LAZZAROTTI 1655',
     bairro: lmeData?.clinicaBairro || 'ANGOLA',

@@ -214,7 +214,7 @@ export default function PatientBulletinModal({
           ufCrm: crmUf,
           rqe: doctorInfo?.rqe || '45890',
           especialidade: doctorInfo?.especialidade || 'Nefrologia Clínica',
-          clinica: doctorInfo?.clinicaPrincipal || patient.clinica || 'Clínica de Hemodiálise'
+          clinica: patient?.clinica || doctorInfo?.clinicaPrincipal || 'Clínica de Hemodiálise'
         },
         paciente: {
           id: patient.id,
@@ -321,7 +321,7 @@ export default function PatientBulletinModal({
     const batidas = filtered.filter(c => c.status === GOAL_STATUS.CONQUISTA).length;
     const taxa = total > 0 ? Math.round((batidas / total) * 100) : 100;
 
-    const clinica = doctorInfo?.clinicaPrincipal || 'CLÍNICA RENALIS';
+    const clinica = patient?.clinica || bulletinData?.pacienteClinica || doctorInfo?.clinicaPrincipal || 'Clínica de Hemodiálise';
     const doctorName = doctorInfo?.nome || 'Dr. Marcelo Ramos';
     const doctorCrm = doctorInfo?.crm ? `CRM-${doctorInfo?.ufCrm || 'SP'} ${doctorInfo?.crm}` : 'CRM-SP 654321';
 
@@ -452,6 +452,7 @@ export default function PatientBulletinModal({
       const PdfElement = isVisual ? (
         <PatientBulletinVisualPdf
           bulletinData={bulletinData}
+          patient={patient}
           doctorInfo={doctorInfo}
           customNote={customNote}
           selectedCardIds={activeCardIds}
@@ -463,6 +464,7 @@ export default function PatientBulletinModal({
       ) : (
         <PatientBulletinPdf
           bulletinData={bulletinData}
+          patient={patient}
           doctorInfo={doctorInfo}
           customNote={customNote}
           selectedCardIds={activeCardIds}
@@ -1148,6 +1150,7 @@ export default function PatientBulletinModal({
               {bulletinModel === 'visual' ? (
                 <PatientBulletinVisualDocument 
                   bulletinData={bulletinData}
+                  patient={patient}
                   doctorInfo={doctorInfo}
                   customNote={customNote}
                   selectedCardIds={activeCardIds}
@@ -1159,6 +1162,7 @@ export default function PatientBulletinModal({
               ) : (
                 <PatientBulletinPrintDocument 
                   bulletinData={bulletinData}
+                  patient={patient}
                   doctorInfo={doctorInfo}
                   customNote={customNote}
                   selectedCardIds={activeCardIds}

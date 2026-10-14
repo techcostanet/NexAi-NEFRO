@@ -23,6 +23,7 @@ function cleanMetaText(meta) {
 
 export default function PatientBulletinPrintDocument({
   bulletinData,
+  patient,
   doctorInfo,
   customNote = '',
   selectedCardIds = null,
@@ -76,7 +77,7 @@ export default function PatientBulletinPrintDocument({
 
   const doctorName = doctorInfo?.nome || 'Dr(a). Médico(a) Responsável';
   const doctorCrm = doctorInfo?.crm ? `CRM-${doctorInfo?.ufCrm || 'MG'} ${doctorInfo?.crm}` : 'Nefrologista Responsável';
-  const doctorClinica = doctorInfo?.clinicaPrincipal || 'Clínica de Hemodiálise';
+  const doctorClinica = patient?.clinica || bulletinData?.pacienteClinica || bulletinData?.clinicaNome || doctorInfo?.clinicaPrincipal || 'Clínica de Hemodiálise';
 
   const cleanDateRef = normalizeDateToString(dataReferencia);
   const dataObj = cleanDateRef ? new Date(cleanDateRef + 'T12:00:00') : new Date();

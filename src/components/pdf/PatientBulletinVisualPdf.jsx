@@ -553,6 +553,7 @@ const styles = StyleSheet.create({
 
 export default function PatientBulletinVisualPdf({
   bulletinData,
+  patient,
   doctorInfo,
   customNote = '',
   selectedCardIds = null,
@@ -589,7 +590,8 @@ export default function PatientBulletinVisualPdf({
 
   const doctorName = cleanPdfText(doctorInfo?.nome || 'Dr(a). Medico(a) Responsavel');
   const doctorCrm = cleanPdfText(doctorInfo?.crm ? `CRM-${doctorInfo?.ufCrm || 'MG'} ${doctorInfo?.crm}` : 'Nefrologista Responsavel');
-  const doctorClinica = cleanPdfText(doctorInfo?.clinicaPrincipal || 'Clinica de Hemodialise');
+  const rawClinica = patient?.clinica || bulletinData?.pacienteClinica || bulletinData?.clinicaNome || doctorInfo?.clinicaPrincipal || 'Clinica de Hemodialise';
+  const doctorClinica = cleanPdfText(rawClinica);
 
   const dataObj = dataReferencia ? new Date(dataReferencia + 'T12:00:00') : new Date();
   const mesAnoExtenso = dataObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });

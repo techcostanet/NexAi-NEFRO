@@ -230,8 +230,8 @@ export default function PrescriptionPdf({
   const doctorCrm = docInfo.crm ? `CRM/${docInfo.ufCrm || 'SP'} ${docInfo.crm}` : 'CRM/SP';
   const doctorRqe = docInfo.rqe ? ` • RQE: ${docInfo.rqe}` : '';
   const doctorEspecialidade = docInfo.especialidade || docInfo.titulo || 'Nefrologia Clínica';
-  const clinicaNome = docInfo.clinica || docInfo.clinicaPrincipal || patient.clinica || 'Clínica de Nefrologia';
-  const enderecoClinica = docInfo.endereco || 'Atendimento Especializado em Nefrologia';
+  const clinicaNome = patient.clinica || docInfo.clinica || docInfo.clinicaPrincipal || doctorInfo?.clinicaPrincipal || 'Clínica de Nefrologia';
+  const enderecoClinica = patient.clinica ? patient.clinica : (docInfo.endereco || doctorInfo?.endereco || 'Atendimento Especializado em Nefrologia');
 
   const tipoReceita = prescription.tipoReceita || 'simples';
   const isControleEspecial = tipoReceita === 'controle_especial';

@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.117] - 2026-10-14
+### Alterações
+- Busca automática da clínica no cadastro do paciente em receitas, boletins e documentos
+
 ## [1.1.116] - 2026-10-10
 ### Alterações
 - Logomarca oficial do Dr. Marcelo, cenarios clinicos com casos fora da meta para evolucao e redesign do grafico de peso

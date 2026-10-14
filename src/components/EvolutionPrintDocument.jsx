@@ -17,8 +17,8 @@ export default function EvolutionPrintDocument({
   const doctorCrm = evolution.medicoCrm || (docInfo.crm ? `CRM-${docInfo.ufCrm || 'SP'} ${docInfo.crm}` : 'CRM/SP');
   const doctorRqe = docInfo.rqe ? ` • RQE ${docInfo.rqe}` : '';
   const doctorEspecialidade = docInfo.especialidade || docInfo.titulo || 'Médico Nefrologista';
-  const clinicaNome = docInfo.clinicaPrincipal || patient.clinica || 'Clínica de Nefrologia & Diálise';
-  const enderecoClinica = docInfo.endereco || patient.clinica || 'Unidade de Hemodiálise';
+  const clinicaNome = patient.clinica || docInfo.clinicaPrincipal || 'Clínica de Hemodiálise';
+  const enderecoClinica = patient.clinica ? patient.clinica : (docInfo.endereco || 'Unidade de Hemodiálise');
 
   const dataHoraEvo = evolution.dataHora ? safeFormatDate(evolution.dataHora) : safeFormatDate(new Date().toISOString());
 

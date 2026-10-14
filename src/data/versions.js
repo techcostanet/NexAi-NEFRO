@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.117",
+    "date": "14/10/2026",
+    "title": "Busca automática da clínica no cadastro do paciente em receitas, boletins e d...",
+    "highlights": [
+      "Busca automática da clínica no cadastro do paciente em receitas, boletins e documentos"
+    ]
+  },
+  {
     "version": "1.1.116",
     "date": "10/10/2026",
     "title": "Logomarca oficial do Dr",

@@ -593,6 +593,8 @@ export function evaluatePatientExamsForBulletin(patient, selectedExam = null) {
 
   return {
     pacienteNome: patient?.nome || 'Paciente',
+    pacienteClinica: patient?.clinica || '',
+    clinicaNome: patient?.clinica || '',
     dataReferencia: exames.dataExame || new Date().toISOString().split('T')[0],
     totalMetas,
     metasBatidas,
