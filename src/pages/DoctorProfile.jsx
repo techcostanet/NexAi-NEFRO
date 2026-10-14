@@ -574,9 +574,6 @@ export default function DoctorProfile() {
                   </div>
                 </div>
               </div>
-              <span style={{ fontSize: '0.72rem', background: '#dcfce7', color: '#166534', padding: '3px 8px', borderRadius: '10px', fontWeight: '600' }}>
-                Ativa em Relatórios e Excel
-              </span>
             </div>
           </div>
         ) : (
@@ -784,145 +781,6 @@ export default function DoctorProfile() {
             })}
           </div>
         )}
-      </div>
-
-      {/* SEÇÃO DE PORTABILIDADE E BACKUP GERAL DE DADOS CLÍNICOS */}
-      <div 
-        className="glass-panel" 
-        style={{ 
-          padding: '1.5rem', 
-          marginBottom: '1.5rem',
-          background: 'linear-gradient(135deg, rgba(30, 58, 138, 0.04), rgba(37, 99, 235, 0.08))',
-          border: '1.5px solid #bfdbfe',
-          borderRadius: '20px',
-          boxShadow: '0 8px 24px rgba(37, 99, 235, 0.06)'
-        }}
-      >
-        <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
-          <div className="flex items-center gap-3">
-            <div 
-              style={{ 
-                width: '42px', 
-                height: '42px', 
-                borderRadius: '12px', 
-                background: 'linear-gradient(135deg, #1e3a8a, #2563eb)', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                color: '#ffffff',
-                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
-              }}
-            >
-              <Database size={22} />
-            </div>
-            <div>
-              <h3 className="font-bold text-base text-slate-800 flex items-center gap-2">
-                Portabilidade de Dados
-              </h3>
-              <p className="text-muted text-xs mt-0.5">
-                Exportação integral ou personalizada dos prontuários em Excel e PDF para transição clínica
-              </p>
-            </div>
-          </div>
-
-          <span 
-            style={{ 
-              fontSize: '0.75rem', 
-              background: '#eff6ff', 
-              color: '#1d4ed8', 
-              padding: '3px 10px', 
-              borderRadius: '12px', 
-              fontWeight: '700',
-              border: '1px solid #bfdbfe'
-            }}
-          >
-            {patients.length} Prontuários Disponíveis
-          </span>
-        </div>
-
-        <p className="text-xs text-slate-600 leading-relaxed mb-4">
-          Gere cópias autênticas e estruturadas de todos os registros clínicos sob sua responsabilidade técnica (dados cadastrais, últimos exames laboratoriais, histórico cronológico, prescrições ativas, acessos vasculares e evoluções). Ideal para segurança de dados, backup offline ou migração imediata para outro software.
-        </p>
-
-        {/* Botoes de Ação Rápida */}
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {/* Botão Configurar / Exportar */}
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => setIsExportModalOpen(true)}
-            style={{
-              padding: '0.55rem 1.1rem',
-              fontSize: '0.85rem',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '7px',
-              borderRadius: '12px',
-              fontWeight: '700',
-              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
-            }}
-            title="Abrir opções de exportação integral ou personalizada"
-          >
-            <Download size={16} />
-            <span>Exportar</span>
-          </button>
-
-          {/* Atalho Rápido Excel */}
-          <button
-            type="button"
-            className="btn btn-outline"
-            onClick={handleQuickExportExcel}
-            disabled={isQuickExportingExcel || isQuickExportingPdf || patients.length === 0}
-            style={{
-              padding: '0.55rem 1rem',
-              fontSize: '0.85rem',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              borderRadius: '12px',
-              borderColor: '#86efac',
-              background: '#f0fdf4',
-              color: '#15803d',
-              fontWeight: '600'
-            }}
-            title="Baixar planilha Excel (.xlsx) com todo o sistema em 1 clique"
-          >
-            {isQuickExportingExcel ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <FileSpreadsheet size={16} color="#16a34a" />
-            )}
-            <span>{isQuickExportingExcel ? 'Gerando...' : 'Excel'}</span>
-          </button>
-
-          {/* Atalho Rápido PDF */}
-          <button
-            type="button"
-            className="btn btn-outline"
-            onClick={handleQuickExportPdf}
-            disabled={isQuickExportingExcel || isQuickExportingPdf || patients.length === 0}
-            style={{
-              padding: '0.55rem 1rem',
-              fontSize: '0.85rem',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              borderRadius: '12px',
-              borderColor: '#bfdbfe',
-              background: '#eff6ff',
-              color: '#1d4ed8',
-              fontWeight: '600'
-            }}
-            title="Baixar dossiê PDF oficial com todo o sistema em 1 clique"
-          >
-            {isQuickExportingPdf ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <FileText size={16} color="#2563eb" />
-            )}
-            <span>{isQuickExportingPdf ? 'Gerando...' : 'PDF'}</span>
-          </button>
-        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
@@ -1258,6 +1116,145 @@ export default function DoctorProfile() {
           </button>
         </div>
       </form>
+
+      {/* SEÇÃO DE PORTABILIDADE E BACKUP GERAL DE DADOS CLÍNICOS */}
+      <div 
+        className="glass-panel" 
+        style={{ 
+          padding: '1.5rem', 
+          marginTop: '1.5rem',
+          background: 'linear-gradient(135deg, rgba(30, 58, 138, 0.04), rgba(37, 99, 235, 0.08))',
+          border: '1.5px solid #bfdbfe',
+          borderRadius: '20px',
+          boxShadow: '0 8px 24px rgba(37, 99, 235, 0.06)'
+        }}
+      >
+        <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
+          <div className="flex items-center gap-3">
+            <div 
+              style={{ 
+                width: '42px', 
+                height: '42px', 
+                borderRadius: '12px', 
+                background: 'linear-gradient(135deg, #1e3a8a, #2563eb)', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                color: '#ffffff',
+                boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
+              }}
+            >
+              <Database size={22} />
+            </div>
+            <div>
+              <h3 className="font-bold text-base text-slate-800 flex items-center gap-2">
+                Portabilidade de Dados
+              </h3>
+              <p className="text-muted text-xs mt-0.5">
+                Exportação integral ou personalizada dos prontuários em Excel e PDF para transição clínica
+              </p>
+            </div>
+          </div>
+
+          <span 
+            style={{ 
+              fontSize: '0.75rem', 
+              background: '#eff6ff', 
+              color: '#1d4ed8', 
+              padding: '3px 10px', 
+              borderRadius: '12px', 
+              fontWeight: '700',
+              border: '1px solid #bfdbfe'
+            }}
+          >
+            {patients.length} Prontuários Disponíveis
+          </span>
+        </div>
+
+        <p className="text-xs text-slate-600 leading-relaxed mb-4">
+          Gere cópias autênticas e estruturadas de todos os registros clínicos sob sua responsabilidade técnica (dados cadastrais, últimos exames laboratoriais, histórico cronológico, prescrições ativas, acessos vasculares e evoluções). Ideal para segurança de dados, backup offline ou migração imediata para outro software.
+        </p>
+
+        {/* Botoes de Ação Rápida */}
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {/* Botão Configurar / Exportar */}
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={() => setIsExportModalOpen(true)}
+            style={{
+              padding: '0.55rem 1.1rem',
+              fontSize: '0.85rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '7px',
+              borderRadius: '12px',
+              fontWeight: '700',
+              boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
+            }}
+            title="Abrir opções de exportação integral ou personalizada"
+          >
+            <Download size={16} />
+            <span>Exportar</span>
+          </button>
+
+          {/* Atalho Rápido Excel */}
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={handleQuickExportExcel}
+            disabled={isQuickExportingExcel || isQuickExportingPdf || patients.length === 0}
+            style={{
+              padding: '0.55rem 1rem',
+              fontSize: '0.85rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              borderRadius: '12px',
+              borderColor: '#86efac',
+              background: '#f0fdf4',
+              color: '#15803d',
+              fontWeight: '600'
+            }}
+            title="Baixar planilha Excel (.xlsx) com todo o sistema em 1 clique"
+          >
+            {isQuickExportingExcel ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <FileSpreadsheet size={16} color="#16a34a" />
+            )}
+            <span>{isQuickExportingExcel ? 'Gerando...' : 'Excel'}</span>
+          </button>
+
+          {/* Atalho Rápido PDF */}
+          <button
+            type="button"
+            className="btn btn-outline"
+            onClick={handleQuickExportPdf}
+            disabled={isQuickExportingExcel || isQuickExportingPdf || patients.length === 0}
+            style={{
+              padding: '0.55rem 1rem',
+              fontSize: '0.85rem',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              borderRadius: '12px',
+              borderColor: '#bfdbfe',
+              background: '#eff6ff',
+              color: '#1d4ed8',
+              fontWeight: '600'
+            }}
+            title="Baixar dossiê PDF oficial com todo o sistema em 1 clique"
+          >
+            {isQuickExportingPdf ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <FileText size={16} color="#2563eb" />
+            )}
+            <span>{isQuickExportingPdf ? 'Gerando...' : 'PDF'}</span>
+          </button>
+        </div>
+      </div>
 
       {/* MODAL DE ADICIONAR / EDITAR LOCAL DE ATENDIMENTO */}
       {isLocationModalOpen && (

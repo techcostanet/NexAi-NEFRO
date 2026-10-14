@@ -11,7 +11,6 @@ import {
   ChevronRight, 
   Activity, 
   Calendar, 
-  Sparkles,
   Pill,
   Clock,
   AlertTriangle,
@@ -654,11 +653,6 @@ export default function DoctorDashboard() {
                 {appointmentsTodayCount}
               </span>
             </button>
-          </div>
-
-          <div className="flex items-center gap-2 pr-2 text-xs text-slate-500 font-medium">
-            <Sparkles size={14} color="#6366f1" />
-            <span>Módulo SaaS Habilitado</span>
           </div>
         </div>
       )}

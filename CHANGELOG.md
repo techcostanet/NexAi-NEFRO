@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.119] - 2026-10-14
+### Alterações
+- Remocao de rotulos desnecessarios e portabilidade como ultima opcao no perfil
+
 ## [1.1.118] - 2026-10-14
 ### Alterações
 - Correcao no leitor de Anti-HBs e Ureia Pos Labicon; Calculadora clinica de Kt/V sp Daugirdas 2a geracao com pesos; Diferenciacao de Permcath sem agulha com conexao Luer-Lock

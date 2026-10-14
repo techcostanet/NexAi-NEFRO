@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.119",
+    "date": "14/10/2026",
+    "title": "Remocao de rotulos desnecessarios e portabilidade como ultima opcao no perfil",
+    "highlights": [
+      "Remocao de rotulos desnecessarios e portabilidade como ultima opcao no perfil"
+    ]
+  },
+  {
     "version": "1.1.118",
     "date": "14/10/2026",
     "title": "Correcao no leitor de Anti-HBs e Ureia Pos Labicon",
