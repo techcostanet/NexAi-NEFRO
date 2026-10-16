@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.121] - 2026-10-16
+### Alterações
+- Homologacao avancada do layout LABICON com suporte a laudos multi-paginas e apoio DB
+
 ## [1.1.120] - 2026-10-14
 ### Alterações
 - Correcao de importacao de Sparkles no DoctorDashboard

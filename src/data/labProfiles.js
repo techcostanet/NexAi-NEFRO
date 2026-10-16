@@ -38,16 +38,21 @@ export const HOMOLOGATED_LABS = [
       'Rua Tiradentes, 2887',
       'Bairro Industrial, Contagem',
       'Contagem/MG',
-      'Contagem / MG'
+      'Contagem / MG',
+      '2565-5769',
+      '(31) 2565-5769',
+      '32.230-020',
+      '120-DIALIZE',
+      'DIALIZE / APD'
     ],
     examesHomologados: [
       'Hb', 'Ht', 'Leucócitos', 'Plaquetas', 'Ca', 'P', 'FA', 'Glicemia',
       'HbA1c', 'Ferro', 'IST', 'Alb', 'TGP', 'Ureia Pré', 'Ureia Pós',
-      'Kt/V', 'Vit D', 'Ferritina', 'PTH', 'K⁺', 'Na⁺', 'HBsAg', 'Anti-HBs', 'Anti-HCV'
+      'Creatinina', 'Kt/V', 'Vit D', 'Ferritina', 'PTH', 'K⁺', 'Na⁺', 'HBsAg', 'Anti-HBs', 'Anti-HCV'
     ],
-    totalExames: 24,
-    dataHomologacao: '2026-09-23',
-    descricao: 'Laudos clínicos multi-páginas de rotina mensal e trimestral em pacientes de hemodiálise da clínica DialiZe.'
+    totalExames: 25,
+    dataHomologacao: '2026-10-16',
+    descricao: 'Laudos clínicos multi-páginas de rotina mensal e trimestral em pacientes de hemodiálise e diálise peritoneal (APD) da rede DialiZe, com apoio terceirizado integrado (DB Diagnósticos).'
   },
   {
     id: 'dialsist-mapao',
@@ -152,8 +157,8 @@ export function detectLaboratoryProfile(fullText = '') {
   if (!fullText) return null;
   const upper = fullText.toUpperCase();
 
-  // Prioriza laboratórios de análises clínicas específicos antes de layouts de mapas colunares
-  const priorityOrder = ['db-diagnosticos', 'labicon', 'hermes-pardini', 'dialsist-mapao'];
+  // Prioriza laboratórios de análises clínicas regionais específicos antes de laboratórios de apoio geral e mapas colunares
+  const priorityOrder = ['labicon', 'hermes-pardini', 'db-diagnosticos', 'dialsist-mapao'];
   const orderedLabs = [...HOMOLOGATED_LABS].sort((a, b) => {
     const idxA = priorityOrder.indexOf(a.id);
     const idxB = priorityOrder.indexOf(b.id);

@@ -1008,7 +1008,10 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
         normLine.includes("VALORES DE REFERENCIA") ||
         normLine.includes("VALOR DE REFERENCIA") ||
         normLine.includes("VALORES DE REFERÊNCIA") ||
-        normLine.includes("VALOR DE REFERÊNCIA")
+        normLine.includes("VALOR DE REFERÊNCIA") ||
+        normLine.includes("EXAME EM ANDAMENTO") ||
+        normLine.includes("EM ANDAMENTO") ||
+        normLine.includes("AGUARDANDO RESULTADO")
       ) {
         activeExamKey = null;
         continue;
@@ -1052,22 +1055,26 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
       const matchFerro = line.match(/Ferro\s*s[eé]rico[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
       if (matchFerro && exames.ferro === undefined) {
         exames.ferro = parseExamNumber(matchFerro[1]);
+        if (activeExamKey === "ferro") activeExamKey = null;
       }
       const matchIst = line.match(/[IÍ]ndice\s*de\s*Satura[çc][aã]o\s*(?:da|de)?\s*Transferrina[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
       if (matchIst && exames.ist === undefined) {
         exames.ist = parseExamNumber(matchIst[1]);
+        if (activeExamKey === "ist") activeExamKey = null;
       }
 
       // Albumina
       const matchAlb = line.match(/ALBUMINA[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
       if (matchAlb && exames.albumina === undefined) {
         exames.albumina = parseExamNumber(matchAlb[1]);
+        if (activeExamKey === "albumina") activeExamKey = null;
       }
 
       // Hemoglobina Glicada HbA1c
       const matchHba1c = line.match(/Hemoglobina\s+Glicada[^%]*?[.:_\s]+([0-9]+[.,]?[0-9]*)\s*%/i);
       if (matchHba1c && exames.hba1c === undefined) {
         exames.hba1c = parseExamNumber(matchHba1c[1]);
+        if (activeExamKey === "hba1c") activeExamKey = null;
       }
 
       // Cabeçalhos de Exames Homologados do Labicon
@@ -1121,7 +1128,7 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
         activeExamKey = "ferritina";
         continue;
       }
-      if (normLine.includes("FERRO SERICO") || (normLine.includes("FERRO") && !normLine.includes("TRANSFERRINA"))) {
+      if ((normLine.includes("FERRO SERICO") || (normLine.includes("FERRO") && !normLine.includes("TRANSFERRINA"))) && !matchFerro) {
         activeExamKey = "ferro";
         continue;
       }

@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.121",
+    "date": "16/10/2026",
+    "title": "Homologacao avancada do layout LABICON com suporte a laudos multi-paginas e a...",
+    "highlights": [
+      "Homologacao avancada do layout LABICON com suporte a laudos multi-paginas e apoio DB"
+    ]
+  },
+  {
     "version": "1.1.120",
     "date": "14/10/2026",
     "title": "Correcao de importacao de Sparkles no DoctorDashboard",
