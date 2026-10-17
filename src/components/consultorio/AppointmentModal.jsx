@@ -82,11 +82,14 @@ export default function AppointmentModal({
       setLocalNome(locais[0]?.nome || '');
       setModalidade('Particular');
       setConvenioNome('');
-      setValor('350.00');
+      const defaultValor = doctorInfo?.gradeConsultorio?.valorParticularPadrao 
+        ? String(doctorInfo.gradeConsultorio.valorParticularPadrao) 
+        : '400.00';
+      setValor(defaultValor);
       setObservacoes('');
     }
     setError('');
-  }, [appointmentToEdit, isOpen, initialDate]);
+  }, [appointmentToEdit, isOpen, initialDate, doctorInfo]);
 
   if (!isOpen) return null;
 
@@ -476,13 +479,23 @@ export default function AppointmentModal({
                   {modalidade === 'Convênio' ? 'Nome do Convênio' : 'Valor (R$)'}
                 </label>
                 {modalidade === 'Convênio' ? (
-                  <input
-                    type="text"
-                    value={convenioNome}
-                    onChange={(e) => setConvenioNome(e.target.value)}
-                    placeholder="Unimed, Bradesco..."
-                    style={{ width: '100%', padding: '0.45rem 0.65rem', fontSize: '0.82rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-                  />
+                  <>
+                    <input
+                      type="text"
+                      list="convenios-grade-list"
+                      value={convenioNome}
+                      onChange={(e) => setConvenioNome(e.target.value)}
+                      placeholder="Selecione ou digite..."
+                      style={{ width: '100%', padding: '0.45rem 0.65rem', fontSize: '0.82rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                    />
+                    <datalist id="convenios-grade-list">
+                      {(doctorInfo?.gradeConsultorio?.conveniosAceitos || [
+                        'Unimed', 'Bradesco Saúde', 'SulAmérica', 'Cassi', 'Geap', 'Amil', 'Porto Seguro'
+                      ]).filter(c => c !== 'Particular').map(c => (
+                        <option key={c} value={c} />
+                      ))}
+                    </datalist>
+                  </>
                 ) : (
                   <input
                     type="number"

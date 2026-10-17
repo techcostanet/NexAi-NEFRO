@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.123",
+    "date": "17/10/2026",
+    "title": "\\ feat: modulo consultorio completo com gerador de documentos e gestao financ...",
+    "highlights": [
+      "\\ feat: modulo consultorio completo com gerador de documentos e gestao financeira\\"
+    ]
+  },
+  {
     "version": "1.1.122",
     "date": "17/10/2026",
     "title": "Atualizacao da landing page com modulos de evolucao mensal simplificada, LME ...",

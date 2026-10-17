@@ -165,10 +165,11 @@ export default function DoctorDashboard() {
     setIsAppointmentModalOpen(true);
   };
 
-  const handleSaveAppointment = async (payload) => {
+  const handleSaveAppointment = async (payload, id) => {
     try {
-      if (payload.id) {
-        await updateAppointment(payload.id, payload);
+      const aptId = payload?.id || id;
+      if (aptId) {
+        await updateAppointment(aptId, payload);
       } else {
         await createAppointment({
           ...payload,
