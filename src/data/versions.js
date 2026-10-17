@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.122",
+    "date": "17/10/2026",
+    "title": "Atualizacao da landing page com modulos de evolucao mensal simplificada, LME ...",
+    "highlights": [
+      "Atualizacao da landing page com modulos de evolucao mensal simplificada, LME padrao SUS, novo boletim com letramento visual, calculadora Kt/V Daugirdas e portabilidade total"
+    ]
+  },
+  {
     "version": "1.1.121",
     "date": "16/10/2026",
     "title": "Homologacao avancada do layout LABICON com suporte a laudos multi-paginas e a...",

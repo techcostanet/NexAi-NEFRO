@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.122] - 2026-10-17
+### Alterações
+- Atualizacao da landing page com modulos de evolucao mensal simplificada, LME padrao SUS, novo boletim com letramento visual, calculadora Kt/V Daugirdas e portabilidade total
+
 ## [1.1.121] - 2026-10-16
 ### Alterações
 - Homologacao avancada do layout LABICON com suporte a laudos multi-paginas e apoio DB
