@@ -530,7 +530,7 @@ export default function DoctorDashboard() {
               }}
             >
               <UserPlus size={15} />
-              <span>+ Paciente</span>
+              <span>Paciente</span>
             </button>
           )}
 
@@ -996,7 +996,7 @@ export default function DoctorDashboard() {
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '0.6rem 1.25rem', borderRadius: '12px' }}
                 >
                   <UserPlus size={16} />
-                  <span>+ Paciente</span>
+                  <span>Paciente</span>
                 </button>
               )}
             </div>
@@ -1414,7 +1414,7 @@ export default function DoctorDashboard() {
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.5rem 1rem', borderRadius: '10px', fontSize: '0.8rem' }}
                 >
                   <UserPlus size={14} />
-                  <span>+ Paciente</span>
+                  <span>Paciente</span>
                 </button>
               )}
             </div>

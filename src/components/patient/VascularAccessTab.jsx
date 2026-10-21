@@ -171,9 +171,9 @@ export default function VascularAccessTab({
   return (
     <div className="flex flex-col gap-4">
       {/* ================= CABEÇALHO PADRONIZADO DA ABA ACESSO ================= */}
-      <div className="flex justify-between items-center flex-wrap gap-2">
+      <div className="flex justify-between items-center flex-wrap gap-2" style={{ listStyle: 'none' }}>
         <div>
-          <h2 className="text-base font-bold text-slate-800 flex items-center gap-2">
+          <h2 className="text-base font-bold text-slate-800 flex items-center gap-2" style={{ listStyle: 'none' }}>
             <Syringe size={18} color="var(--primary)" />
             <span>Acesso Vascular</span>
           </h2>
@@ -243,7 +243,7 @@ export default function VascularAccessTab({
             }}
           >
             <Plus size={14} />
-            <span>+ Registro</span>
+            <span>Registrar</span>
           </button>
         </div>
       </div>

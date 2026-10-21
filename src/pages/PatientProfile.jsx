@@ -1178,83 +1178,82 @@ export default function PatientProfile() {
               title="Nova evolução médica"
             >
               <Plus size={14} color="#1d4ed8" />
-              <span>+ Evolução</span>
+              <span>Evolução</span>
             </button>
           </div>
         </div>
 
-        {/* Alertas Críticos Globais do Paciente */}
+        {/* Alertas Críticos Globais do Paciente - Visual Discreto e Compacto */}
         {(hasLabAlerts || medAlerts.length > 0 || hasPositiveCulture || isHipervolemia || anticoagulacaoInfo.isSemHeparina) && (
-          <div className="mt-4 pt-4 border-t flex flex-col gap-2.5" style={{ borderColor: 'rgba(226, 232, 240, 0.8)' }}>
+          <div className="mt-3 pt-3 border-t flex flex-col gap-1.5" style={{ borderColor: 'rgba(226, 232, 240, 0.7)' }}>
             
             {/* Alerta de Segurança: Sem Heparina */}
             {anticoagulacaoInfo.isSemHeparina && (
               <div 
                 style={{
-                  padding: '0.85rem 1.25rem',
-                  borderRadius: '14px',
+                  padding: '0.35rem 0.75rem',
+                  borderRadius: '10px',
                   background: '#fef2f2',
-                  border: '1.5px solid #ef4444',
+                  border: '1px solid #fca5a5',
                   color: '#991b1b',
-                  fontSize: '0.82rem',
+                  fontSize: '0.76rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   flexWrap: 'wrap',
-                  gap: '0.75rem',
-                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.15)'
+                  gap: '0.5rem'
                 }}
               >
-                <div className="flex items-center gap-2.5">
-                  <AlertTriangle size={20} color="#dc2626" style={{ flexShrink: 0 }} />
-                  <span style={{ lineHeight: '1.4' }}>
-                    <strong style={{ color: '#b91c1c' }}>⚠️ PROTOCOLO SEM HEPARINA:</strong> {anticoagulacaoInfo.motivo ? `Motivo: ${anticoagulacaoInfo.motivo}. ` : 'Risco hemorrágico elevado. '}Realizar lavagens com SF 0,9% a cada 30 min. Não administrar heparina ou enoxaparina.
+                <div className="flex items-center gap-2">
+                  <AlertTriangle size={14} color="#dc2626" style={{ flexShrink: 0 }} />
+                  <span style={{ lineHeight: '1.3' }}>
+                    <strong style={{ color: '#b91c1c' }}>Sem Heparina:</strong> {anticoagulacaoInfo.motivo ? `Motivo: ${anticoagulacaoInfo.motivo}. ` : 'Risco hemorrágico elevado. '}Lavagens com SF 0,9% a cada 30 min.
                   </span>
                 </div>
                 <button 
                   onClick={() => setIsPatientModalOpen(true)}
                   className="btn"
-                  style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #f87171', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold' }}
+                  style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #f87171', fontSize: '0.72rem', padding: '2px 8px', borderRadius: '6px', fontWeight: '600' }}
                 >
-                  Alterar Esquema →
+                  Ajustar →
                 </button>
               </div>
             )}
             {hasPositiveCulture && (
               <div 
                 style={{
-                  padding: '0.85rem 1.25rem',
-                  borderRadius: '14px',
+                  padding: '0.35rem 0.75rem',
+                  borderRadius: '10px',
                   background: '#fef2f2',
-                  border: '1px solid #f87171',
+                  border: '1px solid #fca5a5',
                   color: '#991b1b',
-                  fontSize: '0.82rem',
+                  fontSize: '0.76rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   flexWrap: 'wrap',
-                  gap: '0.75rem'
+                  gap: '0.5rem'
                 }}
               >
-                <div className="flex items-center gap-2.5">
-                  <Bug size={18} color="#dc2626" style={{ flexShrink: 0 }} />
-                  <span style={{ lineHeight: '1.4' }}>
-                    <strong style={{ color: '#b91c1c' }}>🚨 Infecção de Acesso:</strong> Hemocultura positiva ({hemoculturas.find(h => h.resultado === 'Positiva')?.microrganismo || 'Patógeno isolado'}). Checar lock therapy e antibioticoterapia.
+                <div className="flex items-center gap-2">
+                  <Bug size={14} color="#dc2626" style={{ flexShrink: 0 }} />
+                  <span style={{ lineHeight: '1.3' }}>
+                    <strong style={{ color: '#b91c1c' }}>Infecção do Acesso:</strong> Hemocultura positiva ({hemoculturas.find(h => h.resultado === 'Positiva')?.microrganismo || 'Patógeno isolado'}).
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <button 
                     onClick={() => setIsLockTherapyModalOpen(true)}
                     className="btn"
-                    style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #f87171', fontSize: '0.75rem', padding: '4px 9px', borderRadius: '8px', fontWeight: 'bold' }}
+                    style={{ background: '#fee2e2', color: '#991b1b', border: '1px solid #f87171', fontSize: '0.72rem', padding: '2px 8px', borderRadius: '6px', fontWeight: '600' }}
                   >
-                    Lock Therapy →
+                    Protocolo →
                   </button>
                   <button 
                     onClick={() => setActiveTab('exams')}
-                    style={{ background: 'transparent', border: 'none', color: '#991b1b', fontSize: '0.75rem', fontWeight: 'bold', cursor: 'pointer', textDecoration: 'underline' }}
+                    style={{ background: 'transparent', border: 'none', color: '#991b1b', fontSize: '0.72rem', fontWeight: '600', cursor: 'pointer', textDecoration: 'underline' }}
                   >
-                    Ver Culturas
+                    Culturas
                   </button>
                 </div>
               </div>
@@ -1263,42 +1262,42 @@ export default function PatientProfile() {
             {isHipervolemia && (
               <div 
                 style={{
-                  padding: '0.75rem 1.25rem',
-                  borderRadius: '14px',
+                  padding: '0.35rem 0.75rem',
+                  borderRadius: '10px',
                   background: '#fff7ed',
                   border: '1px solid #fed7aa',
                   color: '#c2410c',
-                  fontSize: '0.82rem',
+                  fontSize: '0.76rem',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '10px'
+                  gap: '8px'
                 }}
               >
-                <AlertTriangle size={18} color="#ea580c" style={{ flexShrink: 0 }} />
+                <AlertTriangle size={14} color="#ea580c" style={{ flexShrink: 0 }} />
                 <span>
-                  <strong>Atenção Volêmica:</strong> Ganho interdialítico de <strong>+{ganhoKg} kg ({pidgPct}%)</strong>. Risco de hipertensão e congestão.
+                  <strong>Atenção Volêmica:</strong> Ganho interdialítico de <strong>+{ganhoKg} kg ({pidgPct}%)</strong>.
                 </span>
               </div>
             )}
             {hasLabAlerts && (
               <div 
                 style={{
-                  padding: '0.85rem 1.25rem',
-                  borderRadius: '14px',
+                  padding: '0.35rem 0.75rem',
+                  borderRadius: '10px',
                   background: '#fef2f2',
                   border: '1px solid #fecaca',
                   color: '#991b1b',
-                  fontSize: '0.82rem',
+                  fontSize: '0.76rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   flexWrap: 'wrap',
-                  gap: '0.75rem'
+                  gap: '0.5rem'
                 }}
               >
-                <div className="flex items-center gap-2.5">
-                  <AlertTriangle size={18} color="#dc2626" style={{ flexShrink: 0 }} />
-                  <span style={{ lineHeight: '1.4' }}>
+                <div className="flex items-center gap-2">
+                  <AlertTriangle size={14} color="#dc2626" style={{ flexShrink: 0 }} />
+                  <span style={{ lineHeight: '1.3' }}>
                     <strong style={{ color: '#b91c1c' }}>Atenção Laboratorial:</strong> {hbBaixa ? 'Hb < 10,0 • ' : ''}{pthAlto ? 'PTH > 600 • ' : ''}{fosforoAlto ? 'Fósforo > 5,5 • ' : ''}{kAlto ? 'Potássio > 5,5 • ' : ''}{albuminaBaixa ? 'Albumina < 3,8 • ' : ''}{hco3Baixo ? 'Acidose (HCO₃ < 22)' : ''}
                   </span>
                 </div>
@@ -1310,17 +1309,17 @@ export default function PatientProfile() {
                     color: '#991b1b', 
                     border: '1px solid rgba(220, 38, 38, 0.2)', 
                     cursor: 'pointer', 
-                    fontSize: '0.78rem',
+                    fontSize: '0.72rem',
                     fontWeight: '600',
-                    padding: '0.35rem 0.75rem',
-                    borderRadius: '8px',
+                    padding: '2px 8px',
+                    borderRadius: '6px',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
                     whiteSpace: 'nowrap'
                   }}
                 >
-                  Ver Exames →
+                  Exames →
                 </button>
               </div>
             )}
@@ -1328,23 +1327,23 @@ export default function PatientProfile() {
             {medAlerts.length > 0 && (
               <div 
                 style={{
-                  padding: '0.85rem 1.25rem',
-                  borderRadius: '14px',
+                  padding: '0.35rem 0.75rem',
+                  borderRadius: '10px',
                   background: '#fffbeb',
                   border: '1px solid #fde68a',
                   color: '#92400e',
-                  fontSize: '0.82rem',
+                  fontSize: '0.76rem',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   flexWrap: 'wrap',
-                  gap: '0.75rem'
+                  gap: '0.5rem'
                 }}
               >
-                <div className="flex items-center gap-2.5">
-                  <Clock size={18} color="#d97706" style={{ flexShrink: 0 }} />
-                  <span style={{ lineHeight: '1.4' }}>
-                    <strong style={{ color: '#b45309' }}>Alertas de Prescrição:</strong> {medAlerts.length} medicamento(s) com ciclo encerrado ou a vencer nos próximos dias.
+                <div className="flex items-center gap-2">
+                  <Clock size={14} color="#d97706" style={{ flexShrink: 0 }} />
+                  <span style={{ lineHeight: '1.3' }}>
+                    <strong style={{ color: '#b45309' }}>Alertas de Prescrição:</strong> {medAlerts.length} medicamento(s) com ciclo encerrado ou a vencer.
                   </span>
                 </div>
                 <button 
@@ -1355,17 +1354,17 @@ export default function PatientProfile() {
                     color: '#92400e', 
                     border: '1px solid rgba(217, 119, 6, 0.2)', 
                     cursor: 'pointer', 
-                    fontSize: '0.78rem',
+                    fontSize: '0.72rem',
                     fontWeight: '600',
-                    padding: '0.35rem 0.75rem',
-                    borderRadius: '8px',
+                    padding: '2px 8px',
+                    borderRadius: '6px',
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '4px',
                     whiteSpace: 'nowrap'
                   }}
                 >
-                  Gerenciar Prescrições →
+                  Prescrições →
                 </button>
               </div>
             )}
@@ -2112,7 +2111,7 @@ export default function PatientProfile() {
                   title="Lançar novo peso"
                 >
                   <Plus size={12} />
-                  <span>+ Peso</span>
+                  <span>Peso</span>
                 </button>
               </div>
 
@@ -2509,7 +2508,7 @@ export default function PatientProfile() {
 
               <button className="btn btn-primary" onClick={handleOpenNewExam} style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <Plus size={14} />
-                <span>+ Exame</span>
+                <span>Exame</span>
               </button>
             </div>
           </div>
@@ -2988,7 +2987,7 @@ export default function PatientProfile() {
             
             <button className="btn btn-primary" onClick={handleOpenNewMedication} style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}>
               <Plus size={14} />
-              <span>+ Prescrição</span>
+              <span>Prescrever</span>
             </button>
           </div>
 
@@ -3306,7 +3305,7 @@ export default function PatientProfile() {
               style={{ padding: '0.5rem 1rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '5px' }}
             >
               <Plus size={14} />
-              <span>+ Receita</span>
+              <span>Receita</span>
             </button>
           </div>
 
@@ -3320,7 +3319,7 @@ export default function PatientProfile() {
                 onClick={() => handleOpenNewPrescription('simples')}
                 style={{ fontSize: '0.8rem', padding: '0.4rem 1rem' }}
               >
-                + Receita
+                Receita
               </button>
             </div>
           ) : (
@@ -3487,7 +3486,7 @@ export default function PatientProfile() {
               style={{ padding: '0.45rem 0.95rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}
             >
               <Plus size={14} />
-              <span>+ LME</span>
+              <span>LME</span>
             </button>
           </div>
 

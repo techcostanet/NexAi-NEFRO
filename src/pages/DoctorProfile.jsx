@@ -666,7 +666,8 @@ export default function DoctorProfile() {
             onClick={handleOpenAddLocation}
             style={{ padding: '0.45rem 0.95rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px' }}
           >
-            <Plus size={15} /> + Local
+            <Plus size={15} />
+            <span>Local</span>
           </button>
         </div>
 

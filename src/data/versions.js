@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.124",
+    "date": "21/10/2026",
+    "title": "Padronizacao da aba Acesso sem indicadores extras, alertas de topo discretos ...",
+    "highlights": [
+      "Padronizacao da aba Acesso sem indicadores extras, alertas de topo discretos e compactos no prontuario e eliminacao de simbolos duplos de mais nos botoes"
+    ]
+  },
+  {
     "version": "1.1.123",
     "date": "17/10/2026",
     "title": "\\ feat: modulo consultorio completo com gerador de documentos e gestao financ...",

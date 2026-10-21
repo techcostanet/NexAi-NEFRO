@@ -125,7 +125,7 @@ export default function LmePatientSection({
             title="Emitir nova LME com exames recentes do paciente"
           >
             <Plus size={15} />
-            <span>+ LME</span>
+            <span>LME</span>
           </button>
         </div>
       ) : (
