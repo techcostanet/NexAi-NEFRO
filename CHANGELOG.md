@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.125] - 2026-10-23
+### Alterações
+- Homologacao do layout LABICON para laudos de rotina e apoio DB com testes de cobertura
+
 ## [1.1.124] - 2026-10-21
 ### Alterações
 - Padronizacao da aba Acesso sem indicadores extras, alertas de topo discretos e compactos no prontuario e eliminacao de simbolos duplos de mais nos botoes

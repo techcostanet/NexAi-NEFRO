@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.125",
+    "date": "23/10/2026",
+    "title": "Homologacao do layout LABICON para laudos de rotina e apoio DB com testes de ...",
+    "highlights": [
+      "Homologacao do layout LABICON para laudos de rotina e apoio DB com testes de cobertura"
+    ]
+  },
+  {
     "version": "1.1.124",
     "date": "21/10/2026",
     "title": "Padronizacao da aba Acesso sem indicadores extras, alertas de topo discretos ...",

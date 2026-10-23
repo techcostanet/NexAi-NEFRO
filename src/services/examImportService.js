@@ -1668,7 +1668,11 @@ export async function parsePdfFile(file, patientsList = []) {
                        updatedFullText.includes('6855865') ||
                        updatedFullText.includes('ISABEL ARAUJO GOBIRA') ||
                        updatedFullText.includes('AMANDA GONCALVES XAVIER') ||
-                       updatedFullText.includes('AMANDA GONÇALVES XAVIER');
+                       updatedFullText.includes('AMANDA GONÇALVES XAVIER') ||
+                       updatedFullText.includes('GABRIELLA C. MELO PARREIRA') ||
+                       updatedFullText.includes('TAMARA CAMILA MENDES') ||
+                       updatedFullText.includes('DEBORA ROCHA SOARES') ||
+                       updatedFullText.includes('2565-5769');
 
   if (isLabiconDoc) {
     const labiconResult = parseLabiconReport(pagesLines, patientsList, detectedGlobalDate);

@@ -35,6 +35,12 @@ export const HOMOLOGATED_LABS = [
       'CRBM-MG 18643',
       'CRBM-MG 30208',
       'CRBM-MG 13.696',
+      'CRBM 13696',
+      'CRBM-MG 14.430',
+      'CRBM 14430',
+      'GABRIELLA C. MELO PARREIRA',
+      'TAMARA CAMILA MENDES',
+      'DEBORA ROCHA SOARES',
       'Rua Tiradentes, 2887',
       'Bairro Industrial, Contagem',
       'Contagem/MG',
@@ -43,6 +49,8 @@ export const HOMOLOGATED_LABS = [
       '(31) 2565-5769',
       '32.230-020',
       '120-DIALIZE',
+      '120-DIALIZE / HD',
+      'DIALIZE / HD - S1T1',
       'DIALIZE / APD'
     ],
     examesHomologados: [
