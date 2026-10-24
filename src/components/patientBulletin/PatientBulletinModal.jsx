@@ -19,7 +19,8 @@ import {
   Plus,
   Trash2,
   Sparkles,
-  FileText
+  FileText,
+  Type
 } from 'lucide-react';
 import PatientBulletinPrintDocument from './PatientBulletinPrintDocument';
 import PatientBulletinVisualDocument from './PatientBulletinVisualDocument';
@@ -106,6 +107,7 @@ export default function PatientBulletinModal({
   const [editingTipCardId, setEditingTipCardId] = useState(null);
   const [customNote, setCustomNote] = useState('');
   const [bulletinModel, setBulletinModel] = useState('standard'); // 'standard' | 'visual'
+  const [fontSizeLevel, setFontSizeLevel] = useState('padrao'); // 'padrao' | 'medio' | 'grande'
   const [copied, setCopied] = useState(false);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
@@ -460,6 +462,7 @@ export default function PatientBulletinModal({
           customTips={customTips}
           includePrescription={includePrescription}
           prescriptionItems={activePrescriptionItems}
+          fontSizeLevel={fontSizeLevel}
         />
       ) : (
         <PatientBulletinPdf
@@ -472,6 +475,7 @@ export default function PatientBulletinModal({
           customTips={customTips}
           includePrescription={includePrescription}
           prescriptionItems={activePrescriptionItems}
+          fontSizeLevel={fontSizeLevel}
         />
       );
 
@@ -604,6 +608,79 @@ export default function PatientBulletinModal({
               >
                 <Sparkles size={13} color={bulletinModel === 'visual' ? '#d97706' : '#94a3b8'} />
                 <span>Visual</span>
+              </button>
+            </div>
+
+            {/* Seletor de Tamanho de Fonte (Acessibilidade: Padrão | Médio | Grande) */}
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              background: '#e2e8f0',
+              padding: '3px',
+              borderRadius: '8px',
+              border: '1px solid #cbd5e1',
+              marginRight: '6px'
+            }}>
+              <span style={{ fontSize: '0.70rem', fontWeight: '800', color: '#475569', padding: '0 6px', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                <Type size={12} color="#2563eb" />
+                <span>Fonte</span>
+              </span>
+              <button 
+                type="button"
+                onClick={() => setFontSizeLevel('padrao')}
+                style={{
+                  padding: '4px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: '700',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: fontSizeLevel === 'padrao' ? '#ffffff' : 'transparent',
+                  color: fontSizeLevel === 'padrao' ? '#0f172a' : '#64748b',
+                  boxShadow: fontSizeLevel === 'padrao' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+                title="Tamanho padrão de leitura"
+              >
+                Padrão
+              </button>
+              <button 
+                type="button"
+                onClick={() => setFontSizeLevel('medio')}
+                style={{
+                  padding: '4px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: '700',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: fontSizeLevel === 'medio' ? '#ffffff' : 'transparent',
+                  color: fontSizeLevel === 'medio' ? '#1d4ed8' : '#64748b',
+                  boxShadow: fontSizeLevel === 'medio' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+                title="Fonte média ampliada (+20% legibilidade)"
+              >
+                Médio
+              </button>
+              <button 
+                type="button"
+                onClick={() => setFontSizeLevel('grande')}
+                style={{
+                  padding: '4px 8px',
+                  fontSize: '0.72rem',
+                  fontWeight: '700',
+                  borderRadius: '6px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: fontSizeLevel === 'grande' ? '#ffffff' : 'transparent',
+                  color: fontSizeLevel === 'grande' ? '#059669' : '#64748b',
+                  boxShadow: fontSizeLevel === 'grande' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                  transition: 'all 0.15s ease'
+                }}
+                title="Fonte grande para baixa visão (+40% tamanho)"
+              >
+                Grande
               </button>
             </div>
 
@@ -1158,6 +1235,7 @@ export default function PatientBulletinModal({
                   customTips={customTips}
                   includePrescription={includePrescription}
                   prescriptionItems={activePrescriptionItems}
+                  fontSizeLevel={fontSizeLevel}
                 />
               ) : (
                 <PatientBulletinPrintDocument 
@@ -1170,6 +1248,7 @@ export default function PatientBulletinModal({
                   customTips={customTips}
                   includePrescription={includePrescription}
                   prescriptionItems={activePrescriptionItems}
+                  fontSizeLevel={fontSizeLevel}
                 />
               )}
             </div>

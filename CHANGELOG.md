@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.125] - 2026-10-24
+### Alterações
+- Seletor com 3 niveis de fonte no Boletim de Saude e alternancia compacta Grafico e Lista no Controle Ponderal
+
 ## [1.1.124] - 2026-10-21
 ### Alterações
 - Padronizacao da aba Acesso sem indicadores extras, alertas de topo discretos e compactos no prontuario e eliminacao de simbolos duplos de mais nos botoes

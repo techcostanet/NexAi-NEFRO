@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.125",
+    "date": "24/10/2026",
+    "title": "Seletor com 3 niveis de fonte no Boletim de Saude e alternancia compacta Graf...",
+    "highlights": [
+      "Seletor com 3 niveis de fonte no Boletim de Saude e alternancia compacta Grafico e Lista no Controle Ponderal"
+    ]
+  },
+  {
     "version": "1.1.124",
     "date": "21/10/2026",
     "title": "Padronizacao da aba Acesso sem indicadores extras, alertas de topo discretos ...",

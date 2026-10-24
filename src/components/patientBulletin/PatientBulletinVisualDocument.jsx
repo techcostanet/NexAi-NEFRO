@@ -49,7 +49,6 @@ const renderVisualDocIcon = (tema, color, size = 18) => {
  * Transforma números laboratoriais em órgãos, semáforos de carinhas e figuras de ação.
  * Rigorosamente calibrado para 1 ÚNICA FOLHA A4.
  */
-
 export default function PatientBulletinVisualDocument({
   bulletinData,
   patient,
@@ -59,7 +58,8 @@ export default function PatientBulletinVisualDocument({
   enabledTips = {},
   customTips = {},
   includePrescription = false,
-  prescriptionItems = []
+  prescriptionItems = [],
+  fontSizeLevel = 'padrao'
 }) {
   if (!bulletinData) return null;
 
@@ -89,6 +89,48 @@ export default function PatientBulletinVisualDocument({
   const isCompact = hasPrescription && (totalMetas >= 8 || totalMeds >= 4);
   const isSpacious = totalMetas <= 4 && (!hasPrescription || totalMeds <= 2);
   const isSingleColumn = totalMetas <= 2;
+
+  // 3 Níveis de fontes: 'padrao' | 'medio' | 'grande' (Acessibilidade Visual Lúdica)
+  const isMedio = fontSizeLevel === 'medio';
+  const isGrande = fontSizeLevel === 'grande';
+
+  const visualSizes = {
+    clinicName: isGrande ? '15px' : (isMedio ? '14px' : '13px'),
+    bulletinTag: isGrande ? '12px' : (isMedio ? '11px' : '10px'),
+    patientLabel: isGrande ? '14px' : (isMedio ? '13px' : '12px'),
+    patientName: isGrande ? '22px' : (isMedio ? '20px' : '18px'),
+    dateRef: isGrande ? '14px' : (isMedio ? '13px' : '12px'),
+    docName: isGrande ? '12px' : (isMedio ? '11px' : '10px'),
+    docCrm: isGrande ? '10.5px' : (isMedio ? '9.5px' : '9px'),
+
+    trophyTitle: isGrande ? '16px' : (isMedio ? '15px' : (isSpacious ? '14px' : '13px')),
+    trophyBadge: isGrande ? '13px' : (isMedio ? '12px' : '11px'),
+    trophyMsg: isGrande ? '13px' : (isMedio ? '11.5px' : (isSpacious ? '11px' : '10px')),
+    trophyIcon: isGrande ? (isSpacious ? 28 : 24) : (isMedio ? (isSpacious ? 26 : 22) : (isSpacious ? 24 : 20)),
+    trophyCircle: isGrande ? (isSpacious ? '52px' : '46px') : (isMedio ? (isSpacious ? '48px' : '42px') : (isSpacious ? '46px' : '40px')),
+
+    cardIconCircle: isGrande ? (isSpacious ? '40px' : '36px') : (isMedio ? (isSpacious ? '36px' : '32px') : (isSpacious ? '34px' : '30px')),
+    cardIcon: isGrande ? (isSpacious ? 22 : 20) : (isMedio ? (isSpacious ? 20 : 18) : (isSpacious ? 19 : 17)),
+    cardTitle: isGrande ? (isSpacious ? '15px' : '13.5px') : (isMedio ? (isSpacious ? '14px' : '12.5px') : (isSpacious ? '13px' : '11.5px')),
+    cardSub: isGrande ? (isSpacious ? '11.5px' : '10.5px') : (isMedio ? (isSpacious ? '10.5px' : '9.5px') : (isSpacious ? '9.5px' : '8.5px')),
+    cardValueBadge: isGrande ? '9.5px' : (isMedio ? '8.5px' : '7.5px'),
+    cardStatusFace: isGrande ? (isSpacious ? '18px' : '16px') : (isMedio ? (isSpacious ? '16px' : '14px') : (isSpacious ? '14px' : '12px')),
+    cardStatusText: isGrande ? (isSpacious ? '12px' : '11px') : (isMedio ? (isSpacious ? '11px' : '10px') : (isSpacious ? '10px' : '9px')),
+    cardTipText: isGrande ? (isSpacious ? '12px' : '11px') : (isMedio ? (isSpacious ? '10.5px' : '9.5px') : (isSpacious ? '9.5px' : '8.5px')),
+
+    prescHeader: isGrande ? '14px' : (isMedio ? '12.5px' : (isCompact ? '10.5px' : (isSpacious ? '12px' : '11px'))),
+    prescPeriodTitle: isGrande ? '12px' : (isMedio ? '10.5px' : '9.5px'),
+    prescMedName: isGrande ? '12.5px' : (isMedio ? '11px' : (isCompact ? '9px' : (isSpacious ? '10.5px' : '9.5px'))),
+    prescPoso: isGrande ? '11px' : (isMedio ? '9.5px' : (isCompact ? '8px' : (isSpacious ? '9px' : '8.5px'))),
+    prescVia: isGrande ? '9.5px' : (isMedio ? '8.5px' : '7.5px'),
+
+    noteTitle: isGrande ? '13.5px' : (isMedio ? '12px' : (isSpacious ? '12px' : '10.5px')),
+    noteContent: isGrande ? '13px' : (isMedio ? '11.5px' : (isSpacious ? '11px' : '9.5px')),
+
+    footerDoctor: isGrande ? '12px' : (isMedio ? '11px' : '10px'),
+    footerCrm: isGrande ? '10.5px' : (isMedio ? '9.5px' : '8.5px'),
+    footerNote: isGrande ? '10px' : (isMedio ? '9px' : '8px')
+  };
 
   const doctorName = doctorInfo?.nome || 'Dr(a). Médico(a) Responsável';
   const doctorCrm = doctorInfo?.crm ? `CRM-${doctorInfo?.ufCrm || 'MG'} ${doctorInfo?.crm}` : 'Nefrologista Responsável';
@@ -133,7 +175,7 @@ export default function PatientBulletinVisualDocument({
         width: '100%',
         maxWidth: '740px',
         margin: '0 auto',
-        padding: isSpacious ? '14px 18px' : '10px 14px',
+        padding: isGrande ? '12px 14px' : (isSpacious ? '14px 18px' : '10px 14px'),
         boxSizing: 'border-box'
       }}>
 
@@ -151,16 +193,16 @@ export default function PatientBulletinVisualDocument({
               <img 
                 src={doctorInfo.logoUrl} 
                 alt="Logomarca Médica" 
-                style={{ maxHeight: '44px', maxWidth: '100px', objectFit: 'contain' }} 
+                style={{ maxHeight: isGrande ? '48px' : '44px', maxWidth: '100px', objectFit: 'contain' }} 
               />
             )}
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ fontSize: '13px', fontWeight: '900', color: '#1e40af', letterSpacing: '0.5px' }}>
+                <span style={{ fontSize: visualSizes.clinicName, fontWeight: '900', color: '#1e40af', letterSpacing: '0.5px' }}>
                   {doctorClinica.toUpperCase()}
                 </span>
                 <span style={{ 
-                  fontSize: '10px', 
+                  fontSize: visualSizes.bulletinTag, 
                   background: '#dbeafe', 
                   color: '#1d4ed8', 
                   padding: '2px 8px', 
@@ -175,8 +217,8 @@ export default function PatientBulletinVisualDocument({
               </div>
             
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginTop: '2px' }}>
-              <span style={{ fontSize: '12px', color: '#475569', fontWeight: '600' }}>Paciente:</span>
-              <h1 style={{ margin: 0, fontSize: '18px', fontWeight: '900', color: '#0f172a', letterSpacing: '-0.3px' }}>
+              <span style={{ fontSize: visualSizes.patientLabel, color: '#475569', fontWeight: '600' }}>Paciente:</span>
+              <h1 style={{ margin: 0, fontSize: visualSizes.patientName, fontWeight: '900', color: '#0f172a', letterSpacing: '-0.3px' }}>
                 {pacienteNome}
               </h1>
             </div>
@@ -184,13 +226,13 @@ export default function PatientBulletinVisualDocument({
         </div>
 
         <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '12px', fontWeight: '800', color: '#1e3a8a' }}>
+            <div style={{ fontSize: visualSizes.dateRef, fontWeight: '800', color: '#1e3a8a' }}>
               {mesFormatado}
             </div>
-            <div style={{ fontSize: '10px', color: '#475569', marginTop: '1px' }}>
+            <div style={{ fontSize: visualSizes.docName, color: '#475569', marginTop: '1px' }}>
               Médico: <strong>{doctorName}</strong>
             </div>
-            <div style={{ fontSize: '9px', color: '#64748b' }}>
+            <div style={{ fontSize: visualSizes.docCrm, color: '#64748b' }}>
               {doctorCrm}
             </div>
           </div>
@@ -202,7 +244,7 @@ export default function PatientBulletinVisualDocument({
             background: 'linear-gradient(135deg, #fefce8 0%, #ecfdf5 50%, #eff6ff 100%)',
             border: '2px solid #facc15',
             borderRadius: '12px',
-            padding: isSpacious ? '10px 14px' : '7px 12px',
+            padding: isGrande ? '10px 14px' : (isSpacious ? '10px 14px' : '7px 12px'),
             marginBottom: isSpacious ? '10px' : '7px',
             display: 'flex',
             alignItems: 'center',
@@ -214,8 +256,8 @@ export default function PatientBulletinVisualDocument({
               background: 'linear-gradient(135deg, #eab308 0%, #ca8a04 100%)',
               color: '#ffffff',
               borderRadius: '50%',
-              width: isSpacious ? '46px' : '40px',
-              height: isSpacious ? '46px' : '40px',
+              width: visualSizes.trophyCircle,
+              height: visualSizes.trophyCircle,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -223,12 +265,12 @@ export default function PatientBulletinVisualDocument({
               boxShadow: '0 4px 10px rgba(202, 138, 4, 0.35)',
               border: '2px solid #ffffff'
             }}>
-              <Trophy size={isSpacious ? 24 : 20} color="#ffffff" />
+              <Trophy size={visualSizes.trophyIcon} color="#ffffff" />
             </div>
 
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '4px' }}>
-                <strong style={{ fontSize: isSpacious ? '14px' : '13px', color: '#854d0e', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <strong style={{ fontSize: visualSizes.trophyTitle, color: '#854d0e', display: 'flex', alignItems: 'center', gap: '4px' }}>
                   {trofeuTitulo}
                 </strong>
 
@@ -242,13 +284,13 @@ export default function PatientBulletinVisualDocument({
                   alignItems: 'center',
                   gap: '4px'
                 }}>
-                  <span style={{ fontSize: '11px', fontWeight: '900', color: '#a16207' }}>
+                  <span style={{ fontSize: visualSizes.trophyBadge, fontWeight: '900', color: '#a16207' }}>
                     ⭐ {metasBatidas} de {totalMetas} Conquistas ({taxaSucesso}%)
                   </span>
                 </div>
               </div>
 
-              <p style={{ margin: '2px 0 0 0', fontSize: isSpacious ? '11px' : '10px', color: '#334155', lineHeight: '1.35', fontWeight: '500' }}>
+              <p style={{ margin: '2px 0 0 0', fontSize: visualSizes.trophyMsg, color: '#334155', lineHeight: '1.35', fontWeight: '500' }}>
                 {trofeuMensagem}
               </p>
             </div>
@@ -278,7 +320,7 @@ export default function PatientBulletinVisualDocument({
           <div style={{
             display: 'grid',
             gridTemplateColumns: isSingleColumn ? '1fr' : '1fr 1fr',
-            gap: isSpacious ? '8px' : '6px',
+            gap: isGrande ? '8px' : (isSpacious ? '8px' : '6px'),
             marginBottom: isSpacious ? '10px' : '6px'
           }}>
             {displayCards.map(card => {
@@ -299,11 +341,11 @@ export default function PatientBulletinVisualDocument({
                     background: visual.bgTema,
                     border: `1.5px solid ${visual.bordaTema}`,
                     borderRadius: '10px',
-                    padding: isTipEnabled ? (isSpacious ? '7px 10px' : '5px 8px') : (isSpacious ? '6px 10px' : '4px 8px'),
+                    padding: isTipEnabled ? (isGrande ? '8px 11px' : (isSpacious ? '7px 10px' : '5px 8px')) : (isGrande ? '7px 11px' : (isSpacious ? '6px 10px' : '4px 8px')),
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
-                    gap: isTipEnabled ? (isSpacious ? '4px' : '3px') : '0px',
+                    gap: isTipEnabled ? (isGrande ? '5px' : (isSpacious ? '4px' : '3px')) : '0px',
                     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                     breakInside: 'avoid',
                     pageBreakInside: 'avoid'
@@ -317,23 +359,23 @@ export default function PatientBulletinVisualDocument({
                         background: '#ffffff',
                         border: `1.5px solid ${visual.corTema}`,
                         borderRadius: '50%',
-                        width: isSpacious ? '34px' : '30px',
-                        height: isSpacious ? '34px' : '30px',
+                        width: visualSizes.cardIconCircle,
+                        height: visualSizes.cardIconCircle,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
                         boxShadow: '0 2px 4px rgba(0, 0, 0, 0.06)'
                       }}>
-                        {renderVisualDocIcon(visual.tema, visual.corTema, isSpacious ? 19 : 17)}
+                        {renderVisualDocIcon(visual.tema, visual.corTema, visualSizes.cardIcon)}
                       </div>
 
                       <div style={{ minWidth: 0 }}>
                         {/* Nome do Órgão / Sistema em Letra Grande */}
-                        <strong style={{ fontSize: isSpacious ? '13px' : '11.5px', color: '#0f172a', display: 'block', lineHeight: 1.15 }}>
+                        <strong style={{ fontSize: visualSizes.cardTitle, color: '#0f172a', display: 'block', lineHeight: 1.15 }}>
                           {visual.titulo}
                         </strong>
-                        <span style={{ fontSize: isSpacious ? '9.5px' : '8.5px', color: '#64748b', fontWeight: '600' }}>
+                        <span style={{ fontSize: visualSizes.cardSub, color: '#64748b', fontWeight: '600' }}>
                           {visual.subtitulo}
                         </span>
                       </div>
@@ -342,7 +384,7 @@ export default function PatientBulletinVisualDocument({
                     {/* Lado Direito: Valor Técnico + Semáforo de Carinha Universal */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                       <span style={{
-                        fontSize: '7.5px',
+                        fontSize: visualSizes.cardValueBadge,
                         color: '#64748b',
                         background: '#ffffff',
                         border: '1px solid #cbd5e1',
@@ -358,16 +400,16 @@ export default function PatientBulletinVisualDocument({
                         background: visual.bgStatus,
                         border: `1.5px solid ${visual.bordaStatus}`,
                         color: visual.corStatus,
-                        padding: isSpacious ? '3px 8px' : '2px 6px',
+                        padding: isGrande ? '4px 9px' : (isSpacious ? '3px 8px' : '2px 6px'),
                         borderRadius: '16px',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '4px'
                       }}>
-                        <span style={{ fontSize: isSpacious ? '14px' : '12px', lineHeight: 1 }}>
+                        <span style={{ fontSize: visualSizes.cardStatusFace, lineHeight: 1 }}>
                           {visual.carinha}
                         </span>
-                        <strong style={{ fontSize: isSpacious ? '10px' : '9px', letterSpacing: '0.2px' }}>
+                        <strong style={{ fontSize: visualSizes.cardStatusText, letterSpacing: '0.2px' }}>
                           {visual.rotuloStatus}
                         </strong>
                       </div>
@@ -380,18 +422,18 @@ export default function PatientBulletinVisualDocument({
                       background: 'rgba(255, 255, 255, 0.9)',
                       border: '1px solid rgba(226, 232, 240, 0.9)',
                       borderRadius: '6px',
-                      padding: isSpacious ? '3px 7px' : '2px 6px',
+                      padding: isGrande ? '4px 8px' : (isSpacious ? '3px 7px' : '2px 6px'),
                       display: 'flex',
                       alignItems: 'center',
                       gap: '5px',
                       marginTop: '2px'
                     }}>
-                      <span style={{ fontSize: isSpacious ? '12px' : '11px', flexShrink: 0 }}>
+                      <span style={{ fontSize: isGrande ? '14px' : (isSpacious ? '12px' : '11px'), flexShrink: 0 }}>
                         {visual.acaoIcone}
                       </span>
                       <p style={{
                         margin: 0,
-                        fontSize: isSpacious ? '9.5px' : '8.5px',
+                        fontSize: visualSizes.cardTipText,
                         color: '#1e293b',
                         fontWeight: '600',
                         lineHeight: 1.25
@@ -413,7 +455,7 @@ export default function PatientBulletinVisualDocument({
             background: '#f8fafc',
             border: '2px solid #cbd5e1',
             borderRadius: '10px',
-            padding: isCompact ? '5px 8px' : (isSpacious ? '8px 12px' : '6px 10px'),
+            padding: isGrande ? '8px 12px' : (isCompact ? '5px 8px' : (isSpacious ? '8px 12px' : '6px 10px')),
             marginBottom: isCompact ? '5px' : (isSpacious ? '8px' : '6px'),
             breakInside: 'avoid',
             pageBreakInside: 'avoid'
@@ -421,11 +463,11 @@ export default function PatientBulletinVisualDocument({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                 <span style={{ fontSize: isSpacious ? '15px' : '13px', lineHeight: 1 }}>💊</span>
-                <strong style={{ fontSize: isSpacious ? '12px' : '10.5px', color: '#1e293b' }}>
+                <strong style={{ fontSize: visualSizes.prescHeader, color: '#1e293b' }}>
                   Seus Remédios de Uso Diário
                 </strong>
               </div>
-              <span style={{ fontSize: '8.5px', color: '#1d4ed8', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '1px 6px', borderRadius: '8px', fontWeight: 'bold' }}>
+              <span style={{ fontSize: visualSizes.prescPeriodTitle, color: '#1d4ed8', background: '#eff6ff', border: '1px solid #bfdbfe', padding: '1px 6px', borderRadius: '8px', fontWeight: 'bold' }}>
                 Tome nos horários certos
               </span>
             </div>
@@ -449,7 +491,7 @@ export default function PatientBulletinVisualDocument({
                       background: '#ffffff',
                       border: '1px solid #e2e8f0',
                       borderRadius: '6px',
-                      padding: isCompact ? '3px 6px' : '4px 7px',
+                      padding: isGrande ? '5px 8px' : (isCompact ? '3px 6px' : '4px 7px'),
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
@@ -457,19 +499,19 @@ export default function PatientBulletinVisualDocument({
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1, minWidth: 0 }}>
-                      <span style={{ fontSize: '12px' }}>💊</span>
+                      <span style={{ fontSize: isGrande ? '14px' : '12px' }}>💊</span>
                       <div style={{ minWidth: 0 }}>
-                        <strong style={{ fontSize: isCompact ? '9px' : (isSpacious ? '10.5px' : '9.5px'), color: '#0f172a', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <strong style={{ fontSize: visualSizes.prescMedName, color: '#0f172a', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {item.medicamento}
                         </strong>
-                        <span style={{ fontSize: isCompact ? '8px' : (isSpacious ? '9px' : '8.5px'), color: '#475569', display: 'block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <span style={{ fontSize: visualSizes.prescPoso, color: '#475569', display: 'block', lineHeight: 1.15, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {item.posologia || 'Conforme orientação médica'}
                         </span>
                       </div>
                     </div>
 
                     <span style={{
-                      fontSize: '7.5px',
+                      fontSize: visualSizes.prescVia,
                       fontWeight: '800',
                       background: periodBg,
                       border: `1px solid ${periodBorder}`,
@@ -494,20 +536,20 @@ export default function PatientBulletinVisualDocument({
             background: 'linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)',
             border: '2px solid #86efac',
             borderRadius: '10px',
-            padding: isSpacious ? '8px 12px' : '6px 10px',
+            padding: isGrande ? '10px 14px' : (isSpacious ? '8px 12px' : '6px 10px'),
             marginBottom: '8px',
             breakInside: 'avoid',
             pageBreakInside: 'avoid'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-              <span style={{ fontSize: isSpacious ? '16px' : '14px', lineHeight: 1 }}>🩺💬</span>
-              <strong style={{ fontSize: isSpacious ? '12px' : '10.5px', color: '#166534' }}>
+              <span style={{ fontSize: isGrande ? '18px' : (isSpacious ? '16px' : '14px'), lineHeight: 1 }}>🩺💬</span>
+              <strong style={{ fontSize: visualSizes.noteTitle, color: '#166534' }}>
                 Recado do Dr(a). {doctorName} para você este mês:
               </strong>
             </div>
             <p style={{
               margin: 0,
-              fontSize: isSpacious ? '11px' : '9.5px',
+              fontSize: visualSizes.noteContent,
               color: '#14532d',
               lineHeight: '1.35',
               fontWeight: '700'
@@ -524,7 +566,7 @@ export default function PatientBulletinVisualDocument({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          fontSize: '9px',
+          fontSize: visualSizes.footerNote,
           color: '#64748b'
         }}>
           <div>
@@ -537,10 +579,10 @@ export default function PatientBulletinVisualDocument({
           </div>
 
           <div style={{ textAlign: 'right' }}>
-            <span style={{ display: 'block', fontWeight: '800', color: '#1e293b' }}>
+            <span style={{ display: 'block', fontWeight: '800', color: '#1e293b', fontSize: visualSizes.footerDoctor }}>
               {doctorName}
             </span>
-            <span style={{ fontSize: '8.5px', color: '#64748b' }}>
+            <span style={{ fontSize: visualSizes.footerCrm, color: '#64748b' }}>
               {doctorCrm} • Nefrologia
             </span>
           </div>
