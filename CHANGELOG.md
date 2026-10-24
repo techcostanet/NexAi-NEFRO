@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.126] - 2026-10-24
+### Alterações
+- Correcao no salvamento do calculo de Kt/V e eliminacao de estimativa automatica no laudo
+
 ## [1.1.125] - 2026-10-24
 ### Alterações
 - Seletor com 3 niveis de fonte no Boletim de Saude e alternancia compacta Grafico e Lista no Controle Ponderal

@@ -526,18 +526,9 @@ export function applyDerivedCalculations(exames = {}) {
     exames.ist = Math.round(istCalc * 10) / 10;
   }
 
-  // 2. Cálculo automático de Kt/V (Daugirdas sp) a partir de Ureia Pré e Pós
-  if (exames.ktv === undefined && exames.ureiaPre && exames.ureiaPos) {
-    const pre = Number(exames.ureiaPre);
-    const pos = Number(exames.ureiaPos);
-    if (pre > pos && pre > 0) {
-      const r = pos / pre;
-      if (r > 0.032) {
-        const ktvEst = -Math.log(r - 0.032);
-        exames.ktv = Math.round(ktvEst * 100) / 100;
-      }
-    }
-  }
+  // NOTA CLÍNICA: O Kt/V NÃO deve ser inventado ou estimado automaticamente apenas com Ureia Pré e Pós.
+  // A fórmula padrão-ouro de Daugirdas exige os pesos pré e pós para computar a ultrafiltração (UF) e a duração da sessão.
+  // Portanto, o Kt/V só é gravado se constar expressamente no laudo do laboratório ou se for calculado na Calculadora de Adequação.
 
   return exames;
 }
@@ -2027,18 +2018,7 @@ export async function parsePdfFile(file, patientsList = []) {
         report.exames.ist = Math.round(istCalc * 10) / 10;
       }
 
-      // 2. Cálculo automático de Kt/V (Daugirdas sp) a partir de Ureia Pré e Pós
-      if (report.exames.ktv === undefined && report.exames.ureiaPre && report.exames.ureiaPos) {
-        const pre = Number(report.exames.ureiaPre);
-        const pos = Number(report.exames.ureiaPos);
-        if (pre > pos && pre > 0) {
-          const r = pos / pre;
-          if (r > 0.032) {
-            const ktvEst = -Math.log(r - 0.032);
-            report.exames.ktv = Math.round(ktvEst * 100) / 100;
-          }
-        }
-      }
+      // NOTA CLÍNICA: Kt/V nunca é inventado no laudo. Só entra se vier impresso ou se for calculado na Calculadora de Adequação.
     });
 
     // Se encontrou laudos com exames ou pacientes

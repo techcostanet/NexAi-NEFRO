@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.126",
+    "date": "24/10/2026",
+    "title": "Correcao no salvamento do calculo de Kt/V e eliminacao de estimativa automati...",
+    "highlights": [
+      "Correcao no salvamento do calculo de Kt/V e eliminacao de estimativa automatica no laudo"
+    ]
+  },
+  {
     "version": "1.1.125",
     "date": "24/10/2026",
     "title": "Seletor com 3 niveis de fonte no Boletim de Saude e alternancia compacta Graf...",

@@ -294,6 +294,7 @@ export default function PatientProfile() {
     } catch (err) {
       console.error("Erro ao salvar cálculo de Kt/V:", err);
       alert("Não foi possível salvar o cálculo de Kt/V. Tente novamente.");
+      throw err;
     }
   };
 

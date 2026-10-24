@@ -23,16 +23,16 @@ export default function KtvCalculatorModal({
     if (!isOpen || !patient) return;
 
     const exames = patient.exames || {};
-    setUreiaPre(exames.ureiaPre !== undefined ? String(exames.ureiaPre) : '');
-    setUreiaPos(exames.ureiaPos !== undefined ? String(exames.ureiaPos) : '');
+    setUreiaPre(exames.ureiaPre !== undefined && exames.ureiaPre !== null ? String(exames.ureiaPre) : '');
+    setUreiaPos(exames.ureiaPos !== undefined && exames.ureiaPos !== null ? String(exames.ureiaPos) : '');
     
-    // Sugere peso seco como referência inicial se disponível
-    if (patient.pesoSeco) {
-      setPesoPos(String(patient.pesoSeco));
-    } else {
-      setPesoPos('');
-    }
-    setPesoPre('');
+    // Sugere pesos a partir do histórico de pesagens e peso seco cadastrado
+    const pesos = Array.isArray(patient.historicoPesos) ? patient.historicoPesos : [];
+    const pesoPreRecente = pesos.find(p => (p.tipo || '').toLowerCase().includes('pré'))?.peso || patient.ultimoPesoAferido;
+    const pesoPosRecente = pesos.find(p => (p.tipo || '').toLowerCase().includes('pós'))?.peso || patient.pesoSeco;
+
+    setPesoPre(pesoPreRecente ? String(pesoPreRecente) : '');
+    setPesoPos(pesoPosRecente ? String(pesoPosRecente) : (patient.pesoSeco ? String(patient.pesoSeco) : ''));
 
     // Duração da sessão
     const tempoPrescrito = patient.prescricaoDialise?.tempoSessao;
@@ -78,14 +78,14 @@ export default function KtvCalculatorModal({
       const dadosParaSalvar = {
         ktv: resultado.ktv,
         pru: resultado.pru,
-        uf: resultado.uf,
+        uf: resultado.uf !== null && resultado.uf !== undefined ? resultado.uf : 0,
         ureiaPre: parseFloat(String(ureiaPre).replace(',', '.')),
         ureiaPos: parseFloat(String(ureiaPos).replace(',', '.')),
         pesoPre: pesoPre ? parseFloat(String(pesoPre).replace(',', '.')) : null,
         pesoPos: pesoPos ? parseFloat(String(pesoPos).replace(',', '.')) : null,
         duracaoHoras: parseFloat(String(duracaoHoras).replace(',', '.')) || 4.0,
         dataColeta: dataColeta || new Date().toISOString().split('T')[0],
-        observacao: observacao.trim() || undefined,
+        observacao: observacao ? observacao.trim() : '',
         metodoCalculo: 'Daugirdas 2ª Geração (spKt/V)'
       };
 
@@ -254,6 +254,18 @@ export default function KtvCalculatorModal({
             <p className="text-xs mt-2 text-slate-600">
               {resultado.descricao}
             </p>
+
+            {!pesoPre && resultado.valido && (
+              <div
+                className="mt-2.5 p-2 bg-amber-50 border border-amber-200/70 rounded-lg flex items-start gap-1.5 text-amber-800"
+                style={{ fontSize: '0.72rem' }}
+              >
+                <Info size={13} className="shrink-0 mt-0.5 text-amber-600" />
+                <span>
+                  <strong>Atenção ao Peso Pré:</strong> Como o Peso Pré não foi preenchido, a ultrafiltração (UF) foi estimada em <strong>0 L</strong>. Preencha o Peso Pré para computar a remoção convectiva no spKt/V oficial.
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Seção 1: Dosagens de Ureia (Pré e Pós) */}
