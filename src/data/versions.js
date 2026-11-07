@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.127",
+    "date": "07/11/2026",
+    "title": "Correção cirúrgica no parser do Labicon: leitura de cálcio, fósforo, ureia, s...",
+    "highlights": [
+      "Correção cirúrgica no parser do Labicon: leitura de cálcio, fósforo, ureia, sódio, potássio e glicemia"
+    ]
+  },
+  {
     "version": "1.1.126",
     "date": "24/10/2026",
     "title": "Correcao no salvamento do calculo de Kt/V e eliminacao de estimativa automati...",

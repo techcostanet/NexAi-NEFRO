@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.127] - 2026-11-07
+### Alterações
+- Correção cirúrgica no parser do Labicon: leitura de cálcio, fósforo, ureia, sódio, potássio e glicemia
+
 ## [1.1.126] - 2026-10-24
 ### Alterações
 - Correcao no salvamento do calculo de Kt/V e eliminacao de estimativa automatica no laudo
