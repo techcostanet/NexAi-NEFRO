@@ -1,5 +1,14 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.129",
+    "date": "09/11/2026",
+    "title": "Importacao de 37 pacientes e 513 exames laboratoriais do Dialsist para Dra",
+    "highlights": [
+      "Importacao de 37 pacientes e 513 exames laboratoriais do Dialsist para Dra",
+      "Maria Tereza"
+    ]
+  },
+  {
     "version": "1.1.128",
     "date": "09/11/2026",
     "title": "Criacao de acesso e licenca para Dra",

@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.129] - 2026-11-09
+### Alterações
+- Importacao de 37 pacientes e 513 exames laboratoriais do Dialsist para Dra. Maria Tereza
+
 ## [1.1.128] - 2026-11-09
 ### Alterações
 - Criacao de acesso e licenca para Dra. Maria Tereza (Dialize Betim)
