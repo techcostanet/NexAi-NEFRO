@@ -1,5 +1,14 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.130",
+    "date": "09/11/2026",
+    "title": "Atualizacao cadastral dos 30 pacientes da Dra",
+    "highlights": [
+      "Atualizacao cadastral dos 30 pacientes da Dra",
+      "Maria Tereza com historico dialitico e tempos de TRS"
+    ]
+  },
+  {
     "version": "1.1.129",
     "date": "09/11/2026",
     "title": "Importacao de 37 pacientes e 513 exames laboratoriais do Dialsist para Dra",
