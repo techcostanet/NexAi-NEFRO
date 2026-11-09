@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.128] - 2026-11-09
+### Alterações
+- Criacao de acesso e licenca para Dra. Maria Tereza (Dialize Betim)
+
 ## [1.1.127] - 2026-11-07
 ### Alterações
 - Correção cirúrgica no parser do Labicon: leitura de cálcio, fósforo, ureia, sódio, potássio e glicemia

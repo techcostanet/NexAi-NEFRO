@@ -1,5 +1,14 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.128",
+    "date": "09/11/2026",
+    "title": "Criacao de acesso e licenca para Dra",
+    "highlights": [
+      "Criacao de acesso e licenca para Dra",
+      "Maria Tereza (Dialize Betim)"
+    ]
+  },
+  {
     "version": "1.1.127",
     "date": "07/11/2026",
     "title": "Correção cirúrgica no parser do Labicon: leitura de cálcio, fósforo, ureia, s...",

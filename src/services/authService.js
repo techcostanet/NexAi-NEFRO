@@ -44,6 +44,13 @@ const SYSTEM_ACCOUNTS = [
     role: "doctor",
     doctorId: "dra-gisele",
     nome: "Dra. Gisele"
+  },
+  {
+    email: "mariaterezaalvesfranca@gmail.com",
+    passwords: ["123456", "senha123"],
+    role: "doctor",
+    doctorId: "dra-maria-tereza",
+    nome: "Dra. Maria Tereza"
   }
 ];
 

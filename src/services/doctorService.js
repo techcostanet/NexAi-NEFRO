@@ -84,6 +84,57 @@ export const DEFAULT_DOCTORS = [
     ],
     pacientesCount: 60,
     criadoEm: "2026-08-01T00:00:00.000Z"
+  },
+  {
+    id: "dra-maria-tereza",
+    nome: "Dra. Maria Tereza",
+    titulo: "Médica Nefrologista",
+    cpf: "",
+    cns: "",
+    crm: "",
+    ufCrm: "MG",
+    rqe: "",
+    especialidade: "Nefrologia Clínica e Hemodiálise",
+    email: "mariaterezaalvesfranca@gmail.com",
+    telefone: "",
+    clinicaPrincipal: "Dialize Betim",
+    hospitalVinculo: "",
+    unidadeDialise: "Dialize Betim",
+    bio: "Médica Nefrologista atuante em Nefrologia Clínica e Hemodiálise.",
+    statusLicenca: "Ativo",
+    tipoConta: "Médico Assinante",
+    plano: "Mensal",
+    valorMensalidade: 490.00,
+    dataInicioAssinatura: "2026-11-09T00:00:00.000Z",
+    dataFimAssinatura: "2027-11-09T23:59:59.000Z",
+    historicoPagamentos: [
+      {
+        id: "pag-dra-maria-tereza-01",
+        data: "2026-11-09T00:00:00.000Z",
+        valor: 490.00,
+        plano: "Plano Mensal Nefrologia",
+        status: "Pago",
+        metodo: "PIX",
+        referencia: "Contratação Inicial da Licença"
+      }
+    ],
+    locaisAtuacao: [
+      {
+        id: "loc-betim-01",
+        nome: "Dialize Betim",
+        tipo: "Clínica de Hemodiálise",
+        cidade: "Betim/MG",
+        turnos: "1º, 2º e 3º Turnos",
+        diasSemana: "Seg/Qua/Sex",
+        rtNome: "Dra. Maria Tereza",
+        rtCrm: "",
+        telefoneEnfermagem: "",
+        status: "Ativo",
+        criadoEm: "2026-11-09T00:00:00.000Z"
+      }
+    ],
+    pacientesCount: 0,
+    criadoEm: "2026-11-09T00:00:00.000Z"
   }
 ];
 
