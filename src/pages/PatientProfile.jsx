@@ -1672,6 +1672,22 @@ export default function PatientProfile() {
                     <strong className="text-slate-800 font-semibold text-right">{acessoVascular.agulha || '-'}</strong>
                   </div>
                 )}
+                {(patient.duracaoSessao || patient.prescricaoDialise?.tempoSessao || acessoVascular.duracaoSessao) && (
+                  <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted shrink-0">Duração:</span>
+                    <strong className="text-slate-800 font-semibold text-right">
+                      {patient.duracaoSessao || patient.prescricaoDialise?.tempoSessao || acessoVascular.duracaoSessao}
+                    </strong>
+                  </div>
+                )}
+                {(patient.prescricaoDialise?.composicaoBanho || patient.composicaoBanho || acessoVascular.banho) && (
+                  <div className="flex justify-between items-center gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
+                    <span className="text-muted shrink-0">Banho:</span>
+                    <strong className="text-slate-800 font-semibold text-right" style={{ color: (patient.prescricaoDialise?.composicaoBanho || patient.composicaoBanho || acessoVascular.banho || '').includes('K 1') ? '#d97706' : 'inherit' }}>
+                      {patient.prescricaoDialise?.composicaoBanho || patient.composicaoBanho || acessoVascular.banho}
+                    </strong>
+                  </div>
+                )}
                 <div className="flex justify-between items-start gap-3 border-b pb-1.5" style={{ borderColor: 'var(--border)' }}>
                   <span className="text-muted shrink-0">Anticoagulação:</span>
                   <strong className="text-slate-800 font-semibold text-right" style={{ color: anticoagulacaoInfo.isSemHeparina ? '#dc2626' : 'inherit' }}>
@@ -2445,7 +2461,7 @@ export default function PatientProfile() {
                             </span>
                           </div>
                           <span className="text-muted" style={{ fontSize: '0.65rem' }}>
-                            {safeFormatDate(rec.data)}
+                            {safeFormatDate(rec.data)} {rec.pa ? `• PA: ${rec.pa}` : ''} {rec.observacoes ? `• ${rec.observacoes}` : ''}
                           </span>
                         </div>
 

@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.131",
+    "date": "09/11/2026",
+    "title": "Integracao de sessoes de hemodialise duracao banho e controle ponderal da fol...",
+    "highlights": [
+      "Integracao de sessoes de hemodialise duracao banho e controle ponderal da folha de sala DialiZe Betim"
+    ]
+  },
+  {
     "version": "1.1.130",
     "date": "09/11/2026",
     "title": "Atualizacao cadastral dos 30 pacientes da Dra",

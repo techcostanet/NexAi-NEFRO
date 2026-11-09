@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.131] - 2026-11-09
+### Alterações
+- Integracao de sessoes de hemodialise duracao banho e controle ponderal da folha de sala DialiZe Betim
+
 ## [1.1.130] - 2026-11-09
 ### Alterações
 - Atualizacao cadastral dos 30 pacientes da Dra. Maria Tereza com historico dialitico e tempos de TRS
