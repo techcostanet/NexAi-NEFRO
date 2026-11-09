@@ -1,9 +1,26 @@
 export const SYSTEM_CHANGELOG = [
   {
-    "version": "1.1.125",
-    "date": "23/10/2026",
-    "title": "Homologacao do layout LABICON para laudos de rotina e apoio DB com testes de ...",
+    "version": "1.1.127",
+    "date": "07/11/2026",
+    "title": "Correção cirúrgica no parser do Labicon: leitura de cálcio, fósforo, ureia, s...",
     "highlights": [
+      "Correção cirúrgica no parser do Labicon: leitura de cálcio, fósforo, ureia, sódio, potássio e glicemia"
+    ]
+  },
+  {
+    "version": "1.1.126",
+    "date": "24/10/2026",
+    "title": "Correcao no salvamento do calculo de Kt/V e eliminacao de estimativa automati...",
+    "highlights": [
+      "Correcao no salvamento do calculo de Kt/V e eliminacao de estimativa automatica no laudo"
+    ]
+  },
+  {
+    "version": "1.1.125",
+    "date": "24/10/2026",
+    "title": "Seletor com 3 niveis de fonte no Boletim de Saude e alternancia compacta Graf...",
+    "highlights": [
+      "Seletor com 3 niveis de fonte no Boletim de Saude e alternancia compacta Grafico e Lista no Controle Ponderal",
       "Homologacao do layout LABICON para laudos de rotina e apoio DB com testes de cobertura"
     ]
   },

@@ -186,348 +186,362 @@ const renderPdfIcon = (iconName, color = '#2563eb') => {
   }
 };
 
-const styles = StyleSheet.create({
-  page: {
-    padding: 24,
-    fontSize: 8.5,
-    fontFamily: 'Helvetica',
-    color: '#0f172a',
-    backgroundColor: '#ffffff'
-  },
-  header: {
-    borderBottomWidth: 1.5,
-    borderBottomColor: '#e2e8f0',
-    paddingBottom: 6,
-    marginBottom: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  logo: {
-    maxHeight: 38,
-    maxWidth: 90,
-    objectFit: 'contain',
-    marginRight: 10
-  },
-  headerLeft: {
-    flex: 1
-  },
-  clinicRow: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  clinicName: {
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: '#1e40af',
-    letterSpacing: 0.3
-  },
-  pillBadge: {
-    backgroundColor: '#dbeafe',
-    borderWidth: 1,
-    borderColor: '#bfdbfe',
-    borderRadius: 8,
-    paddingVertical: 1,
-    paddingHorizontal: 5,
-    marginLeft: 6
-  },
-  pillBadgeText: {
-    fontSize: 7.5,
-    fontWeight: 'bold',
-    color: '#1e40af'
-  },
-  docTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#0f172a',
-    marginTop: 2
-  },
-  patientNameRow: {
-    fontSize: 9.5,
-    color: '#475569',
-    marginTop: 2
-  },
-  headerRight: {
-    textAlign: 'right',
-    alignItems: 'flex-end'
-  },
-  monthRef: {
-    fontSize: 10.5,
-    fontWeight: 'bold',
-    color: '#1e293b'
-  },
-  doctorRespText: {
-    fontSize: 8,
-    color: '#64748b',
-    marginTop: 1.5
-  },
-  doctorCrmText: {
-    fontSize: 7.5,
-    color: '#94a3b8',
-    marginTop: 0.5
-  },
+const STYLES_CACHE = {};
 
-  bannerCard: {
-    backgroundColor: '#eff6ff',
-    borderWidth: 1,
-    borderColor: '#bfdbfe',
-    borderRadius: 8,
-    padding: 8,
-    marginBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  trophyCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#3b82f6',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 9
-  },
-  bannerContent: {
-    flex: 1
-  },
-  bannerTopRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  bannerTitle: {
-    fontSize: 11,
-    fontWeight: 'bold',
-    color: '#1e40af'
-  },
-  goalsBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderRadius: 8,
-    paddingVertical: 2,
-    paddingHorizontal: 7,
-    borderWidth: 1
-  },
-  goalsBadgeText: {
-    fontSize: 8,
-    fontWeight: 'bold'
-  },
-  bannerMessage: {
-    fontSize: 8,
-    color: '#334155',
-    lineHeight: 1.3,
-    marginTop: 3
-  },
-
-  cardsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    marginBottom: 4
-  },
-  card: {
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 5,
-    marginBottom: 4
-  },
-  cardTitleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 2
-  },
-  cardLeftHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1
-  },
-  cardTitleBlock: {
-    marginLeft: 5
-  },
-  cardCategoryName: {
-    fontSize: 8.5,
-    fontWeight: 'bold',
-    color: '#0f172a',
-    lineHeight: 1.15
-  },
-  statusBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 1,
-    paddingHorizontal: 5,
-    borderRadius: 4
-  },
-  statusBadgeText: {
-    fontSize: 7,
-    fontWeight: 'bold',
-    marginLeft: 3
-  },
-  cardValueRow: {
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#f1f5f9',
-    borderRadius: 4,
-    paddingVertical: 2,
-    paddingHorizontal: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 2
-  },
-  cardValueText: {
-    fontSize: 9,
-    fontWeight: 'bold'
-  },
-  cardTargetText: {
-    fontSize: 7,
-    color: '#64748b',
-    fontStyle: 'italic'
-  },
-  cardMessage: {
-    fontSize: 7,
-    color: '#334155',
-    lineHeight: 1.2
-  },
-  prescriptionBox: {
-    backgroundColor: '#f8fafc',
-    borderWidth: 1,
-    borderColor: '#cbd5e1',
-    borderRadius: 6,
-    padding: 5,
-    marginBottom: 5
-  },
-  prescriptionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 3
-  },
-  prescriptionTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  prescriptionTitle: {
-    fontSize: 8.5,
-    fontWeight: 'bold',
-    color: '#1e293b',
-    marginLeft: 3
-  },
-  prescriptionSubtitle: {
-    fontSize: 7,
-    color: '#64748b',
-    fontWeight: 'bold'
-  },
-  prescriptionGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between'
-  },
-  prescriptionItem: {
-    backgroundColor: '#ffffff',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    borderRadius: 4,
-    padding: 3.5,
-    marginBottom: 2.5,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  prescriptionItemLeft: {
-    flex: 1,
-    marginRight: 4
-  },
-  prescriptionItemName: {
-    fontSize: 7.5,
-    fontWeight: 'bold',
-    color: '#0f172a'
-  },
-  prescriptionItemPosology: {
-    fontSize: 6.5,
-    color: '#475569',
-    marginTop: 0.5
-  },
-  prescriptionItemRight: {
-    alignItems: 'flex-end',
-    flexShrink: 0
-  },
-  prescriptionViaBadge: {
-    backgroundColor: '#eff6ff',
-    borderWidth: 0.5,
-    borderColor: '#bfdbfe',
-    borderRadius: 3,
-    paddingVertical: 1,
-    paddingHorizontal: 4
-  },
-  prescriptionViaText: {
-    fontSize: 6,
-    fontWeight: 'bold',
-    color: '#1d4ed8'
-  },
-
-  orientationBox: {
-    backgroundColor: '#f0fdf4',
-    borderWidth: 1.5,
-    borderColor: '#86efac',
-    borderRadius: 6,
-    padding: 7,
-    marginBottom: 6
-  },
-  orientationHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 2
-  },
-  orientationTitle: {
-    fontSize: 8.5,
-    fontWeight: 'bold',
-    color: '#166534',
-    marginLeft: 4
-  },
-  orientationText: {
-    fontSize: 8,
-    color: '#14532d',
-    lineHeight: 1.35,
-    fontWeight: 'bold'
-  },
-
-  footerSection: {
-    borderTopWidth: 1,
-    borderTopColor: '#cbd5e1',
-    borderTopStyle: 'dashed',
-    paddingTop: 5,
-    marginTop: 'auto',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  footerLeft: {
-    flex: 1
-  },
-  footerIssueText: {
-    fontSize: 7.5,
-    color: '#64748b'
-  },
-  footerDisclaimerText: {
-    fontSize: 6.5,
-    color: '#94a3b8',
-    marginTop: 1
-  },
-  footerRight: {
-    textAlign: 'right',
-    alignItems: 'flex-end'
-  },
-  doctorSigName: {
-    fontSize: 8,
-    fontWeight: 'bold',
-    color: '#1e293b'
-  },
-  doctorSigSub: {
-    fontSize: 7,
-    color: '#64748b',
-    marginTop: 0.5
+function getStyles(fontSizeLevel = 'padrao') {
+  if (STYLES_CACHE[fontSizeLevel]) {
+    return STYLES_CACHE[fontSizeLevel];
   }
-});
+  const isGrande = fontSizeLevel === 'grande';
+  const isMedio = fontSizeLevel === 'medio';
+  const s = isGrande ? 1.25 : (isMedio ? 1.12 : 1.0);
+
+  const created = StyleSheet.create({
+    page: {
+      padding: isGrande ? 18 : 24,
+      fontSize: 8.5 * s,
+      fontFamily: 'Helvetica',
+      color: '#0f172a',
+      backgroundColor: '#ffffff'
+    },
+    header: {
+      borderBottomWidth: 1.5,
+      borderBottomColor: '#e2e8f0',
+      paddingBottom: isGrande ? 4 : 6,
+      marginBottom: isGrande ? 6 : 8,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    logo: {
+      maxHeight: isGrande ? 34 : 38,
+      maxWidth: 90,
+      objectFit: 'contain',
+      marginRight: 10
+    },
+    headerLeft: {
+      flex: 1
+    },
+    clinicRow: {
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    clinicName: {
+      fontSize: 11 * s,
+      fontWeight: 'bold',
+      color: '#1e40af',
+      letterSpacing: 0.3
+    },
+    pillBadge: {
+      backgroundColor: '#dbeafe',
+      borderWidth: 1,
+      borderColor: '#bfdbfe',
+      borderRadius: 8,
+      paddingVertical: 1,
+      paddingHorizontal: 5,
+      marginLeft: 6
+    },
+    pillBadgeText: {
+      fontSize: 7.5 * s,
+      fontWeight: 'bold',
+      color: '#1e40af'
+    },
+    docTitle: {
+      fontSize: 16 * s,
+      fontWeight: 'bold',
+      color: '#0f172a',
+      marginTop: 2
+    },
+    patientNameRow: {
+      fontSize: 9.5 * s,
+      color: '#475569',
+      marginTop: 2
+    },
+    headerRight: {
+      textAlign: 'right',
+      alignItems: 'flex-end'
+    },
+    monthRef: {
+      fontSize: 10.5 * s,
+      fontWeight: 'bold',
+      color: '#1e293b'
+    },
+    doctorRespText: {
+      fontSize: 8 * s,
+      color: '#64748b',
+      marginTop: 1.5
+    },
+    doctorCrmText: {
+      fontSize: 7.5 * s,
+      color: '#94a3b8',
+      marginTop: 0.5
+    },
+
+    bannerCard: {
+      backgroundColor: '#eff6ff',
+      borderWidth: 1,
+      borderColor: '#bfdbfe',
+      borderRadius: 8,
+      padding: isGrande ? 6 : 8,
+      marginBottom: isGrande ? 6 : 8,
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    trophyCircle: {
+      width: isGrande ? 34 : 32,
+      height: isGrande ? 34 : 32,
+      borderRadius: 17,
+      backgroundColor: '#3b82f6',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 9
+    },
+    bannerContent: {
+      flex: 1
+    },
+    bannerTopRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    bannerTitle: {
+      fontSize: 11 * s,
+      fontWeight: 'bold',
+      color: '#1e40af'
+    },
+    goalsBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderRadius: 8,
+      paddingVertical: 2,
+      paddingHorizontal: 7,
+      borderWidth: 1
+    },
+    goalsBadgeText: {
+      fontSize: 8 * s,
+      fontWeight: 'bold'
+    },
+    bannerMessage: {
+      fontSize: 8 * s,
+      color: '#334155',
+      lineHeight: 1.3,
+      marginTop: 3
+    },
+
+    cardsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      marginBottom: isGrande ? 2 : 4
+    },
+    card: {
+      borderWidth: 1,
+      borderRadius: 5,
+      padding: isGrande ? 4 : 5,
+      marginBottom: isGrande ? 3 : 4
+    },
+    cardTitleRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 2
+    },
+    cardLeftHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1
+    },
+    cardTitleBlock: {
+      marginLeft: 5
+    },
+    cardCategoryName: {
+      fontSize: 8.5 * s,
+      fontWeight: 'bold',
+      color: '#0f172a',
+      lineHeight: 1.15
+    },
+    statusBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 1,
+      paddingHorizontal: 5,
+      borderRadius: 4
+    },
+    statusBadgeText: {
+      fontSize: 7 * s,
+      fontWeight: 'bold',
+      marginLeft: 3
+    },
+    cardValueRow: {
+      backgroundColor: '#ffffff',
+      borderWidth: 1,
+      borderColor: '#f1f5f9',
+      borderRadius: 4,
+      paddingVertical: 2,
+      paddingHorizontal: 5,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 2
+    },
+    cardValueText: {
+      fontSize: 9 * s,
+      fontWeight: 'bold'
+    },
+    cardTargetText: {
+      fontSize: 7 * s,
+      color: '#64748b',
+      fontStyle: 'italic'
+    },
+    cardMessage: {
+      fontSize: 7 * s,
+      color: '#334155',
+      lineHeight: 1.2
+    },
+    prescriptionBox: {
+      backgroundColor: '#f8fafc',
+      borderWidth: 1,
+      borderColor: '#cbd5e1',
+      borderRadius: 6,
+      padding: isGrande ? 4 : 5,
+      marginBottom: isGrande ? 4 : 5
+    },
+    prescriptionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 3
+    },
+    prescriptionTitleRow: {
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    prescriptionTitle: {
+      fontSize: 8.5 * s,
+      fontWeight: 'bold',
+      color: '#1e293b',
+      marginLeft: 3
+    },
+    prescriptionSubtitle: {
+      fontSize: 7 * s,
+      color: '#64748b',
+      fontWeight: 'bold'
+    },
+    prescriptionGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between'
+    },
+    prescriptionItem: {
+      backgroundColor: '#ffffff',
+      borderWidth: 1,
+      borderColor: '#e2e8f0',
+      borderRadius: 4,
+      padding: 3.5,
+      marginBottom: 2.5,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    prescriptionItemLeft: {
+      flex: 1,
+      marginRight: 4
+    },
+    prescriptionItemName: {
+      fontSize: 7.5 * s,
+      fontWeight: 'bold',
+      color: '#0f172a'
+    },
+    prescriptionItemPosology: {
+      fontSize: 6.5 * s,
+      color: '#475569',
+      marginTop: 0.5
+    },
+    prescriptionItemRight: {
+      alignItems: 'flex-end',
+      flexShrink: 0
+    },
+    prescriptionViaBadge: {
+      backgroundColor: '#eff6ff',
+      borderWidth: 0.5,
+      borderColor: '#bfdbfe',
+      borderRadius: 3,
+      paddingVertical: 1,
+      paddingHorizontal: 4
+    },
+    prescriptionViaText: {
+      fontSize: 6 * s,
+      fontWeight: 'bold',
+      color: '#1d4ed8'
+    },
+
+    orientationBox: {
+      backgroundColor: '#f0fdf4',
+      borderWidth: 1.5,
+      borderColor: '#86efac',
+      borderRadius: 6,
+      padding: isGrande ? 5 : 7,
+      marginBottom: isGrande ? 4 : 6
+    },
+    orientationHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 2
+    },
+    orientationTitle: {
+      fontSize: 8.5 * s,
+      fontWeight: 'bold',
+      color: '#166534',
+      marginLeft: 4
+    },
+    orientationText: {
+      fontSize: 8 * s,
+      color: '#14532d',
+      lineHeight: 1.35,
+      fontWeight: 'bold'
+    },
+
+    footerSection: {
+      borderTopWidth: 1,
+      borderTopColor: '#cbd5e1',
+      borderTopStyle: 'dashed',
+      paddingTop: 4,
+      marginTop: 'auto',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    footerLeft: {
+      flex: 1
+    },
+    footerIssueText: {
+      fontSize: 7.5 * s,
+      color: '#64748b'
+    },
+    footerDisclaimerText: {
+      fontSize: 6.5 * s,
+      color: '#94a3b8',
+      marginTop: 1
+    },
+    footerRight: {
+      textAlign: 'right',
+      alignItems: 'flex-end'
+    },
+    doctorSigName: {
+      fontSize: 8 * s,
+      fontWeight: 'bold',
+      color: '#1e293b'
+    },
+    doctorSigSub: {
+      fontSize: 7 * s,
+      color: '#64748b',
+      marginTop: 0.5
+    }
+  });
+
+  STYLES_CACHE[fontSizeLevel] = created;
+  return created;
+}
 
 export default function PatientBulletinPdf({
   bulletinData,
@@ -538,9 +552,13 @@ export default function PatientBulletinPdf({
   enabledTips = {},
   customTips = {},
   includePrescription = false,
-  prescriptionItems = []
+  prescriptionItems = [],
+  fontSizeLevel = 'padrao'
 }) {
   if (!bulletinData) return null;
+
+  const styles = getStyles(fontSizeLevel);
+
 
   const {
     pacienteNome = 'Paciente',

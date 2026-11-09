@@ -526,18 +526,9 @@ export function applyDerivedCalculations(exames = {}) {
     exames.ist = Math.round(istCalc * 10) / 10;
   }
 
-  // 2. Cálculo automático de Kt/V (Daugirdas sp) a partir de Ureia Pré e Pós
-  if (exames.ktv === undefined && exames.ureiaPre && exames.ureiaPos) {
-    const pre = Number(exames.ureiaPre);
-    const pos = Number(exames.ureiaPos);
-    if (pre > pos && pre > 0) {
-      const r = pos / pre;
-      if (r > 0.032) {
-        const ktvEst = -Math.log(r - 0.032);
-        exames.ktv = Math.round(ktvEst * 100) / 100;
-      }
-    }
-  }
+  // NOTA CLÍNICA: O Kt/V NÃO deve ser inventado ou estimado automaticamente apenas com Ureia Pré e Pós.
+  // A fórmula padrão-ouro de Daugirdas exige os pesos pré e pós para computar a ultrafiltração (UF) e a duração da sessão.
+  // Portanto, o Kt/V só é gravado se constar expressamente no laudo do laboratório ou se for calculado na Calculadora de Adequação.
 
   return exames;
 }
@@ -999,21 +990,30 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
       const line = bucket.allLines[i];
       const normLine = line.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
 
-      // Encerra exame ativo ao encontrar blocos de histórico anterior, referências ou assinaturas
+      // Encerra exame ativo ao encontrar blocos de histórico anterior, recoleta, em andamento ou assinaturas
       if (
         normLine.includes("RESULTADOS ANTERIORES") || 
         normLine.includes("LIBERADO ELETRONICAMENTE") || 
         normLine.includes("ESTE EXAME POSSUI ASSINATURA") ||
         normLine.includes("RT ISABEL DE LOURDES") ||
-        normLine.includes("VALORES DE REFERENCIA") ||
-        normLine.includes("VALOR DE REFERENCIA") ||
-        normLine.includes("VALORES DE REFERÊNCIA") ||
-        normLine.includes("VALOR DE REFERÊNCIA") ||
+        normLine.includes("CNPJ 13.150.241") ||
         normLine.includes("EXAME EM ANDAMENTO") ||
+        normLine.includes("SOLICITACAO DE RECOLETA") ||
+        normLine.includes("RECOLETA") ||
         normLine.includes("EM ANDAMENTO") ||
         normLine.includes("AGUARDANDO RESULTADO")
       ) {
         activeExamKey = null;
+        continue;
+      }
+
+      // Linhas puras de "Valores de Referência" são apenas cabeçalho de coluna e não encerram o exame ativo
+      if (
+        normLine === "VALORES DE REFERENCIA" ||
+        normLine === "VALOR DE REFERENCIA" ||
+        normLine.startsWith("VALORES DE REFERENCIA") ||
+        normLine.startsWith("VALOR DE REFERENCIA")
+      ) {
         continue;
       }
 
@@ -1078,6 +1078,23 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
       }
 
       // Cabeçalhos de Exames Homologados do Labicon
+      if (
+        normLine === "DOSAGEM DE HEMOGLOBINA" ||
+        normLine === "HEMOGLOBINA" ||
+        normLine.startsWith("DOSAGEM DE HEMOGLOBINA")
+      ) {
+        activeExamKey = "hb";
+        continue;
+      }
+      if (
+        normLine === "HEMATOCRITO" ||
+        normLine === "HEMATÓCRITO" ||
+        normLine.startsWith("HEMATOCRITO") ||
+        normLine.startsWith("HEMATÓCRITO")
+      ) {
+        activeExamKey = "ht";
+        continue;
+      }
       if (normLine === "CALCIO" || normLine.startsWith("CALCIO ") || normLine.includes("DOSAGEM DE CALCIO")) {
         activeExamKey = "ca";
         continue;
@@ -1201,7 +1218,7 @@ export function parseLabiconReport(pagesLines, patientsList = [], detectedGlobal
           }
         }
 
-        const matchRes = line.match(/(?:Resultado|Valor)[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
+        const matchRes = line.match(/(?:Resultado|Valor|Hemoglobina|Hemat[oó]crito)[.:_\s]+([0-9]+[.,]?[0-9]*)/i);
         if (matchRes) {
           const val = parseExamNumber(matchRes[1]);
           if (val !== null) {
@@ -1879,9 +1896,8 @@ export async function parsePdfFile(file, patientsList = []) {
           currentExamKey = null;
         }
 
-        // A linha "valores de referencia" encerra exame ativo para evitar falsos positivos
+        // Linhas de "valores de referencia" não devem fechar o exame se o resultado ainda não foi capturado
         if (normLine === 'valores de referencia' || normLine === 'valor de referencia' || normLine.startsWith('valores de referencia') || normLine.startsWith('valor de referencia')) {
-          currentExamKey = null;
           continue;
         }
 
@@ -2031,18 +2047,7 @@ export async function parsePdfFile(file, patientsList = []) {
         report.exames.ist = Math.round(istCalc * 10) / 10;
       }
 
-      // 2. Cálculo automático de Kt/V (Daugirdas sp) a partir de Ureia Pré e Pós
-      if (report.exames.ktv === undefined && report.exames.ureiaPre && report.exames.ureiaPos) {
-        const pre = Number(report.exames.ureiaPre);
-        const pos = Number(report.exames.ureiaPos);
-        if (pre > pos && pre > 0) {
-          const r = pos / pre;
-          if (r > 0.032) {
-            const ktvEst = -Math.log(r - 0.032);
-            report.exames.ktv = Math.round(ktvEst * 100) / 100;
-          }
-        }
-      }
+      // NOTA CLÍNICA: Kt/V nunca é inventado no laudo. Só entra se vier impresso ou se for calculado na Calculadora de Adequação.
     });
 
     // Se encontrou laudos com exames ou pacientes

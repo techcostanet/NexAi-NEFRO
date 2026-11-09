@@ -213,15 +213,24 @@ const renderFaceIcon = (humor) => {
   if (humor === 'atencao') return <NeutralFaceIcon />;
   return <AlertFaceIcon />;
 };
+const STYLES_CACHE = {};
 
-const styles = StyleSheet.create({
-  page: {
-    padding: 22,
-    fontSize: 8.5,
-    fontFamily: 'Helvetica',
-    color: '#0f172a',
-    backgroundColor: '#ffffff'
-  },
+function getStyles(fontSizeLevel = 'padrao') {
+  if (STYLES_CACHE[fontSizeLevel]) {
+    return STYLES_CACHE[fontSizeLevel];
+  }
+  const isGrande = fontSizeLevel === 'grande';
+  const isMedio = fontSizeLevel === 'medio';
+  const s = isGrande ? 1.25 : (isMedio ? 1.12 : 1.0);
+
+  const created = StyleSheet.create({
+    page: {
+      padding: isGrande ? 16 : 22,
+      fontSize: 8.5 * s,
+      fontFamily: 'Helvetica',
+      color: '#0f172a',
+      backgroundColor: '#ffffff'
+    },
   header: {
     borderBottomWidth: 1.5,
     borderBottomColor: '#bfdbfe',
@@ -246,7 +255,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   clinicName: {
-    fontSize: 11,
+    fontSize: 11 * s,
     fontWeight: 'bold',
     color: '#1e40af',
     letterSpacing: 0.3
@@ -261,12 +270,12 @@ const styles = StyleSheet.create({
     marginLeft: 6
   },
   pillBadgeText: {
-    fontSize: 7.5,
+    fontSize: 7.5 * s,
     fontWeight: 'bold',
     color: '#1d4ed8'
   },
   patientNameRow: {
-    fontSize: 13,
+    fontSize: 13 * s,
     fontWeight: 'bold',
     color: '#0f172a',
     marginTop: 2
@@ -276,17 +285,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end'
   },
   monthRef: {
-    fontSize: 10.5,
+    fontSize: 10.5 * s,
     fontWeight: 'bold',
     color: '#1e3a8a'
   },
   doctorRespText: {
-    fontSize: 8,
+    fontSize: 8 * s,
     color: '#475569',
     marginTop: 1.5
   },
   doctorCrmText: {
-    fontSize: 7.5,
+    fontSize: 7.5 * s,
     color: '#64748b',
     marginTop: 0.5
   },
@@ -296,15 +305,15 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: '#facc15',
     borderRadius: 10,
-    padding: 8,
-    marginBottom: 8,
+    padding: isGrande ? 6 : 8,
+    marginBottom: isGrande ? 6 : 8,
     flexDirection: 'row',
     alignItems: 'center'
   },
   trophyCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: isGrande ? 38 : 36,
+    height: isGrande ? 38 : 36,
+    borderRadius: 19,
     backgroundColor: '#ca8a04',
     alignItems: 'center',
     justifyContent: 'center',
@@ -319,7 +328,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   bannerTitle: {
-    fontSize: 11.5,
+    fontSize: 11.5 * s,
     fontWeight: 'bold',
     color: '#854d0e'
   },
@@ -334,12 +343,12 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   starBadgeText: {
-    fontSize: 8,
+    fontSize: 8 * s,
     fontWeight: 'bold',
     color: '#a16207'
   },
   bannerMessage: {
-    fontSize: 8,
+    fontSize: 8 * s,
     color: '#334155',
     lineHeight: 1.3,
     marginTop: 2.5
@@ -349,13 +358,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 4
+    marginBottom: isGrande ? 2 : 4
   },
   card: {
     borderWidth: 1.2,
     borderRadius: 8,
-    padding: 6,
-    marginBottom: 5
+    padding: isGrande ? 5 : 6,
+    marginBottom: isGrande ? 4 : 5
   },
   cardHeader: {
     flexDirection: 'row',
@@ -379,12 +388,12 @@ const styles = StyleSheet.create({
     borderColor: '#e2e8f0'
   },
   organTitle: {
-    fontSize: 9.5,
+    fontSize: 9.5 * s,
     fontWeight: 'bold',
     color: '#0f172a'
   },
   organSubtitle: {
-    fontSize: 7,
+    fontSize: 7 * s,
     color: '#64748b'
   },
   statusBadge: {
@@ -396,7 +405,7 @@ const styles = StyleSheet.create({
     borderWidth: 1
   },
   statusText: {
-    fontSize: 7.5,
+    fontSize: 7.5 * s,
     fontWeight: 'bold',
     marginLeft: 3
   },
@@ -411,7 +420,7 @@ const styles = StyleSheet.create({
     marginBottom: 2
   },
   messageText: {
-    fontSize: 8,
+    fontSize: 8 * s,
     fontWeight: 'bold',
     color: '#1e293b',
     lineHeight: 1.2
@@ -423,12 +432,12 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   tipText: {
-    fontSize: 7,
+    fontSize: 7 * s,
     color: '#475569',
     flex: 1
   },
   techValue: {
-    fontSize: 6.5,
+    fontSize: 6.5 * s,
     color: '#94a3b8',
     backgroundColor: '#f8fafc',
     paddingVertical: 0.5,
@@ -443,8 +452,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#cbd5e1',
     borderRadius: 6,
-    padding: 6,
-    marginBottom: 5
+    padding: isGrande ? 4 : 6,
+    marginBottom: isGrande ? 4 : 5
   },
   prescriptionHeader: {
     flexDirection: 'row',
@@ -453,12 +462,12 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   prescriptionTitle: {
-    fontSize: 8.5,
+    fontSize: 8.5 * s,
     fontWeight: 'bold',
     color: '#1e293b'
   },
   prescriptionSub: {
-    fontSize: 6.5,
+    fontSize: 6.5 * s,
     color: '#1d4ed8',
     backgroundColor: '#eff6ff',
     paddingVertical: 1,
@@ -482,16 +491,16 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   medName: {
-    fontSize: 7.5,
+    fontSize: 7.5 * s,
     fontWeight: 'bold',
     color: '#0f172a'
   },
   medPos: {
-    fontSize: 6.5,
+    fontSize: 6.5 * s,
     color: '#475569'
   },
   medPeriod: {
-    fontSize: 6,
+    fontSize: 6 * s,
     fontWeight: 'bold',
     color: '#1e40af',
     backgroundColor: '#eff6ff',
@@ -505,17 +514,17 @@ const styles = StyleSheet.create({
     borderWidth: 1.2,
     borderColor: '#86efac',
     borderRadius: 6,
-    padding: 6,
-    marginBottom: 6
+    padding: isGrande ? 5 : 6,
+    marginBottom: isGrande ? 4 : 6
   },
   noteTitle: {
-    fontSize: 8.5,
+    fontSize: 8.5 * s,
     fontWeight: 'bold',
     color: '#166534',
     marginBottom: 2
   },
   noteContent: {
-    fontSize: 8,
+    fontSize: 8 * s,
     color: '#14532d',
     lineHeight: 1.3
   },
@@ -530,26 +539,30 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   footerLeftText: {
-    fontSize: 7.5,
+    fontSize: 7.5 * s,
     color: '#1e40af',
     fontWeight: 'bold'
   },
   footerSubText: {
-    fontSize: 6.5,
+    fontSize: 6.5 * s,
     color: '#94a3b8'
   },
   footerDoctor: {
-    fontSize: 7.5,
+    fontSize: 7.5 * s,
     fontWeight: 'bold',
     color: '#1e293b',
     textAlign: 'right'
   },
   footerCrm: {
-    fontSize: 6.5,
+    fontSize: 6.5 * s,
     color: '#64748b',
     textAlign: 'right'
   }
 });
+
+STYLES_CACHE[fontSizeLevel] = created;
+return created;
+}
 
 export default function PatientBulletinVisualPdf({
   bulletinData,
@@ -560,9 +573,13 @@ export default function PatientBulletinVisualPdf({
   enabledTips = {},
   customTips = {},
   includePrescription = false,
-  prescriptionItems = []
+  prescriptionItems = [],
+  fontSizeLevel = 'padrao'
 }) {
   if (!bulletinData) return null;
+
+  const styles = getStyles(fontSizeLevel);
+
 
   const {
     pacienteNome,

@@ -479,6 +479,28 @@ export function consolidatePatientExams(historicoExames = [], fallbackExames = {
 }
 
 /**
+ * Remove recursivamente campos 'undefined' de objetos ou arrays,
+ * pois o Cloud Firestore rejeita estritamente valores 'undefined'.
+ */
+export function sanitizeForFirestore(val) {
+  if (val === undefined) return null;
+  if (val === null) return null;
+  if (Array.isArray(val)) {
+    return val.map(item => sanitizeForFirestore(item));
+  }
+  if (typeof val === 'object' && !(val instanceof Date)) {
+    const res = {};
+    for (const [k, v] of Object.entries(val)) {
+      if (v !== undefined) {
+        res[k] = sanitizeForFirestore(v);
+      }
+    }
+    return res;
+  }
+  return val;
+}
+
+/**
  * Adiciona ou atualiza um exame com data no histórico do paciente no Firestore
  */
 export async function savePatientExam(patientId, examData, examIndex = null) {
@@ -516,9 +538,10 @@ export async function savePatientExam(patientId, examData, examIndex = null) {
     atualizadoEm: new Date().toISOString()
   };
 
+  const cleanPayload = sanitizeForFirestore(updatePayload);
   const docRef = doc(db, PATIENTS_COLLECTION, patientId);
-  await updateDoc(docRef, updatePayload);
-  return { ...patient, ...updatePayload };
+  await updateDoc(docRef, cleanPayload);
+  return { ...patient, ...cleanPayload };
 }
 
 /**
@@ -538,15 +561,15 @@ export async function savePatientKtvCalculation(patientId, ktvData) {
   const examPayload = {
     ktv: ktvData.ktv,
     pru: ktvData.pru,
-    uf: ktvData.uf,
+    uf: ktvData.uf !== undefined && ktvData.uf !== null ? ktvData.uf : 0,
     ureiaPre: ktvData.ureiaPre,
     ureiaPos: ktvData.ureiaPos,
-    pesoPre: ktvData.pesoPre,
-    pesoPos: ktvData.pesoPos,
-    duracaoSessao: ktvData.duracaoHoras,
+    pesoPre: ktvData.pesoPre !== undefined && ktvData.pesoPre !== null ? ktvData.pesoPre : null,
+    pesoPos: ktvData.pesoPos !== undefined && ktvData.pesoPos !== null ? ktvData.pesoPos : null,
+    duracaoSessao: ktvData.duracaoHoras || 4.0,
     metodoKtv: ktvData.metodoCalculo || 'Daugirdas 2ª Geração (spKt/V)',
     dataExame,
-    observacaoKtv: ktvData.observacao || undefined,
+    observacaoKtv: ktvData.observacao ? String(ktvData.observacao).trim() : '',
     registradoEm: new Date().toISOString()
   };
 
@@ -574,9 +597,10 @@ export async function savePatientKtvCalculation(patientId, ktvData) {
     atualizadoEm: new Date().toISOString()
   };
 
+  const cleanPayload = sanitizeForFirestore(updatePayload);
   const docRef = doc(db, PATIENTS_COLLECTION, patientId);
-  await updateDoc(docRef, updatePayload);
-  return { ...patient, ...updatePayload };
+  await updateDoc(docRef, cleanPayload);
+  return { ...patient, ...cleanPayload };
 }
 
 /**
