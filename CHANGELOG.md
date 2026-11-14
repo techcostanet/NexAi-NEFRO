@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.133] - 2026-11-14
+### Alterações
+- Atualizacao cadastral, TRS e situacao clinica de 33 pacientes da Dra Maria Tereza
+
 ## [1.1.132] - 2026-11-14
 ### Alterações
 - Importacao de 30 pacientes e 197 exames da Dra. Maria Tereza (Salao 3 2o Turno Seg Qua Sex DialiZe Betim)
