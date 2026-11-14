@@ -1,5 +1,13 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.134",
+    "date": "14/11/2026",
+    "title": "Enriquecimento de dados cadastrais, TRS e desfechos de 33 pacientes do Salao ...",
+    "highlights": [
+      "Enriquecimento de dados cadastrais, TRS e desfechos de 33 pacientes do Salao 1 da Dra Maria Tereza"
+    ]
+  },
+  {
     "version": "1.1.133",
     "date": "14/11/2026",
     "title": "Atualizacao cadastral, TRS e situacao clinica de 33 pacientes da Dra Maria Te...",
