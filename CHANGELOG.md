@@ -2,6 +2,10 @@
 
 Todas as alterações, melhorias e correções deste projeto são documentadas neste arquivo de forma cronológica e versionada.
 
+## [1.1.132] - 2026-11-14
+### Alterações
+- Importacao de 30 pacientes e 197 exames da Dra. Maria Tereza (Salao 3 2o Turno Seg Qua Sex DialiZe Betim)
+
 ## [1.1.131] - 2026-11-09
 ### Alterações
 - Integracao de sessoes de hemodialise duracao banho e controle ponderal da folha de sala DialiZe Betim

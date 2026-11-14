@@ -1,5 +1,14 @@
 export const SYSTEM_CHANGELOG = [
   {
+    "version": "1.1.132",
+    "date": "14/11/2026",
+    "title": "Importacao de 30 pacientes e 197 exames da Dra",
+    "highlights": [
+      "Importacao de 30 pacientes e 197 exames da Dra",
+      "Maria Tereza (Salao 3 2o Turno Seg Qua Sex DialiZe Betim)"
+    ]
+  },
+  {
     "version": "1.1.131",
     "date": "09/11/2026",
     "title": "Integracao de sessoes de hemodialise duracao banho e controle ponderal da fol...",
